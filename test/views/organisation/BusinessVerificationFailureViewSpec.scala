@@ -26,7 +26,7 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
   private val page: business_verification_failure_page =
     inject[business_verification_failure_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private def createView(): Html = page()(registrationJourneyRequest, messages)
 
   "Business Verification Failure Page" should {
 

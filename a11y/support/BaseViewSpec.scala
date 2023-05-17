@@ -19,7 +19,7 @@ package support
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.test.Injecting
+import play.api.test.{FakeRequest, Injecting}
 import spec.PptTestData
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 
@@ -33,5 +33,7 @@ trait BaseViewSpec
   protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   implicit def messages: Messages = realMessagesApi.preferred(request)
+
+  implicit val implicitRequest = FakeRequest()
 
 }

@@ -16,36 +16,27 @@
 
 package controllers.contact
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import controllers.{routes => commonRoutes}
+import forms.contact.EmailAddress
+import models.emailverification.EmailVerificationStatus.{LOCKED_OUT, NOT_VERIFIED, VERIFIED}
+import models.emailverification._
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import controllers.{routes => commonRoutes}
-import forms.contact.EmailAddress
-import models.emailverification.EmailVerificationStatus.{
-  LOCKED_OUT,
-  NOT_VERIFIED,
-  VERIFIED
-}
-import models.emailverification._
-import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
 import services.EmailVerificationService
-import views.html.contact.email_address_page
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.email_address_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
                                                        journeyAction: JourneyAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        emailVerificationService: EmailVerificationService,
@@ -55,7 +46,7 @@ class ContactDetailsEmailAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.primaryContactDetails.email match {
         case Some(data) =>
           Ok(buildEmailPage(EmailAddress.form().fill(EmailAddress(data))))
@@ -65,21 +56,16 @@ class ContactDetailsEmailAddressController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       EmailAddress.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           emailAddress =>
-            updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
+            updateRegistration(formData = emailAddress, credId = request.authenticatedRequest.credId).flatMap {
               case Right(registration) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    saveAndContinue(registration, request.user.credId)
-                  case _ =>
-                    Future(Redirect(commonRoutes.TaskListController.displayPage()))
-                }
+                saveAndContinue(registration, request.authenticatedRequest.credId)
               case Left(error) => throw error
             }
         )

@@ -25,7 +25,7 @@ class TaskListSingleEntityViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[task_list_single_entity]
   private def render(showRestartLiabilityContent: Boolean): String =
-    page(aRegistration(), Call(GET,"/backLink"), showRestartLiabilityContent)(journeyRequest, messages).toString()
+    page(aRegistration(), Call(GET,"/backLink"), showRestartLiabilityContent)(registrationJourneyRequest, messages).toString()
 
   "TaskListSingleEntityView" should {
     "pass accessibility checks" when {

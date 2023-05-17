@@ -16,15 +16,9 @@
 
 package controllers.organisation
 
-import org.joda.time.DateTime
-import play.api.Logging
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import connectors._
 import connectors.grs._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.group.{routes => groupRoutes}
 import controllers.organisation.{routes => orgRoutes}
 import controllers.{routes => commonRoutes}
@@ -33,11 +27,17 @@ import forms.organisation.OrgType.SOLE_TRADER
 import forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import models.genericregistration._
 import models.registration.{Cacheable, OrganisationDetails, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import utils.AddressConversionUtils
+import org.joda.time.DateTime
+import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.AddressConversionUtils
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,7 +55,6 @@ object RegistrationStatus extends Enumeration {
 
 @Singleton
 class GrsController @Inject() (
-                                authenticate: NotEnrolledAuthAction,
                                 journeyAction: JourneyAction,
                                 override val registrationConnector: RegistrationConnector,
                                 ukCompanyGrsConnector: UkCompanyGrsConnector,
@@ -69,7 +68,7 @@ class GrsController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport with Logging {
 
   def grsCallback(journeyId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
+    journeyAction.register.async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
           case Right(registration) => 

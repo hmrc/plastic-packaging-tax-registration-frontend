@@ -18,12 +18,10 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
-import forms.Date
+import controllers.actions.JourneyAction
 import forms.liability.ExceededThresholdWeight
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
-import play.api.data.Form
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import views.html.liability.exceeded_threshold_weight_page
@@ -33,7 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExceededThresholdWeightController @Inject() (
-                                                    authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
                                                     appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,
@@ -44,7 +41,7 @@ class ExceededThresholdWeightController @Inject() (
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
 
       val filledForm = request.registration.liabilityDetails.exceededThresholdWeight  match {
         case Some(yesNo) => form().fill(yesNo)
@@ -55,7 +52,7 @@ class ExceededThresholdWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form().bindFromRequest().fold(
         errorForm =>
           Future.successful(BadRequest(page(errorForm)))

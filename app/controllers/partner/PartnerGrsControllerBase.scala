@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import connectors._
 import connectors.grs._
-import controllers.actions.AuthActioning
+
 import controllers.organisation.RegistrationStatus._
 import controllers.organisation.{routes => orgRoutes}
 import controllers.{routes => commonRoutes}
@@ -41,8 +41,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerGrsControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   soleTraderGrsConnector: SoleTraderGrsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
@@ -54,7 +53,7 @@ abstract class PartnerGrsControllerBase(
     extends FrontendController(mcc) with I18nSupport with Logging {
 
   protected def grsCallback(journeyId: String, partnerId: Option[String], getRedirect: Call ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
+    journeyAction.async {
       implicit request: JourneyRequest[AnyContent] =>
         saveRegistrationDetails(journeyId, partnerId).flatMap {
 

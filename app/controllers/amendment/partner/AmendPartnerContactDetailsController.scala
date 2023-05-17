@@ -18,15 +18,15 @@ package controllers.amendment.partner
 
 import play.api.data.Form
 import play.api.mvc._
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendmentRoutes}
 import controllers.{AddressLookupIntegration, EmailVerificationActions}
 import forms.contact.{EmailAddress, EmailAddressPasscode, JobTitle, PhoneNumber}
 import forms.group.MemberName
 import models.genericregistration.Partner
 import models.registration.{AmendRegistrationUpdateService, Registration}
-import models.request.{AmendmentJourneyAction, JourneyRequest}
-import services.{AddressCaptureConfig, AddressCaptureService, EmailVerificationService}
+import models.request.JourneyRequest
+import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService, EmailVerificationService}
 import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 import views.html.partner.{partner_email_address_page, partner_job_title_page, partner_member_name_page, partner_phone_number_page}
 
@@ -35,9 +35,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendPartnerContactDetailsController @Inject() (
-                                                       authenticate: EnrolledAuthAction,
                                                        mcc: MessagesControllerComponents,
-                                                       amendmentJourneyAction: AmendmentJourneyAction,
+                                                       journeyAction: JourneyAction,
+                                                       amendRegistrationService: AmendRegistrationService,
                                                        contactNamePage: partner_member_name_page,
                                                        contactEmailPage: partner_email_address_page,
                                                        val emailPasscodePage: email_address_passcode_page,
@@ -49,10 +49,10 @@ class AmendPartnerContactDetailsController @Inject() (
                                                        jobTitlePage: partner_job_title_page,
                                                        addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration with EmailVerificationActions {
+    extends AmendmentController(mcc, amendRegistrationService) with AddressLookupIntegration with EmailVerificationActions {
 
   def contactName(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
       val form = MemberName.form().fill(
         MemberName(
@@ -65,7 +65,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def updateContactName(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       MemberName.form()
         .bindFromRequest()
         .fold(
@@ -103,7 +103,7 @@ class AmendPartnerContactDetailsController @Inject() (
     )
 
   def emailAddress(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val form = EmailAddress.form().fill(
         EmailAddress(
           getPartner(partnerId).contactDetails.flatMap(_.emailAddress).getOrElse(throw new IllegalStateException("Partner email address absent"))
@@ -113,7 +113,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def updateEmailAddress(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val partner = getPartner(partnerId)
       EmailAddress.form()
         .bindFromRequest()
@@ -142,7 +142,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def confirmEmailCode(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
       Ok(
         renderEnterEmailVerificationCodePage(
@@ -155,7 +155,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def checkEmailVerificationCode(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val partner = getPartner(partnerId)
       def emailVerificationTooManyAttemptsCall =
         routes.AmendPartnerContactDetailsController.emailVerificationTooManyAttempts()
@@ -168,7 +168,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def emailVerified(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
       showEmailVerifiedPage(
         routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
@@ -177,12 +177,12 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       showTooManyAttemptsPage
     }
 
   def confirmEmailUpdate(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val prospectiveEmail = getProspectiveEmail()
       isEmailVerified(prospectiveEmail).flatMap { isVerified =>
         if (isVerified)
@@ -207,7 +207,7 @@ class AmendPartnerContactDetailsController @Inject() (
     )
 
   def phoneNumber(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val form = PhoneNumber.form().fill(
         PhoneNumber(
           getPartner(partnerId).contactDetails.flatMap(_.phoneNumber).getOrElse(throw new IllegalStateException("Partner phone number absent"))
@@ -217,7 +217,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def updatePhoneNumber(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
@@ -248,7 +248,7 @@ class AmendPartnerContactDetailsController @Inject() (
       isNominated)
 
   def address(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
           backLink = routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId).url,
@@ -260,12 +260,12 @@ class AmendPartnerContactDetailsController @Inject() (
           pptHintKey = None,
           forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   def updateAddress(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.amend.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           updateRegistration(
             registration =>
@@ -282,7 +282,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def jobTitle(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
       val form = JobTitle.form().fill(
         JobTitle(value =
@@ -294,7 +294,7 @@ class AmendPartnerContactDetailsController @Inject() (
     }
 
   def updateJobTitle(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
         .fold(

@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import controllers.EmailVerificationActions
-import controllers.actions.{AuthActioning, FormAction, SaveAndContinue}
+
 import forms.contact.EmailAddress
 import models.genericregistration.Partner
 import models.registration.{Registration, RegistrationUpdater}
@@ -31,8 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerEmailAddressControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
   val registrationUpdater: RegistrationUpdater
@@ -44,7 +43,7 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
@@ -73,11 +72,10 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call,
     emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
         updateEmailAddress(partnerId, emailAddress)
 
@@ -90,7 +88,6 @@ abstract class PartnerEmailAddressControllerBase(
           backCall,
           submitCall,
           onwardsCall,
-          dropoutCall,
           updateAction,
           emailVerificationContinueUrl,
           confirmEmailAddressCall
@@ -106,7 +103,6 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardCall: Call,
-    dropoutCall: Call,
     updateAction: EmailAddress => Future[Registration],
     emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
@@ -127,14 +123,7 @@ abstract class PartnerEmailAddressControllerBase(
           doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
             isEmailVerificationRequired =>
               if (!isEmailVerificationRequired)
-                updateAction(emailAddress).map { _ =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(onwardCall)
-                    case _ =>
-                      Redirect(dropoutCall)
-                  }
-                }
+                updateAction(emailAddress).map ( _ => Redirect(onwardCall))
               else
                 promptForEmailVerificationCode(request,
                                                emailAddress,

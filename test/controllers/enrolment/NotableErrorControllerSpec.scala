@@ -36,7 +36,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val enrolmentReferenceNumberAlreadyUsedFailurePage = mock[reference_number_already_used_failure_page]
 
   private val controller = new NotableErrorController(
-    authenticate = mockAuthAction,
+    authenticate = FakeRegistrationAuthAction,
     mcc = mcc,
     verificationFailurePage = enrolmentVerificationFailurePage,
     referenceNumberAlreadyUsedPage = enrolmentReferenceNumberAlreadyUsedFailurePage,
@@ -60,7 +60,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   "NotableErrorController" should {
 
     "present the business not verified failed page" in {
-      authorizedUser()
+
       val resp = controller.enrolmentVerificationFailurePage()(getRequest())
 
       status(resp) mustBe OK
@@ -68,7 +68,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the ppt reference number already been used failure page" in {
-      authorizedUser()
+
       val resp = controller.enrolmentReferenceNumberAlreadyUsedPage()(getRequest())
 
       status(resp) mustBe OK

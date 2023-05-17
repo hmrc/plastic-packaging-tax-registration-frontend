@@ -16,31 +16,29 @@
 
 package controllers.contact
 
+import controllers.actions.JourneyAction
+import controllers.{routes => commonRoutes}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
-import controllers.{routes => commonRoutes}
-import models.request.JourneyAction
-import views.html.contact.check_primary_contact_details_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.check_primary_contact_details_page
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
                                                        journeyAction: JourneyAction,
                                                        mcc: MessagesControllerComponents,
                                                        page: check_primary_contact_details_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(page(request.registration))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { _ =>
+    journeyAction.register { _ =>
       Redirect(commonRoutes.TaskListController.displayPage())
     }
 

@@ -16,42 +16,33 @@
 
 package controllers.amendment.group
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import org.mockito.ArgumentCaptor
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
+import models.registration.GroupDetail
+import models.registration.group.GroupMember
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{AnyContentAsEmpty, Request}
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, redirectLocation, status}
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import models.registration.group.GroupMember
-import models.registration.{GroupDetail, Registration}
-import models.request.AmendmentJourneyAction
-import views.html.amendment.group.confirm_remove_member_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
+import views.html.amendment.group.confirm_remove_member_page
 
 import java.util.UUID
 
 class ConfirmRemoveMemberControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
+    extends ControllerSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
 
-  private val mcc  = stubMessagesControllerComponents()
+  private val mcc = stubMessagesControllerComponents()
   private val page = mock[confirm_remove_member_page]
 
   private val sessionId = UUID.randomUUID().toString
 
   private val controller =
-    new ConfirmRemoveMemberController(mockEnrolledAuthAction,
-                                      mockAmendmentJourneyAction,
-                                      mcc,
-                                      page
-    )
+    new ConfirmRemoveMemberController(spyJourneyAction, mockAmendRegService, mcc, page)
 
-  private val anotherGroupMember             = groupMember.copy(id = "another-group-member-id")
+  private val anotherGroupMember = groupMember.copy(id = "another-group-member-id")
   private val groupMembers: Seq[GroupMember] = Seq(groupMember, anotherGroupMember)
 
   private val populatedGroupDetails =
@@ -61,48 +52,38 @@ class ConfirmRemoveMemberControllerSpec
     aRegistration().copy(groupDetail = Some(populatedGroupDetails))
 
   override protected def beforeEach(): Unit = {
-    inMemoryRegistrationAmendmentRepository.reset()
-    reset(mockSubscriptionConnector)
-    simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
+    spyJourneyAction.reset()
+    reset(spyJourneyAction, mockAmendRegService)
     when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Confirm remove member"))
   }
 
   "Confirm Remove Member Controller" when {
     "signed in user has a ppt registration to amend" should {
       "show page" in {
-        authorisedUserWithPptSubscription()
-        simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
+        spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
 
         val resp =
           controller.displayPage(groupMember.id)(getRequest())
 
         status(resp) mustBe OK
+        verify(spyJourneyAction).amend
       }
 
       "update registration" when {
         "signed in user when a ppt registration requests removal of an existing group member" in {
-          authorisedUserWithPptSubscription()
-          simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
-          simulateUpdateSubscriptionSuccess()
+          spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
+          simulateUpdateWithRegSubscriptionSuccess()
 
           // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")
           val resp = controller.submit(groupMember.id)(
-            postRequestTuplesEncoded(correctlyEncodedForm, continueFormAction, sessionId)
+            postRequestTuplesEncoded(correctlyEncodedForm, sessionId)
           )
 
           status(resp) mustBe SEE_OTHER
-
-          // Assert that the backend subscription was updated via a call through the subscription connector
-          verifySubscriptionUpdateWasSubmittedToETMP(
-            reg => reg.groupDetail.get.members.size == 1 || reg.groupDetail.get.members.head == groupMember
-          )
-          // And that the RegistrationAmendmentRepository was also updated.
-          val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId)).get
-          updatedReg.groupDetail.get.members.size mustBe 1
-          updatedReg.groupDetail.get.members.head mustBe groupMember
-
+          verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
           redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage().url)
+          verify(spyJourneyAction).amend
         }
       }
     }
@@ -110,44 +91,11 @@ class ConfirmRemoveMemberControllerSpec
 
   "return an error" when {
 
-    "user is not authorised" when {
-      "tries to display page" in {
-        unAuthorizedUser()
-
-        val result = controller.displayPage(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
-      "tries to submit" in {
-        unAuthorizedUser()
-
-        val result = controller.submit(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     "user tries to display an non existent group member" in {
-      authorisedUserWithPptSubscription()
+      spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
 
-      val result = controller.displayPage("not-an-existing-group-member-id")(getRequest())
-
-      intercept[RuntimeException](status(result))
+      intercept[RuntimeException](status(controller.displayPage("not-an-existing-group-member-id")(getRequest())))
     }
   }
-
-  private def verifySubscriptionUpdateWasSubmittedToETMP(
-    registrationCheck: Registration => Boolean
-  ) = {
-    val registrationCaptor: ArgumentCaptor[Registration] =
-      ArgumentCaptor.forClass(classOf[Registration])
-    verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
-
-    registrationCheck(registrationCaptor.getValue) mustBe true
-  }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

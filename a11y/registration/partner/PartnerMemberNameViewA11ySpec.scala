@@ -31,10 +31,10 @@ class PartnerMemberNameViewA11ySpec extends BaseViewSpec {
   private val notNominated     = false
 
   private def createViewNom(form: Form[MemberName] = MemberName.form()): String =
-    page(form, organisationName, nominated, updateLink)(journeyRequest, messages).toString()
+    page(form, organisationName, nominated, updateLink)(registrationJourneyRequest, messages).toString()
 
   private def createViewOther(form: Form[MemberName] = MemberName.form()): String =
-    page(form, organisationName, notNominated, updateLink)(journeyRequest, messages).toString()
+    page(form, organisationName, notNominated, updateLink)(registrationJourneyRequest, messages).toString()
 
   "Member name viewNom" should {
 

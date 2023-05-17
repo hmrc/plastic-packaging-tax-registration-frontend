@@ -20,24 +20,17 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import models.subscriptions.{
-  SubscriptionCreateOrUpdateResponseFailure,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import models.request.JourneyRequest
+import models.subscriptions.{SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.amendment.group.{
-  routes => amendGroupRoutes
-}
+import controllers.amendment.group.{routes => amendGroupRoutes}
+import services.AmendRegistrationService
 
 import scala.concurrent.ExecutionContext
 
 abstract class AmendmentController(
   mcc: MessagesControllerComponents,
-  amendmentJourneyAction: AmendmentJourneyAction
+  service: AmendRegistrationService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -45,7 +38,7 @@ abstract class AmendmentController(
     registrationAmendment: Registration => Registration,
     successfulRedirect: Call = routes.AmendRegistrationController.displayPage()
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
-    amendmentJourneyAction.updateRegistration(registrationAmendment).map {
+    service.updateSubscriptionWithRegistration(registrationAmendment).map {
       case _: SubscriptionCreateOrUpdateResponseSuccess =>
         Redirect(successfulRedirect)
       case _: SubscriptionCreateOrUpdateResponseFailure =>
@@ -56,7 +49,7 @@ abstract class AmendmentController(
     registrationAmendment: Registration => Registration,
     memberId: String
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
-    amendmentJourneyAction.updateRegistration(registrationAmendment)
+    service.updateSubscriptionWithRegistration(registrationAmendment)
       .map(
         _ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId))
       )

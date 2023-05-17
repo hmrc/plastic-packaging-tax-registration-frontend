@@ -80,27 +80,6 @@ error.title  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
 error.detail1  = Rhowch gynnig arall arni yn nes ymlaen.
 error.detail2  = Mae’ch atebion wedi’u cadw. Byddant ar gael am 30 diwrnod.
 
-startPage.title  = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig – GOV.UK
-startPage.heading  = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig – GOV.UK
-startPage.description  = Use this service to register a business for Plastic Packaging Tax (PPT) with HM Revenue & Customs.
-startPage.whoShouldRegister  = Who should register
-startPage.whoShouldRegister.inset.para.1  = You must register within the next 30 days if you calculate that:
-startPage.whoShouldRegister.inset.bullet.1  = you have manufactured, converted or imported over 10,000 kg of finished plastic packaging in the past 12 months
-startPage.whoShouldRegister.inset.bullet.2  = you expect to manufacture, convert or import over 10,000 kg of finished plastic packaging in the next 30 days
-startPage.whoShouldRegister.readMore  = Read more about {0} .
-startPage.whoShouldRegister.readMore.link  = registration, liability and exemptions (opens in a new tab)
-startPage.whoShouldRegister.readMore.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-startPage.beforeYouStart  = Cyn i chi ddechrau
-startPage.beforeYouStart.para.1  = To register you’ll need:
-startPage.beforeYouStart.bullet.1  = rhif cofrestru’r cwmni ar gyfer unrhyw sefydliadau sy’n cofrestru, {0} .
-startPage.beforeYouStart.bullet.1.link  = look up the company number if you’re not sure (opens in a new tab)
-startPage.beforeYouStart.bullet.1.href  =  https://www.gov.uk/get-information-about-a-company
-startPage.beforeYouStart.bullet.2  = Unique Taxpayer References for any organisations registered in the UK
-startPage.beforeYouStart.bullet.3  = the address and contact details for the organisation you’re registering, or the nominated organisation if you’re registering a group
-startPage.beforeYouStart.bullet.4  = Government Gateway user ID and password - you can create an account when you register your organisation’s details
-startPage.beforeYouStart.para.2  = If you’re registering a group, the nominated organisation must have a branch or place of business in the UK.
-startPage.buttonName  = Start now
-
 registrationPage.title  = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 registrationPage.subheading.complete  = Cofrestriad wedi’i gwblhau
 registrationPage.subheading.incomplete  = Heb gwblhau’r cofrestriad

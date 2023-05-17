@@ -17,13 +17,10 @@
 package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendRoutes}
-import models.request.AmendmentJourneyAction
-import models.subscriptions.{
-  SubscriptionCreateOrUpdateResponseFailure,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import models.subscriptions.{SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
+import services.AmendRegistrationService
 import views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
@@ -31,21 +28,21 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsCheckAnswersController @Inject() (
-                                                                 authenticate: EnrolledAuthAction,
-                                                                 journeyAction: AmendmentJourneyAction,
+                                                                 journeyAction: JourneyAction,
+                                                                 amendRegistrationService: AmendRegistrationService,
                                                                  mcc: MessagesControllerComponents,
                                                                  page: amend_add_partner_contact_check_answers_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, journeyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(page(request.registration.inflightPartner.getOrElse(throw new IllegalStateException("Missing partner"))))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      journeyAction.updateRegistration(_ => request.registration.withPromotedInflightPartner()).map {
+   journeyAction.amend.async { implicit request =>
+     amendRegistrationService.updateSubscriptionWithRegistration(_ => request.registration.withPromotedInflightPartner()).map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManagePartnersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

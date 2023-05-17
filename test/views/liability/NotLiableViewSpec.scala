@@ -17,6 +17,7 @@
 package views.liability
 
 import base.unit.UnitViewSpec
+import config.AppConfig
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
@@ -25,10 +26,11 @@ import views.html.liability.not_liable
 
 class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
+  val appConfig = mock[AppConfig]
   private val page = inject[not_liable]
 
   private def createView(): Document =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "Not Liable View" should {
 

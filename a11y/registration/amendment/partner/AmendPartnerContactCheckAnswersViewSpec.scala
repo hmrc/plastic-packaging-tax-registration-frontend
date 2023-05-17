@@ -27,7 +27,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends BaseViewSpec {
 
   "Amend Partner Contact Check Answers View" should {
 
-    val view: String = page(partner)(journeyRequest, messages).toString()
+    val view: String = page(partner)(registrationJourneyRequest, messages).toString()
 
     "pass accessibility checks without error" in {
       view must passAccessibilityChecks

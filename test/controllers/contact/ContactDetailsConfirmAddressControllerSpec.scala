@@ -41,8 +41,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
-                                               mockJourneyAction,
+    new ContactDetailsConfirmAddressController(spyJourneyAction,
                                                mockRegistrationConnector,
                                                mcc = mcc,
                                                page = page
@@ -80,8 +79,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     "redirect to update Companies House" when {
       "Incorporation address is missing country code" in {
-        authorizedUser()
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(
             withOrganisationDetails(
               OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -102,8 +100,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(
             withOrganisationDetails(
               OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -120,8 +117,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     }
 
     "show page for group membership" in {
-      authorizedUser()
-      mockRegistrationFind(
+      spyJourneyAction.setReg(
         aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -150,8 +146,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -168,8 +163,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -185,8 +180,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -202,8 +197,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -217,13 +212,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION))
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
-
-        intercept[IllegalStateException](status(result))
+        intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
       }
     }
 
@@ -246,14 +239,13 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe "GB"
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK) for " when {
         "user accepts the registered address" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
@@ -261,22 +253,18 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           primaryContactAddressPopulatedSameAs(testCompanyAddress)
           businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
+
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsCheckAnswersController.displayPage().url
               )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
         }
 
         "user does not accept the registered address" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("useRegisteredAddress" -> "no", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "no")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
@@ -286,69 +274,58 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
+
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsAddressController.displayPage().url
               )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
+      "return 400 (BAD_REQUEST)"  when {
         "user does not enter mandatory fields" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           val result =
-            controller.submit()(postRequestEncoded(JsObject.empty, formAction))
+            controller.submit()(postRequestEncoded(JsObject.empty))
 
           status(result) mustBe BAD_REQUEST
         }
       }
 
-      "return an error for " + formAction._1 when {
-
-        "user is not authorised" in {
-          unAuthorizedUser()
-          val result = controller.displayPage()(getRequest())
-
-          intercept[RuntimeException](status(result))
-        }
+      "return an error"  when {
 
         "user display page and get uk company details fails" in {
           val registration = aRegistration(
             withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
           )
-          authorizedUser()
-          mockRegistrationFind(registration)
 
-          val result = controller.displayPage()(getRequest())
+          spyJourneyAction.setReg(registration)
 
-          intercept[IllegalStateException](status(result))
+          intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
         }
 
         "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdateFailure()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
 
-          intercept[DownstreamServiceError](status(result))
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationException()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
 
-          intercept[RuntimeException](status(result))
+          intercept[RuntimeException](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
       }

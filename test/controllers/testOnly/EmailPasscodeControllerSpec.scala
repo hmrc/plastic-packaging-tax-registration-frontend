@@ -38,9 +38,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
     mock[EmailTestOnlyPasscodeConnector]
 
   private val controller =
-    new EmailPasscodeController(authenticate = mockPermissiveAuthAction,
+    new EmailPasscodeController(authenticate = FakeBasicAuthAction,
                                 mcc = mcc,
-                                mockJourneyAction,
                                 emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
     )
 
@@ -49,7 +48,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "passcode is returned successfully" in {
-        authorizedUser()
+
         when(
           mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
         ).thenReturn(Future.successful(Right("passcodes")))
@@ -60,15 +59,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.testOnlyGetPasscodes()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "connector throws an exception" in {
-        authorizedUser()
+
         when(
           mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
         ).thenReturn(
@@ -81,9 +73,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
             )
           )
         )
-        val result = controller.testOnlyGetPasscodes()(getRequest())
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(controller.testOnlyGetPasscodes()(getRequest())))
       }
     }
   }

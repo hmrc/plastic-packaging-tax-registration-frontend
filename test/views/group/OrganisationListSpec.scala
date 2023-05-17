@@ -37,7 +37,7 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     form: Form[Boolean] = AddOrganisationForm.form(),
     members: Seq[GroupMember] = Seq(groupMember)
   ): Document =
-    page(form, "ACME Inc", members)(journeyRequest, messages)
+    page(form, "ACME Inc", members)(registrationJourneyRequest, messages)
 
   "OrganisationList View" should {
 
@@ -141,8 +141,8 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(AddOrganisationForm.form(), "Org", singleMember)(journeyRequest, messages)
-    page.render(AddOrganisationForm.form(), "Org", singleMember, journeyRequest, messages)
+    page.f(AddOrganisationForm.form(), "Org", singleMember)(registrationJourneyRequest, messages)
+    page.render(AddOrganisationForm.form(), "Org", singleMember, registrationJourneyRequest, messages)
   }
 
 }

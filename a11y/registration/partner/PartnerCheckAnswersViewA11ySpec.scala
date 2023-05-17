@@ -25,7 +25,7 @@ class PartnerCheckAnswersViewA11ySpec extends BaseViewSpec {
   private val page = inject[partner_check_answers_page]
 
   private def render(partner: Partner): String =
-  page(partner)(journeyRequest, messages).toString()
+  page(partner)(registrationJourneyRequest, messages).toString()
 
   "PartnerCheckAnswersViewA11ySpec" should {
     "pass accessibility checks" when {

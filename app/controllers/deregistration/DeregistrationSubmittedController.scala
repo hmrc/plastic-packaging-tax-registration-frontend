@@ -18,7 +18,7 @@ package controllers.deregistration
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.auth.AmendAuthAction
 import views.html.deregistration.deregistration_submitted_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeregistrationSubmittedController @Inject() (
-                                                    authenticate: EnrolledAuthAction,
+                                                    authenticate: AmendAuthAction,
                                                     mcc: MessagesControllerComponents,
                                                     page: deregistration_submitted_page
 )(implicit ec: ExecutionContext)

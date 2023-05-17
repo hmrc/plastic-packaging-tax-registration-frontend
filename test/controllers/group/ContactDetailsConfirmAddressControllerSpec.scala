@@ -42,8 +42,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
   )
 
   private val controller =
-    new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
-                                               journeyAction = mockJourneyAction,
+    new ContactDetailsConfirmAddressController(journeyAction = spyJourneyAction,
                                                addressCaptureService = mockAddressCaptureService,
                                                mcc = mcc,
                                                mockNewRegistrationUpdater
@@ -51,8 +50,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationFind(groupRegistration)
+
+    spyJourneyAction.setReg(groupRegistration)
     mockRegistrationUpdate()
   }
 
@@ -87,7 +86,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
     "obtain address from address capture and update registration and redirect to organisation list" when {
       "control is returned from address capture" in {
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(
             withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
           )

@@ -33,7 +33,7 @@ class PartnerPhoneNumberViewA11ySpec extends BaseViewSpec {
       form,
       Call(POST,"/update"),
       "contactName",
-      sectionHeading)(journeyRequest, messages).toString()
+      sectionHeading)(registrationJourneyRequest, messages).toString()
 
   "PartnerPhoneNumberViewA11ySpec" should {
 

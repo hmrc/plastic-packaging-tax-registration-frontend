@@ -32,8 +32,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new OrganisationListController(authenticate = mockAuthAction,
-                                   mockJourneyAction,
+    new OrganisationListController(journeyAction = spyJourneyAction,
                                    mockRegistrationConnector,
                                    mcc = mcc,
                                    page = page
@@ -48,7 +47,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
         Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))
       )
     )
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
   }
 
   override protected def afterEach(): Unit = {
@@ -61,7 +60,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 200 (Ok)" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
 
         val result = controller.displayPage()(getRequest())
 
@@ -72,8 +71,8 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 303 (Re-direct to task list)" when {
 
       "group details do not exist" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -87,13 +86,13 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 303 (Re-direct to add first group member)" when {
 
       "group member list is empty" in {
-        authorizedUser()
+
         val registration = aRegistration(
           withGroupDetail(
             Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))
           )
         )
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -104,16 +103,6 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
   }
 
   "Organisation list controller when submitting answer" should {
@@ -121,9 +110,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 400 (Bad request)" when {
 
       "user does not make a selection" in {
-        authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "", saveAndContinueFormAction)
+
+        val correctForm = Seq("addOrganisation" -> "")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe BAD_REQUEST
@@ -134,21 +123,10 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
     "redirects to registration page" when {
       "user does not want to add another" in {
-        authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "no", saveAndContinueFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.routes.TaskListController.displayPage().url
-        )
-      }
-      "user selects save and come back later" in {
-        authorizedUser()
-
-        val correctForm = Seq("addOrganisation" -> "yes", saveAndComeBackLaterFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("addOrganisation" -> "no")
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -159,9 +137,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
     "redirects to add group organisation page" when {
       "user does want to add another" in {
-        authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "yes", saveAndContinueFormAction)
+
+        val correctForm = Seq("addOrganisation" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER

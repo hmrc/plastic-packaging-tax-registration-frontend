@@ -26,7 +26,7 @@ class ContactDetailsCheckAnswersViewA11ySpec extends BaseViewSpec {
   private val page           = inject[member_contact_check_answers_page]
 
   private def createView(form: Form[MemberName] = MemberName.form()): String =
-    page(groupMember)(journeyRequest, messages).toString()
+    page(groupMember)(registrationJourneyRequest, messages).toString()
 
   "Contact Details Check Answers View" should {
 

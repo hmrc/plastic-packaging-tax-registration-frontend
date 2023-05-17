@@ -43,8 +43,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
   private val controller =
     new GroupMemberGrsController(
-      authenticate = mockAuthAction,
-      mockJourneyAction,
+      journeyAction = spyJourneyAction,
       mockUkCompanyGrsConnector,
       mockSubscriptionsConnector,
       mockPartnershipGrsConnector,
@@ -136,7 +135,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
       "change an add member to a change member journey" when {
         s"registering a $orgType group member with same company number as another group member" in {
-          authorizedUser()
+
           val existingMember = orgType match {
             case PARTNERSHIP =>
               val detailsFromGrs =
@@ -162,7 +161,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           }
 
           val registration = registrationWithSelectedGroupMember(orgType, Seq(existingMember))
-          mockRegistrationFind(registration)
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           groupMemberSize(registration) mustBe 1
@@ -187,14 +186,14 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
       "throw exception" when {
 
         "DB registration update fails " + orgType in {
-          authorizedUser()
+
           orgType match {
             case PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
             case _ =>
               mockGetUkCompanyDetails(incorporationDetails)
           }
-          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+          spyJourneyAction.setReg(registrationWithSelectedGroupMember(orgType))
           mockRegistrationUpdateFailure()
 
           intercept[DownstreamServiceError] {
@@ -204,8 +203,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
         }
 
         "GRS call fails " + orgType in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+
+          spyJourneyAction.setReg(registrationWithSelectedGroupMember(orgType))
           mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
           intercept[RuntimeException] {
@@ -217,7 +216,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
       "show duplicate subscription page" when {
         "a subscription already exists for the group member " + orgType in {
-          authorizedUser()
+
           orgType match {
             case PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
@@ -225,7 +224,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
               mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
           }
           val registration = registrationWithSelectedGroupMember(orgType)
-          mockRegistrationFind(registration)
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
           mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
@@ -243,8 +242,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
       forAll(unsupportedOrgTypes) { orgType =>
         "invalid organisation type is selected " + orgType in {
 
-          authorizedUser()
-          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+
+          spyJourneyAction.setReg(registrationWithSelectedGroupMember(orgType))
 
           intercept[IllegalStateException] {
             await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
@@ -253,8 +252,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
       }
 
       "groupDetail is None" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration(withGroupDetail(None)))
+
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(None)))
 
         intercept[IllegalStateException] {
           await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
@@ -269,9 +268,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
     registration.groupDetail.map(_.members.size).getOrElse(0)
 
   private def simulateLimitedCompanyCallback(registration: Registration, memberId: Option[String] = None) = {
-    authorizedUser()
+
     mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     mockRegistrationUpdate()
 
     memberId match {
@@ -282,13 +281,13 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
   }
 
   private def simulatePartnershipCallback(registration: Registration, memberId: Option[String] = None) = {
-    authorizedUser()
+
     mockGetPartnershipBusinessDetails(
       partnershipBusinessDetails.copy(companyProfile =
         Some(companyProfile.copy(companyNumber = "234234234"))
       )
     )
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     mockRegistrationUpdate()
 
     memberId match {

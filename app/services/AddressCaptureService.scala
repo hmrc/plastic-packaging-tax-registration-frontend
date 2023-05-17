@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Call
 import controllers.address.routes
 import forms.contact.Address
-import models.request.AuthenticatedRequest
+import models.request.{AuthenticatedRequest, JourneyRequest}
 import repositories.AddressCaptureDetailRepository
 
 import javax.inject.{Inject, Singleton}

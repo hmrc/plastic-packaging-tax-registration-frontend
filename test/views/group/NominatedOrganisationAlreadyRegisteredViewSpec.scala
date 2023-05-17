@@ -27,7 +27,7 @@ class NominatedOrganisationAlreadyRegisteredViewSpec extends UnitViewSpec with M
   private val page: nominated_organisation_already_registered_page =
     inject[nominated_organisation_already_registered_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private def createView(): Html = page()(registrationJourneyRequest, messages)
 
   "Nominated Organisation Already Registered Page" should {
 
@@ -60,8 +60,8 @@ class NominatedOrganisationAlreadyRegisteredViewSpec extends UnitViewSpec with M
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(journeyRequest, messages)
-    page.render(journeyRequest, messages)
+    page.f()(registrationJourneyRequest, messages)
+    page.render(registrationJourneyRequest, messages)
   }
 
 }

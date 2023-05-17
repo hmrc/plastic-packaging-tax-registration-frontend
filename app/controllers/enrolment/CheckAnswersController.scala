@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.enrolment.UserEnrolmentConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import models.enrolment.{
   EnrolmentFailureCode,
   UserEnrolmentFailedResponse,
@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class CheckAnswersController @Inject() (
-                                         authenticate: NotEnrolledAuthAction,
+                                         authenticate: RegistrationAuthAction,
                                          mcc: MessagesControllerComponents,
                                          cache: UserEnrolmentDetailsRepository,
                                          userEnrolmentConnector: UserEnrolmentConnector,

@@ -16,9 +16,10 @@
 
 package controllers.amendment
 
+import controllers.actions.auth.AmendAuthAction
 import play.api.mvc._
-import controllers.actions.EnrolledAuthAction
-import models.request.AmendmentJourneyAction
+import controllers.actions.JourneyAction
+import services.AmendRegistrationService
 import views.html.amendment.amend_registration_page
 import views.html.partials.amendment.amend_error_page
 
@@ -27,21 +28,22 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendRegistrationController @Inject() (
-                                              authenticate: EnrolledAuthAction,
+                                              journeyAction: JourneyAction,
+                                              amendRegistrationService: AmendRegistrationService,
+                                              amendAuthAction: AmendAuthAction,
                                               mcc: MessagesControllerComponents,
-                                              amendmentJourneyAction: AmendmentJourneyAction,
                                               amendRegistrationPage: amend_registration_page,
                                               amendErrorPage: amend_error_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(amendRegistrationPage(request.registration))
     }
 
   def registrationUpdateFailed(): Action[AnyContent] =
-    authenticate { implicit request =>
+    amendAuthAction { implicit request =>
       Ok(amendErrorPage())
     }
 

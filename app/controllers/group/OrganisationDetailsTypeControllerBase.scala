@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import config.AppConfig
-import controllers.actions.AuthActioning
+
 import forms.organisation.{
   ActionEnum,
   OrgType,
@@ -41,8 +41,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class OrganisationDetailsTypeControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   val appConfig: AppConfig,
   val page: organisation_type,
   val registrationUpdater: RegistrationUpdater,
@@ -51,7 +50,7 @@ abstract class OrganisationDetailsTypeControllerBase(
     extends FrontendController(mcc) with I18nSupport with OrganisationDetailsTypeHelper {
 
   protected def doDisplayPage(memberId: Option[String], submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       val isFirstMember: Boolean = request.registration.isFirstGroupMember
       memberId match {
         case Some(memberId) =>
@@ -80,7 +79,7 @@ abstract class OrganisationDetailsTypeControllerBase(
     }
 
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       OrganisationType.form(ActionEnum.Group)
         .bindFromRequest()
         .fold(
@@ -97,10 +96,7 @@ abstract class OrganisationDetailsTypeControllerBase(
           organisationType =>
             updateRegistration(organisationType).flatMap { registration =>
               handleOrganisationType(organisationType, false, memberId)(
-                new JourneyRequest[AnyContent](authenticatedRequest = request.authenticatedRequest,
-                                               registration = registration,
-                                               request.pptReference
-                ),
+                request.copy(registration = registration),
                 ec,
                 hc
               )

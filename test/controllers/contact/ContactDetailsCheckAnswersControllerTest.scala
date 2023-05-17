@@ -35,8 +35,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(authenticate = mockAuthAction,
-                                             mockJourneyAction,
+    new ContactDetailsCheckAnswersController(spyJourneyAction,
                                              mcc = mcc,
                                              page = page
     )
@@ -44,7 +43,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
   }
 
@@ -58,7 +57,6 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -68,28 +66,15 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
     "return 303" when {
 
       "when form is submitted" in {
-        authorizedUser()
-
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     "redirects to registration page" when {
       "user submits answers" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result =

@@ -19,7 +19,7 @@ package controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.{AuthActioning, FormAction, SaveAndContinue}
+
 import forms.group.MemberName
 import models.genericregistration.{Partner, PartnerContactDetails}
 import models.registration.{Registration, RegistrationUpdater}
@@ -30,8 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerContactNameControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_member_name_page,
   registrationUpdater: RegistrationUpdater
@@ -39,7 +38,7 @@ abstract class PartnerContactNameControllerBase(
     extends FrontendController(mcc) with I18nSupport {
 
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
@@ -68,8 +67,8 @@ abstract class PartnerContactNameControllerBase(
     Ok(page(form, partner.name, isNominated, submitCall))
   }
 
-  protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call, dropoutCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+  protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
+    journeyAction.async { implicit request =>
       def updateAction(memberName: MemberName): Future[Registration] =
         partnerId match {
           case Some(partnerId) => updateExistingPartner(memberName, partnerId)
@@ -84,7 +83,7 @@ abstract class PartnerContactNameControllerBase(
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
 
-        handleSubmission(partner, isNominated, backCall, submitCall, nextPage, dropoutCall, updateAction)
+        handleSubmission(partner, isNominated, backCall, submitCall, nextPage, updateAction)
 
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
@@ -95,7 +94,6 @@ abstract class PartnerContactNameControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call,
     updateAction: MemberName => Future[Registration]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     MemberName.form()
@@ -104,12 +102,7 @@ abstract class PartnerContactNameControllerBase(
         (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, submitCall))),
         fullName =>
           updateAction(fullName).map { _ =>
-            FormAction.bindFromRequest match {
-              case SaveAndContinue =>
-                Redirect(onwardsCall)
-              case _ =>
-                Redirect(dropoutCall)
-            }
+            Redirect(onwardsCall)
           }
       )
 

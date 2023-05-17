@@ -32,7 +32,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new VerifyOrganisationController(authenticate = mockAuthAction, mcc = mcc, page = page)
+    new VerifyOrganisationController(authenticate = FakeRegistrationAuthAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -49,7 +49,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
 
         val result = controller.displayPage()(getRequest())
 
@@ -58,15 +58,6 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
 
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redirect to IsUkAddress page " when {
 

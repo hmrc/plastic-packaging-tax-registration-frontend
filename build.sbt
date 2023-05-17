@@ -5,14 +5,14 @@ val appName = "plastic-packaging-tax-registration-frontend"
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8503")
 
-val silencerVersion = "1.7.0"
+val silencerVersion = "1.7.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtWeb)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion                     := 0,
-    scalaVersion                     := "2.12.11",
+    scalaVersion                     := "2.13.10",
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports        ++= Seq(
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
@@ -23,6 +23,8 @@ lazy val microservice = Project(appName, file("."))
     // Use the silencer plugin to suppress warnings
     // You may turn it on for `views` too to suppress warnings from unused imports in compiled twirl templates, but this will hide other warnings.
     scalacOptions += "-P:silencer:pathFilters=routes",
+    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+    libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always),
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
@@ -57,7 +59,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageMinimum := 85, // TODO reduced whilst new-liability in progress
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
-  parallelExecution in Test := false
+  Test / parallelExecution := false
 )
 
 lazy val silencerSettings: Seq[Setting[_]] = {

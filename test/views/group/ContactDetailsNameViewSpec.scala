@@ -33,7 +33,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
   private val organisationName = "Organisation"
 
   private def createView(form: Form[MemberName] = MemberName.form()): Document =
-    page(form, organisationName, updateLink, groupMember.id)(journeyRequest, messages)
+    page(form, organisationName, updateLink, groupMember.id)(registrationJourneyRequest, messages)
 
   "Member name View" should {
 
@@ -197,14 +197,14 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
   override def exerciseGeneratedRenderingMethods() = {
     page.f(MemberName.form(), organisationName, updateLink, groupMember.id)(
-      journeyRequest,
+      registrationJourneyRequest,
       messages
     )
     page.render(MemberName.form(),
                 organisationName,
                 updateLink,
                 groupMember.id,
-                journeyRequest,
+                registrationJourneyRequest,
                 messages
     )
   }

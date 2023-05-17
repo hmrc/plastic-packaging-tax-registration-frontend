@@ -16,45 +16,93 @@
 
 package base.unit
 
-import base.{MockAuthAction, PptTestData}
+import base.PptTestData
+import base.PptTestData.nrsCredentials
+import config.AppConfig
+import controllers.actions.JourneyAction
+import controllers.actions.auth.{AmendAuthAction, BasicAuthAction, RegistrationAuthAction}
+import models.SignedInUser
+import models.registration.Registration
+import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
+import models.request.{AuthenticatedRequest, IdentityData, JourneyRequest}
+import org.mockito.Mockito.spy
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Play.materializer
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, Injecting}
 import play.twirl.api.Html
 import spec.PptTestData
-import config.AppConfig
-import controllers.actions.{Continue, SaveAndComeBackLater, SaveAndContinue, Unknown}
-import models.SignedInUser
-import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
 import utils.FakeRequestCSRFSupport._
 
 import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
-    with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
-    with MockJourneyAction with MockConnectors with PptTestData with Injecting {
+    extends AnyWordSpecLike with MockRegistrationConnector with MockSubscriptionConnector with MockitoSugar with Matchers
+    with GuiceOneAppPerSuite with BeforeAndAfterEach with DefaultAwaitTimeout
+      with MockConnectors with PptTestData with Injecting {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
+  def getAuthenticatedRequest[A](request: Request[A]): RegistrationRequest[A] = RegistrationRequest[A](request, IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)))
+  val spyJourneyAction: FakeJourneyAction.type = spy(FakeJourneyAction)
+
+  object FakeBasicAuthAction extends BasicAuthAction {
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
+
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.RegistrationRequest[A] => Future[Result]): Future[Result] =
+      block(getAuthenticatedRequest(request))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeAmendAuthAction extends AmendAuthAction {
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
+
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]): Future[Result] =
+      block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "XMPPT0000000123"))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeRegistrationAuthAction extends RegistrationAuthAction {
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
+
+    override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] =
+      block(getAuthenticatedRequest(request))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeJourneyAction extends JourneyAction {
+
+    var registration: Option[Registration] = None
+    def setReg(reg: Registration): Unit = registration = Some(reg)
+    def reset(): Unit = registration = None
+
+    private def ab = new ActionBuilder[JourneyRequest, AnyContent] {
+      override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
+
+      override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
+        block(JourneyRequest(getAuthenticatedRequest(request), registration.getOrElse(fail("registration is not set in FakeJourneyAction"))))
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
+    override def register: ActionBuilder[JourneyRequest, AnyContent] = ab
+    override def amend: ActionBuilder[JourneyRequest, AnyContent] = ab
+  }
+
+
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
-
-  protected val saveAndComeBackLaterFormAction: (String, String) =
-    (SaveAndComeBackLater.toString, "")
-
-  protected val continueFormAction: (String, String) = (Continue.toString, "")
-
-  protected val unKnownFormAction: (String, String) = (Unknown.toString, "")
-
+  @deprecated("just use FakeRequest")
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session).withCSRFToken
 
@@ -62,38 +110,36 @@ trait ControllerSpec
     headers: Headers = Headers(),
     user: SignedInUser = PptTestData.newUser("123")
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(FakeRequest().withHeaders(headers), user)
+    authRequest(FakeRequest().withHeaders(headers))
 
-  def authRequest[A](fakeRequest: FakeRequest[A], user: SignedInUser) =
-    new AuthenticatedRequest(fakeRequest, user )
+  def authRequest[A](fakeRequest: FakeRequest[A]) =
+    RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
+
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
-    postRequest()
+    postRequest
       .withJsonBody(body)
       .withHeaders(testUserHeaders.toSeq: _*)
       .withCSRFToken
 
-  protected def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
+  protected def postRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "")
-      .withSession((AmendmentJourneyAction.SessionId, sessionId))
 
   protected def postRequestEncoded(
     form: AnyRef,
-    formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequestTuplesEncoded(getTuples(form), formAction, sessionId)
+    postRequestTuplesEncoded(getTuples(form), sessionId)
 
   // This function exists because getTuples used in the above may not always encode values correctly
   protected def postRequestTuplesEncoded(
     formTuples: Seq[(String, String)],
-    formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest(sessionId)
-      .withFormUrlEncodedBody(formTuples :+ formAction: _*)
+    postRequest
+      .withFormUrlEncodedBody(formTuples: _*)
       .withCSRFToken
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
@@ -119,8 +165,14 @@ trait ControllerSpec
   protected def postJsonRequestEncoded(
     body: (String, String)*
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest()
+    postRequest
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
+
+  protected def postJsonRequestEncodedFormAction(
+    body: Seq[(String, String)],
+    sessionId: String = "123"
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequestTuplesEncoded(body, sessionId)
 
 }

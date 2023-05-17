@@ -17,18 +17,17 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.JobTitle
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.contact.JobTitle
-import views.html.partner.partner_job_title_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_job_title_page
 
 class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -36,8 +35,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerJobTitleController(authenticate = mockAuthAction,
-                                  journeyAction = mockJourneyAction,
+    new PartnerJobTitleController(journeyAction = spyJourneyAction,
                                   registrationConnector =
                                     mockRegistrationConnector,
                                   mcc = mcc,
@@ -76,8 +74,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -85,8 +83,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "displaying an existing partner to edit their job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
@@ -96,12 +94,12 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "update inflight registration" when {
       "user submits a complete job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("Director"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -115,12 +113,12 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user submits an amendment to an existing partners job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(JobTitle("Company secretary")))
+          postRequestEncoded(JobTitle("Company secretary"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -133,33 +131,33 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(postRequestEncoded(JobTitle(""), saveAndContinueFormAction))
+          controller.submitNewPartner()(postRequestEncoded(JobTitle("")))
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters a long title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(JobTitle("abced" * 40), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("abced" * 40))
         )
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(JobTitle("Director 123"), saveAndContinueFormAction)
+            postRequestEncoded(JobTitle("Director 123"))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -168,44 +166,34 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user tries to display an non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        ))
       }
 
       "user submits an amendment to a non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
-        )
-
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitExistingPartner("not-an-existing-partners-id")(
+          postRequestEncoded(JobTitle("Director")))
+        ))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(JobTitle("Director"))))
-
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submitNewPartner()(postRequestEncoded(JobTitle("Director")))
+        ))
       }
     }
   }

@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors.addresslookup.AddressLookupFrontendConnector
 import controllers.AddressLookupIntegration
-import controllers.actions.PermissiveAuthActionImpl
+import controllers.actions.auth.BasicAuthAction
 import forms.address.UkAddressForm
 import forms.contact.Address
 import models.addresslookup.{AddressLookupOnRamp, MissingAddressIdException}
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressCaptureController @Inject() (
-                                           authenticate: PermissiveAuthActionImpl,
+                                           authenticate: BasicAuthAction,
                                            mcc: MessagesControllerComponents,
                                            addressCaptureService: AddressCaptureService,
                                            addressLookupFrontendConnector: AddressLookupFrontendConnector,

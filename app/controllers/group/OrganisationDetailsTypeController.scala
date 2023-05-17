@@ -18,15 +18,10 @@ package controllers.group
 
 import play.api.mvc._
 import config.AppConfig
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.NotEnrolledAuthAction
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.JourneyAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import views.html.group.organisation_type
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +29,6 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
-                                                    authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
                                                     mcc: MessagesControllerComponents,
                                                     appConfig: AppConfig,
@@ -45,8 +39,8 @@ class OrganisationDetailsTypeController @Inject() (
                                                     val partnershipGrsConnector: PartnershipGrsConnector,
                                                     val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
 )(implicit ec: ExecutionContext)
-    extends OrganisationDetailsTypeControllerBase(authenticate,
-                                                  journeyAction,
+    extends OrganisationDetailsTypeControllerBase(
+                                                  journeyAction.register,
                                                   appConfig,
                                                   page,
                                                   registrationUpdater,

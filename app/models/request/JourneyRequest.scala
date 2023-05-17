@@ -17,12 +17,15 @@
 package models.request
 
 import models.registration.Registration
+import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
+import play.api.mvc.WrappedRequest
 
 final case class JourneyRequest[+A](
-  authenticatedRequest: AuthenticatedRequest[A],
-  registration: Registration,
-  override val pptReference: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest,
-                                    authenticatedRequest.user,
-                                    pptReference
-    ) {}
+                                     authenticatedRequest: AuthenticatedRequest[A],
+                                     registration: Registration
+                                   ) extends WrappedRequest(authenticatedRequest){
+  def pptReference: Option[String] = authenticatedRequest match {
+    case _: RegistrationRequest[_] => None
+    case r: PPTEnrolledRequest[_] => Some(r.pptReference)
+  }
+}

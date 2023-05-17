@@ -56,7 +56,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
 
 
   private def createView(registration: Registration): Html =
-    page(registration)(journeyRequestWithEnrolledUser, messages)
+    page(registration)(amendsJourneyRequest, messages)
 
   "Should display tax start date" in {
     createView(registration).select("dt").text() must include ("Tax start date")
@@ -125,7 +125,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             val descriptionList = view.select("dl").get(0).text()
             val expectedOrganisationDetails =
               Seq(registration.organisationDetails.businessName.get,
-                  journeyRequestWithEnrolledUser.pptReference.get,
+                  amendsJourneyRequest.pptReference.get,
                   viewUtils.displayLocalDate(registration.dateOfRegistration).get,
                   registration.organisationDetails.businessRegisteredAddress.map(
                     bra => bra.addressLine1
@@ -256,8 +256,8 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration)(journeyRequest, messages)
-    page.render(registration, journeyRequest, messages)
+    page.f(registration)(registrationJourneyRequest, messages)
+    page.render(registration, registrationJourneyRequest, messages)
   }
 
 }

@@ -16,33 +16,21 @@
 
 package controllers.organisation
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import audit.Auditor
 import config.AppConfig
 import connectors._
 import connectors.grs._
-import controllers.actions._
+import controllers.actions.JourneyAction
 import controllers.group.OrganisationDetailsTypeHelper
-import controllers.{routes => commonRoutes}
-import forms.organisation.{
-  ActionEnum,
-  OrgType,
-  OrganisationType,
-  PartnerTypeEnum
-}
+import forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
 import models.genericregistration.PartnershipDetails
-import models.registration.{
-  Cacheable,
-  NewRegistrationUpdateService,
-  OrganisationDetails,
-  Registration
-}
-import models.request.{JourneyAction, JourneyRequest}
-import views.html.organisation.organisation_type
+import models.registration.{Cacheable, NewRegistrationUpdateService, OrganisationDetails, Registration}
+import models.request.JourneyRequest
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.organisation_type
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
                                                     auditor: Auditor,
-                                                    authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
                                                     override val appConfig: AppConfig,
                                                     override val soleTraderGrsConnector: SoleTraderGrsConnector,
@@ -73,7 +60,7 @@ class OrganisationDetailsTypeController @Inject() (
   def submit(): Action[AnyContent]                     = doSubmit(ActionEnum.Org)
 
   private def doDisplayPage(action: ActionEnum.Type) =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
@@ -91,7 +78,7 @@ class OrganisationDetailsTypeController @Inject() (
     }
 
   private def doSubmit(action: ActionEnum.Type) =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       OrganisationType.form(action)
         .bindFromRequest()
         .fold(
@@ -100,16 +87,10 @@ class OrganisationDetailsTypeController @Inject() (
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    auditor.orgTypeSelected(request.user.identityData.internalId.getOrElse(
-                                              throw InsufficientEnrolments()
-                                            ),
-                                            organisationType.answer
-                    )
-                    handleOrganisationType(organisationType, true, None)
-                  case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
-                }
+                auditor.orgTypeSelected(request.authenticatedRequest.internalID,
+                                        organisationType.answer
+                )
+                handleOrganisationType(organisationType, true, None)
               case Left(error) => throw error
             }
         )

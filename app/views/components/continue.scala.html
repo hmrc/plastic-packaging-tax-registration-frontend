@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import controllers.actions.Continue
 
 @this(govukButton: GovukButton)
 
@@ -24,4 +23,4 @@
 @govukButton(Button(
     content = Text(messages(messageKey)),
     classes = "govuk-!-margin-right-1",
-    attributes = Map("id" -> "submit", "name" -> Continue.toString)))
+    attributes = Map("id" -> "submit")))

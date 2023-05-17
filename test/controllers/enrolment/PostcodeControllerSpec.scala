@@ -47,7 +47,7 @@ class PostcodeControllerSpec extends ControllerSpec {
   private val mockCache  = mock[UserDataRepository]
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new PostcodeController(mockAuthAction, mcc, repository, page)
+  private val controller = new PostcodeController(FakeRegistrationAuthAction, mcc, repository, page)
 
   private val pptReference = PptReference("XAPPT000123456")
   private val isUkAddress  = IsUkAddress(Some(true))
@@ -76,7 +76,7 @@ class PostcodeControllerSpec extends ControllerSpec {
             Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA"))))
           )
         )
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -84,7 +84,7 @@ class PostcodeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised and cache is empty" in {
-        authorizedUser()
+
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
@@ -94,18 +94,10 @@ class PostcodeControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Postcode Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the Postcode Page with a BAD REQUEST status" when {
       "an invalid postcode is submitted" in {
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(Postcode("XXX")))
 
         status(result) mustBe BAD_REQUEST
@@ -121,7 +113,7 @@ class PostcodeControllerSpec extends ControllerSpec {
           Future.successful(expectedEnrolmentDetails)
         )
 
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(Postcode("LS1 1AA")))
 
         status(result) mustBe SEE_OTHER

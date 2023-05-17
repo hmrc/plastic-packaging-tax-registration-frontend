@@ -29,7 +29,7 @@ class ConfirmRemoveMemberPageSpec extends UnitViewSpec with Matchers {
   private val page = inject[confirm_remove_member_page]
 
   private def createView(form: Form[RemoveMember] = RemoveMember.form()): Document =
-    page(form, groupMember)(journeyRequest, messages)
+    page(form, groupMember)(registrationJourneyRequest, messages)
 
   "Confirm Remove Member  page" should {
 
@@ -59,8 +59,8 @@ class ConfirmRemoveMemberPageSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form(), groupMember)(journeyRequest, messages)
-    page.render(form(), groupMember, journeyRequest, messages)
+    page.f(form(), groupMember)(registrationJourneyRequest, messages)
+    page.render(form(), groupMember, registrationJourneyRequest, messages)
   }
 
 }

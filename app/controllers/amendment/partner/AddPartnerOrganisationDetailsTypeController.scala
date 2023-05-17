@@ -18,16 +18,10 @@ package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import config.AppConfig
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.EnrolledAuthAction
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.JourneyAction
 import controllers.partner.PartnerTypeControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import views.html.organisation.partner_type
 
 import javax.inject.{Inject, Singleton}
@@ -35,8 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerOrganisationDetailsTypeController @Inject() (
-                                                              authenticate: EnrolledAuthAction,
-                                                              journeyAction: AmendmentJourneyAction,
+                                                              journeyAction: JourneyAction,
                                                               registrationUpdater: AmendRegistrationUpdateService,
                                                               mcc: MessagesControllerComponents,
                                                               page: partner_type,
@@ -46,8 +39,7 @@ class AddPartnerOrganisationDetailsTypeController @Inject() (
                                                               val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
                                                               val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
-    extends PartnerTypeControllerBase(authenticate,
-                                      journeyAction = journeyAction,
+    extends PartnerTypeControllerBase(journeyAction = journeyAction.amend,
                                       mcc,
                                       page,
                                       registrationUpdater

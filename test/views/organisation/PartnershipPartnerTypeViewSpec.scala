@@ -27,10 +27,11 @@ import forms.organisation.PartnerType
 import forms.organisation.PartnerType.FormMode
 import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import models.request.{AuthenticatedRequest, JourneyRequest}
+import spec.PptTestData
 import utils.FakeRequestCSRFSupport._
 import views.html.organisation.partner_type
 
-class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
+class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with PptTestData {
 
   private val submitLink = Call("POST", "/submit")
   private val page       = inject[partner_type]
@@ -39,26 +40,18 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
   )
 
-  val journeyReqForOthers = {
-    val user = PptTestData.newUser()
-    JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user),
-                   registrationWithOtherPartners,
-                   pptReferenceFromUsersEnrolments(user)
-    )
-  }
-
   private def createViewNominated(
     form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
   ): Document =
     page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(
-      journeyReqForOthers,
+      registrationJourneyRequest.copy(registration = registrationWithOtherPartners),
       messages
     )
 
   private def createViewForOthers(
     form: Form[PartnerType] = PartnerType.form(FormMode.OtherPartnerType)
   ): Document =
-    page(form, None, submitLink)(journeyReqForOthers, messages)
+    page(form, None, submitLink)(registrationJourneyRequest, messages)
 
   "Confirm Partnership Type View for Nominated" should {
 
@@ -137,13 +130,13 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PartnerType.form(FormMode.NominatedPartnerType), None, submitLink)(journeyRequest,
+    page.f(PartnerType.form(FormMode.NominatedPartnerType), None, submitLink)(registrationJourneyRequest,
                                                                               messages
     )
     page.render(PartnerType.form(FormMode.NominatedPartnerType),
                 None,
                 submitLink,
-                journeyRequest,
+                registrationJourneyRequest,
                 messages
     )
   }

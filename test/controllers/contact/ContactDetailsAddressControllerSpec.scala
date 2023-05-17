@@ -29,8 +29,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
   private val registration = aRegistration()
 
   private val controller =
-    new ContactDetailsAddressController(authenticate = mockAuthAction,
-                                        mockJourneyAction,
+    new ContactDetailsAddressController(spyJourneyAction,
                                         mockRegistrationConnector,
                                         mockAddressCaptureService,
                                         mcc = mcc
@@ -41,8 +40,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
     "redirect to address capture" when {
 
       "display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(backLink =
                                  routes.ContactDetailsConfirmAddressController.displayPage().url,
@@ -63,8 +61,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
 
     "update" should {
       "persist and redirect when compatible address is returned" in {
-        authorizedUser()
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         simulateValidAddressCapture()
 

@@ -30,7 +30,7 @@ class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[partnership_name]
 
   private def createView(form: Form[PartnershipName] = PartnershipName.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "Partnership Name View" should {
 

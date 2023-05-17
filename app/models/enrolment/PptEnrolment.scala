@@ -17,6 +17,6 @@
 package models.enrolment
 
 object PptEnrolment {
-  val Identifier = "HMRC-PPT-ORG"
-  val Key        = "EtmpRegistrationNumber"
+  val Key            = "HMRC-PPT-ORG"
+  val IdentifierName = "EtmpRegistrationNumber"
 }

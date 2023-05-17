@@ -19,9 +19,9 @@ package controllers.group
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import utils.AddressConversionUtils
 
 import javax.inject.{Inject, Singleton}
@@ -29,7 +29,6 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class GroupMemberGrsController @Inject() (
-                                           authenticate: NotEnrolledAuthAction,
                                            journeyAction: JourneyAction,
                                            ukCompanyGrsConnector: UkCompanyGrsConnector,
                                            subscriptionsConnector: SubscriptionsConnector,
@@ -39,8 +38,7 @@ class GroupMemberGrsController @Inject() (
                                            mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends GroupMemberGrsControllerBase(
-      authenticate,
-      journeyAction,
+      journeyAction.register,
       ukCompanyGrsConnector,
       subscriptionsConnector,
       partnershipGrsConnector,

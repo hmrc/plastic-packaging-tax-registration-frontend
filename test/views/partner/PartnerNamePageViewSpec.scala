@@ -32,7 +32,7 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[PartnerName] = PartnerName.form()): Document =
-    page(form, backLink, updateLink)(journeyRequest, messages)
+    page(form, backLink, updateLink)(registrationJourneyRequest, messages)
 
   "Email address View" should {
 
@@ -79,8 +79,8 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(PartnerName.form(), backLink, updateLink)(journeyRequest, messages)
-    page.render(PartnerName.form(), backLink, updateLink, journeyRequest, messages)
+    page.f(PartnerName.form(), backLink, updateLink)(registrationJourneyRequest, messages)
+    page.render(PartnerName.form(), backLink, updateLink, registrationJourneyRequest, messages)
   }
 
 }

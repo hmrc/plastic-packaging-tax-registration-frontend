@@ -27,7 +27,7 @@ class VerifyOrganisationViewSpec extends UnitViewSpec with Matchers {
   private val page: verify_organisation_page = inject[verify_organisation_page]
 
   private def createView(): Html =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "Verify Organisation Page view" should {
 

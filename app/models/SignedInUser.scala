@@ -22,14 +22,9 @@ import controllers.contact.RegistrationException
 import models.request.IdentityData
 
 case class SignedInUser(
-  enrolments: Enrolments,
   identityData: IdentityData
 ) {
 
-  val credId: String = identityData.credentials.map(_.providerId).getOrElse(
-    throw DownstreamServiceError("Cannot find user credentials id",
-                                 RegistrationException("Cannot find user credentials id")
-    )
-  )
+
 
 }

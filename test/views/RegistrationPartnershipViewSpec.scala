@@ -19,7 +19,7 @@ package views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.Call
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.twirl.api.Html
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.partner.{routes => partnerRoutes}
@@ -28,7 +28,9 @@ import forms.{Date, OldDate}
 import forms.liability.LiabilityWeight
 import forms.organisation.PartnerTypeEnum
 import models.registration.{LiabilityDetails, NewLiability, OrganisationDetails, Registration}
+import play.api.test.FakeRequest
 import views.html.task_list_partnership
+
 import java.time.LocalDate
 
 
@@ -628,13 +630,13 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(journeyRequest,
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(registrationJourneyRequest,
       messages
     )
     registrationPage.render(registrationWithPartnershipDetails,
       liabilityStartLink,
       false, 
-      journeyRequest,
+      registrationJourneyRequest,
       messages
     )
   }

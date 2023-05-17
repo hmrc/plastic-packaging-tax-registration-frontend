@@ -16,20 +16,18 @@
 
 package controllers.group
 
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
+import models.registration.Cacheable
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
-import models.registration.Cacheable
-import models.request.JourneyAction
-import views.html.group.member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.member_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
                                                        journeyAction: JourneyAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        mcc: MessagesControllerComponents,
@@ -37,7 +35,7 @@ class ContactDetailsCheckAnswersController @Inject() (
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(
         page(
           request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
@@ -48,7 +46,7 @@ class ContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { _ =>
+    journeyAction.register { _ =>
       Redirect(routes.OrganisationListController.displayPage())
     }
 

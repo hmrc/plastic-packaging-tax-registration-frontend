@@ -17,10 +17,12 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.JobTitle
+import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,12 +30,8 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.{routes => pptRoutes}
-import forms.contact.JobTitle
-import models.registration.PrimaryContactDetails
-import views.html.contact.job_title_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.job_title_page
 
 class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -41,8 +39,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsJobTitleController(authenticate = mockAuthAction,
-                                         journeyAction = mockJourneyAction,
+    new ContactDetailsJobTitleController(journeyAction = spyJourneyAction,
                                          registrationConnector = mockRegistrationConnector,
                                          mcc = mcc,
                                          page = page
@@ -63,41 +60,32 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+        spyJourneyAction.setReg(aRegistration())
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
-      "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-      }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits the job title" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(JobTitle("tester"), formAction))
+            controller.submit()(postRequestEncoded(JobTitle("tester")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
-          formAction match {
-            case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsEmailAddressController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsEmailAddressController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
@@ -112,8 +100,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester"))))
         )
 
@@ -124,8 +112,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     }
 
     "display page for a group organisation" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(
           withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
           withGroupDetail(Some(groupDetailsWithMembers))
@@ -142,7 +130,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid job title" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
 
@@ -152,30 +140,23 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationUpdateFailure()
-        val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
 
-        intercept[DownstreamServiceError](status(result))
+        mockRegistrationUpdateFailure()
+
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequestEncoded(JobTitle("tester")))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationException()
-        val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
 
-        intercept[RuntimeException](status(result))
+        mockRegistrationException()
+
+        intercept[RuntimeException](status(
+          controller.submit()(postRequestEncoded(JobTitle("tester")))
+        ))
       }
-    }
+    
   }
 }

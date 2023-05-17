@@ -19,16 +19,15 @@ package controllers.partner
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerGrsController @Inject() (
-                                       authenticate: NotEnrolledAuthAction,
                                        journeyAction: JourneyAction,
                                        ukCompanyGrsConnector: UkCompanyGrsConnector,
                                        soleTraderGrsConnector: SoleTraderGrsConnector,
@@ -38,8 +37,7 @@ class PartnerGrsController @Inject() (
                                        subscriptionsConnector: SubscriptionsConnector,
                                        mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends PartnerGrsControllerBase(authenticate = authenticate,
-                                     journeyAction = journeyAction,
+    extends PartnerGrsControllerBase(journeyAction = journeyAction.register,
                                      ukCompanyGrsConnector = ukCompanyGrsConnector,
                                      soleTraderGrsConnector = soleTraderGrsConnector,
                                      partnershipGrsConnector = partnershipGrsConnector,

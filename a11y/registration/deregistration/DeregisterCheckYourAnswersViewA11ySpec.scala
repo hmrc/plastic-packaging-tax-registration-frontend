@@ -25,7 +25,7 @@ class DeregisterCheckYourAnswersViewA11ySpec extends BaseViewSpec {
   private val page = inject[deregister_check_your_answers_page]
 
   private def createView(deregistrationDetails: DeregistrationDetails): String =
-    page(deregistrationDetails)(authenticatedRequest, messages.messages).toString()
+    page(deregistrationDetails)(registrationRequest, messages.messages).toString()
 
   "Deregister Check Answers View with no answers" should {
 

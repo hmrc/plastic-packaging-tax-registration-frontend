@@ -17,9 +17,9 @@
 package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.amendment.AmendmentController
-import models.request.AmendmentJourneyAction
+import services.AmendRegistrationService
 import views.html.amendment.partner.amend_partner_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
@@ -27,15 +27,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactDetailsCheckAnswersController @Inject() (
-                                                              authenticate: EnrolledAuthAction,
-                                                              amendmentJourneyAction: AmendmentJourneyAction,
+                                                              journeyAction: JourneyAction,
+                                                              amendRegistrationService: AmendRegistrationService,
                                                               mcc: MessagesControllerComponents,
                                                               page: amend_partner_contact_check_answers_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(
         page(
           request.registration.findPartner(partnerId).getOrElse(
@@ -46,7 +46,7 @@ class PartnerContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) {
+    journeyAction.amend {
       Redirect(routes.PartnersListController.displayPage())
     }
 

@@ -17,10 +17,13 @@
 package controllers.group
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import controllers.group.{routes => groupRoutes}
+import forms.contact.PhoneNumber
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,12 +32,8 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import connectors.DownstreamServiceError
-import controllers.group.{routes => groupRoutes}
-import forms.contact.PhoneNumber
-import models.registration.NewRegistrationUpdateService
-import views.html.group.member_phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.group.member_phone_number_page
 
 class ContactDetailsTelephoneNumberControllerSpec
     extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
@@ -47,8 +46,7 @@ class ContactDetailsTelephoneNumberControllerSpec
   )
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(authenticate = mockAuthAction,
-                                                journeyAction = mockJourneyAction,
+    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction,
                                                 mcc = mcc,
                                                 page = page,
                                                 registrationUpdater = mockNewRegistrationUpdater
@@ -69,9 +67,9 @@ class ContactDetailsTelephoneNumberControllerSpec
     "return 200" when {
 
       "user is authorised display page method is invoked" in {
-        authorizedUser()
+
         val member = groupMember.copy(contactDetails = None)
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -80,8 +78,8 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -90,17 +88,16 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+    "return 303 (OK)" when {
         "user submits the phone number" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
           )
           mockRegistrationUpdate()
 
           val result =
-            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123"), formAction))
+            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some(
@@ -111,7 +108,6 @@ class ContactDetailsTelephoneNumberControllerSpec
           )
           reset(mockRegistrationConnector)
         }
-      }
     }
 
     "return pre populated form" when {
@@ -123,8 +119,8 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
@@ -137,7 +133,7 @@ class ContactDetailsTelephoneNumberControllerSpec
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid phone number" in {
-        authorizedUser()
+
         val result = controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("$%^"))))
 
         status(result) mustBe BAD_REQUEST
@@ -146,29 +142,22 @@ class ContactDetailsTelephoneNumberControllerSpec
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationUpdateFailure()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
-        intercept[DownstreamServiceError](status(result))
+        mockRegistrationUpdateFailure()
+
+        intercept[DownstreamServiceError](status(
+          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationException()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
-        intercept[RuntimeException](status(result))
+        mockRegistrationException()
+
+        intercept[RuntimeException](status(
+          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
+        ))
       }
     }
   }

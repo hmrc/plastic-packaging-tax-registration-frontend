@@ -18,10 +18,9 @@ package controllers.amendment.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.amendment.group
 import forms.group.AddOrganisationForm
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.list_group_members_page
 import views.viewmodels.ListGroupMembersViewModel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -30,19 +29,18 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class GroupMembersListController @Inject() (
-                                             authenticate: EnrolledAuthAction,
-                                             amendmentJourneyAction: AmendmentJourneyAction,
+                                             journeyAction: JourneyAction,
                                              mcc: MessagesControllerComponents,
                                              page: list_group_members_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(page(AddOrganisationForm.form(), new ListGroupMembersViewModel(request.registration)))
     }
 
   def onSubmit(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       AddOrganisationForm
         .form()
         .bindFromRequest()

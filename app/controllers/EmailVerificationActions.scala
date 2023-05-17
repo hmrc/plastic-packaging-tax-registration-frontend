@@ -61,7 +61,7 @@ trait EmailVerificationActions {
     ec: ExecutionContext
   ): Future[Boolean] =
     if (isEmailChanged(email))
-      emailVerificationService.isEmailVerified(email, request.user.credId).map(!_)
+      emailVerificationService.isEmailVerified(email, request.authenticatedRequest.credId).map(!_)
     else
       Future.successful(false)
 
@@ -76,7 +76,7 @@ trait EmailVerificationActions {
     ec: ExecutionContext
   ): Future[Result] =
     emailVerificationService.sendVerificationCode(email.value,
-                                                  request.user.credId,
+                                                  request.authenticatedRequest.credId,
                                                   continueUrl.url
     ).flatMap { emailVerificationJourneyId =>
       persistProspectiveEmailAddress(email, emailVerificationJourneyId).map { _ =>
@@ -154,7 +154,7 @@ trait EmailVerificationActions {
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Boolean] =
-    emailVerificationService.isEmailVerified(email, request.user.credId)
+    emailVerificationService.isEmailVerified(email, request.authenticatedRequest.credId)
 
   private def persistProspectiveEmailAddress(
     email: EmailAddress,

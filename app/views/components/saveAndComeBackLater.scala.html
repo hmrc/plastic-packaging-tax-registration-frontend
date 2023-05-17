@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import controllers.actions.SaveAndComeBackLater
 
 @this(govukButton: GovukButton)
 
@@ -24,4 +23,4 @@
 @govukButton(Button(
     content = Text(messages(messageKey)),
     classes = "govuk-button--secondary",
-    attributes = Map("id" -> "save_and_come_back_later", "name" -> SaveAndComeBackLater.toString)))
+    attributes = Map("id" -> "save_and_come_back_later")))

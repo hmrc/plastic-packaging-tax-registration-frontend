@@ -19,17 +19,11 @@ package controllers.amendment
 import play.api.data.Form
 import play.api.mvc._
 import controllers.EmailVerificationActions
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.contact._
-import models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
-}
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import services.EmailVerificationService
+import models.registration.{AmendRegistrationUpdateService, Registration}
+import models.request.JourneyRequest
+import services.{AmendRegistrationService, EmailVerificationService}
 import views.html.contact._
 
 import javax.inject.{Inject, Singleton}
@@ -37,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendEmailAddressController @Inject() (
-                                              authenticate: EnrolledAuthAction,
                                               mcc: MessagesControllerComponents,
-                                              amendmentJourneyAction: AmendmentJourneyAction,
+                                              journeyAction: JourneyAction,
+                                              amendRegistrationService: AmendRegistrationService,
                                               emailPage: email_address_page,
                                               val emailPasscodePage: email_address_passcode_page,
                                               val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
@@ -47,13 +41,13 @@ class AmendEmailAddressController @Inject() (
                                               val emailVerificationService: EmailVerificationService,
                                               val registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
+    extends AmendmentController(mcc, amendRegistrationService) with EmailVerificationActions {
 
   private def backCall   = routes.AmendEmailAddressController.email()
   private def submitCall = routes.AmendEmailAddressController.checkEmailVerificationCode()
 
   def email(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.primaryContactDetails.email match {
         case Some(email) =>
           Ok(buildEmailPage(EmailAddress.form().fill(EmailAddress(email))))
@@ -63,7 +57,7 @@ class AmendEmailAddressController @Inject() (
     }
 
   def updateEmail(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       EmailAddress.form()
         .bindFromRequest()
         .fold(
@@ -105,7 +99,7 @@ class AmendEmailAddressController @Inject() (
     )
 
   def emailVerificationCode(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(
         renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
                                              getProspectiveEmail(),
@@ -116,7 +110,7 @@ class AmendEmailAddressController @Inject() (
     }
 
   def checkEmailVerificationCode(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       processVerificationCodeSubmission(
         backCall,
         submitCall,
@@ -126,14 +120,14 @@ class AmendEmailAddressController @Inject() (
     }
 
   def emailVerified(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       showEmailVerifiedPage(routes.AmendEmailAddressController.emailVerificationCode(),
                             routes.AmendEmailAddressController.confirmEmailUpdate()
       )
     }
 
   def confirmEmailUpdate(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val prospectiveEmail = getProspectiveEmail()
       isEmailVerified(prospectiveEmail).flatMap { isVerified =>
         if (isVerified)
@@ -144,7 +138,7 @@ class AmendEmailAddressController @Inject() (
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       showTooManyAttemptsPage
     }
 

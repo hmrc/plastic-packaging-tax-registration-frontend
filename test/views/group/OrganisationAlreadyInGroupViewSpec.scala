@@ -35,7 +35,7 @@ class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
   private val groupError = GroupError(MEMBER_IN_GROUP, "Member Name")
 
   private def createView(groupError: GroupError = groupError): Html =
-    page(groupError)(journeyRequest, messages)
+    page(groupError)(registrationJourneyRequest, messages)
 
   "Organisation Already In Group Page" should {
 
@@ -79,8 +79,8 @@ class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(groupError)(journeyRequest, messages)
-    page.render(groupError, journeyRequest, messages)
+    page.f(groupError)(registrationJourneyRequest, messages)
+    page.render(groupError, registrationJourneyRequest, messages)
   }
 
 }

@@ -35,8 +35,7 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
   when(mockView.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
 
   val sut = new UpdateCompaniesHouseController(
-    authenticate = mockAuthAction,
-    mockJourneyAction,
+    journeyAction = spyJourneyAction,
     mockRegistrationConnector,
     mockView,
     stubMessagesControllerComponents().messagesApi
@@ -44,8 +43,8 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
 
   "onPageLoad" should {
     "return the view" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration(withIncorpDetails(incorporationDetails)))
+
+      spyJourneyAction.setReg(aRegistration(withIncorpDetails(incorporationDetails)))
       val resultF = sut.onPageLoad()(FakeRequest())
 
       status(resultF) mustBe OK
@@ -56,8 +55,8 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
 
   "reset" should {
     "clear the cache and redirect to task list" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration(withIncorpDetails(incorporationDetails)))
+
+      spyJourneyAction.setReg(aRegistration(withIncorpDetails(incorporationDetails)))
       val updated = aRegistration(withIncorpDetails(incorporationDetails)).clearAddressFromGrs
 
       when(mockRegistrationConnector.update(any())(any()))

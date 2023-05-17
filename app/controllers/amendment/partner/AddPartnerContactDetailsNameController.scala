@@ -17,13 +17,10 @@
 package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.partner.PartnerContactNameControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
+import models.request.JourneyRequest
 import views.html.partner.partner_member_name_page
 
 import javax.inject.{Inject, Singleton}
@@ -31,14 +28,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsNameController @Inject() (
-                                                         authenticate: EnrolledAuthAction,
-                                                         journeyAction: AmendmentJourneyAction,
+                                                         journeyAction: JourneyAction,
                                                          mcc: MessagesControllerComponents,
                                                          page: partner_member_name_page,
                                                          registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(authenticate = authenticate,
-                                             journeyAction = journeyAction,
+    extends PartnerContactNameControllerBase(journeyAction = journeyAction.amend,
                                              mcc = mcc,
                                              page = page,
                                              registrationUpdater = registrationUpdateService
@@ -53,8 +48,7 @@ class AddPartnerContactDetailsNameController @Inject() (
   def submit(): Action[AnyContent] =
     doSubmit(None,
              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-             routes.AddPartnerContactDetailsNameController.submit(),
-             routes.PartnersListController.displayPage()
+             routes.AddPartnerContactDetailsNameController.submit()
     )
 
   override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =

@@ -43,7 +43,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
   private val mockCache  = mock[UserDataRepository]
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new PptReferenceController(mockAuthAction, mcc, repository, page)
+  private val controller = new PptReferenceController(FakeRegistrationAuthAction, mcc, repository, page)
 
   val pptReference     = PptReference("XAPPT0001234567")
   val enrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
@@ -66,7 +66,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
   "PPT Reference Controller" should {
     "display the ppt reference page" when {
       "user is authorised" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -74,7 +74,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
       }
 
       "user is authorised and cache is empty" in {
-        authorizedUser()
+
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
@@ -84,18 +84,11 @@ class PptReferenceControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "PPT Reference Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
 
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the ppt reference page with a BAD REQUEST status" when {
       "an invalid ppt reference is submitted" in {
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(PptReference("XXX")))
 
         status(result) mustBe BAD_REQUEST
@@ -110,7 +103,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
           Future.successful(enrolmentDetails)
         )
 
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe SEE_OTHER

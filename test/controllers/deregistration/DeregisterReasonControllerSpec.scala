@@ -49,7 +49,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
     DeregistrationDetails(deregister = Some(true), reason = None)
 
   private val controller =
-    new DeregisterReasonController(authenticate = mockEnrolledAuthAction,
+    new DeregisterReasonController(authenticate = FakeAmendAuthAction,
                                    mcc = mcc,
                                    deregistrationDetailRepository = repository,
                                    page = page
@@ -70,7 +70,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
           Future.successful(Some(initialDeregistrationDetails))
         )
@@ -81,7 +81,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, details already exist and display page method is invoked" in {
-        authorizedUser()
+
         when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
           Future.successful(Some(initialDeregistrationDetails.copy(reason = Some(CeasedTrading))))
         )
@@ -98,7 +98,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
             Future.successful(expectedDeregistrationDetails)
           )
 
-          authorizedUser()
+
           val result =
             controller.submit()(postRequestEncoded(DeregisterReasonForm(Some(CeasedTrading))))
 
@@ -116,19 +116,10 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
 
       "redisplay the page with a BAD REQUEST status" when {
         "no reason is submitted" in {
-          authorizedUser()
+
           val result = controller.submit()(postRequestEncoded(JsObject.empty))
 
           status(result) mustBe BAD_REQUEST
-        }
-      }
-
-      "throw a RuntimeException" when {
-        "user is not authorised" in {
-          unAuthorizedUser()
-          val result = controller.displayPage()(getRequest())
-
-          intercept[RuntimeException](status(result))
         }
       }
 

@@ -36,8 +36,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[registration_type_page]
 
-  private val registrationTypeController = new RegistrationTypeController(mockAuthAction,
-                                                                          mockJourneyAction,
+  private val registrationTypeController = new RegistrationTypeController(journeyAction = spyJourneyAction,
                                                                           mockRegistrationConnector,
                                                                           mcc,
                                                                           mockPage
@@ -57,12 +56,12 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
   "Registration Type Controller" should {
 
-    authorizedUser()
+
 
     "display page" when {
 
       "no existing registration type" in {
-        mockRegistrationFind(aRegistration(withRegistrationType(None)))
+        spyJourneyAction.setReg(aRegistration(withRegistrationType(None)))
 
         val result = registrationTypeController.displayPage()(getRequest())
 
@@ -75,7 +74,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
       }
 
       "registration type previously supplied" in {
-        mockRegistrationFind(aRegistration(withRegistrationType(Some(GROUP))))
+        spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(GROUP))))
 
         val result = registrationTypeController.displayPage()(getRequest())
 
@@ -90,7 +89,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
     }
 
     "display page with appropriate backlink" in {
-      authorizedUser()
+
       verifyExpectedBackLink(routes.LiabilityWeightController.displayPage().url)
     }
 
@@ -98,10 +97,10 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
       "group selected" in {
         val initialRegistration = aRegistration()
-        mockRegistrationFind(initialRegistration)
+        spyJourneyAction.setReg(initialRegistration)
         mockRegistrationUpdate()
 
-        val groupSelection = Seq("value" -> GROUP.toString, saveAndContinueFormAction)
+        val groupSelection = Seq("value" -> GROUP.toString)
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(groupSelection: _*))
 
         redirectLocation(result) mustBe Some(
@@ -116,7 +115,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
     "display validation error" when {
       "no selection made" in {
         val initialRegistration = aRegistration()
-        mockRegistrationFind(initialRegistration)
+        spyJourneyAction.setReg(initialRegistration)
         mockRegistrationUpdate()
 
         val emptySelection = Seq()
@@ -128,7 +127,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   }
 
   private def verifyExpectedBackLink(backLink: String): Unit = {
-    mockRegistrationFind(aRegistration(withRegistrationType(None)))
+    spyJourneyAction.setReg(aRegistration(withRegistrationType(None)))
 
     val result = registrationTypeController.displayPage()(getRequest())
 

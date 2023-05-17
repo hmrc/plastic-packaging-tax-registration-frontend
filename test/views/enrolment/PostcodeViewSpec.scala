@@ -28,7 +28,7 @@ class PostcodeViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[postcode_page]
 
   private def createView(form: Form[Postcode] = Postcode.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "The Initial Postcode View" should {
 

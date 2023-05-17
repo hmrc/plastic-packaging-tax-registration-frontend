@@ -34,7 +34,7 @@ class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
   private val memberId   = UUID.randomUUID.toString
 
   private def createView(form: Form[RemoveMember] = RemoveMember.form()): Document =
-    page(form, memberName, memberId)(journeyRequest, messages)
+    page(form, memberName, memberId)(registrationJourneyRequest, messages)
 
   "Remove Group Member View" should {
 
@@ -85,8 +85,8 @@ class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(RemoveMember.form(), memberName, memberId)(journeyRequest, messages)
-    page.render(RemoveMember.form(), memberName, memberId, journeyRequest, messages)
+    page.f(RemoveMember.form(), memberName, memberId)(registrationJourneyRequest, messages)
+    page.render(RemoveMember.form(), memberName, memberId, registrationJourneyRequest, messages)
   }
 
 }

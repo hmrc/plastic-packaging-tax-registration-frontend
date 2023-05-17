@@ -36,7 +36,7 @@ class OrganisationDetailsTypeViewA11ySpec extends BaseViewSpec {
          isFirstMember = isFirstMember,
          memberId = Some(groupMember.id),
          routes.OrganisationDetailsTypeController.submitNewMember()
-    )(journeyRequest, messages).toString()
+    )(registrationJourneyRequest, messages).toString()
 
   "Confirm Organisation Type View" should {
 

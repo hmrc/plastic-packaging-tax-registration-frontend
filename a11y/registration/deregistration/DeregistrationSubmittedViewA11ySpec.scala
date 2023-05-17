@@ -22,7 +22,7 @@ import views.html.deregistration.deregistration_submitted_page
 
 class DeregistrationSubmittedViewA11ySpec extends BaseViewSpec {
 
-  override val appConfig: AppConfig = inject[AppConfig]
+  val appConfig: AppConfig = inject[AppConfig]
   private val page                  = inject[deregistration_submitted_page]
 
   "The Deregistration Submitted View" should {

@@ -16,25 +16,20 @@
 
 package controllers.amendment.group
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import org.mockito.ArgumentCaptor
+import base.unit.{ControllerSpec, AmendmentControllerSpec}
+import controllers.amendment.{routes => amendRoutes}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import controllers.amendment.{routes => amendRoutes}
-import models.registration.Registration
-import models.request.AmendmentJourneyAction
-import views.html.amendment.group.amend_member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
+import views.html.amendment.group.amend_member_contact_check_answers_page
 
-class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
+class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc     = stubMessagesControllerComponents()
   private val cyaPage = mock[amend_member_contact_check_answers_page]
@@ -42,19 +37,18 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
   when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Group Member CYA"))
 
   private val controller = new AddGroupMemberContactDetailsCheckAnswersController(
-    authenticate = mockEnrolledAuthAction,
-    journeyAction = mockAmendmentJourneyAction,
+    journeyAction = spyJourneyAction,
     mcc = mcc,
-    page = cyaPage
+    page = cyaPage,
+    amendRegistrationService = mockAmendRegService
   )
 
-  private val groupRegistrationInAmendment = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
+  private val groupRegistrationInAmendment: Registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 
   override protected def beforeEach(): Unit = {
-    inMemoryRegistrationAmendmentRepository.reset()
-    reset(mockSubscriptionConnector)
-    simulateGetSubscriptionSuccess(groupRegistrationInAmendment)
-    simulateUpdateSubscriptionSuccess()
+    reset(spyJourneyAction, mockAmendRegService)
+    spyJourneyAction.reset()
+    simulateUpdateWithRegSubscriptionSuccess()
   }
 
   "AddGroupMemberContactDetailsCheckAnswersController" when {
@@ -62,21 +56,22 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
     "displaying page" should {
       "display successfully" when {
         "group member present" in {
-          authorisedUserWithPptSubscription()
+          spyJourneyAction.setReg(groupRegistrationInAmendment)
           val mostRecentGroupMember = groupRegistrationInAmendment.groupDetail.get.members.last
 
-          val resp = controller.displayPage(mostRecentGroupMember.id)(getRequest())
+          val resp = controller.displayPage(mostRecentGroupMember.id)(FakeRequest())
 
           status(resp) mustBe OK
           contentAsString(resp) mustBe "Amend Reg - New Group Member CYA"
+          verify(spyJourneyAction).amend
         }
       }
       "throw IllegalStateException" when {
         "group member is absent" in {
-          authorisedUserWithPptSubscription()
+          spyJourneyAction.setReg(groupRegistrationInAmendment)
 
           intercept[IllegalStateException] {
-            await(controller.displayPage("XXX")(getRequest()))
+            await(controller.displayPage("XXX")(FakeRequest()))
           }
         }
       }
@@ -84,49 +79,46 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
     "details confirmed" should {
       "update subscription at the ETMP back end" in {
-        authorisedUserWithPptSubscription()
+        spyJourneyAction.setReg(groupRegistrationInAmendment)
 
-        await(controller.submit()(postRequest(JsObject.empty)))
+        await(controller.submit()(FakeRequest()))
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
-
-        registrationCaptor.getValue mustBe groupRegistrationInAmendment
+        verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
+        verify(spyJourneyAction).amend
       }
 
       "redirect to the manage group page when update successful" in {
-        authorisedUserWithPptSubscription()
+        spyJourneyAction.setReg(groupRegistrationInAmendment)
 
-        val resp = controller.submit()(postRequest(JsObject.empty))
+        val resp = controller.submit()(FakeRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.ManageGroupMembersController.displayPage().toString)
+        verify(spyJourneyAction).amend
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
-          authorisedUserWithPptSubscription()
-          simulateUpdateSubscriptionFailure(new RuntimeException("BANG!"))
+          spyJourneyAction.setReg(groupRegistrationInAmendment)
+          simulateUpdateWithRegSubscriptionFailure(new RuntimeException("BANG!"))
 
-          val resp = controller.submit()(postRequest(JsObject.empty))
+          val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
           redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          verify(spyJourneyAction).amend
         }
         "update fails due to error returned from ETMP" in {
-          authorisedUserWithPptSubscription()
-          simulateUpdateSubscriptionFailureReturnedError()
+          spyJourneyAction.setReg(groupRegistrationInAmendment)
+          simulateUpdateSubscriptionWithRegFailureReturnedError()
 
-          val resp = controller.submit()(postRequest(JsObject.empty))
+          val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
           redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          verify(spyJourneyAction).amend
         }
       }
     }
   }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

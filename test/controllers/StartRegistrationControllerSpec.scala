@@ -47,17 +47,17 @@ class StartRegistrationControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc)
+    new StartRegistrationController(spyJourneyAction, mcc)
 
   "StartRegistrationController" should {
     "redirect to first liability check page" when {
       "no existing registration" in {
-        authorizedUser()
+
         verifyRedirect(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
       }
 
       def verifyRedirect(pageUrl: String): Unit = {
-        mockRegistrationFind(emptyRegistration)
+        spyJourneyAction.setReg(emptyRegistration)
 
         val result = controller.startRegistration()(getRequest())
 
@@ -67,8 +67,8 @@ class StartRegistrationControllerSpec extends ControllerSpec {
     }
     "redirect to task list page" when {
       "partial registration exists" in {
-        authorizedUser()
-        mockRegistrationFind(partialRegistration)
+
+        spyJourneyAction.setReg(partialRegistration)
 
         val result = controller.startRegistration()(getRequest())
 
@@ -77,8 +77,8 @@ class StartRegistrationControllerSpec extends ControllerSpec {
       }
 
       "partial registration exists with new liability" in {
-        authorizedUser()
-        mockRegistrationFind(partialRegistration.copy(
+
+        spyJourneyAction.setReg(partialRegistration.copy(
           liabilityDetails = partialRegistration.liabilityDetails.copy(newLiabilityStarted = Some(NewLiability)))
         )
 

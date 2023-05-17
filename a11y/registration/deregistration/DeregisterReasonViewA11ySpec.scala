@@ -26,7 +26,7 @@ class DeregisterReasonViewA11ySpec extends BaseViewSpec {
   private val page = inject[deregister_reason_page]
 
   private def createView(form: Form[DeregisterReasonForm] = DeregisterReasonForm.form()): String =
-    page(form)(authenticatedRequest, messages).toString()
+    page(form)(registrationRequest, messages).toString()
 
   "Confirm Deregistration Reason View" should {
 

@@ -36,8 +36,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
   private val controller =
     new ConfirmBusinessAddressController(
-      authenticate = mockAuthAction,
-      journeyAction = mockJourneyAction,
+      journeyAction = spyJourneyAction,
       registrationConnector = mockRegistrationConnector,
       mockAddressCaptureService,
       mcc = mcc,
@@ -47,7 +46,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(HtmlFormat.raw("business registered address"))
-    authorizedUser()
+
     mockRegistrationUpdate()
     simulateSuccessfulAddressCaptureInit(None)
     simulateValidAddressCapture()
@@ -61,7 +60,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
   "Confirm Company Address Controller" should {
 
     "display registered business address when it is populated and valid" in {
-      mockRegistrationFind(aRegistration())
+      spyJourneyAction.setReg(aRegistration())
 
       val resp = controller.displayPage()(getRequest())
 
@@ -72,7 +71,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
     "redirect to address capture" when {
       "registered business address is not present" in {
         val registration = aRegistration()
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           registration.copy(organisationDetails =
             registration.organisationDetails.copy(businessRegisteredAddress = None)
           )
@@ -85,7 +84,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
       "registered business address is invalid" in {
         val registration   = aRegistration()
         val newAddressLine = "100 Really Long Street Name Which is Well in Excess of 35 characters"
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           registration.copy(organisationDetails =
             registration.organisationDetails.copy(businessRegisteredAddress =
               registration.organisationDetails.businessRegisteredAddress.map {
@@ -114,7 +113,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
     "redirect to address lookup frontend" when {
       "user wants to change business address" in {
-        mockRegistrationFind(aRegistration())
+        spyJourneyAction.setReg(aRegistration())
 
         val resp = controller.changeBusinessAddress()(getRequest())
 

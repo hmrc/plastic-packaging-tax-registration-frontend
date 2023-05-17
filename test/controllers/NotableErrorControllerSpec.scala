@@ -17,10 +17,13 @@
 package controllers
 
 import base.unit.ControllerSpec
+import controllers.actions.getRegistration.GetRegistrationAction
+import models.request.{AuthenticatedRequest, JourneyRequest}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{spy, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
+import play.api.mvc.{Request, Result}
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import views.html.enrolment.enrolment_failure_page
@@ -29,6 +32,8 @@ import views.html.organisation.business_verification_failure_page
 import views.html.organisation.sole_trader_verification_failure_page
 import views.html.{duplicate_subscription_page, error_page, registration_failed_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
@@ -42,9 +47,16 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val duplicateSubscriptionPage = mock[duplicate_subscription_page]
   private val registrationFailedPage = mock[registration_failed_page]
 
+  object FakeGetRegistrationAction extends GetRegistrationAction {
+    override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
+      Future.successful(Right(JourneyRequest(getAuthenticatedRequest(request), aRegistration())))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
   private val controller =
-    new NotableErrorController(authenticate = mockAuthAction,
-      mockJourneyAction,
+    new NotableErrorController(authenticate = FakeRegistrationAuthAction,
+      getRegistration = FakeGetRegistrationAction,
       mcc = mcc,
       errorPage = errorPage,
       errorNoSavePage = enrolmentFailurePage,
@@ -75,7 +87,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   "NotableErrorController" should {
     "present the generic error page on subscription failure" in {
-      authorizedUser()
+
       val resp = controller.subscriptionFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -83,7 +95,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the generic error no save page on enrolment failure" in {
-      authorizedUser()
+
       val resp = controller.enrolmentFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -91,7 +103,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the business verification failed page" in {
-      authorizedUser()
+
       val resp = controller.businessVerificationFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -99,7 +111,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the sole trader verification failed page" in {
-      authorizedUser()
+
       val resp = controller.soleTraderVerificationFailure()(getRequest())
 
       status(resp) mustBe OK

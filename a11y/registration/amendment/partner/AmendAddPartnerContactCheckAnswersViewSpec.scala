@@ -29,7 +29,7 @@ class AmendAddPartnerContactCheckAnswersViewSpec extends BaseViewSpec {
   private val partnershipPartner    = aPartnershipPartner()
 
   private def createView(partner: Partner): String =
-    page(partner)(journeyRequest, messages).toString()
+    page(partner)(registrationJourneyRequest, messages).toString()
 
   "Amend Add Partner Check Answers View" should {
 

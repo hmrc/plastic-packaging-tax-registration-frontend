@@ -18,30 +18,31 @@ package controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.PermissiveAuthAction
+import controllers.actions.auth.BasicAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.{routes => groupRoutes}
-import models.request.JourneyAction
 import views.html.group.{group_member_already_registered_page, nominated_organisation_already_registered_page, organisation_already_in_group_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-  authenticate: PermissiveAuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
-  organisationAlreadyInGroupPage: organisation_already_in_group_page,
-  groupMemberAlreadyRegisteredPage: group_member_already_registered_page
+                                         authenticate: BasicAuthAction,
+                                         getRegistration: GetRegistrationAction,
+                                         mcc: MessagesControllerComponents,
+                                         nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
+                                         organisationAlreadyInGroupPage: organisation_already_in_group_page,
+                                         groupMemberAlreadyRegisteredPage: group_member_already_registered_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       Ok(nominatedOrganisationAlreadyRegisteredPage())
     }
 
   def organisationAlreadyInGroup(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       request.registration.groupDetail.flatMap(_.groupError) match {
         case Some(groupError) => Ok(organisationAlreadyInGroupPage(groupError))
         case _                => Redirect(groupRoutes.OrganisationListController.displayPage())
@@ -49,7 +50,7 @@ class NotableErrorController @Inject() (
     }
 
   def groupMemberAlreadyRegistered(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       request.registration.groupDetail.flatMap(_.groupError) match {
         case Some(groupError) => Ok(groupMemberAlreadyRegisteredPage(groupError))
         case _                => Redirect(groupRoutes.OrganisationListController.displayPage())

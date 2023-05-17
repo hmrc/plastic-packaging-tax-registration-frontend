@@ -16,7 +16,8 @@
 
 package controllers.amendment.group
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status.OK
@@ -24,13 +25,11 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, status}
 import play.api.test.{FakeRequest, Helpers}
 import play.twirl.api.Html
-import models.registration.Registration
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.manage_group_members_page
 
 import scala.concurrent.Future
 
-class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
+class ManageGroupMembersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
 
   val registration: Registration = aRegistration()
 
@@ -38,23 +37,21 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
 
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(mockEnrolledAuthAction,
-                                             mockAmendmentJourneyAction,
+  val sut = new ManageGroupMembersController(spyJourneyAction,
                                              Helpers.stubMessagesControllerComponents(),
                                              view
   )
 
   "displayPage" must {
     "return 200 with view" in {
-      simulateGetSubscriptionSuccess(registration)
-      authorisedUserWithPptSubscription()
+      spyJourneyAction.setReg(registration)
 
-      val result: Future[Result] =
-        sut.displayPage()(FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")))
+      val result: Future[Result] = sut.displayPage()(FakeRequest())
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
       verify(view).apply(refEq(registration))(any(), any())
+      verify(spyJourneyAction).amend
     }
   }
 }

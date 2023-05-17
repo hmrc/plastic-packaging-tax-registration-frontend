@@ -18,11 +18,11 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
 import forms.OldDate
 import models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TaxStartDateService
@@ -33,8 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolledAuthAction,
-                                                        journeyAction: JourneyAction,
+class CheckLiabilityDetailsAnswersController @Inject() (journeyAction: JourneyAction,
                                                         mcc: MessagesControllerComponents,
                                                         override val registrationConnector: RegistrationConnector,
                                                         taxStarDateService: TaxStartDateService,
@@ -44,7 +43,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
   with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(
@@ -56,7 +55,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(

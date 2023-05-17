@@ -43,14 +43,6 @@ class Auditor @Inject() (auditConnector: AuditConnector) {
                                      StartRegistrationEvent(UserType.NEW, internalId)
     )
 
-  def resumePPTRegistration(internalId: String, orgType: Option[OrgType])(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Unit =
-    auditConnector.sendExplicitAudit(ResumeRegistrationEvent.eventType,
-                                     ResumeRegistrationEvent(UserType.RESUME, internalId, orgType)
-    )
-
   def orgTypeSelected(internalId: String, orgType: Option[OrgType])(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext

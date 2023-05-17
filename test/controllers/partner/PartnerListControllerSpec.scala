@@ -37,8 +37,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerListController(authenticate = mockAuthAction,
-                              journeyAction = mockJourneyAction,
+    new PartnerListController(journeyAction = spyJourneyAction,
                               registrationConnector = mockRegistrationConnector,
                               mcc = mcc,
                               page = page
@@ -50,8 +49,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationFind(partnershipRegistration)
+
+    spyJourneyAction.setReg(partnershipRegistration)
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Partner list"))
   }
 
@@ -79,7 +78,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     }
     "redirect to other partner type selection page" when {
       "user suggests they would like to add another partner" in {
-        val form = Seq("addPartner" -> "yes", saveAndContinueFormAction)
+        val form = Seq("addPartner" -> "yes")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
         status(resp) mustBe SEE_OTHER
@@ -88,7 +87,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     }
     "redirect to task list page" when {
       "user suggests they need not add any further partner" in {
-        val form = Seq("addPartner" -> "no", saveAndContinueFormAction)
+        val form = Seq("addPartner" -> "no")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
         status(resp) mustBe SEE_OTHER
@@ -98,7 +97,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
     "throw IllegalStateException" when {
       "nominated partner absent from registration" in {
-        mockRegistrationFind(withAllPartnersRemoved(partnershipRegistration))
+        spyJourneyAction.setReg(withAllPartnersRemoved(partnershipRegistration))
 
         intercept[IllegalStateException] {
           await(controller.displayPage()(getRequest()))

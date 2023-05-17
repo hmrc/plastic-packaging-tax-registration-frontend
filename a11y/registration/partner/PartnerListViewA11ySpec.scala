@@ -44,7 +44,7 @@ class PartnerListViewA11ySpec extends BaseViewSpec {
     otherPartner: Seq[Partner] = getOtherPartners(partnershipRegistration)
   ): String =
     page(AddPartner.form(), getNominatedPartner(partnershipRegistration), otherPartner)(
-      journeyRequest,
+      registrationJourneyRequest,
       messages
     ).toString()
 

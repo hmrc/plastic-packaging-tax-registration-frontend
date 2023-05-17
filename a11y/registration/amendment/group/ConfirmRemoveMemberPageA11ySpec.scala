@@ -26,7 +26,7 @@ class ConfirmRemoveMemberPageA11ySpec extends BaseViewSpec {
   private val page = inject[confirm_remove_member_page]
 
   private def createView(form: Form[RemoveMember] = RemoveMember.form()): String =
-    page(form, groupMember)(journeyRequest, messages).toString()
+    page(form, groupMember)(registrationJourneyRequest, messages).toString()
 
   "Confirm Remove Member  page" should {
 

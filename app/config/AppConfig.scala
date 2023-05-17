@@ -212,6 +212,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
+  lazy val pptNotEnrolledUrl = s"$pptAccountHost/plastic-packaging-tax/account/not-enrolled"
 
   lazy val changeGroupLeadUrl = s"$pptAccountHost/plastic-packaging-tax/select-new-representative-member"
 

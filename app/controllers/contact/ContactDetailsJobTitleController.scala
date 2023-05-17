@@ -20,11 +20,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
+import controllers.actions.JourneyAction
+import controllers.actions.auth.RegistrationAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.JobTitle
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.contact.job_title_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsJobTitleController @Inject() (
-                                                   authenticate: NotEnrolledAuthAction,
                                                    journeyAction: JourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    mcc: MessagesControllerComponents,
@@ -42,7 +43,7 @@ class ContactDetailsJobTitleController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.primaryContactDetails.jobTitle match {
         case Some(data) =>
           Ok(buildPage(JobTitle.form().fill(JobTitle(data))))
@@ -52,7 +53,7 @@ class ContactDetailsJobTitleController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
         .fold(
@@ -62,13 +63,7 @@ class ContactDetailsJobTitleController @Inject() (
             ),
           jobTitle =>
             updateRegistration(jobTitle).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.ContactDetailsEmailAddressController.displayPage())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_) => Redirect(routes.ContactDetailsEmailAddressController.displayPage())
               case Left(error) => throw error
             }
         )

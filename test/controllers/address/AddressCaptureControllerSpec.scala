@@ -16,24 +16,23 @@
 
 package controllers.address
 
-import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAddressCaptureDetailRepository}
+import config.AppConfig
+import connectors.addresslookup.AddressLookupFrontendConnector
+import models.addresslookup._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.mvc.Call
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
-import config.AppConfig
-import connectors.addresslookup.AddressLookupFrontendConnector
-import models.addresslookup._
-import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
 import services.{AddressCaptureConfig, AddressCaptureService, CountryService}
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.AddressConversionUtils
 import views.html.address.{address_page, uk_address_page}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
@@ -61,7 +60,7 @@ class AddressCaptureControllerSpec
   ).thenReturn(HtmlFormat.raw("Address Capture"))
 
   private val addressCaptureController = new AddressCaptureController(
-    authenticate = mockPermissiveAuthAction,
+    authenticate = FakeBasicAuthAction,
     mcc = mcc,
     addressCaptureService = addressCaptureService,
     addressLookupFrontendConnector = mockAddressLookupFrontendConnector,
@@ -83,8 +82,9 @@ class AddressCaptureControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    addressCaptureService.initAddressCapture(addressCaptureConfig)(getAuthenticatedRequest())
+
+    addressCaptureService.initAddressCapture(addressCaptureConfig)(registrationJourneyRequest.authenticatedRequest)
+
     when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
       Future.successful(AddressLookupOnRamp("/alf-on-ramp"))
     )
@@ -126,12 +126,14 @@ class AddressCaptureControllerSpec
     "initialise and redirect to ALF" when {
 
       "the force UK flag is used" in {
+        val request = FakeRequest()
+
         val forcedUkAddressCaptureConfig = addressCaptureConfig.copy(forceUkAddress = true)
         addressCaptureService.initAddressCapture(forcedUkAddressCaptureConfig)(
-          getAuthenticatedRequest()
+          getAuthenticatedRequest(request)
         )
 
-        val resp = await(addressCaptureController.initialiseAddressCapture()(getRequest()))
+        val resp = await(addressCaptureController.initialiseAddressCapture()(request))
 
         redirectLocation(Future.successful(resp)) mustBe Some("/alf-on-ramp")
         verifyAlfInitialisedAsExpected(forcedUkAddressCaptureConfig)
@@ -151,14 +153,15 @@ class AddressCaptureControllerSpec
 
     "obtain and store address obtained from ALF and redirect to address capture callback" when {
       "ALF address is valid" in {
+        val request = FakeRequest()
         val validAlfAddress = aValidAlfAddress()
         simulateAlfCallback(validAlfAddress)
 
-        val resp = await(addressCaptureController.alfCallback(Some("123"))(getRequest()))
+        val resp = await(addressCaptureController.alfCallback(Some("123"))(request))
 
         redirectLocation(Future.successful(resp)) mustBe Some("/success-link")
 
-        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest()).map {
+        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map {
           capturedAddress =>
             capturedAddress.get.addressLine1 mustBe validAlfAddress.address.lines.head
             capturedAddress.get.addressLine2 mustBe validAlfAddress.address.lines(1)
@@ -211,6 +214,7 @@ class AddressCaptureControllerSpec
 
     "store address and redirect to address capture callback" when {
       "valid address captured in PPT address page" in {
+        val request = FakeRequest()
         val validAddress = List(("addressLine1", "99 Edge Road"),
                                 ("addressLine2", "Notting Hill"),
                                 ("townOrCity", "London"),
@@ -223,7 +227,7 @@ class AddressCaptureControllerSpec
 
         redirectLocation(Future.successful(resp)) mustBe Some("/success-link")
 
-        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest()).map {
+        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map {
           capturedAddress =>
             capturedAddress.get.addressLine1 mustBe validAddress.head._2
             capturedAddress.get.addressLine2 mustBe validAddress(1)._2
@@ -300,14 +304,5 @@ class AddressCaptureControllerSpec
     )
     alfConfig.labels.en.lookupPageLabels.heading mustBe s"${addressCaptureConfig.alfHeadingsPrefix}.lookup.heading"
   }
-
-  private def getAuthenticatedRequest() =
-    new AuthenticatedRequest(
-      request = FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")),
-      user = newUser()
-    )
-
-  private def getRequest() =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123"))
 
 }

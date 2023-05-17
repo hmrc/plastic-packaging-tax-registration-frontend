@@ -31,7 +31,7 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
 
   private val groupError = GroupError(MEMBER_IS_ALREADY_REGISTERED, "Plastic Packaging Ltd")
 
-  private def createView(): Html = page(groupError)(journeyRequest, messages)
+  private def createView(): Html = page(groupError)(registrationJourneyRequest, messages)
 
   "Group member Already Registered Page" should {
 
@@ -61,8 +61,8 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(groupError)(journeyRequest, messages)
-    page.render(groupError, journeyRequest, messages)
+    page.f(groupError)(registrationJourneyRequest, messages)
+    page.render(groupError, registrationJourneyRequest, messages)
   }
 
 }

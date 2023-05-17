@@ -51,7 +51,7 @@
   useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
-@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 
 @head = {
     @hmrcTrackingConsentSnippet()
@@ -135,7 +135,7 @@
         None
 }
 
-@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 @feedbackUrl = @{
     if (isAuthenticated) {
         s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"

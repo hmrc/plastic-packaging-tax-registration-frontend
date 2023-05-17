@@ -18,32 +18,26 @@ package controllers.amendment
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.contact.Address
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
+import models.request.JourneyRequest
+import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendOrganisationDetailsController @Inject() (
-                                                     authenticate: EnrolledAuthAction,
+                                                     journeyAction: JourneyAction,
+                                                     amendRegistrationService: AmendRegistrationService,
                                                      mcc: MessagesControllerComponents,
                                                      addressCaptureService: AddressCaptureService,
-                                                     amendmentJourneyAction: AmendmentJourneyAction
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def changeBusinessAddress(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       initialiseAddressLookup(request)
     }
 
@@ -60,10 +54,10 @@ class AmendOrganisationDetailsController @Inject() (
                            pptHintKey = None,
                            forceUkAddress = false
       )
-    )(request).map(redirect => Redirect(redirect))
+    )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 
   def addressCaptureCallback(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       def updateBusinessAddress(address: Option[Address]): Registration => Registration = {
         registration: Registration =>
           val updatedOrganisationDetails =
@@ -73,7 +67,7 @@ class AmendOrganisationDetailsController @Inject() (
           registration.copy(organisationDetails = updatedOrganisationDetails)
       }
 
-      addressCaptureService.getCapturedAddress().flatMap {
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           updateRegistration(updateBusinessAddress(capturedAddress)).map { _ =>
             Redirect(routes.AmendRegistrationController.displayPage())

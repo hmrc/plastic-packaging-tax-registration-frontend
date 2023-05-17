@@ -46,7 +46,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
          isFirstMember = isFirstMember,
          memberId = Some(groupMember.id),
          routes.OrganisationDetailsTypeController.submitNewMember()
-    )(journeyRequest, messages)
+    )(registrationJourneyRequest, messages)
 
   "Confirm Organisation Type View" should {
 

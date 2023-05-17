@@ -26,11 +26,7 @@ import connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import controllers.actions.{
-  AuthActioning,
-  FormAction,
-  SaveAndContinue
-}
+
 import controllers.organisation.{
   routes => organisationRoutes
 }
@@ -58,8 +54,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerNameControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val partnershipGrsConnector: PartnershipGrsConnector,
@@ -76,7 +71,7 @@ abstract class PartnerNameControllerBase(
     backCall: Call,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
         renderPageFor(partner, backCall, submitCall)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -88,7 +83,7 @@ abstract class PartnerNameControllerBase(
     submitCall: Call,
     dropoutCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       getPartner(partnerId).map { partner =>
         def updateAction(partnerName: PartnerName): Future[Registration] =
           partnerId match {
@@ -131,27 +126,22 @@ abstract class PartnerNameControllerBase(
             Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
           partnerName =>
             updateAction(partnerName).flatMap { _ =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  // Select GRS journey type based on selected partner type
-                  partner.partnerType match {
-                    case SCOTTISH_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
-                                                grsCallbackUrl(existingPartnerId)
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case GENERAL_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
-                                                grsCallbackUrl(existingPartnerId)
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case _ =>
-                      Future(
-                        Redirect(
-                          organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                        )
-                      )
-                  }
+              // Select GRS journey type based on selected partner type
+              partner.partnerType match {
+                case SCOTTISH_PARTNERSHIP =>
+                  getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
+                case GENERAL_PARTNERSHIP =>
+                  getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                 case _ =>
-                  Future.successful(Redirect(dropoutCall))
+                  Future(
+                    Redirect(
+                      organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
+                    )
+                  )
               }
             }
         )

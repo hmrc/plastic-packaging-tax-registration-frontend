@@ -17,19 +17,18 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.group.MemberName
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.group.MemberName
-import models.registration.NewRegistrationUpdateService
-import views.html.partner.partner_member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_member_name_page
 
 class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -41,8 +40,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   )
 
   private val controller =
-    new PartnerContactNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
+    new PartnerContactNameController(journeyAction = spyJourneyAction,
                                      registrationUpdateService =
                                        mockNewRegistrationUpdater,
                                      mcc = mcc,
@@ -81,8 +79,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -90,8 +88,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "displaying an existing partner to edit their contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
@@ -101,12 +99,12 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "update inflight registration" when {
       "user submits a complete contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("John", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -123,12 +121,12 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "nominated partner submits a contact name and is prompted for job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("John", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -138,12 +136,12 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits an amendment to an existing partners contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(MemberName("Jane", "Smith")))
+          postRequestEncoded(MemberName("Jane", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -157,37 +155,35 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
+            postRequestEncoded(MemberName("John", ""))
           )
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters a long name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("abced" * 40, "Smith"))
         )
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
-                               saveAndContinueFormAction
-            )
+            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -196,44 +192,37 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user tries to display an non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        intercept[RuntimeException](status(result))
+
+        intercept[RuntimeException](status(
+          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        ))
       }
 
       "user submits an amendment to a non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(MemberName("Jane", "Smith"), saveAndContinueFormAction)
-        )
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitExistingPartner("not-an-existing-partners-id")(
+            postRequestEncoded(MemberName("Jane", "Smith"))
+          )
+        ))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
-
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
+        ))
       }
     }
   }

@@ -31,7 +31,7 @@ class OrganisationListViewA11ySpec extends BaseViewSpec {
     form: Form[Boolean] = AddOrganisationForm.form(),
     members: Seq[GroupMember] = Seq(groupMember, groupMember, groupMember)
   ): String =
-    page(form, "ACME Inc", members)(journeyRequest, messages).toString()
+    page(form, "ACME Inc", members)(registrationJourneyRequest, messages).toString()
 
   "OrganisationList View" should {
 

@@ -16,24 +16,22 @@
 
 package controllers.contact
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.contact.FullName
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
-import controllers.{routes => commonRoutes}
-import forms.contact.FullName
-import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
-import views.html.contact.full_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.full_name_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsFullNameController @Inject() (
-                                                   authenticate: NotEnrolledAuthAction,
                                                    journeyAction: JourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    mcc: MessagesControllerComponents,
@@ -42,7 +40,7 @@ class ContactDetailsFullNameController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.primaryContactDetails.name match {
         case Some(data) =>
           Ok(buildPage(FullName.form().fill(FullName(data))))
@@ -52,7 +50,7 @@ class ContactDetailsFullNameController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       FullName.form()
         .bindFromRequest()
         .fold(
@@ -62,12 +60,7 @@ class ContactDetailsFullNameController @Inject() (
             ),
           fullName =>
             updateRegistration(fullName).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.ContactDetailsJobTitleController.displayPage())
-                  case _ => Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_) => Redirect(routes.ContactDetailsJobTitleController.displayPage())
               case Left(error) => throw error
             }
         )

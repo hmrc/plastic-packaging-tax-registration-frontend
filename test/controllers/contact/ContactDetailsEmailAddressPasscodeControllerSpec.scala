@@ -50,8 +50,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
   private val controller =
-    new ContactDetailsEmailAddressPasscodeController(authenticate = mockAuthAction,
-                                                     journeyAction = mockJourneyAction,
+    new ContactDetailsEmailAddressPasscodeController(journeyAction = spyJourneyAction,
                                                      emailVerificationService =
                                                        mockEmailVerificationService,
                                                      registrationConnector =
@@ -93,15 +92,16 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+        spyJourneyAction.setReg(aRegistration())
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -109,8 +109,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     }
 
     "display page for group member" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration(
+
+      spyJourneyAction.setReg(aRegistration(
         withGroupDetail(Some(groupDetailsWithMembers))
       ))
       await(controller.displayPage()(getRequest()))
@@ -121,8 +121,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     }
 
     "display page for single member" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration())
+
+      spyJourneyAction.setReg(aRegistration())
       await(controller.displayPage()(getRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
@@ -130,93 +130,74 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
     }
 
-    forAll(Seq(continueFormAction, unKnownFormAction)) { formAction =>
-      "return 200 (OK) for " + formAction._1 when {
+      "return 200 (OK)" when {
         "user submits passcode returns complete" in {
           val email = "test2352356523332453@test.com"
           val reg =
             aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some(email))))
           reg.metaData.emailVerified(email) mustBe false
 
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(COMPLETE)
           val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
           status(result) mustBe SEE_OTHER
-          formAction._1 match {
-            case "Continue" =>
-              redirectLocation(result) mustBe Some(
-                contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
-              )
-              modifiedRegistration.metaData.emailVerified(email) mustBe true
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          redirectLocation(result) mustBe Some(
+            contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
+          )
+          modifiedRegistration.metaData.emailVerified(email) mustBe true
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 400 bad request " + formAction._1 when {
+      "return 400 bad request" when {
         "user submits passcode returns incorrect passcode" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(INCORRECT_PASSCODE)
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe BAD_REQUEST
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          status(result) mustBe BAD_REQUEST
+
           reset(mockRegistrationConnector)
         }
 
         "user submits passcode returns too many attempts" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
 
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe SEE_OTHER
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          status(result) mustBe SEE_OTHER
+
           reset(mockRegistrationConnector)
         }
 
         "user submits passcode returns journey not found" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(JOURNEY_NOT_FOUND)
           val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe BAD_REQUEST
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
+
+          status(result) mustBe BAD_REQUEST
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "throw Exception when cache fails to return email " + formAction._1 when {
+      "throw Exception when cache fails to return email " when {
         "user submits passcode" in {
           val reg = aRegistration(
             withPrimaryContactDetails(primaryContactDetails =
@@ -237,42 +218,30 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
               )
             )
           )
-          authorizedUser()
-          mockRegistrationFind(reg)
-          mockRegistrationUpdate()
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
-          formAction._1 match {
-            case "Continue" =>
-              intercept[RegistrationException](status(result))
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          spyJourneyAction.setReg(reg)
+          mockRegistrationUpdate()
+
+          intercept[RegistrationException](status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))))
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "return error when verifyPasscode throws error " + formAction._1 when {
+      "return error when verifyPasscode throws error " when {
         "user submits passcode" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscodeWithException(
             DownstreamServiceError("Error", RegistrationException("Error"))
           )
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
-          formAction._1 match {
-            case "Continue" =>
-              intercept[DownstreamServiceError](status(result))
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
 
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
+          ))
           reset(mockRegistrationConnector)
         }
       }
@@ -281,7 +250,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid passcode" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequest(Json.toJson(EmailAddressPasscode(""))))
 
@@ -289,15 +258,6 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "return prepopulated form" when {
 
@@ -314,8 +274,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(
             withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))
           )
@@ -325,6 +285,6 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
         pageForm.get.value mustBe "DNCLRK"
       }
-    }
+
   }
 }

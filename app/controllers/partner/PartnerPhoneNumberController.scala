@@ -17,11 +17,11 @@
 package controllers.partner
 
 import play.api.mvc._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import views.html.partner.partner_phone_number_page
 
 import javax.inject.{Inject, Singleton}
@@ -29,14 +29,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerPhoneNumberController @Inject() (
-                                               authenticate: NotEnrolledAuthAction,
                                                journeyAction: JourneyAction,
                                                mcc: MessagesControllerComponents,
                                                page: partner_phone_number_page,
                                                registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerPhoneNumberControllerBase(authenticate = authenticate,
-                                             journeyAction = journeyAction,
+    extends PartnerPhoneNumberControllerBase(journeyAction = journeyAction.register,
                                              mcc = mcc,
                                              page = page,
                                              registrationUpdater = registrationUpdateService
@@ -58,17 +56,14 @@ class PartnerPhoneNumberController @Inject() (
     doSubmit(None,
              partnerRoutes.PartnerContactNameController.displayNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
-             partnerRoutes.PartnerContactAddressController.captureNewPartner(),
-             commonRoutes.TaskListController.displayPage(),
-
+             partnerRoutes.PartnerContactAddressController.captureNewPartner()
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     doSubmit(Some(partnerId),
              routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
              routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-             routes.PartnerContactAddressController.captureExistingPartner(partnerId),
-             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+             routes.PartnerContactAddressController.captureExistingPartner(partnerId)
     )
 
 }

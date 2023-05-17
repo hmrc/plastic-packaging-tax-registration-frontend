@@ -38,8 +38,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsFullNameController(authenticate = mockAuthAction,
-                                         mockJourneyAction,
+    new ContactDetailsFullNameController(journeyAction = spyJourneyAction,
                                          mockRegistrationConnector,
                                          mcc = mcc,
                                          page = page
@@ -58,17 +57,9 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   "Primary Contact Details Full Name Controller" should {
 
     "return 200" when {
-
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-      }
-
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(
             withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))
           )
@@ -79,106 +70,94 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits or saves the contact full name" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+    "return 303 (OK) " when {
+      "user submits or saves the contact full name" in {
 
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName"), formAction))
+        spyJourneyAction.setReg(aRegistration())
+        mockRegistrationUpdate()
 
-          status(result) mustBe SEE_OTHER
+        val result =
+          controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName")))
 
-          modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
+        status(result) mustBe SEE_OTHER
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsJobTitleController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+        modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
+
+
+        redirectLocation(result) mustBe Some(
+          routes.ContactDetailsJobTitleController.displayPage().url
+        )
+
+      }
+    }
+
+    "return 400 (BAD_REQUEST)" when {
+      "user does not enter name" in {
+
+
+        val result = controller.submit()(postRequestEncoded(FullName("")))
+
+        status(result) mustBe BAD_REQUEST
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
-        "user does not enter name" in {
+      "user enters a long name" in {
 
-          authorizedUser()
-          val result = controller.submit()(postRequestEncoded(FullName(""), formAction))
+        val result = controller.submit()(postRequestEncoded(FullName("abced" * 40)))
 
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters a long name" in {
-          authorizedUser()
-          val result = controller.submit()(postRequestEncoded(FullName("abced" * 40), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters non-alphabetic characters" in {
-          authorizedUser()
-          val result =
-            controller.submit()(
-              postRequestEncoded(FullName("FirstNam807980234£$ LastName"), formAction)
-            )
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters non-alphabetic no digits" in {
-          authorizedUser()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("()/,& LastName"), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters accented characters" in {
-          authorizedUser()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie"), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
+        status(result) mustBe BAD_REQUEST
       }
 
-      "return an error for " + formAction._1 when {
+      "user enters non-alphabetic characters" in {
 
-        "user is not authorised" in {
-          unAuthorizedUser()
-          val result = controller.displayPage()(getRequest())
+        val result =
+          controller.submit()(
+            postRequestEncoded(FullName("FirstNam807980234£$ LastName"))
+          )
 
-          intercept[RuntimeException](status(result))
-        }
+        status(result) mustBe BAD_REQUEST
+      }
 
-        "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationUpdateFailure()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
+      "user enters non-alphabetic no digits" in {
 
-          intercept[DownstreamServiceError](status(result))
-        }
+        val result =
+          controller.submit()(postRequestEncoded(FullName("()/,& LastName")))
 
-        "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationException()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
+        status(result) mustBe BAD_REQUEST
+      }
 
-          intercept[RuntimeException](status(result))
-        }
+      "user enters accented characters" in {
+
+        val result =
+          controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie")))
+
+        status(result) mustBe BAD_REQUEST
+      }
+    }
+
+    "return an error" when {
+
+      "user submits form and the registration update fails" in {
+
+        mockRegistrationUpdateFailure()
+
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+        ))
+      }
+
+      "user submits form and a registration update runtime exception occurs" in {
+
+        mockRegistrationException()
+
+        intercept[RuntimeException](status(
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+        ))
       }
     }
 
     "display page for a group organisation" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(
           withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
           withGroupDetail(Some(groupDetailsWithMembers))

@@ -40,7 +40,7 @@ class ManageGroupMembersPageA11ySpec extends BaseViewSpec {
   )
 
   private def createView(): String =
-    page(registration)(journeyRequest, messages).toString()
+    page(registration)(registrationJourneyRequest, messages).toString()
 
   val view = createView()
 

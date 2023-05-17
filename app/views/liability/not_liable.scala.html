@@ -15,7 +15,7 @@
  *@
 
 @import views.viewmodels.Title
-@import models.request.AuthenticatedRequest
+@import models.request.{AuthenticatedRequest, JourneyRequest}
 @import views.html.main_template
 @import config.AppConfig
 
@@ -36,7 +36,7 @@
 )
 @()(implicit request: Request[_], messages: Messages)
 
-@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 
 @feedbackUrl = @{
     if (isAuthenticated) {

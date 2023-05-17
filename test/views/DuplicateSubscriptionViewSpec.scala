@@ -24,12 +24,12 @@ import views.html.duplicate_subscription_page
 
 class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
-  override val appConfig: AppConfig = inject[AppConfig]
+  val appConfig: AppConfig = inject[AppConfig]
 
   private val page: duplicate_subscription_page =
     inject[duplicate_subscription_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private def createView(): Html = page()(registrationJourneyRequest, messages)
 
   "Duplicate Subscription Page" should {
 
@@ -51,8 +51,8 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(journeyRequest, messages)
-    page.render(journeyRequest, messages)
+    page.f()(registrationJourneyRequest, messages)
+    page.render(registrationJourneyRequest, messages)
   }
 
 }

@@ -17,11 +17,11 @@
 package controllers.liability
 
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.Date
 import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.{Cacheable, NewLiability, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,7 +32,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExpectToExceedThresholdWeightController @Inject() (
-                                                          authenticate: NotEnrolledAuthAction,
                                                           journeyAction: JourneyAction,
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
@@ -42,7 +41,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.liabilityDetails.expectToExceedThresholdWeight match {
         case Some(yesNo) => Ok(page(form().fill(yesNo)))
         case _ => Ok(page(form()))
@@ -50,7 +49,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form()
         .bindFromRequest()
         .fold(formWithErrors =>

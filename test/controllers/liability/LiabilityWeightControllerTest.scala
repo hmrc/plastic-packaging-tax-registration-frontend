@@ -36,8 +36,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new LiabilityWeightController(authenticate = mockAuthAction,
-                                  mockJourneyAction,
+    new LiabilityWeightController(journeyAction = spyJourneyAction,
                                   mockRegistrationConnector,
                                   mcc = mcc,
                                   page = page
@@ -58,15 +57,15 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -75,8 +74,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
     "update registration and redirect as expected" when {
       "user enters projected 12m weight" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result = controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000))))
@@ -93,8 +92,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
     "redisplay page" when {
       "does not provide projected 12m weight" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result = controller.submit()(postRequestEncoded(LiabilityWeight(None)))
@@ -102,7 +101,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
       }
       "user provides an out of range projected 12m weight" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(100000000000L)))))
 
@@ -113,27 +112,22 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
   "return an error" when {
 
-    "user is not authorised" in {
-      unAuthorizedUser()
-      val result = controller.displayPage()(getRequest())
-
-      intercept[RuntimeException](status(result))
-    }
-
     "user submits form and the registration update fails" in {
-      authorizedUser()
-      mockRegistrationUpdateFailure()
-      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-      intercept[DownstreamServiceError](status(result))
+      mockRegistrationUpdateFailure()
+
+      intercept[DownstreamServiceError](status(
+        controller.submit()(postRequestEncoded(LiabilityWeight(Some(1000))))
+      ))
     }
 
     "user submits form and a registration update runtime exception occurs" in {
-      authorizedUser()
-      mockRegistrationException()
-      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-      intercept[RuntimeException](status(result))
+      mockRegistrationException()
+
+      intercept[RuntimeException](status(
+        controller.submit()(postRequestEncoded(LiabilityWeight(Some(1000))))
+      ))
     }
   }
 }

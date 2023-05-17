@@ -52,16 +52,16 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     (organisationType.answer) match {
       case Some(OrgType.UK_COMPANY) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          .map(journeyStartUrl => SeeOther(journeyStartUrl))
       case Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          .map(journeyStartUrl => SeeOther(journeyStartUrl))
       case Some(OrgType.SOLE_TRADER) =>
         getSoleTraderRedirectUrl(memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          .map(journeyStartUrl => SeeOther(journeyStartUrl))
       case Some(OrgType.REGISTERED_SOCIETY) =>
         getRegisteredSocietyRedirectUrl(memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          .map(journeyStartUrl => SeeOther(journeyStartUrl))
       case Some(OrgType.PARTNERSHIP) =>
         getPartnershipRedirectUrl(memberId, businessVerificationCheck)
       case _ =>
@@ -82,7 +82,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
           getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                          businessVerificationCheck,
                          memberId
-          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          ).map(journeyStartUrl => SeeOther(journeyStartUrl))
         else
           Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
   }

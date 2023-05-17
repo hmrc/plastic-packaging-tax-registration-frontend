@@ -20,15 +20,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.JourneyAction
+import controllers.actions.auth.RegistrationAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.contact.confirm_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -37,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-                                                         authenticate: NotEnrolledAuthAction,
                                                          journeyAction: JourneyAction,
                                                          override val registrationConnector: RegistrationConnector,
                                                          mcc: MessagesControllerComponents,
@@ -46,7 +43,7 @@ class ContactDetailsConfirmAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       val businessRegisteredAddress = request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
         throw new IllegalStateException("Registered business address must be present")
       )
@@ -66,7 +63,7 @@ class ContactDetailsConfirmAddressController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.incorpJourneyId match {
         case Some(_) =>
           ConfirmAddress.form()
@@ -87,13 +84,9 @@ class ContactDetailsConfirmAddressController @Inject() (
                   request.registration.organisationDetails.businessRegisteredAddress
                 ).map {
                   case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        if (confirmAddress.useRegisteredAddress.getOrElse(false))
-                          Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-                        else Redirect(routes.ContactDetailsAddressController.displayPage())
-                      case _ => Redirect(commonRoutes.TaskListController.displayPage())
-                    }
+                    if (confirmAddress.useRegisteredAddress.getOrElse(false))
+                      Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                    else Redirect(routes.ContactDetailsAddressController.displayPage())
                   case Left(error) => throw error
                 }
             )

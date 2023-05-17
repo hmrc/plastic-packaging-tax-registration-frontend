@@ -36,7 +36,7 @@ class PartnerTypeA11ySpec extends BaseViewSpec {
   )
 
   val customRequest: JourneyRequest[AnyContent] =
-    JourneyRequest(authenticatedRequest = authenticatedRequest, registration = partnershipRegistrationWithInflightPartner, pptReference = None)
+    JourneyRequest(authenticatedRequest = registrationRequest, registration = partnershipRegistrationWithInflightPartner)
 
 
   private def render(form: Form[PartnerType] = PartnerType.form(PartnershipType), partnerId: Option[String]) = page(

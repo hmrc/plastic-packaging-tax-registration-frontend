@@ -26,7 +26,7 @@ class ErrorPageSpec extends UnitViewSpec with Matchers {
   private val page = inject[error_page]
 
   private def createView(): Document =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "Error page" should {
 

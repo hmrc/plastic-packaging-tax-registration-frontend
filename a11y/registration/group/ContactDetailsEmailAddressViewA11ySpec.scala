@@ -31,7 +31,7 @@ class ContactDetailsEmailAddressViewA11ySpec extends BaseViewSpec {
   private val contactName = Some("Test")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
+    page(form, contactName, updateLink)(registrationJourneyRequest, messages).toString()
 
   "Email Address View" should {
 

@@ -32,7 +32,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Org),
     isGroup: Boolean = false
   ): Document =
-    page(form, isGroup)(journeyRequest, messages)
+    page(form, isGroup)(registrationJourneyRequest, messages)
 
   "Confirm Organisation Type View" should {
 

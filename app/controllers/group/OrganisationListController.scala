@@ -16,25 +16,20 @@
 
 package controllers.group
 
-import javax.inject.{Inject, Singleton}
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
+import forms.group.AddOrganisationForm.form
+import models.registration.Cacheable
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.RegistrationConnector
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import forms.group.AddOrganisationForm.form
-import models.registration.Cacheable
-import models.request.JourneyAction
-import views.html.group.organisation_list
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.organisation_list
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class OrganisationListController @Inject() (
-                                             authenticate: NotEnrolledAuthAction,
                                              journeyAction: JourneyAction,
                                              override val registrationConnector: RegistrationConnector,
                                              mcc: MessagesControllerComponents,
@@ -42,7 +37,7 @@ class OrganisationListController @Inject() (
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.groupDetail.fold(
         Redirect(controllers.routes.TaskListController.displayPage())
       )(
@@ -63,7 +58,7 @@ class OrganisationListController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       form().bindFromRequest().fold(
         (formWithErrors: Form[Boolean]) =>
           BadRequest(
@@ -73,13 +68,10 @@ class OrganisationListController @Inject() (
             )
           ),
         addOrganisation =>
-          FormAction.bindFromRequest match {
-            case SaveAndContinue if addOrganisation =>
-              Redirect(
-                controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-              )
-            case _ => Redirect(controllers.routes.TaskListController.displayPage())
-          }
+          if (addOrganisation)
+            Redirect(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember())
+          else
+            Redirect(controllers.routes.TaskListController.displayPage())
       )
 
     }

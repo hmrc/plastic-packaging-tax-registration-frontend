@@ -16,7 +16,9 @@
 
 package repositories
 
-import base.PptTestData
+import config.AppConfig
+import models.deregistration.{DeregistrationDetails, DeregistrationReason}
+import models.request.AuthenticatedRequest
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
@@ -25,15 +27,11 @@ import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import play.api.mvc.AnyContent
+import play.api.test.DefaultAwaitTimeout
+import spec.PptTestData
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
-import config.AppConfig
-import models.deregistration.{
-  DeregistrationDetails,
-  DeregistrationReason
-}
-import models.request.AuthenticatedRequest
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,9 +39,11 @@ import scala.concurrent.duration.FiniteDuration
 
 class DeregistrationDetailRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MongoSupport {
+    with DefaultAwaitTimeout with MongoSupport with PptTestData {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
+
+  override implicit val authenticatedRequest: AuthenticatedRequest[AnyContent] = registrationRequest
 
   private val appConfig  = mock[AppConfig]
   private val mockConfig = mock[Configuration]
@@ -58,10 +58,7 @@ class DeregistrationDetailRepositorySpec
 
   val deregistrationDetailRepository = new DeregistrationDetailRepositoryImpl(userDataRepository)
 
-  implicit val request: AuthenticatedRequest[Any] =
-    new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> "12345"),
-                             PptTestData.newUser("123")
-    )
+  implicit val authRequest: AuthenticatedRequest[Any] = registrationRequest
 
   private val deregistrationDetail =
     DeregistrationDetails(Some(true), Some(DeregistrationReason.RegisteredIncorrectly))

@@ -31,7 +31,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form(), isGroup: Boolean = false): Document =
-    page(form, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages)
 
   "Phone Number View" should {
 
@@ -53,7 +53,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
       view.select("title").text() must include(
         messages("primaryContactDetails.phoneNumber.title",
-                 journeyRequest.registration.primaryContactDetails.name.getOrElse(
+                 registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
                    messages("primaryContactDetails.fullName.default")
                  )
         )
@@ -89,7 +89,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "output hidden label correctly" in {
       view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
         messages("contactDetails.member.phoneNumber.title",
-                 journeyRequest.registration.primaryContactDetails.name.getOrElse(
+                 registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
                    messages("primaryContactDetails.fullName.default")
                  )
         )
@@ -137,8 +137,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PhoneNumber.form(), updateLink, false)(journeyRequest, messages)
-    page.render(PhoneNumber.form(), updateLink, false, journeyRequest, messages)
+    page.f(PhoneNumber.form(), updateLink, false)(registrationJourneyRequest, messages)
+    page.render(PhoneNumber.form(), updateLink, false, registrationJourneyRequest, messages)
   }
 
 }

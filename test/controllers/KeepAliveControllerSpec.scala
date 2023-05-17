@@ -16,32 +16,19 @@
 
 package controllers
 
-import base.PptTestData.newUser
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
-import uk.gov.hmrc.auth.core.SessionRecordNotFound
-import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
-import models.request.AuthenticatedRequest
 import repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import java.time.Instant
-import scala.concurrent.Future
-
 class KeepAliveControllerSpec extends ControllerSpec {
   private val mcc                    = stubMessagesControllerComponents()
-  private val mockUserDataRepository = mock[MongoUserDataRepository]
 
   private val controller =
-    new KeepAliveController(authenticate = mockEnrolledAuthAction,
-                            userDataRepository = mockUserDataRepository,
+    new KeepAliveController(journeyAction = spyJourneyAction,
                             mcc = mcc
     )
 
@@ -49,90 +36,9 @@ class KeepAliveControllerSpec extends ControllerSpec {
     super.afterEach()
 
   "Keepalive controller" should {
-
-    "return 200 and keep all documents alive" when {
-
-      "user is authorised and display page method is invoked" in {
-        val registration: (String, JsValue) =
-          "registrationAmendment" -> Json.toJson(aRegistration())
-        val cachedRegistration: CacheItem =
-          CacheItem("sessionId", JsObject.apply(Map(registration)), Instant.now(), Instant.now())
-        when(mockUserDataRepository.findBySessionId(any())).thenReturn(
-          Future.successful(cachedRegistration)
-        )
-        authorizedUser()
-        val result = controller.keepAlive()(
-          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")),
-                                   newUser()
-          )
-        )
-
-        status(result) mustBe OK
-        val cacheItemCaptor: ArgumentCaptor[CacheItem] =
-          ArgumentCaptor.forClass(classOf[CacheItem])
-        verify(mockUserDataRepository).put(any[String])(
-          DataKey(ArgumentMatchers.eq("registrationAmendment")),
-          cacheItemCaptor.capture()
-        )(any())
-        cacheItemCaptor.getValue mustBe Json.toJson(cachedRegistration.data.fields.head._2)
-      }
-    }
-
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.keepAlive()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
-      "no record is found for the sessionId" in {
-        authorizedUser()
-        when(mockUserDataRepository.findBySessionId("123456")).thenReturn(
-          Future.failed(SessionRecordNotFound())
-        )
-        val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser()
-            )
-          )
-        status(result) mustBe OK
-        verify(mockUserDataRepository, never()).put(any[String])(
-          DataKey(ArgumentMatchers.eq("123")),
-          any()
-        )(any())
-      }
-      "no value in the record for the sessionId" in {
-        authorizedUser()
-        val cachedRegistration: CacheItem =
-          CacheItem("sessionId", JsObject.empty, Instant.now(), Instant.now())
-        when(mockUserDataRepository.findBySessionId(any())).thenReturn(
-          Future.successful(cachedRegistration)
-        )
-        val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser()
-            )
-          )
-        status(result) mustBe OK
-        verify(mockUserDataRepository, never()).put(any[String])(
-          DataKey(ArgumentMatchers.eq("123")),
-          any()
-        )(any())
-      }
-      "no value for sessionId" in {
-        authorizedUser()
-        val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")),
-                                     newUser()
-            )
-          )
-        intercept[RuntimeException](status(result))
-      }
+    "keepalive" in {
+      spyJourneyAction.setReg(aRegistration())
+      status(controller.keepAlive()(FakeRequest())) mustBe OK
     }
   }
 

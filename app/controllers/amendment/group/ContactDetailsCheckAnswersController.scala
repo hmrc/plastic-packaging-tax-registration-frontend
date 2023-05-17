@@ -17,9 +17,9 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.amendment.AmendmentController
-import models.request.AmendmentJourneyAction
+import services.AmendRegistrationService
 import views.html.amendment.group.member_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
@@ -27,15 +27,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       authenticate: EnrolledAuthAction,
-                                                       amendmentJourneyAction: AmendmentJourneyAction,
+                                                       journeyAction: JourneyAction,
+                                                       amendRegistrationService: AmendRegistrationService,
                                                        mcc: MessagesControllerComponents,
                                                        page: member_contact_check_answers_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(
         page(
           request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
@@ -46,7 +46,7 @@ class ContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { _ =>
+    journeyAction.amend { _ =>
       Redirect(routes.GroupMembersListController.displayPage())
     }
 

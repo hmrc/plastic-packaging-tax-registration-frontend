@@ -18,6 +18,7 @@ package registration.liability
 
 import config.AppConfig
 import forms.liability.{ExpectToExceedThresholdWeightDate, LiabilityWeight}
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.Form
 import support.BaseViewSpec
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
@@ -26,6 +27,8 @@ import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
 class ExpectToExceedThresholdWeightDateViewA11ySpec extends BaseViewSpec {
+
+  val appConfig = mock[AppConfig]
 
   private val fakeClock = {
     Clock.fixed(Instant.parse("2022-06-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
@@ -36,7 +39,7 @@ class ExpectToExceedThresholdWeightDateViewA11ySpec extends BaseViewSpec {
   private val form = formProvider()(messages)
 
   private def render(form: Form[LocalDate] = form) : String =
-    page(form)(journeyRequest, messages).toString()
+    page(form)(registrationJourneyRequest, messages).toString()
 
   "view" should {
     "pass accessibility checks without error" in {

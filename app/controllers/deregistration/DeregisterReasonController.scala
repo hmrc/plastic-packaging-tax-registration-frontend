@@ -19,7 +19,7 @@ package controllers.deregistration
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.auth.AmendAuthAction
 import forms.deregistration.DeregisterReasonForm
 import repositories.DeregistrationDetailRepository
 import views.html.deregistration.deregister_reason_page
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterReasonController @Inject() (
-                                             authenticate: EnrolledAuthAction,
+                                             authenticate: AmendAuthAction,
                                              mcc: MessagesControllerComponents,
                                              deregistrationDetailRepository: DeregistrationDetailRepository,
                                              page: deregister_reason_page

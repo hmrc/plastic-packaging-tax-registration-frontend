@@ -16,47 +16,28 @@
 
 package controllers.partner
 
+import config.AppConfig
+import connectors._
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.JourneyAction
+import controllers.organisation.{routes => organisationRoutes}
+import forms.organisation.PartnerType
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import models.genericregistration.PartnershipDetails
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import config.AppConfig
-import connectors._
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import controllers.organisation.{
-  routes => organisationRoutes
-}
-import controllers.{routes => commonRoutes}
-import forms.organisation.PartnerType
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import models.genericregistration.PartnershipDetails
-import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
 import services.GRSRedirections
-import views.html.organisation.partnership_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.partnership_type
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipTypeController @Inject() (
-                                            authenticate: NotEnrolledAuthAction,
                                             journeyAction: JourneyAction,
                                             val appConfig: AppConfig,
                                             val soleTraderGrsConnector: SoleTraderGrsConnector,
@@ -72,7 +53,7 @@ class PartnershipTypeController @Inject() (
   private val form: Form[PartnerType] = PartnerType.form(PartnerType.FormMode.PartnershipType)
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
           Ok(page(form.fill(PartnerType(partnershipDetails.partnershipType))))
@@ -81,43 +62,39 @@ class PartnershipTypeController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form
         .bindFromRequest()
         .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
               partnerType =>
                 updateRegistration(partnerType).flatMap {
                   case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        partnerType.answer match {
-                          case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
-                            Future(Redirect(routes.PartnershipNameController.displayPage().url))
-                          case LIMITED_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
-                                                      appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case SCOTTISH_LIMITED_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(
-                              appConfig.scottishLimitedPartnershipJourneyUrl,
-                              appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case LIMITED_LIABILITY_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(
-                              appConfig.limitedLiabilityPartnershipJourneyUrl,
-                              appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case _ =>
-                            Future(
-                              Redirect(
-                                organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                              )
-                            )
-                        }
-                      case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+                    partnerType.answer match {
+                      case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
+                        Future(Redirect(routes.PartnershipNameController.displayPage().url))
+                      case LIMITED_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
+                                                  appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                      case SCOTTISH_LIMITED_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(
+                          appConfig.scottishLimitedPartnershipJourneyUrl,
+                          appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                      case LIMITED_LIABILITY_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(
+                          appConfig.limitedLiabilityPartnershipJourneyUrl,
+                          appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                      case _ =>
+                        Future(
+                          Redirect(
+                            organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
+                          )
+                        )
                     }
                   case Left(error) => throw error
                 }

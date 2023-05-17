@@ -17,10 +17,9 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.group.ContactDetailsTelephoneNumberControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import views.html.group.member_phone_number_page
 
 import javax.inject.{Inject, Singleton}
@@ -28,13 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsTelephoneNumberController @Inject() (
-                                                                        authenticate: EnrolledAuthAction,
-                                                                        journeyAction: AmendmentJourneyAction,
+                                                                        journeyAction: JourneyAction,
                                                                         mcc: MessagesControllerComponents,
                                                                         page: member_phone_number_page,
                                                                         registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsTelephoneNumberControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
+    extends ContactDetailsTelephoneNumberControllerBase(journeyAction.amend, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
 

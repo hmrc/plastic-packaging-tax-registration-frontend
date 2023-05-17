@@ -23,15 +23,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors._
 import connectors.grs.PartnershipGrsConnector
-import controllers.actions.NotEnrolledAuthAction
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import controllers.actions.JourneyAction
+import controllers.actions.auth.RegistrationAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import forms.organisation.PartnershipName
 import models.genericregistration.PartnershipGrsCreateRequest
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.organisation.partnership_name
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -40,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipNameController @Inject() (
-                                            authenticate: NotEnrolledAuthAction,
                                             journeyAction: JourneyAction,
                                             appConfig: AppConfig,
                                             partnershipGrsConnector: PartnershipGrsConnector,
@@ -51,7 +49,7 @@ class PartnershipNameController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
           partnershipDetails.partnershipName match {
@@ -64,7 +62,7 @@ class PartnershipNameController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       PartnershipName.form()
         .bindFromRequest()
         .fold((formWithErrors: Form[PartnershipName]) => Future(BadRequest(page(formWithErrors))),

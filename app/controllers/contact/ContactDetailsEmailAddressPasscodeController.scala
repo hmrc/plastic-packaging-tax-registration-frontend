@@ -16,38 +16,25 @@
 
 package controllers.contact
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.contact.EmailAddressPasscode
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, TOO_MANY_ATTEMPTS}
+import models.emailverification.{EmailStatus, EmailVerificationJourneyStatus}
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  Continue => ContinueAction
-}
-import controllers.{routes => commonRoutes}
-import forms.contact.EmailAddressPasscode
-import models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  TOO_MANY_ATTEMPTS
-}
-import models.emailverification.{
-  EmailStatus,
-  EmailVerificationJourneyStatus
-}
-import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
 import services.EmailVerificationService
-import views.html.contact.email_address_passcode_page
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.email_address_passcode_page
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
-                                                               authenticate: NotEnrolledAuthAction,
                                                                journeyAction: JourneyAction,
                                                                mcc: MessagesControllerComponents,
                                                                emailVerificationService: EmailVerificationService,
@@ -57,7 +44,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(
         buildEmailPasscodePage(EmailAddressPasscode.form(),
                                request.registration.primaryContactDetails.email
@@ -66,22 +53,16 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       EmailAddressPasscode.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddressPasscode]) =>
             Future.successful(BadRequest(buildEmailPasscodePage(formWithErrors, None))),
           emailAddressPasscode =>
-            FormAction.bindFromRequest match {
-              case ContinueAction =>
-                request.registration.primaryContactDetails.email match {
-                  case Some(email) => continue(emailAddressPasscode.value, email)
-                  case None        => throw RegistrationException("Failed to get email from the cache")
-                }
-
-              case _ =>
-                Future(Redirect(commonRoutes.TaskListController.displayPage()))
+            request.registration.primaryContactDetails.email match {
+              case Some(email) => continue(emailAddressPasscode.value, email)
+              case None        => throw RegistrationException("Failed to get email from the cache")
             }
         )
     }

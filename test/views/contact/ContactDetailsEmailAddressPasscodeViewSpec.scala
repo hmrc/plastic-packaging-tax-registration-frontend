@@ -37,7 +37,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
          Some(emailAddress),
          updateCall,
          Some("primaryContactDetails.sectionHeader")
-    )(journeyRequest, messages)
+    )(registrationJourneyRequest, messages)
 
   "Email Address Passcode View" should {
 

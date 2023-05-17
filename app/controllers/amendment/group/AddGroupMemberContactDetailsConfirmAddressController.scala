@@ -17,10 +17,9 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.group.ContactDetailsConfirmAddressControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import services.AddressCaptureService
 
 import javax.inject.{Inject, Singleton}
@@ -28,13 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
-                                                                       authenticate: EnrolledAuthAction,
-                                                                       journeyAction: AmendmentJourneyAction,
+                                                                       journeyAction: JourneyAction,
                                                                        addressCaptureService: AddressCaptureService,
                                                                        mcc: MessagesControllerComponents,
                                                                        registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(authenticate, journeyAction, addressCaptureService, mcc, registrationUpdater) {
+    extends ContactDetailsConfirmAddressControllerBase(journeyAction.amend, addressCaptureService, mcc, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId))

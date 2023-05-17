@@ -17,11 +17,15 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.{DownstreamServiceError, ServiceError}
+import controllers.{routes => pptRoutes}
+import forms.contact.{Address, EmailAddress}
+import models.emailverification.{EmailStatus, VerificationStatus}
+import models.registration.{MetaData, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,14 +33,9 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.{DownstreamServiceError, ServiceError}
-import controllers.{routes => pptRoutes}
-import forms.contact.{Address, EmailAddress}
-import models.emailverification.{EmailStatus, VerificationStatus}
-import models.registration.{MetaData, PrimaryContactDetails}
 import services.EmailVerificationService
-import views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.email_address_page
 
 import scala.concurrent.Future
 
@@ -48,8 +47,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
   private val controller =
-    new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
-                                             journeyAction = mockJourneyAction,
+    new ContactDetailsEmailAddressController(journeyAction = spyJourneyAction,
                                              emailVerificationService =
                                                mockEmailVerificationService,
                                              registrationConnector = mockRegistrationConnector,
@@ -96,27 +94,26 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)"  when {
         "user submits an email address" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -124,53 +121,46 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             )
           )
 
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsTelephoneNumberController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsTelephoneNumberController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 303 (OK) for no status response" + formAction._1 when {
+      "return 303 (OK) for no status response" when {
         "user submits an email address" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(None)
 
           val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsTelephoneNumberController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsTelephoneNumberController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 303 (OK) for get status throw error" + formAction._1 when {
+      "return 303 (OK) for get status throw error" when {
         "user submits an email address" in {
           val reg = aRegistration()
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatusWithException(
             DownstreamServiceError("Failed to get status", new Exception())
@@ -178,7 +168,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
           intercept[DownstreamServiceError] {
             await(
-              controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+              controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
             )
           }
           reset(mockRegistrationConnector)
@@ -186,15 +176,15 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         }
       }
 
-      "return 303 (OK) for not verified email address " + formAction._1 when {
+      "return 303 (OK) for not verified email address " when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
               MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, false)))
             )
           )
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -205,23 +195,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           mockEmailVerificationCreate("/email-verification/journey/234234234-23423/passcode")
 
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
           status(result) mustBe SEE_OTHER
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsEmailAddressPasscodeController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsEmailAddressPasscodeController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 303 (OK) for locked out " + formAction._1 when {
+      "return 303 (OK) for locked out " when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -230,8 +215,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               )
             )
           )
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -242,41 +227,34 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
 
           val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
           status(result) mustBe SEE_OTHER
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 303 (OK)  " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits an email address with email-verification disabled " in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
           status(result) mustBe SEE_OTHER
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsTelephoneNumberController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsTelephoneNumberController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 303 (OK) for create verification email throw error " + formAction._1 when {
+      "return 303 (OK) for create verification email throw error " when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -285,8 +263,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               )
             )
           )
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -299,25 +277,20 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             DownstreamServiceError("Failed to get status", new Exception())
           )
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              intercept[DownstreamServiceError] {
-                await(
-                  controller.submit()(
-                    postRequestEncoded(EmailAddress("test2@test.com"), formAction)
-                  )
+
+            intercept[DownstreamServiceError] {
+              await(
+                controller.submit()(
+                  postRequestEncoded(EmailAddress("test2@test.com"))
                 )
-              }
-            case "SaveAndComeBackLater" =>
-              val result =
-                controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+              )
+            }
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "throw exception when cache registration with no email " + formAction._1 when {
+      "throw exception when cache registration with no email " when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -343,8 +316,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               )
             )
           )
-          authorizedUser()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -354,25 +327,20 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             )
           )
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              intercept[DownstreamServiceError] {
-                await(
-                  controller.submit()(
-                    postRequestEncoded(EmailAddress("test2@test.com"), formAction)
-                  )
-                )
-              }
-            case "SaveAndComeBackLater" =>
-              val result =
-                controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+
+          intercept[DownstreamServiceError] {
+            await(
+              controller.submit()(
+                postRequestEncoded(EmailAddress("test2@test.com"))
+              )
+            )
           }
+
           reset(mockRegistrationConnector)
         }
       }
 
-      "return to Registration page when no credentials " + formAction._1 when {
+      "return to Registration page when no credentials " when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -381,8 +349,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               )
             )
           )
-          authorizedUserWithNoCredentials()
-          mockRegistrationFind(reg)
+
+          spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
           mockEmailVerificationGetStatus(
             Some(
@@ -393,7 +361,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           intercept[DownstreamServiceError] {
             await(
-              controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
+              controller.submit()(postRequestEncoded(EmailAddress("test2@test.com")))
             )
           }
           reset(mockRegistrationConnector)
@@ -410,8 +378,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(
             withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))
           )
@@ -424,8 +392,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     }
 
     "return page for a group" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(
           withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))),
           withGroupDetail(Some(groupDetailsWithMembers))
@@ -442,7 +410,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid email address" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequest(Json.toJson(EmailAddress("test@"))))
 
@@ -452,31 +420,23 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationUpdateFailure()
-        val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[DownstreamServiceError](status(result))
+        mockRegistrationUpdateFailure()
+
+
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationException()
-        val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[RuntimeException](status(result))
+        mockRegistrationException()
+
+        intercept[RuntimeException](status(controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))))
       }
-    }
+
   }
 
 }

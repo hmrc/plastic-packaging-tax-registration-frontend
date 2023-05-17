@@ -16,6 +16,8 @@
 
 package controllers
 
+import audit.Auditor
+import base.MetricsMocks
 import base.unit.ControllerSpec
 import forms.contact.Address
 import forms.liability.LiabilityWeight
@@ -37,6 +39,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.mvc.Results.Redirect
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.RegistrationGroupFilterService
@@ -47,17 +50,17 @@ import views.html.{duplicate_subscription_page, review_registration_page}
 import java.time.LocalDate
 import java.util.UUID
 
-class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
+class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks with MetricsMocks{
   private val mockReviewRegistrationPage    = mock[review_registration_page]
   private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
   private val mcc                           = stubMessagesControllerComponents()
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
+  val mockAuditor: Auditor = mock[Auditor]
 
   private val controller =
     new ReviewRegistrationController(
-      appConfig = appConfig,
-      authenticate = mockAuthAction,
-      mockJourneyAction,
+      appConfig = config,
+      journeyAction = spyJourneyAction,
       mcc = mcc,
       registrationConnector = mockRegistrationConnector,
       subscriptionsConnector = mockSubscriptionsConnector,
@@ -69,7 +72,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
+
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
@@ -105,18 +108,17 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                                          companyName = "NewPlastics",
                                                          ctutr = Some("1890894"),
                                                          companyAddress = testCompanyAddress,
-                                                         registration =
-                                                           Some(registrationDetails)
+                                                         registration = Some(registrationDetails)
                                     )
                                   ),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         verify(mockReviewRegistrationPage).apply(
@@ -135,7 +137,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             )
           )
         )
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -156,7 +158,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             )
           )
         )
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
@@ -179,7 +181,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
         )
 
-        mockRegistrationFind(registrationWitPartialGroupMembers)
+        spyJourneyAction.setReg(registrationWitPartialGroupMembers)
         when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
         mockRegistrationUpdate()
 
@@ -199,7 +201,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         when(mockRegistrationFilterService.removePartialGroupMembers(any()))
           .thenReturn(sanitisedReg)
-        mockRegistrationFind(registrationRequest)
+        spyJourneyAction.setReg(registrationRequest)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
@@ -217,7 +219,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                 None
               )
             )
-        mockRegistrationFind(unreadyRegistration)
+        spyJourneyAction.setReg(unreadyRegistration)
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
 
@@ -229,7 +231,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val oldLiability = completedLiabilityDetails.copy(
           newLiabilityFinished = None,
           newLiabilityStarted = None)
-        mockRegistrationFind(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
+        spyJourneyAction.setReg(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
@@ -254,7 +256,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         forAll(registrations) { registration =>
           val completedRegistration =
             registration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-          mockRegistrationFind(completedRegistration)
+          spyJourneyAction.setReg(completedRegistration)
           mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
           val result = controller.submit()(postRequest(JsObject.empty))
@@ -277,7 +279,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val oldLiability = completedLiabilityDetails.copy(
           newLiabilityFinished = None,
           newLiabilityStarted = None)
-        mockRegistrationFind(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
+        spyJourneyAction.setReg(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
         mockRegistrationUpdate()
 
         val result = controller.submit()(postRequest(JsObject.empty))
@@ -287,30 +289,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     }
 
     "throw exceptions" when {
-      "display page and get details fails for uk company" in {
-        mockRegistrationFindFailure()
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "display page and get details fails for sole trader" in {
-        mockRegistrationFindFailure()
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "display page and get details fails for partnership" in {
-        mockRegistrationFindFailure()
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
       "submit registration with missing business partner id" in {
         val registrationWithMissingBusinessPartnerId =
           aCompletedUkCompanyRegistration
@@ -327,12 +305,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                 )
               )
             )
-        mockRegistrationFind(registrationWithMissingBusinessPartnerId)
+        spyJourneyAction.setReg(registrationWithMissingBusinessPartnerId)
         mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
-        val result = controller.submit()(postRequest(JsObject.empty))
-
-        intercept[IllegalStateException](status(result))
+        intercept[IllegalStateException](status(controller.submit()(postRequest(JsObject.empty))))
       }
     }
 
@@ -340,7 +316,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       "submission of audit event" in {
 
         val completedRegistration = aCompletedUkCompanyRegistration
-        mockRegistrationFind(completedRegistration)
+        spyJourneyAction.setReg(completedRegistration)
         mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
@@ -363,20 +339,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     "redirect to the error page" when {
 
       "user submits form and the submission fails with an exception" in {
-        mockRegistrationFind(aCompletedUkCompanyRegistration)
+        spyJourneyAction.setReg(aCompletedUkCompanyRegistration)
         mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
         val result =
           controller.submit()(postRequest(JsObject.empty))
@@ -393,7 +359,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "user submits form and the submission fails with an error response" in {
         val registration = aCompletedUkCompanyRegistration
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
             List(
@@ -414,7 +380,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "user submits form and the enrolment initiation fails" in {
         val registration = aCompletedUkCompanyRegistration
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockSubscriptionSubmit(subscriptionCreateWithEnrolmentFailure)
 
         val result = controller.submit()(postRequest(JsObject.empty))
@@ -425,7 +391,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "duplicate subscription detected at the back end" in {
         val registration = aCompletedUkCompanyRegistration
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
             List(

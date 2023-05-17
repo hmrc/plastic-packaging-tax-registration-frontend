@@ -75,8 +75,8 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK")(journeyRequest, messages)
-    page.render(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK", journeyRequest, messages)
+    page.f(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK")(registrationJourneyRequest, messages)
+    page.render(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK", registrationJourneyRequest, messages)
   }
 
 }

@@ -16,25 +16,25 @@
 
 package spec
 
-import base.MockAuthAction
-import base.PptTestData.newUser
+
+import base.PptTestData
 import builders.RegistrationBuilder
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
 import forms.contact.Address
 import forms.contact.Address.UKAddress
-import forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
+import forms.enrolment._
 import forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
 import forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
 import forms.organisation.{OrgType, PartnerTypeEnum}
 import models.SignedInUser
 import models.emailverification.{EmailStatus, VerificationStatus}
-import models.enrolment.PptEnrolment
 import models.genericregistration._
 import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupOrgDetails}
 import models.registration.{GroupDetail, OrganisationDetails, UserEnrolmentDetails}
-import models.request.{AuthenticatedRequest, JourneyRequest}
+import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
+import models.request.{AuthenticatedRequest, IdentityData, JourneyRequest}
 import models.subscriptions.{SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatus, SubscriptionStatusResponse}
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.FakeRequest
 import services.CountryService
 import utils.AddressConversionUtils
 import utils.FakeRequestCSRFSupport._
@@ -42,27 +42,31 @@ import utils.FakeRequestCSRFSupport._
 import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
-trait PptTestData extends RegistrationBuilder with MockAuthAction {
+trait PptTestData extends RegistrationBuilder {
 
   override val addressConversionUtils: AddressConversionUtils = new AddressConversionUtils(new CountryService)
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  val authenticatedRequest: AuthenticatedRequest[AnyContent] =
-    new AuthenticatedRequest(FakeRequest().withCSRFToken, newUser())
+  val identityData = IdentityData(Some("testData-internal-id"), Some(PptTestData.nrsCredentials))
 
-  implicit val journeyRequest: JourneyRequest[AnyContent] =
-    JourneyRequest(authenticatedRequest = authenticatedRequest, registration = aRegistration(), pptReference = None)
+  val registrationRequest: RegistrationRequest[AnyContent] =
+    RegistrationRequest(request, identityData)
 
-  def pptReferenceFromUsersEnrolments(user: SignedInUser): Option[String] =
-    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(_.identifiers.headOption.map(_.value))
+  val pptEnrolledRequest: PPTEnrolledRequest[AnyContent] =
+    PPTEnrolledRequest(FakeRequest(), identityData, "testData-ppt-ref")
 
-  val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
+  implicit val authenticatedRequest: AuthenticatedRequest[AnyContent] = registrationRequest
+
+  implicit val registrationJourneyRequest: JourneyRequest[AnyContent] =
+    JourneyRequest(authenticatedRequest = registrationRequest, registration = aRegistration())
+
+  def pptReferenceFromUsersEnrolments(user: SignedInUser): Option[String] = Some(pptEnrolledRequest.pptReference)
+
+  val amendsJourneyRequest: JourneyRequest[AnyContent] =
     JourneyRequest(
-      authenticatedRequest =
-        new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment),
-      registration = aRegistration(),
-      pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
+      authenticatedRequest = pptEnrolledRequest,
+      registration = aRegistration()
     )
 
   protected val testCompanyName   = "Example Limited"

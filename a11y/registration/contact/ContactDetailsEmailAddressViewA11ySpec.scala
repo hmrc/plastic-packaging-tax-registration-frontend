@@ -28,7 +28,7 @@ class ContactDetailsEmailAddressViewA11ySpec extends BaseViewSpec {
   private val updateLink = Call("GET", "/update")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroup: Boolean = false): String =
-    page(form, updateLink, isGroup)(journeyRequest, messages).toString()
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages).toString()
 
   "Primary Contact Details Email Address View" should {
 

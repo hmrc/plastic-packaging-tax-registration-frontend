@@ -16,23 +16,20 @@
 
 package controllers.amendment.partner
 
-import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec, MockRegistrationAmendmentRepository}
+import models.registration.AmendRegistrationUpdateService
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation}
-import spec.PptTestData
-import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import services.AddressCaptureConfig
+import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 
 import scala.concurrent.Future
 
 class AddPartnerContactDetailsConfirmAddressControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
+    extends ControllerSpec with MockRegistrationAmendmentRepository with AddressCaptureSpec with AmendmentControllerSpec
     with PptTestData {
 
   private val mcc       = stubMessagesControllerComponents()
@@ -40,8 +37,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
   private val controller =
     new AddPartnerContactDetailsConfirmAddressController(
-      authenticate = mockEnrolledAuthAction,
-      journeyAction = mockAmendmentJourneyAction,
+      journeyAction = spyJourneyAction,
       registrationUpdater =
         new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository),
       addressCaptureService = mockAddressCaptureService,
@@ -66,6 +62,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     inMemoryRegistrationAmendmentRepository.reset()
+    spyJourneyAction.setReg(partnershipRegistrationWithInflightPartner)
     reset(mockSubscriptionConnector)
     simulateGetSubscriptionSuccess(partnershipRegistrationWithInflightPartner)
   }
@@ -76,7 +73,6 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
   "Partner Contact Address Controller" should {
     "redirect to address capture" when {
       "capturing address for new partner" in {
-        authorisedUserWithPptSubscription()
 
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(
@@ -91,7 +87,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-        val resp = controller.displayPage()(getRequest())
+        val resp = controller.displayPage()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -99,11 +95,12 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
     "update registration with captured address and redirect to partner check answers" when {
       "address capture callback called" in {
-        authorisedUserWithPptSubscription()
         simulateValidAddressCapture()
         simulateUpdateSubscriptionSuccess()
 
-        val resp = await(controller.addressCaptureCallback()(getRequest()))
+        inMemoryRegistrationAmendmentRepository.put(partnershipRegistrationWithInflightPartner)
+
+        val resp = await(controller.addressCaptureCallback()(FakeRequest()))
 
         inMemoryRegistrationAmendmentRepository.get(sessionId).map { registration =>
           registration.get.inflightPartner.get.contactDetails.get.address mustBe validCapturedAddress
@@ -115,8 +112,5 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
       }
     }
   }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, sessionId)).withCSRFToken
 
 }

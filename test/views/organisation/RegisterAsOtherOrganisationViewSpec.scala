@@ -25,7 +25,7 @@ import views.html.organisation.register_as_other_organisation
 class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
   private val page                   = inject[register_as_other_organisation]
-  private def createView(): Document = page()(journeyRequest, messages)
+  private def createView(): Document = page()(registrationJourneyRequest, messages)
 
   "Register As Other Organisation View" should {
 

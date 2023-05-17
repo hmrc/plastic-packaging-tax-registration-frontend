@@ -19,23 +19,22 @@ package controllers.testOnly
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
-import controllers.actions.PermissiveAuthActionImpl
-import models.request.JourneyAction
+import controllers.actions.auth.BasicAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailPasscodeController @Inject() (
-                                          authenticate: PermissiveAuthActionImpl,
+                                          authenticate: BasicAuthAction,
                                           mcc: MessagesControllerComponents,
-                                          journeyAction: JourneyAction,
                                           emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def testOnlyGetPasscodes(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    authenticate.async { implicit request =>
       emailTestOnlyPasscodeConnector.getTestOnlyPasscode.flatMap {
         case Right(response) => Future.successful(Ok(response))
         case Left(error)     => throw error

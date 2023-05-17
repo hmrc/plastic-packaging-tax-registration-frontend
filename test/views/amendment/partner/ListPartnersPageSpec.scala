@@ -35,7 +35,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(registration: Registration): Html =
-    page(AddOrganisationForm.form(), registration)(journeyRequestWithEnrolledUser, messages)
+    page(AddOrganisationForm.form(), registration)(amendsJourneyRequest, messages)
 
   val view: Html = createView(partnershipRegistration)
 
@@ -101,7 +101,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
       "the form has errors" in {
         val errorForm = form.withError("foo", "site.button.tryAgain")
         val view =
-          page(errorForm, partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
+          page(errorForm, partnershipRegistration)(amendsJourneyRequest, messages)
 
         view.select(".govuk-error-summary__title").size() mustBe 1
       }
@@ -145,8 +145,8 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(AddOrganisationForm.form(), partnershipRegistration)(journeyRequest, messages)
-    page.render(AddOrganisationForm.form(), partnershipRegistration, journeyRequest, messages)
+    page.f(AddOrganisationForm.form(), partnershipRegistration)(registrationJourneyRequest, messages)
+    page.render(AddOrganisationForm.form(), partnershipRegistration, registrationJourneyRequest, messages)
   }
 
 }

@@ -25,10 +25,10 @@ import views.html.unauthorised.unauthorised
 class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
   private val page       = inject[unauthorised]
-  override val appConfig = inject[AppConfig] // Use real AppConfig rather than inherited mock
+  val appConfig = inject[AppConfig]
 
   private def createView(): Document =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "Unauthorised Page view" should {
 

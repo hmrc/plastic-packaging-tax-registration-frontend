@@ -31,7 +31,7 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
   private val countryService = inject[CountryService]
 
   private def createView(): Document =
-    page(groupMember)(journeyRequest, messages)
+    page(groupMember)(registrationJourneyRequest, messages)
 
   "Amendment Contact Details Check Answers View" should {
 
@@ -112,8 +112,8 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(groupMember)(journeyRequest, messages)
-    page.render(groupMember, journeyRequest, messages)
+    page.f(groupMember)(registrationJourneyRequest, messages)
+    page.render(groupMember, registrationJourneyRequest, messages)
   }
 
 }

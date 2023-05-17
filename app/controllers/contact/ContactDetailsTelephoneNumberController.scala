@@ -16,28 +16,22 @@
 
 package controllers.contact
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.contact.PhoneNumber
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import controllers.{routes => commonRoutes}
-import forms.contact.PhoneNumber
-import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
-import views.html.contact.phone_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.phone_number_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsTelephoneNumberController @Inject() (
-                                                          authenticate: NotEnrolledAuthAction,
                                                           journeyAction: JourneyAction,
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
@@ -46,7 +40,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.primaryContactDetails.phoneNumber match {
         case Some(data) =>
           Ok(buildPage(PhoneNumber.form().fill(PhoneNumber(data))))
@@ -56,7 +50,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
@@ -66,13 +60,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
             ),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_) => Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
               case Left(error) => throw error
             }
         )

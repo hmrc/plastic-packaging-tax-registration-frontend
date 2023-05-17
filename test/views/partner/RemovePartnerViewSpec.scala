@@ -34,7 +34,7 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
   private val partnerId   = UUID.randomUUID.toString
 
   private def createView(form: Form[RemovePartner] = RemovePartner.form()): Document =
-    page(form, partnerName, partnerId)(journeyRequest, messages)
+    page(form, partnerName, partnerId)(registrationJourneyRequest, messages)
 
   "Remove Partner View" should {
 
@@ -89,8 +89,8 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(RemovePartner.form(), partnerName, partnerId)(journeyRequest, messages)
-    page.render(RemovePartner.form(), partnerName, partnerId, journeyRequest, messages)
+    page.f(RemovePartner.form(), partnerName, partnerId)(registrationJourneyRequest, messages)
+    page.render(RemovePartner.form(), partnerName, partnerId, registrationJourneyRequest, messages)
   }
 
 }

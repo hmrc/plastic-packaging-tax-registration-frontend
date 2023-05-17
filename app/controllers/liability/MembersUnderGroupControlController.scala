@@ -16,36 +16,31 @@
 
 package controllers.liability
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.liability.MembersUnderGroupControl
+import models.registration.{Cacheable, GroupDetail, Registration}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
-import forms.liability.MembersUnderGroupControl
-import models.registration.{
-  Cacheable,
-  GroupDetail,
-  Registration
-}
-import models.request.{JourneyAction, JourneyRequest}
-import views.html.liability.members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.liability.members_under_group_control_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MembersUnderGroupControlController @Inject() (
-                                                     authenticate: NotEnrolledAuthAction,
-                                                     mcc: MessagesControllerComponents,
                                                      journeyAction: JourneyAction,
+                                                     mcc: MessagesControllerComponents,
                                                      page: members_under_group_control_page,
                                                      override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.groupDetail match {
         case Some(groupDetail) =>
           Ok(
@@ -62,7 +57,7 @@ class MembersUnderGroupControlController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       MembersUnderGroupControl.form()
         .bindFromRequest()
         .fold(

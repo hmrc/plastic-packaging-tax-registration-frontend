@@ -19,12 +19,12 @@ package controllers.amendment.group
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import connectors.RegistrationConnector
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.contact.Address
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import models.registration.Cacheable
-import models.request.{AmendmentJourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.{AddressCaptureConfig, AddressCaptureService}
 import views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -34,8 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddGroupMemberConfirmBusinessAddressController @Inject() (
-                                                   authenticate: EnrolledAuthAction,
-                                                   journeyAction: AmendmentJourneyAction,
+                                                   journeyAction: JourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,
                                                    mcc: MessagesControllerComponents,
@@ -44,7 +43,7 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
 
       val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
 
@@ -87,11 +86,11 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
         pptHintKey = None,
         forceUkAddress = false
       )
-    )(request).map(redirect => Redirect(redirect))
+    )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.amend.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           update { reg =>
             reg.withUpdatedMemberAddress(memberId, capturedAddress.getOrElse(throw new IllegalStateException("No captured address")))

@@ -24,7 +24,7 @@ class NominatedOrganisationAlreadyRegisteredViewA11ySpec extends BaseViewSpec {
   private val page: nominated_organisation_already_registered_page =
     inject[nominated_organisation_already_registered_page]
 
-  private def createView(): String = page()(journeyRequest, messages).toString()
+  private def createView(): String = page()(registrationJourneyRequest, messages).toString()
 
   "Nominated Organisation Already Registered Page" should {
 

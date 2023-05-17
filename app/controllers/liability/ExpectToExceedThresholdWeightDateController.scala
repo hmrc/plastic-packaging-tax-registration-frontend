@@ -18,11 +18,11 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.Date
 import forms.liability.ExpectToExceedThresholdWeightDate
-import models.registration.{Cacheable, NewLiability, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -33,7 +33,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ExpectToExceedThresholdWeightDateController@Inject() (
-                                                             authenticate: NotEnrolledAuthAction,
                                                              journeyAction: JourneyAction,
                                                              override val registrationConnector: RegistrationConnector,
                                                              mcc: MessagesControllerComponents,
@@ -44,7 +43,7 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
   extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight match {
         case Some(date) => Ok(page(form().fill(date.date)))
         case _ => Ok(page(form()))
@@ -52,7 +51,7 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form()
         .bindFromRequest()
         .fold(formWithErrors =>

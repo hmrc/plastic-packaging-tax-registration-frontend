@@ -18,7 +18,7 @@ package controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.AuthActioning
+
 import models.registration.RegistrationUpdater
 import models.request.{
   AuthenticatedRequest,
@@ -33,8 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 abstract class ContactDetailsConfirmAddressControllerBase(
-  authenticate: AuthActioning,
-  journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
@@ -42,7 +41,7 @@ abstract class ContactDetailsConfirmAddressControllerBase(
     extends FrontendController(mcc) with I18nSupport {
 
   protected def doDisplayPage(memberId: String, backLink: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(backLink = backLink.url,
                              successLink = getAddressCaptureCallback(memberId).url,
@@ -52,15 +51,16 @@ abstract class ContactDetailsConfirmAddressControllerBase(
                              pptHintKey = None,
                              forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   protected def getAddressCaptureCallback(memberId: String): Call
 
   protected def onAddressCaptureCallback(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
+
           registrationUpdater.updateRegistration { registration =>
             registration.copy(groupDetail =
               registration.groupDetail.map(

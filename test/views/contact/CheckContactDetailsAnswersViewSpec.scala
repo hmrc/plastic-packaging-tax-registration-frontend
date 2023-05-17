@@ -58,7 +58,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private val addressKey     = 4
 
   private def createView(reg: Registration = registration): Document =
-    page(reg)(journeyRequest, messages)
+    page(reg)(registrationJourneyRequest, messages)
 
   "Check primary contact details answers View" should {
 

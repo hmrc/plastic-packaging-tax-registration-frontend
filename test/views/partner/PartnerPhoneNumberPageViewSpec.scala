@@ -34,7 +34,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
   private val sectionHeading = true
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
-    page(form, updateLink, contactName, sectionHeading)(journeyRequest, messages)
+    page(form, updateLink, contactName, sectionHeading)(registrationJourneyRequest, messages)
 
   "Phone number View" should {
 
@@ -85,8 +85,8 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(PhoneNumber.form(), updateLink, contactName, sectionHeading)(journeyRequest, messages)
-    page.render(PhoneNumber.form(), updateLink, contactName, sectionHeading,journeyRequest, messages)
+    page.f(PhoneNumber.form(), updateLink, contactName, sectionHeading)(registrationJourneyRequest, messages)
+    page.render(PhoneNumber.form(), updateLink, contactName, sectionHeading,registrationJourneyRequest, messages)
   }
 
 }

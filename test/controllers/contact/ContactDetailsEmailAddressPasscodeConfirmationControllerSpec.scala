@@ -35,8 +35,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsEmailAddressPasscodeConfirmationController(authenticate = mockAuthAction,
-                                                                 mockJourneyAction,
+    new ContactDetailsEmailAddressPasscodeConfirmationController(journeyAction = spyJourneyAction,
                                                                  mcc = mcc,
                                                                  page = page
     )
@@ -44,7 +43,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
@@ -58,7 +57,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -67,10 +66,10 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
     "display page with caption" when {
       "is group member" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
 
-        await(controller.displayPage()(getRequest()))
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
+
+        await(controller.displayPage()(FakeRequest()))
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
         verify(page).apply(any(), captor.capture())(any(), any())
@@ -78,10 +77,10 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
       }
 
       "is single registration" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
 
-        await(controller.displayPage()(getRequest()))
+        spyJourneyAction.setReg(aRegistration())
+
+        await(controller.displayPage()(FakeRequest()))
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
         verify(page).apply(any(), captor.capture())(any(), any())
@@ -92,7 +91,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
     "return 303" when {
 
       "when form is submitted" in {
-        authorizedUser()
+
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
@@ -100,20 +99,11 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redirects to phone numbers page" when {
       "user submits answers" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result =
