@@ -54,8 +54,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
-  lazy val returnsSessionCacheUri: String = config.get[String]("mongodb.returns.uri")
-
   lazy val selfBaseUrl: String = config
     .getOptional[String]("platform.frontend.host")
     .getOrElse("http://localhost:8503")

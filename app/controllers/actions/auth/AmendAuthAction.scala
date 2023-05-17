@@ -24,7 +24,6 @@ import models.request.{AuthenticatedRequest, IdentityData}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-import repositories.ReturnsSessionRepository
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, credentials, internalId}
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -41,7 +40,6 @@ trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
 class AmendAuthActionImpl @Inject()(
  override val authConnector: AuthConnector,
  override val parser: BodyParsers.Default,
- returnsSessionRepository: ReturnsSessionRepository,
  appConfig: AppConfig
 )(implicit val executionContext: ExecutionContext) extends AmendAuthAction
   with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
@@ -60,11 +58,10 @@ class AmendAuthActionImpl @Inject()(
       AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))
     ).retrieve(retrievals) {
         case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
-          returnsSessionRepository.getAgentSelectedPPTRef(internalId.getOrElse(throw new IllegalStateException("User has no Internal ID")))
-            .flatMap{
-              case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
-              case None => Future.successful(Redirect(appConfig.pptAccountUrl)) //todo to the returns select page, or home page? thinking
-            }
+          request.session.get("clientPPT") match {
+            case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
+            case None => Future.successful(Redirect(appConfig.pptAccountUrl)) //todo to the returns select page, or home page? thinking
+          }
 
         case credentials ~ internalId ~ allEnrolments ~ _ =>
 
