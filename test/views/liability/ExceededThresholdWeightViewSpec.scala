@@ -133,8 +133,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       verify(mockMessages).apply("liability.exceededThresholdWeight.line1")
       verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
       verify(mockMessages).apply("liability.exceededThresholdWeight.line2")
-      verify(mockMessages).apply("liability.exceededThresholdWeight.line3")
-      verify(paragraphBody, times(5)).apply("some message") // including inset and link-to-guidance
+      verify(paragraphBody, times(4)).apply("some message") // including inset and link-to-guidance
     }
     
     "have link to guidance" in {
