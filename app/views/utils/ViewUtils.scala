@@ -52,27 +52,7 @@ class ViewUtils @Inject() (countryService: CountryService) {
                    )
     )
 
-  def summaryListRowWithValue(key: String, value: Value, call: Option[Call] = None)(implicit
-    messages: Messages
-  ): SummaryListRow =
-    SummaryListRow(key = Key(content = Text(messages(key))),
-                   value = value,
-                   actions = call.flatMap(
-                     c =>
-                       Some(
-                         Actions(items =
-                           Seq(
-                             ActionItem(href = c.url,
-                                        content = Text(messages("site.link.change")),
-                                        visuallyHiddenText = Some(messages(key))
-                             )
-                           )
-                         )
-                       )
-                   )
-    )
-
-  def extractAddress(address: Address) =
+  def extractAddress(address: Address): String =
     Seq(address.addressLine1,
         address.addressLine2.getOrElse(""),
         address.addressLine3.getOrElse(""),
@@ -81,7 +61,7 @@ class ViewUtils @Inject() (countryService: CountryService) {
         countryService.tryLookupCountryName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
-  def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =
+  def showChangeLink(call: Call): Option[Call] =
     Some(call)
 
   def displayOldDate(date: Option[OldDate])(implicit messages: Messages): Option[String] =
