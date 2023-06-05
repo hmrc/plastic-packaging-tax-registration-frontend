@@ -46,7 +46,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
         |urls.businessAccount="http://localhost:9020/business-account"
-        |features.backward-look-date=${LocalDate.now()}
       """.stripMargin
     )
 
@@ -123,34 +122,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'businessAccountUrl' defined" in {
       validAppConfig.businessAccountUrl must be("http://localhost:9020/business-account")
-    }
-
-    "isBackwardLookChangeEnabled" should {
-      "return true when today date is equal to the back look test date" in {
-        validAppConfig.isBackwardLookChangeEnabled mustBe true
-      }
-
-      "return true when today date is greater than the back look test date" in {
-
-        val newConfig = ConfigFactory.parseString(
-          s"""
-             |features.backward-look-date=${LocalDate.now().minusDays(1)}
-             |""".stripMargin)
-
-        val config = appConfig(Configuration(newConfig))
-        config.isBackwardLookChangeEnabled mustBe true
-      }
-
-      "return true when today date is less than the back look test date" in {
-
-        val newConfig = ConfigFactory.parseString(
-          s"""
-             |features.backward-look-date=${LocalDate.now().plusDays(1)}
-             |""".stripMargin)
-
-        val config = appConfig(Configuration(newConfig))
-        config.isBackwardLookChangeEnabled mustBe false
-      }
     }
   }
 }
