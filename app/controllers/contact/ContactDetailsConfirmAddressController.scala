@@ -16,19 +16,17 @@
 
 package controllers.contact
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.JourneyAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.contact.confirm_address
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.confirm_address
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -86,7 +84,7 @@ class ContactDetailsConfirmAddressController @Inject() (
                   case Right(_) =>
                     if (confirmAddress.useRegisteredAddress.getOrElse(false))
                       Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-                    else Redirect(routes.ContactDetailsAddressController.displayPage())
+                    else Redirect(routes.ContactDetailsAddressController.displayPage)
                   case Left(error) => throw error
                 }
             )

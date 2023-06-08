@@ -17,21 +17,20 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.FullName
+import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.{routes => pptRoutes}
-import forms.contact.FullName
-import models.registration.PrimaryContactDetails
-import views.html.contact.full_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.full_name_page
 
 class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   private val page = mock[full_name_page]
@@ -64,7 +63,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
             withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))
           )
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -164,7 +163,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         )
       )
 
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())

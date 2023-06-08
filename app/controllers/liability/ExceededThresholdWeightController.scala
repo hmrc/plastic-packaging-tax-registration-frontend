@@ -40,7 +40,7 @@ class ExceededThresholdWeightController @Inject() (
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
 
       val filledForm = request.registration.liabilityDetails.exceededThresholdWeight  match {
@@ -51,7 +51,7 @@ class ExceededThresholdWeightController @Inject() (
       Ok(page(filledForm))
     }
 
-  def submit(): Action[AnyContent] =
+  def submit: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       form().bindFromRequest().fold(
         errorForm =>

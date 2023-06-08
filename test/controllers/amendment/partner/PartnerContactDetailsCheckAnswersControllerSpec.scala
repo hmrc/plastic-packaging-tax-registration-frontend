@@ -22,12 +22,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 import views.html.amendment.partner.amend_partner_contact_check_answers_page
 
 class PartnerContactDetailsCheckAnswersControllerSpec

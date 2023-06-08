@@ -27,7 +27,7 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[confirm_remove_partner_page]
 
-  private val partner = aLimitedCompanyPartner()
+  private val partner = aLimitedCompanyPartner
 
   private def createView(form: Form[RemovePartner] = RemovePartner.form()): Document =
     page(form, partner)(registrationJourneyRequest, messages)

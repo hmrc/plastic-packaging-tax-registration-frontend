@@ -16,14 +16,12 @@
 
 package controllers.partner
 
-import play.api.mvc._
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
-import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddressPasscode
 import models.genericregistration.Partner
 import models.registration.{NewRegistrationUpdateService, Registration}
+import play.api.mvc._
 import services.EmailVerificationService
 import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 import views.html.partner.partner_email_address_page
@@ -54,7 +52,7 @@ class PartnerEmailAddressController @Inject() (
 
   def displayNewPartner(): Action[AnyContent] =
     doDisplay(None,
-              partnerRoutes.PartnerContactNameController.displayNewPartner(),
+              partnerRoutes.PartnerContactNameController.displayNewPartner,
               partnerRoutes.PartnerEmailAddressController.submitNewPartner()
     )
 
@@ -66,10 +64,10 @@ class PartnerEmailAddressController @Inject() (
 
   def submitNewPartner(): Action[AnyContent] =
     doSubmit(None,
-             partnerRoutes.PartnerContactNameController.displayNewPartner(),
+             partnerRoutes.PartnerContactNameController.displayNewPartner,
              partnerRoutes.PartnerEmailAddressController.submitNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.displayNewPartner(),
-             partnerRoutes.PartnerContactNameController.displayNewPartner(),
+             partnerRoutes.PartnerContactNameController.displayNewPartner,
              partnerRoutes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
     )
 

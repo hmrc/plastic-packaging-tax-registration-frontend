@@ -16,12 +16,10 @@
 
 package controllers.partner
 
-import play.api.mvc._
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
-import controllers.{routes => commonRoutes}
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc._
 import views.html.partner.partner_phone_number_page
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +40,7 @@ class PartnerPhoneNumberController @Inject() (
 
   def displayNewPartner(): Action[AnyContent] =
     doDisplay(None,
-              partnerRoutes.PartnerContactNameController.displayNewPartner(),
+              partnerRoutes.PartnerContactNameController.displayNewPartner,
               partnerRoutes.PartnerPhoneNumberController.submitNewPartner()
     )
 
@@ -54,7 +52,7 @@ class PartnerPhoneNumberController @Inject() (
 
   def submitNewPartner(): Action[AnyContent] =
     doSubmit(None,
-             partnerRoutes.PartnerContactNameController.displayNewPartner(),
+             partnerRoutes.PartnerContactNameController.displayNewPartner,
              partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
              partnerRoutes.PartnerContactAddressController.captureNewPartner()
     )

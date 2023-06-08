@@ -41,7 +41,7 @@ object AddressLookupConfigV2 {
     new AddressLookupConfigV2(options = JourneyOptions(continueUrl = appConfig.selfUrl(continue),
                                                        signOutHref = appConfig.signOutLink,
                                                        serviceHref = appConfig.selfUrl(
-                                                         commonRoutes.StartRegistrationController.startRegistration
+                                                         commonRoutes.StartRegistrationController.startRegistration()
                                                        )
                               ),
                               labels = JourneyLabels(en =

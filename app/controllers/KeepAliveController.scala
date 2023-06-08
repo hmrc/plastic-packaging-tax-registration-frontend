@@ -22,15 +22,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class KeepAliveController @Inject() (
   mcc: MessagesControllerComponents,
   journeyAction: JourneyAction
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
-  def keepAlive(): Action[AnyContent] = journeyAction.amend { implicit request => Ok}
+  def keepAlive(): Action[AnyContent] = journeyAction.amend { Ok }
 
 }

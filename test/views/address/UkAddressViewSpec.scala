@@ -17,11 +17,10 @@
 package views.address
 
 import base.unit.UnitViewSpec
+import forms.address.UkAddressForm
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import play.api.mvc.Call
-import forms.address.UkAddressForm
 import views.html.address.uk_address_page
 
 class UkAddressViewSpec extends UnitViewSpec with Matchers {

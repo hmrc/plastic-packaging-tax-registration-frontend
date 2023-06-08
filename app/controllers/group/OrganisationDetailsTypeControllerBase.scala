@@ -16,27 +16,15 @@
 
 package controllers.group
 
+import config.AppConfig
+import forms.organisation.{ActionEnum, OrgType, OrganisationType}
+import models.registration.{GroupDetail, Registration, RegistrationUpdater}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import config.AppConfig
-
-import forms.organisation.{
-  ActionEnum,
-  OrgType,
-  OrganisationType
-}
-import models.registration.{
-  GroupDetail,
-  Registration,
-  RegistrationUpdater
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
-import views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.organisation_type
 
 import scala.concurrent.{ExecutionContext, Future}
 

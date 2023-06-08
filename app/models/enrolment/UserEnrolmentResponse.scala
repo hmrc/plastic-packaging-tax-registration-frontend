@@ -18,7 +18,7 @@ package models.enrolment
 
 import play.api.libs.json.{Json, OFormat}
 
-trait UserEnrolmentResponse
+sealed trait UserEnrolmentResponse
 
 case class UserEnrolmentSuccessResponse(pptReference: String) extends UserEnrolmentResponse
 

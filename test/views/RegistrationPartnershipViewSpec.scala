@@ -17,18 +17,17 @@
 package views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Element
-import org.scalatest.matchers.must.Matchers
-import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.twirl.api.Html
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.partner.{routes => partnerRoutes}
 import controllers.routes
-import forms.{Date, OldDate}
 import forms.liability.LiabilityWeight
 import forms.organisation.PartnerTypeEnum
+import forms.{Date, OldDate}
 import models.registration.{LiabilityDetails, NewLiability, OrganisationDetails, Registration}
-import play.api.test.FakeRequest
+import org.jsoup.nodes.Element
+import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
+import play.twirl.api.Html
 import views.html.task_list_partnership
 
 import java.time.LocalDate
@@ -353,7 +352,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner())
+                Seq(aLimitedCompanyPartner)
               )
             )
           ),
@@ -448,7 +447,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner(), aSoleTraderPartner())
+                Seq(aLimitedCompanyPartner, aSoleTraderPartner)
               )
             )
           ),
@@ -539,7 +538,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
             withPartnershipDetails(
               Some(
                 scottishPartnershipDetails.copy(partners =
-                  Seq(aLimitedCompanyPartner(), aSoleTraderPartner())
+                  Seq(aLimitedCompanyPartner, aSoleTraderPartner)
                 )
               )
             ),

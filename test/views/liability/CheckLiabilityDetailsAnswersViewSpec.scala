@@ -70,13 +70,13 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
             "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
             "5 March 2022",
             Some(
-              liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage().url
+              liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage.url
             )
           ),
           SummaryRowDetail(
             "liability.checkAnswers.exceededThreshold",
             "No",
-            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage.url)
           ),
           SummaryRowDetail("liability.checkAnswers.startDate",
             "1 April 2022",

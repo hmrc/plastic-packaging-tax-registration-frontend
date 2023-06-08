@@ -16,12 +16,11 @@
 
 package controllers.partner
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext

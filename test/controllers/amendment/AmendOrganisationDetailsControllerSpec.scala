@@ -18,14 +18,13 @@ package controllers.amendment
 
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.verify
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.{AnyContentAsEmpty, Request, Result}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.redirectLocation
 import services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 
 import scala.concurrent.Future
 

@@ -448,11 +448,11 @@ trait PptTestData extends RegistrationBuilder {
         )
       ),
       partners =
-        Seq(aSoleTraderPartner(), aLimitedCompanyPartner(), aPartnershipPartner()),
+        Seq(aSoleTraderPartner, aLimitedCompanyPartner, aPartnershipPartner),
       inflightPartner = None
     )
 
-  protected def aSoleTraderPartner() =
+  protected def aSoleTraderPartner =
     Partner(
       partnerType = PartnerTypeEnum.SOLE_TRADER,
       id = "123",
@@ -494,7 +494,7 @@ trait PptTestData extends RegistrationBuilder {
       )
     )
 
-  protected def aLimitedCompanyPartner() =
+  protected def aLimitedCompanyPartner =
     Partner(
       partnerType = PartnerTypeEnum.UK_COMPANY,
       id = "456",
@@ -535,7 +535,7 @@ trait PptTestData extends RegistrationBuilder {
       )
     )
 
-  protected def aPartnershipPartner() =
+  protected def aPartnershipPartner =
     Partner(
       partnerType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
       partnerPartnershipDetails = Some(

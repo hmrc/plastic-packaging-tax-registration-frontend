@@ -23,12 +23,13 @@ import models.registration.NewLiability
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.MockitoSugar.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.{TaxStartDate, TaxStartDateService}
@@ -80,7 +81,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
           val registration = aRegistration()
           spyJourneyAction.setReg(registration)
 
-          val result: Future[Result] = controller.displayPage()(getRequest())
+          val result: Future[Result] = controller.displayPage()(FakeRequest())
           status(result) shouldEqual Status.OK
 
           verify(mockTaxStartDateService).calculateTaxStartDate(
@@ -97,7 +98,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         given(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage()(FakeRequest()))
 
         verify(page).apply(any())(any(), any())
       }
@@ -109,7 +110,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         verify(page).apply(any())(any(), any())

@@ -18,10 +18,8 @@ package controllers.partner
 
 import com.google.inject.{Inject, Singleton}
 import controllers.actions.JourneyAction
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AddressCaptureService
 
 import scala.concurrent.ExecutionContext

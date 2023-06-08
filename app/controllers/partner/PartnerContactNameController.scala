@@ -39,10 +39,10 @@ class PartnerContactNameController @Inject() (
                                              registrationUpdater = registrationUpdateService
     ) {
 
-  def displayNewPartner(): Action[AnyContent] =
+  def displayNewPartner: Action[AnyContent] =
     doDisplay(None,
               partnerRoutes.PartnerTypeController.displayNewPartner(),
-              partnerRoutes.PartnerContactNameController.submitNewPartner()
+              partnerRoutes.PartnerContactNameController.submitNewPartner
     )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
@@ -51,10 +51,10 @@ class PartnerContactNameController @Inject() (
               partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
     )
 
-  def submitNewPartner(): Action[AnyContent] =
+  def submitNewPartner: Action[AnyContent] =
     doSubmit(None,
              partnerRoutes.PartnerTypeController.displayNewPartner(),
-             partnerRoutes.PartnerContactNameController.submitNewPartner()
+             partnerRoutes.PartnerContactNameController.submitNewPartner
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
@@ -63,7 +63,7 @@ class PartnerContactNameController @Inject() (
              partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
     )
 
-  override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
+  override def onwardCallNewPartner(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.inflightPartner.map { partner =>
       if (request.registration.isNominatedPartnerOrFirstInflightPartner(partner))
         routes.PartnerJobTitleController.displayNewPartner()

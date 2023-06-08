@@ -18,16 +18,14 @@ package controllers.testOnly
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
-import connectors.{
-  DownstreamServiceError,
-  FailedToFetchTestOnlyPasscode
-}
+import connectors.{DownstreamServiceError, FailedToFetchTestOnlyPasscode}
+import play.api.test.FakeRequest
 
 import scala.concurrent.Future
 
@@ -52,7 +50,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
         when(
           mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
         ).thenReturn(Future.successful(Right("passcodes")))
-        val result = controller.testOnlyGetPasscodes()(getRequest())
+        val result = controller.testOnlyGetPasscodes()(FakeRequest())
         status(result) mustBe OK
       }
     }
@@ -74,7 +72,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
           )
         )
 
-        intercept[DownstreamServiceError](status(controller.testOnlyGetPasscodes()(getRequest())))
+        intercept[DownstreamServiceError](status(controller.testOnlyGetPasscodes()(FakeRequest())))
       }
     }
   }

@@ -87,7 +87,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     }
 
     "identify that partner business verification failed " in {
-      val partnerWithVerificationFailed = aSoleTraderPartner().copy(soleTraderDetails =
+      val partnerWithVerificationFailed = aSoleTraderPartner.copy(soleTraderDetails =
         Some(
           soleTraderDetails.copy(registration =
             Some(

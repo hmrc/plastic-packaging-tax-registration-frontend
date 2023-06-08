@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class TaskListController @Inject()(
@@ -37,8 +36,7 @@ class TaskListController @Inject()(
                                     groupPage: task_list_group,
                                     partnershipPage: task_list_partnership,
                                     override val registrationConnector: RegistrationConnector
-)
-  (implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with Cacheable {
+) extends FrontendController(mcc) with I18nSupport with Cacheable {
 
   def displayPage(): Action[AnyContent] = {
     journeyAction.register { implicit request =>

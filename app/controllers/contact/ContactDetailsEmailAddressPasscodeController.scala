@@ -43,7 +43,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
       Ok(
         buildEmailPasscodePage(EmailAddressPasscode.form(),
@@ -52,7 +52,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       )
     }
 
-  def submit(): Action[AnyContent] =
+  def submit: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       EmailAddressPasscode.form()
         .bindFromRequest()
@@ -120,7 +120,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   ) =
     page(form,
          email,
-         routes.ContactDetailsEmailAddressPasscodeController.submit(),
+         routes.ContactDetailsEmailAddressPasscodeController.submit,
          Some(sectionName)
     )
 
@@ -137,7 +137,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   ): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationService.checkVerificationCode(passcode, email, journeyId)
 
-  private def sectionName()(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
+  private def sectionName(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
     if(request.registration.isGroup)
       messages("primaryContactDetails.group.sectionHeader")
     else messages("primaryContactDetails.sectionHeader")

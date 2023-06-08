@@ -18,7 +18,6 @@ package audit
 
 import play.api.libs.json.{Json, OFormat}
 import audit.UserType.UserType
-import forms.organisation.OrgType.OrgType
 
 case class StartRegistrationEvent(userType: UserType, internalId: String) {}
 

@@ -16,16 +16,16 @@
 
 package controllers.deregistration
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.DeregistrationConnector
 import controllers.actions.auth.AmendAuthAction
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.DeregistrationDetailRepository
-import views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.deregistration.deregister_check_your_answers_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeregisterCheckYourAnswersController @Inject() (

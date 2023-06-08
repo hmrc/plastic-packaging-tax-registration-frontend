@@ -18,8 +18,7 @@ package base.unit
 
 import models.request.JourneyRequest
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.{AnyContent, AnyContentAsEmpty}
-import play.api.test.FakeRequest
+import play.api.mvc.AnyContent
 import spec.{PptTestData, ViewMatchers}
 
 abstract class UnitViewSpec

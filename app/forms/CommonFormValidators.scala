@@ -56,9 +56,11 @@ trait CommonFormValidators {
       value.isEmpty || value.chars().allMatch(
         char =>
           Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(
-            _.contains(char)
+            _.contains(char.toChar)
           )
       )
+
+  def hasChar(char: Char, allowedChars: Option[String]): Boolean = allowedChars.exists(_.contains(char))
 
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()

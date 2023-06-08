@@ -21,7 +21,7 @@ import models.subscriptions.EisError.DUPLICATE_SUBSCRIPTION_ERROR_CODES
 
 import java.time.ZonedDateTime
 
-trait SubscriptionCreateOrUpdateResponse
+sealed trait SubscriptionCreateOrUpdateResponse
 
 case class SubscriptionCreateOrUpdateResponseSuccess(
   pptReference: String,

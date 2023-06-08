@@ -49,8 +49,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       """.stripMargin
     )
 
-  private val emptyConfig: Config = ConfigFactory.parseString("")
-
   private def appConfig(conf: Configuration) =
     new AppConfig(conf, servicesConfig(conf))
 

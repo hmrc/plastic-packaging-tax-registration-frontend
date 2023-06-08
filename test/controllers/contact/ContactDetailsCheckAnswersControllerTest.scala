@@ -19,7 +19,7 @@ package controllers.contact
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -57,7 +57,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

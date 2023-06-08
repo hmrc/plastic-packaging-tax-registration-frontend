@@ -18,7 +18,7 @@ package controllers.organisation
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.mockito.MockitoSugar.verify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
@@ -35,6 +35,7 @@ import models.genericregistration.{IncorporationDetails, PartnershipBusinessDeta
 import models.registration.{OrganisationDetails, Registration}
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import models.subscriptions.SubscriptionStatusResponse
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
@@ -181,7 +182,7 @@ class GrsControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(aRegistration(withOrganisationDetails(OrganisationDetails())))
 
         intercept[InternalServerException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(FakeRequest()))
         }
       }
 
@@ -196,7 +197,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(FakeRequest()))
         }
       }
 
@@ -212,7 +213,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(FakeRequest()))
         }
       }
 
@@ -223,7 +224,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(FakeRequest()))
         }
       }
 
@@ -233,7 +234,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
         intercept[RuntimeException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(FakeRequest()))
         }
       }
     }
@@ -245,7 +246,7 @@ class GrsControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(unregisteredLimitedCompany)
         mockRegistrationUpdate()
     
-        val result: Future[Result] = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result: Future[Result] = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         val exception              = intercept[Exception](await(result))
         exception.getMessage must include("some-journey-id")
@@ -267,7 +268,7 @@ class GrsControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(verificationFailedSoleTrader)
         mockRegistrationUpdate()
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.soleTraderVerificationFailure().url)
@@ -282,7 +283,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.duplicateRegistration().url)
@@ -299,7 +300,7 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url)
@@ -314,7 +315,7 @@ class GrsControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registeredLimitedCompany)
         mockRegistrationUpdate()
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).get must include(
@@ -330,7 +331,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(unregisteredLimitedCompany)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
   private def simulateRegisteredSocietyCallback() = {
@@ -339,7 +340,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(registeredRegisteredSociety)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
 
@@ -349,7 +350,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(verificationFailedLimitedCompany)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
   private def simulateSoleTraderCallback(soleTraderDetails: SoleTraderDetails) = {
@@ -358,7 +359,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(unregisteredSoleTrader)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
   private def simulateGeneralPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
@@ -367,7 +368,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(unregisteredGeneralPartnership)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
   private def simulateScottishPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
@@ -376,7 +377,7 @@ class GrsControllerSpec extends ControllerSpec {
     spyJourneyAction.setReg(unregisteredScottishPartnership)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
 
   private def getLastSavedRegistration: Registration = {

@@ -23,7 +23,8 @@ import forms.liability.ExpectToExceedThresholdWeightDate
 import models.registration.{LiabilityDetails, NewLiability, Registration}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -69,7 +70,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         spyJourneyAction.setReg(aRegistration())
         when(mockFormProvider.apply()(any())).thenReturn(form)
 
-        val result = sut.displayPage()()(getRequest())
+        val result = sut.displayPage()()(FakeRequest())
 
         status(result) mustBe OK
     }
@@ -82,7 +83,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       spyJourneyAction.setReg(registration)
       when(mockFormProvider.apply()(any())).thenReturn(form)
 
-      await(sut.displayPage()(getRequest()))
+      await(sut.displayPage()(FakeRequest()))
 
       verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
       verifyNoInteractions(form)
@@ -94,7 +95,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       when(mockFormProvider.apply()(any())).thenReturn(form)
       when(form.fill(any())).thenReturn(form)
 
-      await(sut.displayPage()(getRequest()))
+      await(sut.displayPage()(FakeRequest()))
 
       verify(form).fill(LocalDate.of(2022,3,5))
       verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
@@ -110,7 +111,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        routes.ExceededThresholdWeightController.displayPage().url
+        routes.ExceededThresholdWeightController.displayPage.url
       )
     }
 

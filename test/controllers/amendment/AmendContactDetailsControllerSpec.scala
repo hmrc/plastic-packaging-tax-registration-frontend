@@ -20,7 +20,7 @@ import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import forms.contact._
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks

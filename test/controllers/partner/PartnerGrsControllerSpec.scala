@@ -25,25 +25,12 @@ import uk.gov.hmrc.http.InternalServerException
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => pptRoutes}
 import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  OVERSEAS_COMPANY_NO_UK_BRANCH,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  REGISTERED_SOCIETY,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import forms.organisation.PartnerTypeEnum.{CHARITABLE_INCORPORATED_ORGANISATION, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import models.genericregistration.PartnerPartnershipDetails
 import models.registration.NewRegistrationUpdateService
-import models.subscriptions.SubscriptionStatus.{
-  NOT_SUBSCRIBED,
-  SUBSCRIBED
-}
+import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import models.subscriptions.SubscriptionStatusResponse
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class PartnerGrsControllerSpec extends ControllerSpec {
@@ -139,15 +126,15 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
               intercept[InternalServerException](
                 await(
-                  controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+                  controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
                 )
               )
             case _ =>
               val result =
-                controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+                controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
-                partnerRoutes.PartnerContactNameController.displayNewPartner().url
+                partnerRoutes.PartnerContactNameController.displayNewPartner.url
               )
           }
 
@@ -166,7 +153,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockGetSoleTraderDetails(soleTraderDetails)
         val result =
           controller.grsCallbackExistingPartner(registration.incorpJourneyId.get, "123")(
-            getRequest()
+            FakeRequest()
           )
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -193,7 +180,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
         val result =
-          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -221,7 +208,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
         val result =
-          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -260,7 +247,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
         val result =
-          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
 

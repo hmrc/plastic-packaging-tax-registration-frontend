@@ -29,7 +29,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
   private val page           = inject[amend_partner_contact_check_answers_page]
   private val countryService = inject[CountryService]
 
-  private val partner = aLimitedCompanyPartner()
+  private val partner = aLimitedCompanyPartner
 
   "Amend Partner Contact Check Answers View" should {
 

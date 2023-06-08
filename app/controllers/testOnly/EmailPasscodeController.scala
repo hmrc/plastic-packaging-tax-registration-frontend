@@ -16,11 +16,10 @@
 
 package controllers.testOnly
 
-import play.api.i18n.I18nSupport
-import play.api.mvc._
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
 import controllers.actions.auth.BasicAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -35,7 +34,7 @@ class EmailPasscodeController @Inject() (
 
   def testOnlyGetPasscodes(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      emailTestOnlyPasscodeConnector.getTestOnlyPasscode.flatMap {
+      emailTestOnlyPasscodeConnector.getTestOnlyPasscode().flatMap {
         case Right(response) => Future.successful(Ok(response))
         case Left(error)     => throw error
       }

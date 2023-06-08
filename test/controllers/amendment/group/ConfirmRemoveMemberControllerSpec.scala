@@ -20,10 +20,11 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import models.registration.GroupDetail
 import models.registration.group.GroupMember
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -63,7 +64,7 @@ class ConfirmRemoveMemberControllerSpec
         spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
 
         val resp =
-          controller.displayPage(groupMember.id)(getRequest())
+          controller.displayPage(groupMember.id)(FakeRequest())
 
         status(resp) mustBe OK
         verify(spyJourneyAction).amend
@@ -94,7 +95,7 @@ class ConfirmRemoveMemberControllerSpec
     "user tries to display an non existent group member" in {
       spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
 
-      intercept[RuntimeException](status(controller.displayPage("not-an-existing-group-member-id")(getRequest())))
+      intercept[RuntimeException](status(controller.displayPage("not-an-existing-group-member-id")(FakeRequest())))
     }
   }
 

@@ -34,6 +34,7 @@ import utils.AddressConversionUtils
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import controllers.amendment.group.{routes => amendRoutes}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,6 +71,7 @@ abstract class GroupMemberGrsControllerBase(
               case DUPLICATE_SUBSCRIPTION =>
                 val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, memberId))
                 updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered()))
+              case other => throw new IllegalStateException(s"Invalid registration status: $other")
             }
           case Left(groupError) =>
             updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.organisationAlreadyInGroup()))
@@ -91,6 +93,7 @@ abstract class GroupMemberGrsControllerBase(
               case DUPLICATE_SUBSCRIPTION =>
                 val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, None))
                 updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered()))
+              case other => throw new IllegalStateException(s"Invalid registration status: $other")
             }
           case Left(groupError) =>
             updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.organisationAlreadyInGroup()))

@@ -19,14 +19,13 @@ package connectors.grs
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlMatching}
+import models.genericregistration._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
-import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import models.genericregistration._
 
 import java.util.UUID
 

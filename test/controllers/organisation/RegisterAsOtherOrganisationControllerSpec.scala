@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import views.html.organisation.register_as_other_organisation
@@ -52,7 +53,7 @@ class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
 
       "on page load method is invoked" in {
 
-        val result = controller.onPageLoad()(getRequest())
+        val result = controller.onPageLoad()(FakeRequest())
 
         status(result) must be(OK)
       }

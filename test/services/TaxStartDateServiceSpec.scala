@@ -16,7 +16,7 @@
 
 package services
 
-import org.mockito.Mockito.{never, reset, times, verify}
+import org.mockito.MockitoSugar.{reset, verify, times, never}
 import org.mockito.ArgumentMatchers._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock

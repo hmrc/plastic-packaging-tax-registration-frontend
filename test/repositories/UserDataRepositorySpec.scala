@@ -16,7 +16,8 @@
 
 package repositories
 
-import base.PptTestData
+import models.request.AuthenticatedRequest
+import models.request.AuthenticatedRequest.RegistrationRequest
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
@@ -28,13 +29,10 @@ import play.api.Configuration
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import spec.PptTestData
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
-import config.AppConfig
-import models.request.AuthenticatedRequest
-import models.request.AuthenticatedRequest.RegistrationRequest
-import spec.PptTestData
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,8 +44,8 @@ class UserDataRepositorySpec
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
 
-  private val appConfig: AppConfig = mock[AppConfig]
   private val mockConfig           = mock[Configuration]
+
   when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
     FiniteDuration(1, TimeUnit.MINUTES)
   )
@@ -77,7 +75,7 @@ class UserDataRepositorySpec
         await(repository.getData[String](id, "testKey")) mustBe Some("testData")
       }
       "user's session id used as id" in {
-        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+
         await(repository.putData("testKey", "testData"))
 
         await(repository.getData[String]("testKey")) mustBe Some("testData")
@@ -90,7 +88,6 @@ class UserDataRepositorySpec
         await(repository.findBySessionId(request.cacheId).map(_.data)) mustBe JsObject.apply(Map(registration))
       }
       "no cacheItem found for sessionId" in {
-        implicit val request: AuthenticatedRequest[Any] = authRequest("123456")
         await(repository.putData("testKey", "testData"))
         intercept[SessionRecordNotFound] {
           await(repository.findBySessionId("12345"))
@@ -99,9 +96,6 @@ class UserDataRepositorySpec
     }
 
     "return None when no data found" in {
-
-      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-
       await(repository.getData[String]("some-key")) mustBe None
     }
 
@@ -113,7 +107,6 @@ class UserDataRepositorySpec
         await(repository.deleteData[String](id, "testKey")).mustBe(())
       }
       "user's session id used as id" in {
-        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
         await(repository.putData("testKey", "testData"))
 
         await(repository.deleteData[String]("testKey")).mustBe(())

@@ -19,9 +19,10 @@ package controllers.contact
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
+import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import views.html.contact.too_many_attempts_passcode_page
@@ -52,7 +53,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
 
       "display page method is invoked" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

@@ -19,7 +19,7 @@ package controllers.amendment.partner
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest

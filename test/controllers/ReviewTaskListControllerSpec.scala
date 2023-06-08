@@ -29,10 +29,9 @@ import models.registration._
 import models.registration.group.GroupMember
 import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure}
-import org.mockito.AdditionalAnswers.returnsFirstArg
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -75,7 +74,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
-    when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
+    when(mockRegistrationFilterService.removeGroupDetails(any[Registration]))
+      .thenAnswer((reg: Registration) => reg)
   }
 
   override protected def afterEach(): Unit = {
@@ -140,7 +140,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -151,7 +151,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(
                                   generalPartnershipDetails.copy(partners =
-                                    Seq(aLimitedCompanyPartner(), aSoleTraderPartner())
+                                    Seq(aLimitedCompanyPartner, aSoleTraderPartner)
                                   )
                                 ),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
@@ -162,7 +162,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         mockRegistrationUpdate()
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -185,7 +185,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)

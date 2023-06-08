@@ -21,19 +21,16 @@ import controllers.testOnly.html.SkipAuthView
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
-import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import java.util.UUID
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
-class SkipAuthStubController  @Inject() (
-                                        val controllerComponents: ControllerComponents,
-                                        appConfig: AppConfig,
-                                        skipAuthView: SkipAuthView
-                                        )(implicit ec: ExecutionContext)
-  extends BaseController with FrontendHeaderCarrierProvider with Logging with I18nSupport  {
+class SkipAuthStubController  @Inject()(
+  val controllerComponents: ControllerComponents,
+  appConfig: AppConfig,
+  skipAuthView: SkipAuthView
+) extends BaseController with FrontendHeaderCarrierProvider with Logging with I18nSupport  {
 
   def returns(): Action[AnyContent] = Action { implicit request =>
     val params: Map[String, Seq[String]] = Map(

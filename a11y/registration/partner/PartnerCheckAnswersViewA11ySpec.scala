@@ -34,11 +34,11 @@ class PartnerCheckAnswersViewA11ySpec extends BaseViewSpec {
       }
 
       "a Sole trader partner" in {
-        render(aSoleTraderPartner()) must passAccessibilityChecks
+        render(aSoleTraderPartner) must passAccessibilityChecks
       }
 
       "a Partnership Partner" in {
-        render(aPartnershipPartner()) must passAccessibilityChecks
+        render(aPartnershipPartner) must passAccessibilityChecks
       }
     }
   }

@@ -18,13 +18,14 @@ package controllers.enrolment
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import config.AppConfig
+import org.mockito.MockitoSugar.{reset, when}
+import play.api.test.FakeRequest
 import views.html.enrolment.{reference_number_already_used_failure_page, verification_failure_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -61,7 +62,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the business not verified failed page" in {
 
-      val resp = controller.enrolmentVerificationFailurePage()(getRequest())
+      val resp = controller.enrolmentVerificationFailurePage()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error business not verified content"
@@ -69,7 +70,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the ppt reference number already been used failure page" in {
 
-      val resp = controller.enrolmentReferenceNumberAlreadyUsedPage()(getRequest())
+      val resp = controller.enrolmentReferenceNumberAlreadyUsedPage()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error ppt reference already been used content"

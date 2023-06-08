@@ -21,10 +21,10 @@ import connectors.DownstreamServiceError
 import forms.partner.PartnerName
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -64,16 +64,16 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aPartnershipPartner())
+      Some(aPartnershipPartner)
     )
 
   private def registrationWithPartnershipDetailsAndInflightIncorporatedPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner())
+      Some(aLimitedCompanyPartner)
     )
 
   private val existingPartner =
-    aPartnershipPartner()
+    aPartnershipPartner
 
   private def registrationWithExistingPartner =
     aRegistration(
@@ -87,7 +87,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -96,7 +96,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+        val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -171,7 +171,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
 
         intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
         ))
       }
 
@@ -191,7 +191,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
 
 
-        intercept[RuntimeException](status(controller.displayNewPartner()(getRequest())))
+        intercept[RuntimeException](status(controller.displayNewPartner()(FakeRequest())))
       }
 
       "user tries to submit a name on a partner with a type which has a GRS provided name" in {

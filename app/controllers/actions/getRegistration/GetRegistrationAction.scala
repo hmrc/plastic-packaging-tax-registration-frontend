@@ -42,7 +42,7 @@ class GetRegistrationActionImpl @Inject()(
   ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    loadOrCreateRegistration(request.cacheId)(hc, request).map {
+    loadOrCreateRegistration(request.cacheId)(hc).map {
       case Right(reg)  => Right(JourneyRequest(request, reg))
       case Left(error) => throw error
     }
@@ -50,7 +50,7 @@ class GetRegistrationActionImpl @Inject()(
 
   private def loadOrCreateRegistration[A](
     id: String
-  )(implicit headerCarrier: HeaderCarrier, request: AuthenticatedRequest[A]): Future[Either[ServiceError, Registration]] =
+  )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, Registration]] =
     registrationConnector.find(id).flatMap {
       case Right(Some(reg)) => Future.successful(Right(reg))
       case Right(None) =>

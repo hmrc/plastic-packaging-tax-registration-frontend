@@ -126,6 +126,7 @@ class ContactDetailsEmailAddressController @Inject() (
         handleNotVerifiedEmail(registration, credId)
       case LOCKED_OUT =>
         Future(Redirect(commonRoutes.TaskListController.displayPage()))
+      case other => throw new IllegalStateException(s"Invalid email verification status: $other")
     }
 
   private def createEmailVerification(credId: String, email: String)(implicit
@@ -147,7 +148,7 @@ class ContactDetailsEmailAddressController @Inject() (
           updatedJourneyId(registration, journeyId).map {
             case Left(error) => throw error
             case Right(_) =>
-              Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage())
+              Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage)
           }
         }
       case None => throw RegistrationException("Failed to get email from the cache")

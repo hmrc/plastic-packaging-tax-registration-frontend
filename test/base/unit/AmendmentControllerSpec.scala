@@ -20,8 +20,8 @@ import models.registration.{AmendRegistrationUpdateService, Registration, Regist
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponse, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import services.AmendRegistrationService
 
@@ -35,7 +35,7 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
   val mockAmendRegService: AmendRegistrationService = mock[AmendRegistrationService]
   val mockRegistrationUpdater: RegistrationUpdater = mock[RegistrationUpdater]
 
-  protected def simulateUpdateWithRegSubscriptionSuccess() =
+  protected def simulateUpdateWithRegSubscriptionSuccess(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseSuccess(pptReference = "XMPPT0000000123",
@@ -51,13 +51,13 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
 
   protected def simulateUpdateWithRegSubscriptionFailure(
                                                    ex: RuntimeException
-                                                 ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+                                                 ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.failed(ex)
     )
 
   protected def simulateUpdateSubscriptionWithRegFailureReturnedError()
-  : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures =
@@ -66,7 +66,7 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
       )
     )
 
-  protected def getUpdatedRegistrationMethod() = {
+  protected def getUpdatedRegistrationMethod(): Registration => Registration = {
     val registrationCaptor: ArgumentCaptor[Registration => Registration] =
       ArgumentCaptor.forClass(classOf[Registration => Registration])
     verify(mockAmendRegService).updateSubscriptionWithRegistration(registrationCaptor.capture())(any(), any())

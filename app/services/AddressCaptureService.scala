@@ -16,11 +16,11 @@
 
 package services
 
-import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.Call
 import controllers.address.routes
 import forms.contact.Address
-import models.request.{AuthenticatedRequest, JourneyRequest}
+import models.request.AuthenticatedRequest
+import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.Call
 import repositories.AddressCaptureDetailRepository
 
 import javax.inject.{Inject, Singleton}

@@ -20,7 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.MockitoSugar.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -58,7 +58,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
       "user is authorised and display page method is invoked" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

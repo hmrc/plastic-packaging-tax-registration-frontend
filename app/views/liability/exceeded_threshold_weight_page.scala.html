@@ -40,7 +40,7 @@
     title = Title(form, "liability.exceededThresholdWeight.title"),
     backButton = Some(BackButtonJs())) {
 
-    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit, 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
         @sectionHeader(messages("liability.sectionHeader"))

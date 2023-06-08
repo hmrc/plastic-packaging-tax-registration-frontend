@@ -18,13 +18,16 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.Mockito.never
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
 import forms.partner.RemovePartner
+import org.mockito.MockitoSugar.reset
+import play.api.test.FakeRequest
 import views.html.partner.remove_partner_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -37,7 +40,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
   )
 
-  private val soleTraderPartner = aSoleTraderPartner()
+  private val soleTraderPartner = aSoleTraderPartner
 
   private val removePartnerController = new RemovePartnerController(journeyAction = spyJourneyAction,
                                                                     mockRegistrationConnector,
@@ -63,7 +66,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       spyJourneyAction.setReg(partnershipRegistration)
 
-      val result = removePartnerController.displayPage(aSoleTraderPartner().id)(getRequest())
+      val result = removePartnerController.displayPage(aSoleTraderPartner.id)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe "Remove Partner Page"
@@ -73,7 +76,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       spyJourneyAction.setReg(partnershipRegistration)
 
-      val result = removePartnerController.displayPage(s"${soleTraderPartner.id}xxx")(getRequest())
+      val result = removePartnerController.displayPage(s"${soleTraderPartner.id}xxx")(FakeRequest())
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)

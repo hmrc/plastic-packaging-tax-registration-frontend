@@ -18,6 +18,7 @@ package controllers.contact
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.test.FakeRequest
 import play.api.test.Helpers.redirectLocation
 import services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -53,7 +54,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         redirectLocation(result) mustBe Some(addressCaptureRedirect.url)
       }
@@ -65,7 +66,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
         mockRegistrationUpdate()
         simulateValidAddressCapture()
 
-        val result = controller.update()(getRequest())
+        val result = controller.update()(FakeRequest())
 
         redirectLocation(result) mustBe Some(
           routes.ContactDetailsCheckAnswersController.displayPage().url

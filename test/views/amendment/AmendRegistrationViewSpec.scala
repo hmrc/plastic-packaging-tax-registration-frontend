@@ -92,6 +92,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.title"
               case Group        => "amend.group.title"
               case Partnership  => "amend.partnership.title"
+              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 
@@ -112,6 +113,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.title"
               case Group        => "amend.group.title"
               case Partnership  => "amend.partnership.title"
+              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 
@@ -121,6 +123,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.subheading"
               case Group        => "amend.group.subheading"
               case Partnership  => "amend.partnership.subheading"
+              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
             val descriptionList = view.select("dl").get(0).text()
             val expectedOrganisationDetails =
@@ -159,6 +162,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.contactDetails.individual.subheading"
               case Group        => "amend.contactDetails.group.subheading"
               case Partnership  => "amend.contactDetails.partnership.subheading"
+              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 

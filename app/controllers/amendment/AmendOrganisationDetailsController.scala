@@ -16,12 +16,11 @@
 
 package controllers.amendment
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 import controllers.actions.JourneyAction
 import forms.contact.Address
 import models.registration.Registration
 import models.request.JourneyRequest
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +42,7 @@ class AmendOrganisationDetailsController @Inject() (
 
   private def initialiseAddressLookup(
     request: JourneyRequest[AnyContent]
-  )(implicit header: HeaderCarrier): Future[Result] =
+  ): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
                            successLink =
