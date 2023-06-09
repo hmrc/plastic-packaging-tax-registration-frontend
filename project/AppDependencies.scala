@@ -4,18 +4,18 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "7.13.0"
+  val bootstrapVersion = "7.15.0"
 
   val compile = Seq(
     ws,
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28" % bootstrapVersion,
     "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "6.6.0-play-28",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.74.0",
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "1.2.0",
     "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.12.0-play-28"
   )
   val test = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % bootstrapVersion        % Test,
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.74.0"                % Test,
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "1.2.0"                % Test,
     "org.scalatest"           %% "scalatest"                  % "3.2.5"                 % Test,
     "org.mockito"             %% "mockito-scala"              % "1.17.12"               % Test,
     "org.jsoup"               %  "jsoup"                      % "1.13.1"                % Test,
