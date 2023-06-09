@@ -33,6 +33,7 @@ import connectors.{DownstreamServiceError, ServiceError}
 import controllers.contact.{routes => contactRoutes}
 import controllers.{routes => pptRoutes}
 import forms.contact.{Address, EmailAddress, EmailAddressPasscode}
+import models.addresslookup.CountryCode.GB
 import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
 import models.registration.PrimaryContactDetails
 import services.EmailVerificationService
@@ -211,7 +212,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                               addressLine3 = None,
                                               townOrCity = "London",
                                               maybePostcode = Some("W1T 2HN"),
-                                              countryCode = "GB"
+                                              countryCode = GB
                                       )
                                     ),
                                     journeyId = Some("journey-id")

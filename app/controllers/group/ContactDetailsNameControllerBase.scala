@@ -19,16 +19,10 @@ package controllers.group
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-
 import forms.group.MemberName
-import models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import models.registration.OrganisationName.businessName
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.{AuthenticatedRequest, JourneyRequest}
 import views.html.group.member_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -57,7 +51,7 @@ abstract class ContactDetailsNameControllerBase(
       Ok(
         page(form,
              request.registration.findMember(memberId).map(_.businessName).getOrElse(
-               "your organisation"
+               businessName
              ),
              getSubmitCall(memberId),
              memberId
@@ -79,7 +73,7 @@ abstract class ContactDetailsNameControllerBase(
               BadRequest(
                 page(formWithErrors,
                      request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                       "your organisation"
+                       businessName
                      ),
                      getSubmitCall(memberId),
                      memberId

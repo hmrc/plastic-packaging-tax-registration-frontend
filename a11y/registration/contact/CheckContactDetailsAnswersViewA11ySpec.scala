@@ -18,6 +18,7 @@ package registration.contact
 
 import support.BaseViewSpec
 import forms.contact.Address
+import models.addresslookup.CountryCode.GB
 import models.registration.{PrimaryContactDetails, Registration}
 import views.html.contact.check_primary_contact_details_page
 
@@ -37,7 +38,7 @@ class CheckContactDetailsAnswersViewA11ySpec extends BaseViewSpec {
                                       addressLine3 = None,
                                       townOrCity = "London",
                                       maybePostcode = Some("W1T 2HN"),
-                                     countryCode = "GB"
+                                     countryCode = GB
                               )
                             )
       )

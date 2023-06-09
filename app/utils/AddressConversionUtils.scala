@@ -18,6 +18,7 @@ package utils
 
 import forms.contact.Address
 import models.addresslookup.AddressLookupConfirmation
+import models.addresslookup.CountryCode.GB
 import models.genericregistration.IncorporationAddressDetails
 import services.CountryService
 
@@ -43,7 +44,7 @@ class AddressConversionUtils @Inject() (countryService: CountryService) {
 
   def toPptAddress(addressLookupConfirmation: AddressLookupConfirmation): Address = {
     val lines                    = addressLookupConfirmation.extractAddressLines()
-    val addressLookupCountryCode = addressLookupConfirmation.address.country.map(_.code).getOrElse("GB")
+    val addressLookupCountryCode = addressLookupConfirmation.address.country.map(_.code).getOrElse(GB)
 
     Address(lines._1, lines._2, lines._3, lines._4, addressLookupConfirmation.address.postcode, addressLookupCountryCode)
 

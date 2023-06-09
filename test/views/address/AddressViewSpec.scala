@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import forms.contact.Address
 import forms.contact.Address.UKAddress
+import models.addresslookup.CountryCode.GB
 import services.CountryService
 import views.html.address.address_page
 
@@ -86,7 +87,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
           addressLine3 = Some("Address Line 3"),
           townOrCity = "townOrCity",
           maybePostcode = Some("LS3 3UJ"),
-          countryCode = "GB"
+          countryCode = GB
         )
 
       val form = Address

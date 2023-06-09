@@ -22,6 +22,7 @@ import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendRoutes}
 import forms.contact._
 import forms.group.MemberName
+import models.registration.OrganisationName.businessName
 import models.registration.Registration
 import models.request.JourneyRequest
 import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
@@ -92,7 +93,7 @@ class AmendMemberContactDetailsController @Inject() (
   ) =
     contactNamePage(form,
                     request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                      "your organisation"
+                      businessName
                     ),
                     routes.AmendMemberContactDetailsController.updateContactName(memberId),
                     memberId

@@ -21,7 +21,9 @@ import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
 import forms.contact.Address
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
+import models.addresslookup.CountryCode.GB
 import models.registration.Cacheable
+import models.registration.OrganisationName.businessName
 import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -52,7 +54,7 @@ class ConfirmBusinessAddressController @Inject() (
             Ok(
               page(
                 registeredBusinessAddress,
-                request.registration.organisationDetails.businessName.getOrElse("your organisation"),
+                request.registration.organisationDetails.businessName.getOrElse(businessName),
                 commonRoutes.TaskListController.displayPage().url
               )
             )
@@ -91,8 +93,8 @@ class ConfirmBusinessAddressController @Inject() (
   private def isAddressValidForOrgType(address: Address, orgType: Option[OrgType]): Boolean =
     if (Address.validateAsInput(address).errors.isEmpty)
       orgType match {
-        case Some(OVERSEAS_COMPANY_UK_BRANCH) => address.countryCode != "GB"
-        case _                                => address.countryCode == "GB"
+        case Some(OVERSEAS_COMPANY_UK_BRANCH) => address.countryCode != GB
+        case _                                => address.countryCode == GB
       }
     else
       false

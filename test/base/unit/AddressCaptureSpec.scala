@@ -21,6 +21,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import forms.contact.Address
+import models.addresslookup.CountryCode.GB
 import services.{AddressCaptureConfig, AddressCaptureService}
 
 import scala.concurrent.Future
@@ -40,7 +41,7 @@ trait AddressCaptureSpec extends MockitoSugar {
     addressLine3 = None,
     townOrCity = "London",
     maybePostcode = Some("E17 3RE"),
-    countryCode = "GB"
+    countryCode = GB
   )
 
   protected def simulateSuccessfulAddressCaptureInit(config: Option[AddressCaptureConfig]) =

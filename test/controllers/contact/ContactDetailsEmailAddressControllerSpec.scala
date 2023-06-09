@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import connectors.{DownstreamServiceError, ServiceError}
 import controllers.{routes => pptRoutes}
 import forms.contact.{Address, EmailAddress}
+import models.addresslookup.CountryCode.GB
 import models.emailverification.{EmailStatus, VerificationStatus}
 import models.registration.{MetaData, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
@@ -309,7 +310,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                                               addressLine3 = None,
                                               townOrCity = "London",
                                               maybePostcode = Some("W1T 2HN"),
-                                              countryCode = "GB"
+                                              countryCode = GB
                                       )
                                     ),
                                     journeyId = Some("journey-id")

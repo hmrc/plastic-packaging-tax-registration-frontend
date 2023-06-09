@@ -19,6 +19,7 @@ package controllers.address
 import base.unit.{ControllerSpec, MockAddressCaptureDetailRepository}
 import config.AppConfig
 import connectors.addresslookup.AddressLookupFrontendConnector
+import models.addresslookup.CountryCode.GB
 import models.addresslookup._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -219,7 +220,7 @@ class AddressCaptureControllerSpec
                                 ("addressLine2", "Notting Hill"),
                                 ("townOrCity", "London"),
                                 ("postCode", "NW1 1AA"),
-                                ("countryCode", "GB")
+                                ("countryCode", GB)
         )
 
         val resp =
@@ -245,7 +246,7 @@ class AddressCaptureControllerSpec
           ("addressLine2", "Notting Hill"),
           ("townOrCity", "London"),
           ("postCode", "NW1 1AA"),
-          ("countryCode", "GB")
+          ("countryCode", GB)
         )
 
         val resp =
@@ -269,7 +270,7 @@ class AddressCaptureControllerSpec
                                 lines = List("100 Old Bog Lane", "Shoreditch", "London"),
                                 postcode = Some("EC1 1AA"),
                                 country =
-                                  Some(AddressLookupCountry("GB", "United Kingdom"))
+                                  Some(AddressLookupCountry(GB, "United Kingdom"))
                               )
     )
 
@@ -284,7 +285,7 @@ class AddressCaptureControllerSpec
                                 ),
                                 postcode = Some("EC1 1AA"),
                                 country =
-                                  Some(AddressLookupCountry("GB", "United Kingdom"))
+                                  Some(AddressLookupCountry(GB, "United Kingdom"))
                               )
     )
 

@@ -26,6 +26,7 @@ import forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
 import forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
 import forms.organisation.{OrgType, PartnerTypeEnum}
 import models.SignedInUser
+import models.addresslookup.CountryCode.GB
 import models.emailverification.{EmailStatus, VerificationStatus}
 import models.genericregistration._
 import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupOrgDetails}
@@ -487,7 +488,7 @@ trait PptTestData extends RegistrationBuilder {
               addressLine3 = None,
               townOrCity = "Leeds",
               maybePostcode = Some("LS1 1AA"),
-              countryCode = "GB"
+              countryCode = GB
             )
           )
         )
@@ -528,7 +529,7 @@ trait PptTestData extends RegistrationBuilder {
               addressLine3 = None,
               townOrCity = "Leeds",
               maybePostcode = Some("LS1 1BB"),
-              countryCode = "GB"
+              countryCode = GB
             )
           )
         )
@@ -574,7 +575,7 @@ trait PptTestData extends RegistrationBuilder {
               addressLine3 = None,
               townOrCity = "Leeds",
               maybePostcode = Some("LS1 1CC"),
-              countryCode = "GB"
+              countryCode = GB
             )
           )
         )

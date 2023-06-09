@@ -19,6 +19,7 @@ package models.registration
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import forms.contact.Address
+import models.addresslookup.CountryCode.GB
 import views.viewmodels.TaskStatus
 
 class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
@@ -81,7 +82,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                           addressLine3 = None,
                                           townOrCity = "Leeds",
                                           maybePostcode = Some("LS1 8TY"),
-                                         countryCode = "GB"
+                                         countryCode = GB
                                   )
                                 )
           )
@@ -102,7 +103,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                           addressLine3 = None,
                                           townOrCity = "Leeds",
                                           maybePostcode = Some("LS1 8TY"),
-                                          countryCode = "GB"
+                                          countryCode = GB
                                   )
                                 )
           )
