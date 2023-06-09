@@ -118,7 +118,6 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       setUpMockForSubmit()
       val reg = aRegistration()
       spyJourneyAction.setReg(reg)
-      when(config.isBackwardLookChangeEnabled).thenReturn(false)
 
       await(sut.submit()(FakeRequest()))
 
