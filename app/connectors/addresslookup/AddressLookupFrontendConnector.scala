@@ -51,7 +51,7 @@ class AddressLookupFrontendConnector @Inject() (
             case Some(redirectUrl) => AddressLookupOnRamp(redirectUrl)
             case _              => throw new IllegalStateException("Missing re-direct url")
           }
-        case error => throw new IllegalStateException(s"Error response with status: ${error.status}")
+        case error => throw new IllegalStateException(s"Error. Address look up frontend error with status: ${error.status}")
       }
   }
 
