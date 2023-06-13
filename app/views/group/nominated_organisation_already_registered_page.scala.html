@@ -32,7 +32,7 @@
     @pageHeading(text = messages("nominated.organisation.already.registered.title"))
     @paragraphBody(
         message = messages("nominated.organisation.already.registered.detail1",
-            request.registration.organisationDetails.businessName.getOrElse("Your organisation")
+            request.registration.organisationDetails.businessName.getOrElse(messages("missing.organisationName"))
         )
     )
     @paragraphBody(

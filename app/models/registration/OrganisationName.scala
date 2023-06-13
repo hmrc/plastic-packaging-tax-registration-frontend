@@ -16,8 +16,12 @@
 
 package models.registration
 
+import play.api.i18n.Messages
+
 object OrganisationName {
 
-  val businessName = "your organisation"
+  def getMissingOrgMessage(implicit messages: Messages) = {
+    messages("missing.organisationName")
+  }
 
 }

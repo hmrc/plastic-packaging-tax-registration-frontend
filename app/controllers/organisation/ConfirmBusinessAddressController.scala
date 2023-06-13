@@ -23,7 +23,7 @@ import forms.contact.Address
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import models.addresslookup.CountryCode.GB
 import models.registration.Cacheable
-import models.registration.OrganisationName.businessName
+import models.registration.OrganisationName.getMissingOrgMessage
 import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -54,7 +54,7 @@ class ConfirmBusinessAddressController @Inject() (
             Ok(
               page(
                 registeredBusinessAddress,
-                request.registration.organisationDetails.businessName.getOrElse(businessName),
+                request.registration.organisationDetails.businessName.getOrElse(getMissingOrgMessage),
                 commonRoutes.TaskListController.displayPage().url
               )
             )

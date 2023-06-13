@@ -16,15 +16,15 @@
 
 package controllers.group
 
+import forms.group.MemberName
+import models.registration.OrganisationName.getMissingOrgMessage
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import forms.group.MemberName
-import models.registration.OrganisationName.businessName
-import models.registration.{Registration, RegistrationUpdater}
-import models.request.{AuthenticatedRequest, JourneyRequest}
-import views.html.group.member_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.member_name_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,7 +51,7 @@ abstract class ContactDetailsNameControllerBase(
       Ok(
         page(form,
              request.registration.findMember(memberId).map(_.businessName).getOrElse(
-               businessName
+               getMissingOrgMessage
              ),
              getSubmitCall(memberId),
              memberId
@@ -73,7 +73,7 @@ abstract class ContactDetailsNameControllerBase(
               BadRequest(
                 page(formWithErrors,
                      request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                       businessName
+                       getMissingOrgMessage
                      ),
                      getSubmitCall(memberId),
                      memberId

@@ -18,7 +18,6 @@
 @import views.html.main_template
 @import views.viewmodels.Title
 @import config.AppConfig
-@import models.registration.OrganisationName
 
 @this(
         govukLayout: main_template,
@@ -37,7 +36,7 @@
     @pageHeading(text = messages("duplicateSubscription.title"))
     @paragraphBody(
         message = messages("duplicateSubscription.detail",
-            request.registration.organisationDetails.businessName.getOrElse(OrganisationName.businessName)
+            request.registration.organisationDetails.businessName.getOrElse(messages("missing.organisationName"))
         )
     )
 }
