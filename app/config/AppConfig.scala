@@ -48,10 +48,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def languageLinks: Seq[(Language, String)] =
     Seq((En, controllers.routes.LanguageController.enGb.url), (Cy, controllers.routes.LanguageController.cyGb.url))
 
-  lazy val assetsUrl: String = config.get[String]("assets.url")
-
-  lazy val assetsPrefix: String = assetsUrl + config.get[String]("assets.version")
-
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
   lazy val selfBaseUrl: String = config
