@@ -47,13 +47,13 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     doDisplay(None,
-              routes.AddPartnerContactDetailsNameController.displayPage(),
+              routes.AddPartnerContactDetailsNameController.displayPage,
               routes.AddPartnerContactDetailsEmailAddressController.submit()
     )
 
   def submit(): Action[AnyContent] =
     doSubmit(None,
-             routes.AddPartnerContactDetailsNameController.displayPage(),
+             routes.AddPartnerContactDetailsNameController.displayPage,
              routes.AddPartnerContactDetailsEmailAddressController.submit(),
              routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
              routes.AddPartnerContactDetailsEmailAddressController.displayPage(),

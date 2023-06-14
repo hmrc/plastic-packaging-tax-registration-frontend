@@ -24,7 +24,7 @@ trait CommonTestUtils {
   val alphabetAndWhitespaceChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ  "
 
   def randomAlphabetString(length: Int): String =
-    Stream.continually(
+    LazyList.continually(
       alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
     ) take length mkString
 

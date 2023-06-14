@@ -22,11 +22,12 @@ import forms.YesNoValues
 import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.LiabilityDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -55,7 +56,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(aRegistration())
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -68,7 +69,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -81,7 +82,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

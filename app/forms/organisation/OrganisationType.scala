@@ -61,6 +61,7 @@ object OrganisationType extends CommonFormValidators {
       case ActionEnum.Org                  => "organisationDetails.type.empty.error"
       case ActionEnum.RepresentativeMember => "organisationDetails.type.empty.member.error"
       case ActionEnum.Group                => "organisationDetails.type.empty.group.error"
+      case other => throw new IllegalStateException(s"Invalid action: $other")
     }
 
     Form(

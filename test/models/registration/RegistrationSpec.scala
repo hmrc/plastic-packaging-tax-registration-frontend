@@ -17,15 +17,14 @@
 package models.registration
 
 import builders.RegistrationBuilder
+import forms.liability.RegType.GROUP
+import forms.liability.{LiabilityWeight, RegType}
+import forms.organisation.OrgType
+import forms.{Date, OldDate}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.PptTestData
-import forms.liability.RegType.GROUP
-import forms.liability.{LiabilityWeight, RegType}
-import forms.organisation.OrgType
-import forms.organisation.OrgType.UK_COMPANY
-import forms.{Date, OldDate}
 import views.viewmodels.TaskStatus
 
 import java.time.LocalDate
@@ -348,7 +347,7 @@ class RegistrationSpec
           generalPartnershipRegistration.copy(organisationDetails =
             generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
               generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
-                _.copy(partners = Seq(aLimitedCompanyPartner()))
+                _.copy(partners = Seq(aLimitedCompanyPartner))
               )
             )
           ).numberOfCompletedSections mustBe 2
@@ -383,7 +382,7 @@ class RegistrationSpec
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner())
+                Seq(aLimitedCompanyPartner)
               )
             )
           )
@@ -399,7 +398,7 @@ class RegistrationSpec
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner(), aSoleTraderPartner())
+                Seq(aLimitedCompanyPartner, aSoleTraderPartner)
               )
             )
           )
@@ -410,7 +409,7 @@ class RegistrationSpec
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner())
+                Seq(aLimitedCompanyPartner)
               )
             )
           )

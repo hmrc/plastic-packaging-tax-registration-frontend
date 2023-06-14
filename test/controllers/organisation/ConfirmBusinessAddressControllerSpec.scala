@@ -18,7 +18,7 @@ package controllers.organisation
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -26,6 +26,7 @@ import play.twirl.api.HtmlFormat
 import controllers.{routes => commonRoutes}
 import forms.contact.Address
 import forms.contact.Address.{NonUKAddress, UKAddress}
+import play.api.test.FakeRequest
 import views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -62,7 +63,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
     "display registered business address when it is populated and valid" in {
       spyJourneyAction.setReg(aRegistration())
 
-      val resp = controller.displayPage()(getRequest())
+      val resp = controller.displayPage()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "business registered address"
@@ -77,7 +78,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
           )
         )
 
-        val resp = controller.displayPage()(getRequest())
+        val resp = controller.displayPage()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -95,7 +96,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
           )
         )
 
-        val resp = controller.displayPage()(getRequest())
+        val resp = controller.displayPage()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -103,7 +104,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
     "obtain address from address capture service and update registration and redirect to task list" when {
       "control is returned from address lookup frontend" in {
-        val resp = controller.addressCaptureCallback()(getRequest())
+        val resp = controller.addressCaptureCallback()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
 
@@ -115,7 +116,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
       "user wants to change business address" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val resp = controller.changeBusinessAddress()(getRequest())
+        val resp = controller.changeBusinessAddress()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }

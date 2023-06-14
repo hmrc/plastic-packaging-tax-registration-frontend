@@ -138,7 +138,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains trailing blank space" in {
 
         val input =
-          Map(totalKg -> (LiabilityDetails.minimumLiabilityWeightKg + " "))
+          Map(totalKg -> s"${LiabilityDetails.minimumLiabilityWeightKg} ")
         val form = LiabilityWeight.form().bind(input)
         form.errors.size mustBe 0
       }

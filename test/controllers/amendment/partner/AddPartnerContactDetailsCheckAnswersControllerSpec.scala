@@ -19,10 +19,11 @@ package controllers.amendment.partner
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import controllers.amendment.{routes => amendRoutes}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -45,7 +46,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
 
   private val partnerRegistrationInAmendment = aRegistration(
     withPartnershipDetails(
-      Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner())))
+      Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner)))
     )
   )
 
@@ -62,7 +63,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
       "display successfully" when {
         "partner present" in {
           spyJourneyAction.setReg(partnerRegistrationInAmendment)
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayPage()(FakeRequest())
 
           status(resp) mustBe OK
           contentAsString(resp) mustBe "Amend Reg - New Partner CYA"
@@ -78,7 +79,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
         val updated = getUpdatedRegistrationMethod()(partnerRegistrationInAmendment)
 
         updated.inflightPartner mustBe None
-        updated.newPartner mustBe Some(aSoleTraderPartner())
+        updated.newPartner mustBe Some(aSoleTraderPartner)
       }
 
       "redirect to the manage group page when update successful" in {

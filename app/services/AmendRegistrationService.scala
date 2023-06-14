@@ -17,7 +17,7 @@
 package services
 
 import connectors.SubscriptionsConnector
-import models.registration.{Registration, RegistrationUpdater}
+import models.registration.Registration
 import models.request.JourneyRequest
 import models.subscriptions.SubscriptionCreateOrUpdateResponse
 import repositories.RegistrationAmendmentRepository

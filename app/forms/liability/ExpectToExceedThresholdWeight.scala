@@ -17,10 +17,7 @@
 package forms.liability
 
 import forms.mappings.Mappings
-import forms.partner.AddPartner.YES
 import play.api.data.Form
-import forms.{CommonFormValidators, CommonFormValues}
-import play.api.data.Forms.mapping
 
 import javax.inject.Inject
 

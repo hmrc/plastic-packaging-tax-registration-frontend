@@ -19,7 +19,6 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
@@ -28,6 +27,8 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.Html
 import forms.liability.RegType.GROUP
 import forms.liability.RegistrationType
+import org.mockito.MockitoSugar.{reset, verify, when}
+import play.api.test.FakeRequest
 import views.html.liability.registration_type_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -63,7 +64,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
       "no existing registration type" in {
         spyJourneyAction.setReg(aRegistration(withRegistrationType(None)))
 
-        val result = registrationTypeController.displayPage()(getRequest())
+        val result = registrationTypeController.displayPage()(FakeRequest())
 
         status(result) mustBe OK
 
@@ -76,7 +77,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
       "registration type previously supplied" in {
         spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(GROUP))))
 
-        val result = registrationTypeController.displayPage()(getRequest())
+        val result = registrationTypeController.displayPage()(FakeRequest())
 
         status(result) mustBe OK
 
@@ -129,7 +130,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   private def verifyExpectedBackLink(backLink: String): Unit = {
     spyJourneyAction.setReg(aRegistration(withRegistrationType(None)))
 
-    val result = registrationTypeController.displayPage()(getRequest())
+    val result = registrationTypeController.displayPage()(FakeRequest())
 
     status(result) mustBe OK
 

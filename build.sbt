@@ -1,5 +1,4 @@
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "plastic-packaging-tax-registration-frontend"
 
@@ -31,7 +30,6 @@ lazy val microservice = Project(appName, file("."))
     )
     // ***************
   )
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .configs(A11yTest)

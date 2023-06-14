@@ -27,6 +27,7 @@ import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchersSugar.any
 import org.mockito.MockitoSugar.{reset, verify, when}
+import play.api.test.FakeRequest
 import repositories.{DeregistrationDetailRepositoryImpl, UserDataRepository}
 import views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -73,7 +74,7 @@ class DeregisterCheckYourAnswersControllerSpec
 
       "user is authorised and display page method is invoked" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -83,7 +84,7 @@ class DeregisterCheckYourAnswersControllerSpec
           mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"),
                                                ArgumentMatchers.eq(initialDeregistrationDetails)
           )(any)
-        ).thenReturn(Future.successful(Right()))
+        ).thenReturn(Future.successful(Right(())))
 
         val result: Future[Result] = controller.continue()(request)
 

@@ -24,6 +24,7 @@ import controllers.liability.{routes => liabilityRoutes}
 import forms.liability.LiabilityWeight
 import forms.{Date, OldDate}
 import models.registration.{LiabilityDetails, NewLiability, Registration}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.time.LocalDate
@@ -59,7 +60,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
       def verifyRedirect(pageUrl: String): Unit = {
         spyJourneyAction.setReg(emptyRegistration)
 
-        val result = controller.startRegistration()(getRequest())
+        val result = controller.startRegistration()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(pageUrl)
@@ -70,7 +71,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(partialRegistration)
 
-        val result = controller.startRegistration()(getRequest())
+        val result = controller.startRegistration()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
@@ -82,7 +83,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
           liabilityDetails = partialRegistration.liabilityDetails.copy(newLiabilityStarted = Some(NewLiability)))
         )
 
-        val result = controller.startRegistration()(getRequest())
+        val result = controller.startRegistration()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)

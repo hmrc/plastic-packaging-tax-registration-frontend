@@ -17,10 +17,11 @@
 package base.unit
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import forms.contact.Address
+import org.mockito.invocation.InvocationOnMock
 import services.{AddressCaptureConfig, AddressCaptureService}
 
 import scala.concurrent.Future
@@ -47,7 +48,7 @@ trait AddressCaptureSpec extends MockitoSugar {
     config match {
       case Some(config) =>
         when(mockAddressCaptureService.initAddressCapture(any())(any())).thenAnswer(
-          inv =>
+          (inv: InvocationOnMock) =>
             if (inv.getArgument[AddressCaptureConfig](0) == config)
               Future.successful(addressCaptureRedirect)
             else

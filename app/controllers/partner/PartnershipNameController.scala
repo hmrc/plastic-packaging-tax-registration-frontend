@@ -16,23 +16,21 @@
 
 package controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors._
 import connectors.grs.PartnershipGrsConnector
 import controllers.actions.JourneyAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import forms.organisation.PartnershipName
 import models.genericregistration.PartnershipGrsCreateRequest
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.organisation.partnership_name
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.partnership_name
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

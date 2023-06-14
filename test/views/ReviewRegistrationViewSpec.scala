@@ -30,12 +30,11 @@ import forms.organisation.{OrgType, PartnerTypeEnum}
 import forms.{Date, OldDate}
 import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupMemberOrganisationDetails}
 import models.registration.{GroupDetail, LiabilityDetails, OrganisationDetails, Registration}
-import models.request.{AuthenticatedRequest, JourneyRequest}
+import models.request.JourneyRequest
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.{AnyContent, Call}
-import play.api.test.FakeRequest
 import views.components.Styles.gdsPageHeading
 import views.html.review_registration_page
 
@@ -219,7 +218,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(liabilitySection, 2, liabilityView) mustBe "1 April 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                controllers.liability.routes.ExceededThresholdWeightController.displayPage().url
+                controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
                 liabilityRoutes.ExceededThresholdWeightDateController.displayPage()
@@ -262,10 +261,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+                liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage
               )
               getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
-                liabilityRoutes.ExceededThresholdWeightController.displayPage()
+                liabilityRoutes.ExceededThresholdWeightController.displayPage
               )
             }
 
@@ -532,6 +531,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      )
                     )
                 }
+              case other => throw new IllegalStateException(s"Invalid registration type: $other")
             }
           }
 
@@ -627,7 +627,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                   partnershipDetails =
                                     Some(
                                       generalPartnershipDetails.copy(partners =
-                                        Seq(aSoleTraderPartner(), aLimitedCompanyPartner())
+                                        Seq(aSoleTraderPartner, aLimitedCompanyPartner)
                                       )
                                     ),
                                   incorporationDetails = None

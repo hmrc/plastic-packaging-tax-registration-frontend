@@ -17,27 +17,21 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.organisation.PartnerType
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import models.genericregistration.PartnershipDetails
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.{routes => pptRoutes}
-import forms.organisation.PartnerType
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import models.genericregistration.PartnershipDetails
-import views.html.organisation.partnership_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.organisation.partnership_type
 
 class PartnershipTypeControllerSpec extends ControllerSpec {
   private val page = mock[partnership_type]
@@ -72,7 +66,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -83,7 +77,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

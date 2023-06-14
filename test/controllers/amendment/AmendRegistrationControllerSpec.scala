@@ -18,10 +18,11 @@ package controllers.amendment
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.OK
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -65,7 +66,7 @@ class AmendRegistrationControllerSpec
     "display the amend registration page" when {
 
       "user is authenticated" in {
-        val resp = controller.displayPage()(getRequest())
+        val resp = controller.displayPage()(FakeRequest())
 
         status(resp) mustBe OK
         contentAsString(resp) mustBe "registration amendment"
@@ -75,7 +76,7 @@ class AmendRegistrationControllerSpec
     "display the amend error page" in {
 
 
-      val resp = controller.registrationUpdateFailed()(getRequest())
+      val resp = controller.registrationUpdateFailed()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "registration amendment error"

@@ -21,10 +21,10 @@ import connectors.DownstreamServiceError
 import forms.contact.PhoneNumber
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -59,29 +59,29 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner())
+      Some(aLimitedCompanyPartner)
     )
 
   private def registrationWithInflightPartnerWithMissingContactName = {
     val contactDetailsWithNoName =
-      aLimitedCompanyPartner().contactDetails.map(_.copy(firstName = None, lastName = None))
+      aLimitedCompanyPartner.contactDetails.map(_.copy(firstName = None, lastName = None))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithNoName))
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithNoName))
     )
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
     val contactDetailsWithPhoneNumber =
-      aLimitedCompanyPartner().contactDetails.map(_.copy(phoneNumber = Some("12345678")))
+      aLimitedCompanyPartner.contactDetails.map(_.copy(phoneNumber = Some("12345678")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithPhoneNumber))
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber))
     )
   }
 
   private val existingPartner = {
     val contactDetailsWithPhoneNumber =
-      aLimitedCompanyPartner().contactDetails.map(_.copy(phoneNumber = Some("12345678")))
-    aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithPhoneNumber)
+      aLimitedCompanyPartner.contactDetails.map(_.copy(phoneNumber = Some("12345678")))
+    aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber)
   }
 
   private def registrationWithExistingPartner =
@@ -96,7 +96,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -105,7 +105,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -114,7 +114,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+        val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -179,7 +179,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
 
         intercept[RuntimeException](status(
-          controller.displayNewPartner()(getRequest())
+          controller.displayNewPartner()(FakeRequest())
         ))
       }
 
@@ -188,7 +188,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
         ))
       }
 

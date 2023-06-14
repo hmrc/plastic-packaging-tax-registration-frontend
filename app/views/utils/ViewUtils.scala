@@ -17,15 +17,14 @@
 package views.utils
 
 import com.google.inject.{Inject, Singleton}
+import forms.contact.Address
+import forms.{Date, OldDate}
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import services.CountryService
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
-import forms.contact.Address
-import forms.{Date, OldDate}
-import models.request.JourneyRequest
-import services.CountryService
 
 import java.time.LocalDate
 
@@ -73,7 +72,10 @@ class ViewUtils @Inject() (countryService: CountryService) {
   def displayLocalDate(date: Option[LocalDate])(implicit messages: Messages): Option[String] =
     date.map(displayLocalDate)
 
-  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
-    date.getDayOfMonth + " " + messages(s"date.month.${date.getMonthValue}") + " " + date.getYear
 
+  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${getDateMonth(date)} ${date.getYear}"
+
+  private def getDateMonth(date: LocalDate)(implicit messages: Messages): String =
+    messages(s"date.month.${date.getMonthValue}")
 }

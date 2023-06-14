@@ -16,10 +16,9 @@
 
 package controllers.group
 
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import views.html.group.member_name_page
 
 import javax.inject.{Inject, Singleton}

@@ -18,7 +18,7 @@ package controllers.enrolment
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -75,7 +75,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           Future.successful(Some(userEnrolmentDetails))
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "CYA Page"
@@ -91,7 +91,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           Future.successful(Some(UserEnrolmentDetails()))
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
 

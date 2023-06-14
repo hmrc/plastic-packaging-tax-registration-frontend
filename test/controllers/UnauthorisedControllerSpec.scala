@@ -18,11 +18,12 @@ package controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import controllers.unauthorised.UnauthorisedController
+import play.api.test.FakeRequest
 import views.html.unauthorised._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -45,7 +46,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
       "onPageLoad can be invoked" in {
 
-        val result = controller.showGenericUnauthorised()(getRequest())
+        val result = controller.showGenericUnauthorised()(FakeRequest())
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "unauthorised"
@@ -53,7 +54,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
       "showAgentUnauthorised can be invoked" in {
 
-        val result = controller.showAgentUnauthorised()(getRequest())
+        val result = controller.showAgentUnauthorised()(FakeRequest())
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "unauthorised agent"
@@ -61,7 +62,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
       "showAssistantUnauthorised can be invoked" in {
 
-        val result = controller.showAssistantUnauthorised()(getRequest())
+        val result = controller.showAssistantUnauthorised()(FakeRequest())
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "wrong cred role"

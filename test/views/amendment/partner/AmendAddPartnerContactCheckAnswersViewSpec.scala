@@ -17,15 +17,12 @@
 package views.amendment.partner
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers
-import play.api.mvc.Call
-import controllers.amendment.partner.{
-  routes => partnerRoutes
-}
 import forms.contact.Address
 import forms.organisation.PartnerTypeEnum
 import models.genericregistration.Partner
+import org.jsoup.nodes.Document
+import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import services.CountryService
 import views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
@@ -34,9 +31,9 @@ class AmendAddPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Match
   private val page           = inject[amend_add_partner_contact_check_answers_page]
   private val countryService = inject[CountryService]
 
-  private val limitedCompanyPartner = aLimitedCompanyPartner()
-  private val soleTraderPartner     = aSoleTraderPartner()
-  private val partnershipPartner    = aPartnershipPartner()
+  private val limitedCompanyPartner = aLimitedCompanyPartner
+  private val soleTraderPartner     = aSoleTraderPartner
+  private val partnershipPartner    = aPartnershipPartner
 
   private def createView(partner: Partner): Document =
     page(partner)(registrationJourneyRequest, messages)

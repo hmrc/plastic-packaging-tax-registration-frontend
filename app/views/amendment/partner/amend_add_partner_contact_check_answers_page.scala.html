@@ -36,7 +36,7 @@
 
 @partnerContactRows() = @{
  Seq(
-  viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.AddPartnerContactDetailsNameController.displayPage())),
+  viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.AddPartnerContactDetailsNameController.displayPage)),
   viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.AddPartnerContactDetailsEmailAddressController.displayPage())),
   viewUtils.summaryListRow("partner.check.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.AddPartnerContactDetailsTelephoneNumberController.displayPage())),
   viewUtils.summaryListRow("partner.check.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),

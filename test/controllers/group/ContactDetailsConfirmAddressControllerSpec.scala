@@ -20,10 +20,8 @@ import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers.{await, redirectLocation}
 import controllers.group.{routes => groupRoutes}
-import models.registration.{
-  GroupDetail,
-  NewRegistrationUpdateService
-}
+import models.registration.{GroupDetail, NewRegistrationUpdateService}
+import play.api.test.FakeRequest
 import services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -78,7 +76,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-        val resp = controller.displayPage(groupMember.id)(getRequest())
+        val resp = controller.displayPage(groupMember.id)(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -93,7 +91,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
         )
         simulateValidAddressCapture()
 
-        val resp = controller.addressCaptureCallback(groupMember.id)(getRequest())
+        val resp = controller.addressCaptureCallback(groupMember.id)(FakeRequest())
 
         redirectLocation(resp) mustBe Some(
           groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url
@@ -108,7 +106,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
     "throw IllegalStateException" when {
       "group member cannot be found in registration" in {
         intercept[IllegalStateException] {
-          await(controller.addressCaptureCallback("XXX")(getRequest()))
+          await(controller.addressCaptureCallback("XXX")(FakeRequest()))
         }
       }
     }

@@ -16,17 +16,16 @@
 
 package controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
 import controllers.EmailVerificationActions
-
 import forms.contact.EmailAddress
 import models.genericregistration.Partner
 import models.registration.{Registration, RegistrationUpdater}
-import models.request.{AuthenticatedRequest, JourneyRequest}
-import views.html.partner.partner_email_address_page
+import models.request.JourneyRequest
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_email_address_page
 
 import scala.concurrent.{ExecutionContext, Future}
 

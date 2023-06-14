@@ -17,15 +17,6 @@
 package controllers.group
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.test.Helpers.{redirectLocation, status}
-import play.twirl.api.HtmlFormat
 import connectors.DownstreamServiceError
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.partner.{routes => partnerRoutes}
@@ -34,8 +25,17 @@ import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEA
 import forms.organisation.OrganisationType
 import models.registration.group.{GroupMember, OrganisationDetails}
 import models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
-import views.html.group.organisation_type
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{reset, when}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.Form
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, status}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.group.organisation_type
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
@@ -79,7 +79,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
           spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdate()
-          val result = controller.displayPageNewMember()(getRequest())
+          val result = controller.displayPageNewMember()(FakeRequest())
 
           status(result) mustBe OK
         }
@@ -89,7 +89,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
             aRegistration(withGroupDetail(groupDetail = Some(groupDetailsWithMembers)))
           )
           mockRegistrationUpdate()
-          val result = controller.displayPageAmendMember("123456ABC")(getRequest())
+          val result = controller.displayPageAmendMember("123456ABC")(FakeRequest())
 
           status(result) mustBe OK
         }
@@ -110,7 +110,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           )
         )
         mockRegistrationUpdate()
-        val result = controller.displayPageNewMember()(getRequest())
+        val result = controller.displayPageNewMember()(FakeRequest())
 
         status(result) mustBe OK
       }

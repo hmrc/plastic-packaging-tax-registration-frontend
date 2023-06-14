@@ -21,13 +21,7 @@ import play.api.Logger
 import play.api.http.Status.CREATED
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{
-  HeaderCarrier,
-  HttpClient,
-  HttpReads,
-  HttpResponse,
-  InternalServerException
-}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
 import models.genericregistration.GrsJourneyCreationRequest
 
 import scala.concurrent.{ExecutionContext, Future}

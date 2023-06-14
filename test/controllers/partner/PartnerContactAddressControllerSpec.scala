@@ -18,7 +18,7 @@ package controllers.partner
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.redirectLocation
 import spec.PptTestData
 import models.registration.NewRegistrationUpdateService
@@ -44,8 +44,8 @@ class PartnerContactAddressControllerSpec
         generalPartnershipDetailsWithPartners.copy(
           partners = Seq(),
           inflightPartner = Some(
-            aSoleTraderPartner().copy(contactDetails =
-              aSoleTraderPartner().contactDetails.map(_.copy(address = None))
+            aSoleTraderPartner.copy(contactDetails =
+              aSoleTraderPartner.contactDetails.map(_.copy(address = None))
             )
           )
         )
@@ -73,7 +73,7 @@ class PartnerContactAddressControllerSpec
       "capturing address for new partner" in {
         spyJourneyAction.setReg(partnershipRegistrationWithInflightPartner)
 
-        val resp = controller.captureNewPartner()(getRequest())
+        val resp = controller.captureNewPartner()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -82,7 +82,7 @@ class PartnerContactAddressControllerSpec
 
         val resp = controller.captureExistingPartner(
           partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
-        )(getRequest())
+        )(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -92,7 +92,7 @@ class PartnerContactAddressControllerSpec
       "receive address capture callback for new partner" in {
         spyJourneyAction.setReg(partnershipRegistrationWithInflightPartner)
 
-        val resp = controller.addressCaptureCallbackNewPartner()(getRequest())
+        val resp = controller.addressCaptureCallbackNewPartner()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(
           routes.PartnerCheckAnswersController.displayNewPartner().url
@@ -107,7 +107,7 @@ class PartnerContactAddressControllerSpec
         spyJourneyAction.setReg(partnershipRegistrationWithExistingPartner)
 
         val resp =
-          controller.addressCaptureCallbackExistingPartner(nominatedPartnerId)(getRequest())
+          controller.addressCaptureCallbackExistingPartner(nominatedPartnerId)(FakeRequest())
 
         redirectLocation(resp) mustBe Some(
           routes.PartnerCheckAnswersController.displayExistingPartner(nominatedPartnerId).url

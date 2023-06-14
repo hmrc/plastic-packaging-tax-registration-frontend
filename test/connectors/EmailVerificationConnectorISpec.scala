@@ -69,7 +69,7 @@ class EmailVerificationConnectorISpec
 
         val res = await(connector.create(emailVerificationRequest))
 
-        res.right.get mustBe testJourneyStartUrl
+        res.value mustBe testJourneyStartUrl
         getTimer("ppt.email.verification.create.timer").getCount mustBe 1
       }
     }

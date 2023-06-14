@@ -20,18 +20,18 @@ import base.unit.ControllerSpec
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.request.{AuthenticatedRequest, JourneyRequest}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{spy, verify, when}
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.enrolment.enrolment_failure_page
 import views.html.liability.grs_failure_page
-import views.html.organisation.business_verification_failure_page
-import views.html.organisation.sole_trader_verification_failure_page
+import views.html.organisation.{business_verification_failure_page, sole_trader_verification_failure_page}
 import views.html.{duplicate_subscription_page, error_page, registration_failed_page}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -88,7 +88,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   "NotableErrorController" should {
     "present the generic error page on subscription failure" in {
 
-      val resp = controller.subscriptionFailure()(getRequest())
+      val resp = controller.subscriptionFailure()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error page content"
@@ -96,7 +96,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the generic error no save page on enrolment failure" in {
 
-      val resp = controller.enrolmentFailure()(getRequest())
+      val resp = controller.enrolmentFailure()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error no save page content"
@@ -104,7 +104,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the business verification failed page" in {
 
-      val resp = controller.businessVerificationFailure()(getRequest())
+      val resp = controller.businessVerificationFailure()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error business verification failed content"
@@ -112,21 +112,21 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the sole trader verification failed page" in {
 
-      val resp = controller.soleTraderVerificationFailure()(getRequest())
+      val resp = controller.soleTraderVerificationFailure()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error sole trader verification failed content"
     }
 
     "present the grs failure page" in {
-      val resp = controller.grsFailure()(getRequest())
+      val resp = controller.grsFailure()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "grs failure content"
     }
 
     "present the duplicate subscription page" in {
-      val resp = controller.duplicateRegistration()(getRequest())
+      val resp = controller.duplicateRegistration()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "duplicate subscription content"

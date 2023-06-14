@@ -19,9 +19,10 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import views.html.enrolment.verify_organisation_page
@@ -51,7 +52,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
 
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -62,7 +63,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
     "redirect to IsUkAddress page " when {
 
       "user is authorised and submit " in {
-        val result = controller.submit()(getRequest())
+        val result = controller.submit()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)

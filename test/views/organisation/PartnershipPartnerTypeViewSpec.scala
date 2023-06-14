@@ -16,19 +16,15 @@
 
 package views.organisation
 
-import base.PptTestData
 import base.unit.UnitViewSpec
+import forms.organisation.PartnerType
+import forms.organisation.PartnerType.FormMode
+import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import play.api.test.FakeRequest
-import forms.organisation.PartnerType
-import forms.organisation.PartnerType.FormMode
-import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
-import models.request.{AuthenticatedRequest, JourneyRequest}
 import spec.PptTestData
-import utils.FakeRequestCSRFSupport._
 import views.html.organisation.partner_type
 
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with PptTestData {

@@ -23,10 +23,10 @@ import models.emailverification.EmailVerificationJourneyStatus
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.EmailVerificationService
@@ -91,21 +91,21 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner())
+      Some(aLimitedCompanyPartner)
     )
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress = {
     val contactDetailsWithEmailAddress =
-      aLimitedCompanyPartner().contactDetails.map(_.copy(emailAddress = Some("test@localhost")))
+      aLimitedCompanyPartner.contactDetails.map(_.copy(emailAddress = Some("test@localhost")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithEmailAddress))
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithEmailAddress))
     )
   }
 
   private val existingPartner =
-    aLimitedCompanyPartner()
+    aLimitedCompanyPartner
 
-  private val nonNominatedExistingPartner = aSoleTraderPartner()
+  private val nonNominatedExistingPartner = aSoleTraderPartner
 
   private def registrationWithExistingPartner =
     aRegistration(
@@ -126,7 +126,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   private def registrationWithExistingPartnerAndInflightPartner =
     aRegistration(
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
-    ).withInflightPartner(Some(aSoleTraderPartner()))
+    ).withInflightPartner(Some(aSoleTraderPartner))
 
   "PartnerEmailAddressController" should {
 
@@ -135,7 +135,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -146,7 +146,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress
         )
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -155,7 +155,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+        val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -205,7 +205,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         spyJourneyAction.setReg(withEmailVerificationJourney)
 
-        val result = controller.confirmNewPartnerEmailCode()(getRequest())
+        val result = controller.confirmNewPartnerEmailCode()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -264,7 +264,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       }
 
       "user requests too many attempts page" in {
-        val result = controller.emailVerificationTooManyAttempts()(getRequest())
+        val result = controller.emailVerificationTooManyAttempts()(FakeRequest())
         status(result) mustBe OK
       }
 
@@ -283,7 +283,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         spyJourneyAction.setReg(withEmailVerificationJourney)
         mockRegistrationUpdate()
 
-        val result = controller.emailVerifiedNewPartner()(getRequest())
+        val result = controller.emailVerifiedNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -330,7 +330,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           )(any())
         ).thenReturn(Future.successful(true))
 
-        val result = controller.confirmEmailUpdateNewPartner()(getRequest())
+        val result = controller.confirmEmailUpdateNewPartner()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -380,7 +380,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
 
         val result =
-          controller.confirmExistingPartnerEmailCode(existingNominatedPartner.id)(getRequest())
+          controller.confirmExistingPartnerEmailCode(existingNominatedPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -437,7 +437,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
 
         val result =
-          controller.confirmEmailUpdateExistingPartner(existingNominatedPartner.id)(getRequest())
+          controller.confirmEmailUpdateExistingPartner(existingNominatedPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -459,7 +459,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
 
         val result =
-          controller.emailVerifiedExistingPartner(existingNominatedPartner.id)(getRequest())
+          controller.emailVerifiedExistingPartner(existingNominatedPartner.id)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -476,14 +476,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
     "return an error" when {
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
-        intercept[RuntimeException](status(controller.displayNewPartner()(getRequest())))
+        intercept[RuntimeException](status(controller.displayNewPartner()(FakeRequest())))
       }
 
       "user tries to display an non existent partner" in {
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
         ))
       }
 

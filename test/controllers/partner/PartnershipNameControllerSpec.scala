@@ -18,12 +18,13 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.BAD_REQUEST
 import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
 import forms.organisation.PartnershipName
+import play.api.test.FakeRequest
 import views.html.organisation.partnership_name
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -65,7 +66,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     "display partnership name capture page" when {
       "user is authorized" when {
         "registration does not contain partnership name" in {
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayPage()(FakeRequest())
 
           contentAsString(resp) mustBe "Partnership name capture"
         }
@@ -78,7 +79,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
             )
           )
 
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayPage()(FakeRequest())
 
           contentAsString(resp) mustBe "Partnership name capture"
         }
@@ -146,7 +147,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           )
 
           intercept[IllegalStateException] {
-            await(controller.displayPage()(getRequest()))
+            await(controller.displayPage()(FakeRequest()))
           }
         }
       }

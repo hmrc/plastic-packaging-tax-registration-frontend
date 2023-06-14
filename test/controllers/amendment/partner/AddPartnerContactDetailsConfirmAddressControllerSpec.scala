@@ -18,7 +18,7 @@ package controllers.amendment.partner
 
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec, MockRegistrationAmendmentRepository}
 import models.registration.AmendRegistrationUpdateService
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation}
@@ -50,8 +50,8 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
         generalPartnershipDetailsWithPartners.copy(
           partners = Seq(),
           inflightPartner = Some(
-            aSoleTraderPartner().copy(contactDetails =
-              aSoleTraderPartner().contactDetails.map(_.copy(address = None))
+            aSoleTraderPartner.copy(contactDetails =
+              aSoleTraderPartner.contactDetails.map(_.copy(address = None))
             )
           )
         )

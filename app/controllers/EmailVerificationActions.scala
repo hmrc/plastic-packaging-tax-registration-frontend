@@ -129,7 +129,7 @@ trait EmailVerificationActions {
       Ok(emailCorrectPasscodePage(submitCall, possibleSectionHeadingText))
   }
 
-  def showTooManyAttemptsPage()(implicit
+  def showTooManyAttemptsPage(implicit
     request: JourneyRequest[AnyContent],
     messages: Messages
   ): Result =
@@ -151,8 +151,7 @@ trait EmailVerificationActions {
 
   protected def isEmailVerified(email: String)(implicit
     request: JourneyRequest[AnyContent],
-    hc: HeaderCarrier,
-    ec: ExecutionContext
+    hc: HeaderCarrier
   ): Future[Boolean] =
     emailVerificationService.isEmailVerified(email, request.authenticatedRequest.credId)
 

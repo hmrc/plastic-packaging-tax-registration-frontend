@@ -16,40 +16,20 @@
 
 package controllers.partner
 
+import config.AppConfig
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.organisation.{routes => organisationRoutes}
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import forms.partner.PartnerName
+import models.genericregistration.{Partner, PartnerPartnershipDetails}
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import config.AppConfig
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-
-import controllers.organisation.{
-  routes => organisationRoutes
-}
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import forms.partner.PartnerName
-import models.genericregistration.{
-  Partner,
-  PartnerPartnershipDetails
-}
-import models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
 import services.GRSRedirections
-import views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_name_page
 
 import scala.concurrent.{ExecutionContext, Future}
 

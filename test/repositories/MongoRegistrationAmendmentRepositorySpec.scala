@@ -17,17 +17,16 @@
 package repositories
 
 import builders.RegistrationBuilder
-import config.AppConfig
 import models.registration.Registration
-import models.request.AuthenticatedRequest.RegistrationRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.invocation.InvocationOnMock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.await
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import spec.PptTestData
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +48,7 @@ class MongoRegistrationAmendmentRepositorySpec
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)
     when(mockUserDataRepository.putData[Registration](any(), any())(any(), any())).thenAnswer(
-      inv => Future.successful(inv.getArgument(0))
+      (inv: InvocationOnMock) => Future.successful(inv.getArgument(0))
     )
     when(mockUserDataRepository.getData[Registration](any())(any(), any())).thenReturn(
       Future.successful(Some(registration))

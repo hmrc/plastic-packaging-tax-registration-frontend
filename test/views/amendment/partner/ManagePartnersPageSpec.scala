@@ -17,16 +17,14 @@
 package views.amendment.partner
 
 import base.unit.UnitViewSpec
+import models.registration.Registration
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import config.AppConfig
-import models.registration.Registration
 import views.html.amendment.partner.manage_partners_page
 
 class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
 
   private val page: manage_partners_page = inject[manage_partners_page]
-  private val realAppConfig              = inject[AppConfig]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))

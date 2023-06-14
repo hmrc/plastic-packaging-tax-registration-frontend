@@ -16,16 +16,13 @@
 
 package controllers.liability
 
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
+import forms.liability.{RegType, RegistrationType}
+import models.registration.{Cacheable, Registration}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import connectors.RegistrationConnector
-import controllers.actions.JourneyAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import forms.liability.{RegType, RegistrationType}
-import models.registration.Cacheable
-import models.request.JourneyRequest
 import views.html.liability.registration_type_page
 
 import javax.inject.{Inject, Singleton}
@@ -57,17 +54,7 @@ class RegistrationTypeController @Inject() (
           (formWithErrors: Form[RegistrationType]) =>
             Future.successful(BadRequest(page(formWithErrors, backLink))),
           registrationType =>
-            update(registrationType.value match {
-              case Some(RegType.GROUP) =>
-                registration => registration.copy(registrationType = registrationType.value)
-              case Some(RegType.SINGLE_ENTITY) =>
-                registration =>
-                  registration.copy(
-                    registrationType = registrationType.value,
-                    groupDetail =
-                      registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
-                  )
-            }).map {
+            update(updateRegistration(registrationType)).map {
               case Right(registration) =>
                 registration.registrationType match {
                   case Some(regType) if regType == RegType.GROUP =>
@@ -80,7 +67,22 @@ class RegistrationTypeController @Inject() (
         )
     }
 
-  private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
+  private def backLink: Call =
     routes.LiabilityWeightController.displayPage()
+
+  private def updateRegistration(registrationType: RegistrationType): Registration => Registration = {
+    registrationType.value match {
+      case Some(RegType.GROUP) =>
+        registration => registration.copy(registrationType = registrationType.value)
+      case Some(RegType.SINGLE_ENTITY) =>
+        registration =>
+          registration.copy(
+            registrationType = registrationType.value,
+            groupDetail =
+              registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
+          )
+      case other => throw new IllegalStateException(s"Invalid registration type: $other")
+    }
+  }
 
 }

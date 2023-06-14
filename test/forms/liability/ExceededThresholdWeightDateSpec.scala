@@ -17,11 +17,10 @@
 package forms.liability
 
 import config.AppConfig
-import forms.liability.ExceededThresholdWeightDate.{dateEmptyError, dateFormattingError, dateOutOfRangeError, isBeforeLiveDateError, requiredKey, twoRequiredKey}
-import org.mockito.ArgumentCaptor
+import forms.liability.ExceededThresholdWeightDate._
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.{atLeastOnce, verify, when}
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError

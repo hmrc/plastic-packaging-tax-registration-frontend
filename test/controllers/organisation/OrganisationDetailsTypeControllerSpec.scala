@@ -18,24 +18,24 @@ package controllers.organisation
 
 import audit.Auditor
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
-import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.test.Helpers.{redirectLocation, status}
-import play.twirl.api.HtmlFormat
 import connectors.DownstreamServiceError
 import controllers.partner.{routes => partnerRoutes}
-import controllers.{routes => pptRoutes}
 import forms.liability.RegType
 import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import forms.organisation.{OrgType, OrganisationType, PartnerTypeEnum}
 import models.registration.{NewRegistrationUpdateService, OrganisationDetails}
-import views.html.organisation.organisation_type
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.atLeastOnce
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.Form
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, status}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.organisation.organisation_type
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
@@ -84,7 +84,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -96,7 +96,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -105,7 +105,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
-        val result = controller.displayPageRepresentativeMember()(getRequest())
+        val result = controller.displayPageRepresentativeMember()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -117,7 +117,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayPageRepresentativeMember()(getRequest())
+        val result = controller.displayPageRepresentativeMember()(FakeRequest())
 
         status(result) mustBe OK
       }

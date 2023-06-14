@@ -16,22 +16,20 @@
 
 package controllers.amendment.group
 
-import base.unit.{AddressCaptureSpec, ControllerSpec, AmendmentControllerSpec}
-import controllers.actions.getRegistration.GetRegistrationAction
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, spy, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.OK
-import play.api.mvc.{AnyContentAsEmpty, Request}
-import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import play.twirl.api.HtmlFormat
-import spec.PptTestData
+import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import forms.contact.Address
 import forms.contact.Address.UKAddress
 import models.registration.GroupDetail
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import views.html.organisation.confirm_business_address
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
+import play.twirl.api.HtmlFormat
+import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.organisation.confirm_business_address
 
 class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCaptureSpec
   with AmendmentControllerSpec with PptTestData {

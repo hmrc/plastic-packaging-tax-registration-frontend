@@ -100,7 +100,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     )
 
   private def incorpEntityGrsCreateRequest(
-    businessVerificationCheck: Boolean = true,
+    businessVerificationCheck: Boolean,
     memberId: Option[String]
   )(implicit request: Request[_]) =
     IncorpEntityGrsCreateRequest(grsCallbackUrl(memberId),
@@ -108,8 +108,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
                                  appConfig.grsAccessibilityStatementPath,
-                                 businessVerificationCheck =
-                                   businessVerificationCheck
+                                 businessVerificationCheck = businessVerificationCheck
     )
 
   private def getUkCompanyRedirectUrl(

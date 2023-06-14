@@ -17,19 +17,17 @@
 package controllers.partner
 
 import com.google.inject.{Inject, Singleton}
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
 import controllers.actions.JourneyAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.partner.AddPartner
 import models.registration.Cacheable
 import models.request.JourneyRequest
-import views.html.partner.partner_list_page
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_list_page
 
 @Singleton
 class PartnerListController @Inject() (

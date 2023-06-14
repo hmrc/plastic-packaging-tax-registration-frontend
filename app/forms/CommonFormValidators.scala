@@ -56,7 +56,7 @@ trait CommonFormValidators {
       value.isEmpty || value.chars().allMatch(
         char =>
           Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(
-            _.contains(char)
+            _.contains(char.toChar)
           )
       )
 

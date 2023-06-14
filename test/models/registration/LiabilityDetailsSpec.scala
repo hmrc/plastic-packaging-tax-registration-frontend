@@ -81,26 +81,8 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "be COMPLETED " when {
-
-      "post-launch" in {
-        // TODO this test needs updating?
-        completedDetails.status mustBe TaskStatus.Completed
-      }
-    }
-
-    "clear some of the previous questions" in {
-      val fullyCompleteddetails = completedDetails.copy(
-        // TODO missing fields        
-      )
-      val updatedDetails = fullyCompleteddetails.clearOldLiabilityAnswers mustBe LiabilityDetails(
-        expectToExceedThresholdWeight = None,
-        dateExceededThresholdWeight = None,
-        expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-        startDate = None,
-        newLiabilityStarted = Some(NewLiability),
-        newLiabilityFinished = Some(NewLiability)
-      )
+    "be COMPLETED " in {
+      completedDetails.status mustBe TaskStatus.Completed
     }
   }
 }

@@ -18,10 +18,10 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
@@ -61,7 +61,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
   "Partner List Controller" should {
     "show list of partners" in {
-      val resp = controller.displayPage()(getRequest())
+      val resp = controller.displayPage()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner list"
@@ -100,7 +100,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(withAllPartnersRemoved(partnershipRegistration))
 
         intercept[IllegalStateException] {
-          await(controller.displayPage()(getRequest()))
+          await(controller.displayPage()(FakeRequest()))
         }
       }
     }

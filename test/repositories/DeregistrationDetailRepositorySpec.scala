@@ -16,7 +16,6 @@
 
 package repositories
 
-import config.AppConfig
 import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 import models.request.AuthenticatedRequest
 import org.mockito.Mockito.when
@@ -45,7 +44,6 @@ class DeregistrationDetailRepositorySpec
 
   override implicit val authenticatedRequest: AuthenticatedRequest[AnyContent] = registrationRequest
 
-  private val appConfig  = mock[AppConfig]
   private val mockConfig = mock[Configuration]
   when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
     FiniteDuration(1, TimeUnit.MINUTES)

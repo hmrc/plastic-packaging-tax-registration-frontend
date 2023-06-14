@@ -20,7 +20,7 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import controllers.amendment.group
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}

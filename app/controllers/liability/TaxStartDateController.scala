@@ -19,11 +19,9 @@ package controllers.liability
 import controllers.actions.JourneyAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import services.TaxStartDateService
-import views.html.liability.tax_start_date_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.liability.tax_start_date_page
 
 import javax.inject.{Inject, Singleton}
 

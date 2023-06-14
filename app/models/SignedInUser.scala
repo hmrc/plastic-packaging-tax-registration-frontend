@@ -16,9 +16,6 @@
 
 package models
 
-import uk.gov.hmrc.auth.core.Enrolments
-import connectors.DownstreamServiceError
-import controllers.contact.RegistrationException
 import models.request.IdentityData
 
 case class SignedInUser(

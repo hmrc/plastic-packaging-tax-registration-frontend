@@ -16,12 +16,11 @@
 
 package controllers.group
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import utils.AddressConversionUtils
 
 import javax.inject.{Inject, Singleton}

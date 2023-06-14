@@ -16,18 +16,11 @@
 
 package controllers.group
 
+import models.registration.RegistrationUpdater
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-
-import models.registration.RegistrationUpdater
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
+import services.{AddressCaptureConfig, AddressCaptureService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext

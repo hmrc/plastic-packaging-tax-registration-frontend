@@ -51,7 +51,7 @@ class DeregistrationConnectorISpec
         val res: Either[ServiceError, Unit] =
           await(connector.deregister(pptReference, deregistrationDetails))
 
-        res.right.get mustBe ()
+        res mustBe Right(())
         getTimer("ppt.deregister.timer").getCount mustBe 1
       }
 

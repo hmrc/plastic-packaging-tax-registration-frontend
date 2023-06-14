@@ -23,12 +23,12 @@ import forms.contact.PhoneNumber
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
@@ -72,7 +72,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
-        val result = controller.displayPage(groupMember.id)(getRequest())
+        val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -82,7 +82,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
-        val result = controller.displayPage(groupMember.id)(getRequest())
+        val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -124,7 +124,7 @@ class ContactDetailsTelephoneNumberControllerSpec
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
-        await(controller.displayPage(groupMember.id)(getRequest()))
+        await(controller.displayPage(groupMember.id)(FakeRequest()))
 
         pageForm.get.value mustBe "077123"
       }

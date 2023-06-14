@@ -17,27 +17,23 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import controllers.organisation.{routes => orgRoutes}
+import controllers.partner.{routes => partnerRoutes}
+import forms.organisation.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum._
+import models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipGrsCreateRequest, SoleTraderGrsCreateRequest}
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.MockitoSugar.{verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import controllers.organisation.{routes => orgRoutes}
-import controllers.partner.{routes => partnerRoutes}
-import controllers.{routes => pptRoutes}
-import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum._
-import models.genericregistration.{
-  IncorpEntityGrsCreateRequest,
-  PartnershipGrsCreateRequest,
-  SoleTraderGrsCreateRequest
-}
-import models.registration.NewRegistrationUpdateService
-import views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.organisation.partner_type
 
 class PartnerTypeControllerSpec extends ControllerSpec {
 
@@ -98,7 +94,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -113,7 +109,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
         spyJourneyAction.setReg(registration)
 
-        val result = controller.displayExistingPartner("123")(getRequest())
+        val result = controller.displayExistingPartner("123")(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -314,7 +310,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     "display nominated partner type capture page" when {
       "user is authorized" when {
         "registration does not contain partnership partner" in {
-          val resp = controller.displayNewPartner()(getRequest())
+          val resp = controller.displayNewPartner()(FakeRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }
@@ -331,7 +327,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             )
           )
 
-          val resp = controller.displayNewPartner()(getRequest())
+          val resp = controller.displayNewPartner()(FakeRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }

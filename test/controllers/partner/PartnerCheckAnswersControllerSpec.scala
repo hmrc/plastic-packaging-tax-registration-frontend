@@ -18,10 +18,10 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
@@ -63,7 +63,7 @@ class PartnerCheckAnswersControllerSpec
       spyJourneyAction.setReg(
         aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
       )
-      val resp = controller.displayNewPartner()(getRequest())
+      val resp = controller.displayNewPartner()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
@@ -72,7 +72,7 @@ class PartnerCheckAnswersControllerSpec
     "show nominated partner detail" in {
       val resp = controller.displayExistingPartner(
         partnershipRegistration.nominatedPartner.map(_.id).get
-      )(getRequest())
+      )(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
@@ -81,14 +81,14 @@ class PartnerCheckAnswersControllerSpec
       val firstPartnerId = partnershipRegistration.organisationDetails.partnershipDetails.map(
         _.otherPartners.head.id
       ).getOrElse(throw new IllegalStateException("Missing partner id"))
-      val resp = controller.displayExistingPartner(firstPartnerId)(getRequest())
+      val resp = controller.displayExistingPartner(firstPartnerId)(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
     }
     "redirect to partner list" when {
       "confirmed" in {
-        val resp = controller.continue()(getRequest())
+        val resp = controller.continue()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(routes.PartnerListController.displayPage().url)
       }
@@ -101,13 +101,13 @@ class PartnerCheckAnswersControllerSpec
           await(
             controller.displayExistingPartner(
               partnershipRegistration.nominatedPartner.map(_.id).get
-            )(getRequest())
+            )(FakeRequest())
           )
         }
       }
       "specific partner not found" in {
         intercept[IllegalStateException] {
-          await(controller.displayExistingPartner("XXX")(getRequest()))
+          await(controller.displayExistingPartner("XXX")(FakeRequest()))
         }
       }
     }

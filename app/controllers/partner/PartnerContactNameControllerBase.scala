@@ -16,16 +16,15 @@
 
 package controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-
 import forms.group.MemberName
 import models.genericregistration.{Partner, PartnerContactDetails}
 import models.registration.{Registration, RegistrationUpdater}
-import models.request.{AuthenticatedRequest, JourneyRequest}
-import views.html.partner.partner_member_name_page
+import models.request.JourneyRequest
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_member_name_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -78,7 +77,7 @@ abstract class PartnerContactNameControllerBase(
       getPartner(partnerId).map { partner =>
         val nextPage = partnerId match {
           case Some(partnerId) => onwardCallExistingPartner(partnerId)
-          case _               => onwardCallNewPartner()
+          case _               => onwardCallNewPartner
         }
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
@@ -141,7 +140,7 @@ abstract class PartnerContactNameControllerBase(
       case _               => request.registration.inflightPartner
     }
 
-  def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call
+  def onwardCallNewPartner(implicit request: JourneyRequest[AnyContent]): Call
 
   def onwardCallExistingPartner(partnerId: String)(implicit request: JourneyRequest[AnyContent]): Call
 

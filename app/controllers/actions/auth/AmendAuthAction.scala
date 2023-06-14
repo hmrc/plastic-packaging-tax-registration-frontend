@@ -20,7 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.AppConfig
 import models.enrolment.PptEnrolment
 import models.request.AuthenticatedRequest.PPTEnrolledRequest
-import models.request.{AuthenticatedRequest, IdentityData}
+import models.request.IdentityData
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._

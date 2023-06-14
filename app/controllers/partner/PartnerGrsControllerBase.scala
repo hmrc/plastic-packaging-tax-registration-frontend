@@ -17,25 +17,22 @@
 package controllers.partner
 
 
+import connectors._
+import connectors.grs._
+import controllers.{routes => commonRoutes}
+import forms.organisation.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum._
+import models.genericregistration._
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.JourneyRequest
+import models.subscriptions.SubscriptionStatus
+import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import org.joda.time.DateTime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import connectors._
-import connectors.grs._
-
-import controllers.organisation.RegistrationStatus._
-import controllers.organisation.{routes => orgRoutes}
-import controllers.{routes => commonRoutes}
-import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum._
-import models.genericregistration._
-import models.registration.{Registration, RegistrationUpdater}
-import models.request.{AuthenticatedRequest, JourneyRequest}
-import models.subscriptions.SubscriptionStatus
-import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -38,7 +38,7 @@ class ContactDetailsAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
@@ -54,7 +54,7 @@ class ContactDetailsAddressController @Inject() (
 
     }
 
-  def update(): Action[AnyContent] =
+  def update: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>

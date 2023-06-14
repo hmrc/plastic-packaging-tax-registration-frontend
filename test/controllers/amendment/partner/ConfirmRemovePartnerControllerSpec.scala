@@ -64,7 +64,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
 
     "throw IllegalStateException if the specified partner cannot be found" in {
       intercept[IllegalStateException] {
-        await(confirmRemovePartnerController.displayPage("XXX")(getRequest()))
+        await(confirmRemovePartnerController.displayPage("XXX")(FakeRequest()))
       }
     }
 

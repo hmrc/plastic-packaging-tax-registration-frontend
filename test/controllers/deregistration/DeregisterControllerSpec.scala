@@ -27,6 +27,7 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
 import models.deregistration.DeregistrationDetails
+import play.api.test.FakeRequest
 import views.html.deregistration.deregister_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -121,7 +122,7 @@ class DeregisterControllerSpec
   private def deregisterPageDisplayedAsExpected() = {
 
 
-    val resp = deregisterController.displayPage()(getRequest())
+    val resp = deregisterController.displayPage()(FakeRequest())
 
     status(resp) mustBe OK
     contentAsString(resp) mustBe "Deregister?"

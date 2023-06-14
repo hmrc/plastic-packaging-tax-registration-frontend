@@ -17,9 +17,10 @@
 package views.liability
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
 import org.mockito.ArgumentCaptor
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
+import org.mockito.Mockito.{times, verify, when}
+import org.mockito.MockitoSugar.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -36,18 +37,18 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import views.html.components._
 import views.html.liability.expect_to_exceed_threshold_weight_page
 import views.html.main_template
+import views.viewmodels.Title
 import views.viewmodels.govuk.radios._
-import views.viewmodels.{BackButtonJs, Title}
 
 class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
 
   val request = FakeRequest()
-  val mockMessages: Messages = mock[Messages]
+  val mockMessages = mock[Messages]
 
   val form: Form[Boolean] = Form[Boolean]("value" -> ignored[Boolean](true))
-  val sectionHeader: sectionHeader = mock[sectionHeader]
-  val pageHeading: pageHeading = mock[pageHeading]
-  val govUkLayout: main_template = mock[main_template]
+  val sectionHeader = mock[sectionHeader]
+  val pageHeading = mock[pageHeading]
+  val govUkLayout = mock[main_template]
   val contentCaptor = ArgumentCaptor.forClass(classOf[Html])
   val saveButtons = mock[saveButtons]
   val errorSummary = mock[errorSummary]
