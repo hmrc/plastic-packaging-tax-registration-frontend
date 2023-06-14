@@ -74,8 +74,8 @@ class ViewUtils @Inject() (countryService: CountryService) {
 
 
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
-    s"${date.getDayOfMonth} ${getDateMonth1(date)} ${date.getYear}"
+    s"${date.getDayOfMonth} ${getDateMonth(date)} ${date.getYear}"
 
-  def getDateMonth1(date: LocalDate)(implicit messages: Messages): String =
+  private def getDateMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"date.month.${date.getMonthValue}")
 }
