@@ -1,3 +1,17 @@
 .hmrc-add-to-a-list--short .hmrc-add-to-a-list__identifier {
   width: 52%;
 }
+
+.row-header--no-border .govuk-table__header {
+  border: none !important;
+}
+.cell--no-border .govuk-table__cell {
+  border: none !important;
+}
+th.govuk-table__header.row-border {
+  border-bottom: 1px solid #b1b4b6 !important;
+}
+
+td.govuk-table__cell.row-border {
+  border-bottom: 1px solid #b1b4b6 !important;
+}
