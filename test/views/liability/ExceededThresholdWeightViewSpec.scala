@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar
 import org.mockito.captor.ArgCaptor
-import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.mockito.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
@@ -96,8 +96,8 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       instantiateView()
 
       val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
-      form.attr("method") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit().method
-      form.attr("action") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit().url
+      form.attr("method") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit.method
+      form.attr("action") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit.url
       form.attr("autoComplete") mustBe "off"
       assert(form.hasAttr("novalidate"))
     }

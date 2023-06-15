@@ -24,9 +24,9 @@ class AmendAddPartnerContactCheckAnswersViewSpec extends BaseViewSpec {
 
   private val page           = inject[amend_add_partner_contact_check_answers_page]
 
-  private val limitedCompanyPartner = aLimitedCompanyPartner()
-  private val soleTraderPartner     = aSoleTraderPartner()
-  private val partnershipPartner    = aPartnershipPartner()
+  private val limitedCompanyPartner = aLimitedCompanyPartner
+  private val soleTraderPartner     = aSoleTraderPartner
+  private val partnershipPartner    = aPartnershipPartner
 
   private def createView(partner: Partner): String =
     page(partner)(registrationJourneyRequest, messages).toString()

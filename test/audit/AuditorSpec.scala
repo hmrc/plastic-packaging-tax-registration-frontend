@@ -28,8 +28,6 @@ import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Injecting
-import forms.liability.RegType
-import forms.organisation.OrgType
 
 class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with RegistrationBuilder {
 

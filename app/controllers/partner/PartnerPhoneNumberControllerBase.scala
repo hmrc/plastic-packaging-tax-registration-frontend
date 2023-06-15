@@ -16,22 +16,15 @@
 
 package controllers.partner
 
+import forms.contact.PhoneNumber
+import models.genericregistration.Partner
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-
-import forms.contact.PhoneNumber
-import models.genericregistration.Partner
-import models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
-import views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_phone_number_page
 
 import scala.concurrent.{ExecutionContext, Future}
 

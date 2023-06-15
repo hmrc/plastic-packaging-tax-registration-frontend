@@ -16,19 +16,16 @@
 
 package controllers.contact
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.JourneyAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import controllers.{routes => commonRoutes}
 import forms.contact.JobTitle
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.contact.job_title_page
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.job_title_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

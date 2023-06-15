@@ -20,10 +20,10 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import forms.contact.{EmailAddress, EmailAddressPasscode}
 import models.emailverification.EmailVerificationJourneyStatus
 import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
-import models.registration.Registration
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.Mockito.{never, verifyNoInteractions}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -65,7 +65,6 @@ class AmendEmailAddressControllerSpec
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
-  private val pptReference = "XMPPT0000000123"
   private val cacheId    = amendsJourneyRequest.authenticatedRequest.cacheId
 
   private val populatedRegistration = {
@@ -236,13 +235,11 @@ class AmendEmailAddressControllerSpec
           )(any())
         ).thenReturn(Future.successful(true))
 
-        val resp = controller.confirmEmailUpdate()(getRequest())
+        val resp = controller.confirmEmailUpdate()(FakeRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
         verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
         getUpdatedRegistrationMethod().apply(populatedRegistration).primaryContactDetails.email mustBe populatedRegistration.primaryContactDetails.prospectiveEmail
       }

@@ -23,15 +23,13 @@ import views.html.deregistration.deregistration_submitted_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeregistrationSubmittedController @Inject() (
                                                     authenticate: AmendAuthAction,
                                                     mcc: MessagesControllerComponents,
                                                     page: deregistration_submitted_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>

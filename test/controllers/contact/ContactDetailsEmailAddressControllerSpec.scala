@@ -25,14 +25,14 @@ import models.emailverification.{EmailStatus, VerificationStatus}
 import models.registration.{MetaData, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
 import services.EmailVerificationService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -68,24 +68,24 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
   def mockEmailVerificationGetStatus(
     dataToReturn: Option[VerificationStatus]
-  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(
       Future(Right(dataToReturn))
     )
 
   def mockEmailVerificationGetStatusWithException(
     error: ServiceError
-  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Left(error)))
 
-  def mockEmailVerificationCreate(dataToReturn: String): OngoingStubbing[Future[String]] =
+  def mockEmailVerificationCreate(dataToReturn: String): ScalaOngoingStubbing[Future[String]] =
     when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
       Future.successful(dataToReturn)
     )
 
   def mockEmailVerificationCreateWithException(
     error: ServiceError
-  ): OngoingStubbing[Future[String]] =
+  ): ScalaOngoingStubbing[Future[String]] =
     when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
       Future.failed(error)
     )
@@ -96,7 +96,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "user is authorised and display page method is invoked" in {
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -104,7 +104,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       "user is authorised, a registration already exists and display page method is invoked" in {
 
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -200,7 +200,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(
-            routes.ContactDetailsEmailAddressPasscodeController.displayPage().url
+            routes.ContactDetailsEmailAddressPasscodeController.displayPage.url
           )
 
           reset(mockRegistrationConnector)
@@ -386,7 +386,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage()(FakeRequest()))
 
         pageForm.get.value mustBe "test@test.com"
       }
@@ -401,7 +401,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         )
       )
 
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())

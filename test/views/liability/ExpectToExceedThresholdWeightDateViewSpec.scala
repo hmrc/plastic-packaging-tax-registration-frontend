@@ -19,7 +19,8 @@ package views.liability
 import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
-import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
+import org.mockito.Mockito.atLeastOnce
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -29,13 +30,13 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import views.viewmodels.govuk.date.{DateViewModel, FluentDate}
-import views.html.components.{bulletList, _}
+import views.html.components._
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
 import views.html.main_template
+import views.viewmodels.govuk.date.{DateViewModel, FluentDate}
 import views.viewmodels.{BackButtonJs, Title}
 
 class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
@@ -96,8 +97,8 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
 
       val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
 
-      form.attr("method") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit().method
-      form.attr("action") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit().url
+      form.attr("method") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit.method
+      form.attr("action") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit.url
       form.attr("autoComplete") mustBe "off"
       assert(form.hasAttr("novalidate"))
     }

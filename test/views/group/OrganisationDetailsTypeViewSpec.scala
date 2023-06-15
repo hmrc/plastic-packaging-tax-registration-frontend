@@ -17,21 +17,12 @@
 package views.group
 
 import base.unit.UnitViewSpec
+import controllers.group.routes
+import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import forms.organisation.{ActionEnum, OrganisationType}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import controllers.group.routes
-import controllers.{routes => commonRoutes}
-import forms.organisation.OrgType.{
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  UK_COMPANY
-}
-import forms.organisation.{
-  ActionEnum,
-  OrganisationType
-}
 import views.html.group.organisation_type
 
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {

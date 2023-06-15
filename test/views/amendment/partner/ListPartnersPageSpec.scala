@@ -99,7 +99,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
 
     "include the error summary" when {
       "the form has errors" in {
-        val errorForm = form.withError("foo", "site.button.tryAgain")
+        val errorForm = form().withError("foo", "site.button.tryAgain")
         val view =
           page(errorForm, partnershipRegistration)(amendsJourneyRequest, messages)
 

@@ -31,9 +31,9 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   private val page           = inject[partner_check_answers_page]
   private val countryService = inject[CountryService]
 
-  private val limitedCompanyPartner = aLimitedCompanyPartner()
-  private val soleTraderPartner     = aSoleTraderPartner()
-  private val partnershipPartner    = aPartnershipPartner()
+  private val limitedCompanyPartner = aLimitedCompanyPartner
+  private val soleTraderPartner     = aSoleTraderPartner
+  private val partnershipPartner    = aPartnershipPartner
 
   private def createView(partner: Partner): Document =
     page(partner)(registrationJourneyRequest, messages)

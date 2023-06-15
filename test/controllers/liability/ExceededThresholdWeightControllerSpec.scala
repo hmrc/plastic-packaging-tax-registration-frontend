@@ -18,25 +18,25 @@ package controllers.liability
 
 import base.unit.ControllerSpec
 import connectors.DownstreamServiceError
-import forms.Date
 import forms.liability.ExceededThresholdWeight
 import models.registration.Registration
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
-import org.scalatest.{BeforeAndAfterEach, color}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.RETURNS_DEEP_STUBS
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.liability.exceeded_threshold_weight_page
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAndAfterEach{
@@ -71,7 +71,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       "return 200" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val result: Future[Result] = controller.displayPage()(getRequest())
+        val result: Future[Result] = controller.displayPage()(FakeRequest())
         status(result) shouldEqual Status.OK
         contentAsString(result) mustBe "test view"
       }
@@ -85,7 +85,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         spyJourneyAction.setReg(existingRegistration)
 
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
         status(result) mustBe Status.OK
 
         verify(existingRegistration.liabilityDetails).exceededThresholdWeight

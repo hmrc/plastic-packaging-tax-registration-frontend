@@ -23,7 +23,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends BaseViewSpec {
 
   private val page = inject[amend_partner_contact_check_answers_page]
 
-  private val partner = aLimitedCompanyPartner()
+  private val partner = aLimitedCompanyPartner
 
   "Amend Partner Contact Check Answers View" should {
 

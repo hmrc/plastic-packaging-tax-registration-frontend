@@ -19,7 +19,6 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -27,10 +26,9 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.enrolment.PptReference
 import models.registration.UserEnrolmentDetails
-import repositories.{
-  UserDataRepository,
-  UserEnrolmentDetailsRepository
-}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import play.api.test.FakeRequest
+import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -67,7 +65,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
     "display the ppt reference page" when {
       "user is authorised" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "PPT Reference Page"
@@ -78,7 +76,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "PPT Reference Page"

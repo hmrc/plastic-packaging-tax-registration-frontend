@@ -21,11 +21,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.{await, contentAsString, status}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import views.html.deregistration.deregistration_submitted_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.deregistration.deregistration_submitted_page
 
 class DeregistrationSubmittedControllerSpec
     extends ControllerSpec with MockDeregistrationDetailRepository with PptTestData {
@@ -42,7 +43,7 @@ class DeregistrationSubmittedControllerSpec
       "user authenticated" in {
 
 
-        val resp = deregistrationSubmittedController.displayPage()(getRequest())
+        val resp = deregistrationSubmittedController.displayPage()(FakeRequest())
 
         status(resp) mustBe OK
         contentAsString(resp) mustBe "Deregistration Submitted"

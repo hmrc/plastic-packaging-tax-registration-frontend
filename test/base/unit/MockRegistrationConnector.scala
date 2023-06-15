@@ -17,18 +17,15 @@
 package base.unit
 
 import builders.RegistrationBuilder
+import connectors.{DownstreamServiceError, RegistrationConnector, ServiceError}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import connectors.{
-  DownstreamServiceError,
-  RegistrationConnector,
-  ServiceError
-}
-import models.registration.Registration
 
 import scala.concurrent.Future
 
@@ -36,17 +33,17 @@ trait MockRegistrationConnector
     extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
-  protected val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
+  protected val mockRegistrationConnector = mock[RegistrationConnector]
 
-  def mockRegistrationUpdate(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdate(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
-      .thenAnswer(inv => Future.successful(Right(inv.getArgument(0))))
+      .thenAnswer((inv: InvocationOnMock) => Future.successful(Right(inv.getArgument(0))))
 
-  def mockRegistrationException(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationException(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenThrow(new RuntimeException("some error"))
 
-  def mockRegistrationUpdateFailure(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdateFailure(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenReturn(
         Future.successful(Left(DownstreamServiceError("some error", new Exception("some error"))))

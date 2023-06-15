@@ -19,22 +19,16 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference
-}
+import forms.enrolment.{IsUkAddress, Postcode, PptReference}
 import models.registration.UserEnrolmentDetails
-import repositories.{
-  UserDataRepository,
-  UserEnrolmentDetailsRepository
-}
+import play.api.test.FakeRequest
+import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import views.html.enrolment.postcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -77,7 +71,7 @@ class PostcodeControllerSpec extends ControllerSpec {
           )
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "Postcode Page"
@@ -88,7 +82,7 @@ class PostcodeControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "Postcode Page"

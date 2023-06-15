@@ -26,7 +26,6 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.mvc.Call
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
@@ -99,7 +98,7 @@ class AddressCaptureControllerSpec
   "Address Capture Controller" should {
 
     "display the address in uk page" in {
-      val resp = addressCaptureController.addressInUk()(getRequest())
+      val resp = addressCaptureController.addressInUk()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Is UK Address?"
@@ -107,7 +106,7 @@ class AddressCaptureControllerSpec
 
     "ask the user whether the address is uk based" when {
       "the force UK flag is *not* used" in {
-        val resp = addressCaptureController.initialiseAddressCapture()(getRequest())
+        val resp = addressCaptureController.initialiseAddressCapture()(FakeRequest())
 
         redirectLocation(resp) mustBe Some(routes.AddressCaptureController.addressInUk().url)
       }
@@ -178,7 +177,7 @@ class AddressCaptureControllerSpec
         val invalidAlfAddress = anInvalidAlfAddress()
         simulateAlfCallback(invalidAlfAddress)
 
-        val resp = addressCaptureController.alfCallback(Some("123"))(getRequest())
+        val resp = addressCaptureController.alfCallback(Some("123"))(FakeRequest())
 
         status(resp) mustBe BAD_REQUEST
         contentAsString(resp) mustBe "Address Capture"
@@ -189,7 +188,7 @@ class AddressCaptureControllerSpec
           validAlfAddress.copy(address = validAlfAddress.address.copy(postcode = None))
         simulateAlfCallback(invalidAlfAddress)
 
-        val resp = addressCaptureController.alfCallback(Some("123"))(getRequest())
+        val resp = addressCaptureController.alfCallback(Some("123"))(FakeRequest())
 
         status(resp) mustBe BAD_REQUEST
         contentAsString(resp) mustBe "Address Capture"
@@ -207,7 +206,7 @@ class AddressCaptureControllerSpec
     }
 
     "display the PPT address capture page" in {
-      val resp = addressCaptureController.captureAddress()(getRequest())
+      val resp = addressCaptureController.captureAddress()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Address Capture"

@@ -16,18 +16,17 @@
 
 package controllers
 
-import base.PptTestData
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
+import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
-import views.html.confirmation_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.confirmation_page
 
 class ConfirmationControllerSpec extends ControllerSpec {
   private val page = mock[confirmation_page]
@@ -58,14 +57,14 @@ class ConfirmationControllerSpec extends ControllerSpec {
 
 
         mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
 
       "user is already enrolled and display page method is invoked" in {
         mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

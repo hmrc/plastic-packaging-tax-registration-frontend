@@ -16,37 +16,19 @@
 
 package controllers.partner
 
+import controllers.organisation.{routes => organisationRoutes}
+import forms.organisation.PartnerType
+import forms.organisation.PartnerType.FormMode
+import forms.organisation.PartnerTypeEnum._
+import models.genericregistration.Partner
+import models.registration.{Registration, RegistrationUpdater}
+import models.request.JourneyRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-
-import controllers.organisation.{
-  routes => organisationRoutes
-}
-import forms.organisation.PartnerType
-import forms.organisation.PartnerType.FormMode
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  REGISTERED_SOCIETY,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import models.genericregistration.Partner
-import models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
 import services.GRSRedirections
-import views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.partner_type
 
 import scala.concurrent.{ExecutionContext, Future}
 

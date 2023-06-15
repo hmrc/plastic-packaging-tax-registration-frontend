@@ -102,10 +102,6 @@ trait ControllerSpec
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  @deprecated("just use FakeRequest")
-  def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession(session).withCSRFToken
-
   def authRequest(
     headers: Headers = Headers(),
     user: SignedInUser = PptTestData.newUser("123")

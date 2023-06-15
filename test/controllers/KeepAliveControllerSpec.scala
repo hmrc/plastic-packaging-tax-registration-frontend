@@ -21,7 +21,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
-import repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class KeepAliveControllerSpec extends ControllerSpec {

@@ -20,7 +20,7 @@ import base.unit.{ControllerSpec, AmendmentControllerSpec}
 import controllers.amendment.{routes => amendRoutes}
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, when, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest

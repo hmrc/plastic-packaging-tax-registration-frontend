@@ -29,9 +29,9 @@ class LanguageController @Inject() (
   cc: MessagesControllerComponents
 ) extends uk.gov.hmrc.play.language.LanguageController(languageUtils, cc) {
 
-  def enGb(): Action[AnyContent] = switchToLanguage(language = "english")
+  def enGb: Action[AnyContent] = switchToLanguage(language = "english")
 
-  def cyGb(): Action[AnyContent] = switchToLanguage(language = "cymraeg")
+  def cyGb: Action[AnyContent] = switchToLanguage(language = "cymraeg")
 
   override def fallbackURL: String = appConfig.pptAccountUrl
 

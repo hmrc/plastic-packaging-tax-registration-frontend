@@ -49,8 +49,9 @@ class AddressLookupFrontendConnector @Inject() (
         case response @ HttpResponse(ACCEPTED, _, _) =>
           response.header(LOCATION) match {
             case Some(redirectUrl) => AddressLookupOnRamp(redirectUrl)
-            case None              => throw new IllegalStateException("Missing re-direct url")
+            case _              => throw new IllegalStateException("Missing re-direct url")
           }
+        case error => throw new IllegalStateException(s"Error. Address look up frontend error with status: ${error.status}")
       }
   }
 

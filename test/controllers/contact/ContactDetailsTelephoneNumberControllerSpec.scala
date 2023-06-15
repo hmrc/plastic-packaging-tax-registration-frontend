@@ -22,12 +22,12 @@ import forms.contact.PhoneNumber
 import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -62,7 +62,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
       "user is authorised and display page method is invoked" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -70,7 +70,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
       "user is authorised, a registration already exists and display page method is invoked" in {
 
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -80,7 +80,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
       spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
 
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())
@@ -124,7 +124,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
           )
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage()(FakeRequest()))
 
         pageForm.get.value mustBe "077123"
       }

@@ -17,16 +17,6 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.test.Helpers.{await, redirectLocation, status}
-import play.twirl.api.HtmlFormat
 import connectors.DownstreamServiceError
 import controllers.{routes => pptRoutes}
 import forms.contact.{Address, ConfirmAddress}
@@ -34,8 +24,18 @@ import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, PARTNER
 import models.addresslookup.CountryCode.GB
 import models.genericregistration.IncorporationAddressDetails
 import models.registration.{OrganisationDetails, PrimaryContactDetails}
-import views.html.contact.confirm_address
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.{reset, verify, when}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.Form
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, redirectLocation, status}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.confirm_address
 
 class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val page = mock[confirm_address]
@@ -91,7 +91,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             )
           )
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(pptRoutes.UpdateCompaniesHouseController.onPageLoad().url)
@@ -111,7 +111,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           )
         )
         mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -129,7 +129,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         )
       )
       mockRegistrationUpdate()
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())
@@ -150,7 +150,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -168,7 +168,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -185,7 +185,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -202,7 +202,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -217,11 +217,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
+        intercept[IllegalStateException](status(controller.displayPage()(FakeRequest())))
       }
     }
 
-    def primaryContactAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
+    def primaryContactAddressPopulatedSameAs(expected: IncorporationAddressDetails): Unit =  {
       modifiedRegistration.primaryContactDetails.address.get.addressLine1 mustBe expected.premises.get
       modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
@@ -231,7 +231,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
 
-    def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
+    def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails): Unit = {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
@@ -277,7 +277,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
 
               redirectLocation(result) mustBe Some(
-                routes.ContactDetailsAddressController.displayPage().url
+                routes.ContactDetailsAddressController.displayPage.url
               )
 
       }
@@ -302,7 +302,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           spyJourneyAction.setReg(registration)
 
-          intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
+          intercept[IllegalStateException](status(controller.displayPage()(FakeRequest())))
         }
 
         "user submits form and the registration update fails" in {

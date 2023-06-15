@@ -20,7 +20,6 @@ import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import spec.PptTestData
 
 class TitleSpec extends MessagesSpec with Matchers {
 

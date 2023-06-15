@@ -20,7 +20,6 @@ import base.unit.ControllerSpec
 import com.codahale.metrics.SharedMetricRegistries
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,6 +27,8 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.enrolment.{DateData, RegistrationDate}
 import models.registration.UserEnrolmentDetails
+import org.mockito.MockitoSugar.{reset, verify, when}
+import play.api.test.FakeRequest
 import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import views.html.enrolment.registration_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -67,7 +68,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
     "display the registration data page" when {
       "user is authorised" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "Registration Date Page"
@@ -78,7 +79,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "Registration Date Page"

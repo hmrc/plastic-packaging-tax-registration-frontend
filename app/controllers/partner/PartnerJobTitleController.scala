@@ -46,7 +46,7 @@ class PartnerJobTitleController @Inject() (
     journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner,
-                      partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                      partnerRoutes.PartnerContactNameController.displayNewPartner,
                       partnerRoutes.PartnerJobTitleController.submitNewPartner()
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))

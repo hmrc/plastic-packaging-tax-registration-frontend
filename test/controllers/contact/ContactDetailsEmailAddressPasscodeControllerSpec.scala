@@ -17,28 +17,26 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import connectors.{DownstreamServiceError, ServiceError}
+import controllers.contact.{routes => contactRoutes}
+import forms.contact.{Address, EmailAddressPasscode}
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
+import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.Inspectors.forAll
+import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
-import connectors.{DownstreamServiceError, ServiceError}
-import controllers.contact.{routes => contactRoutes}
-import controllers.{routes => pptRoutes}
-import forms.contact.{Address, EmailAddress, EmailAddressPasscode}
 import models.addresslookup.CountryCode.GB
-import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
-import models.registration.PrimaryContactDetails
 import services.EmailVerificationService
-import views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.email_address_passcode_page
 
 import scala.concurrent.Future
 
@@ -72,7 +70,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
   def mockEmailVerificationVerifyPasscode(
     dataToReturn: JourneyStatus
-  ): OngoingStubbing[Future[JourneyStatus]] =
+  ): ScalaOngoingStubbing[Future[JourneyStatus]] =
     when(
       mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(
         any()
@@ -81,7 +79,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
   def mockEmailVerificationVerifyPasscodeWithException(
     error: ServiceError
-  ): OngoingStubbing[Future[JourneyStatus]] =
+  ): ScalaOngoingStubbing[Future[JourneyStatus]] =
     when(
       mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(
         any()
@@ -95,7 +93,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       "user is authorised and display page method is invoked" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -103,7 +101,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       "user is authorised, a registration already exists and display page method is invoked" in {
 
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -114,7 +112,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       spyJourneyAction.setReg(aRegistration(
         withGroupDetail(Some(groupDetailsWithMembers))
       ))
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
       verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
@@ -124,7 +122,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     "display page for single member" in {
 
       spyJourneyAction.setReg(aRegistration())
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
       verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
@@ -267,7 +265,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
         verify(page).apply(ArgumentMatchers.eq(form),
                            ArgumentMatchers.eq(Some("test@test.com")),
                            ArgumentMatchers.eq(
-                             routes.ContactDetailsEmailAddressPasscodeController.submit()
+                             routes.ContactDetailsEmailAddressPasscodeController.submit
                            ),
                            any()
         )(any(), any())
@@ -282,7 +280,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           )
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage()(FakeRequest()))
 
         pageForm.get.value mustBe "DNCLRK"
       }

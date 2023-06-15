@@ -19,7 +19,7 @@ package controllers.group
 import base.unit.ControllerSpec
 import controllers.actions.getRegistration.GetRegistrationAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -30,6 +30,7 @@ import models.registration.group.GroupError
 import models.registration.group.GroupErrorType.{MEMBER_IN_GROUP, MEMBER_IS_ALREADY_REGISTERED}
 import models.request.{AuthenticatedRequest, JourneyRequest}
 import play.api.mvc.Result
+import play.api.test.FakeRequest
 import views.html.group.{group_member_already_registered_page, nominated_organisation_already_registered_page, organisation_already_in_group_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -82,7 +83,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     "present nominated organisation already been registered page" in {
       spyJourneyAction.setReg(aRegistration())
 
-      val resp = controller.nominatedOrganisationAlreadyRegistered()(getRequest())
+      val resp = controller.nominatedOrganisationAlreadyRegistered()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error nominated organisation already been registered"
@@ -101,7 +102,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
         )
         spyJourneyAction.setReg(registration)
 
-        val resp = controller.organisationAlreadyInGroup()(getRequest())
+        val resp = controller.organisationAlreadyInGroup()(FakeRequest())
 
         status(resp) mustBe OK
         contentAsString(resp) mustBe "error organisation already in group"
@@ -112,7 +113,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
       "registration does not have group error" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val resp = controller.organisationAlreadyInGroup()(getRequest())
+        val resp = controller.organisationAlreadyInGroup()(FakeRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(groupRoutes.OrganisationListController.displayPage().url)
@@ -133,7 +134,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
       )
       spyJourneyAction.setReg(registration)
 
-      val resp = controller.groupMemberAlreadyRegistered()(getRequest())
+      val resp = controller.groupMemberAlreadyRegistered()(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error group member already registered"

@@ -18,12 +18,7 @@ package views.components
 
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
-import config.AppConfig
-import views.html.components.{
-  saveAndComeBackLater,
-  saveAndContinue,
-  saveButtons
-}
+import views.html.components.{saveAndContinue, saveButtons}
 
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 

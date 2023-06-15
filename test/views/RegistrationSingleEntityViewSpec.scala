@@ -17,18 +17,17 @@
 package views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import org.scalatest.matchers.must.Matchers
-import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.twirl.api.Html
 import controllers.contact.{routes => contactRoutes}
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.routes
 import forms.liability.LiabilityWeight
 import forms.{Date, OldDate}
-import models.registration.{LiabilityDetails, MetaData, NewLiability, OrganisationDetails, Registration}
-import play.api.test.FakeRequest
+import models.registration._
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
+import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
+import play.twirl.api.Html
 import views.html.task_list_single_entity
 
 import java.time.LocalDate

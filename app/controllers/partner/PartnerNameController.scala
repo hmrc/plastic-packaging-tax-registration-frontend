@@ -16,14 +16,13 @@
 
 package controllers.partner
 
-import play.api.mvc._
 import config.AppConfig
 import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
 import controllers.actions.JourneyAction
-import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import models.registration.NewRegistrationUpdateService
+import play.api.mvc._
 import views.html.partner.partner_name_page
 
 import javax.inject.{Inject, Singleton}

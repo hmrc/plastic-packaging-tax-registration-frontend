@@ -85,7 +85,7 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
 
     "not display the remove partner button" when {
       "there are two partner only" in {
-        val newView = createView(Seq(aPartnershipPartner()))
+        val newView = createView(Seq(aPartnershipPartner))
 
         newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
       }

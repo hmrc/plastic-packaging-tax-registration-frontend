@@ -17,13 +17,12 @@
 package repositories
 
 import com.google.inject.ImplementedBy
+import models.request.AuthenticatedRequest
 import play.api.Configuration
 import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
-import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
 import uk.gov.hmrc.mongo.cache.{CacheIdType, CacheItem, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
-import models.request.AuthenticatedRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration

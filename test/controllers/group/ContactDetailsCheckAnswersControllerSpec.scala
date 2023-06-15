@@ -18,10 +18,10 @@ package controllers.group
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
@@ -64,7 +64,7 @@ class ContactDetailsCheckAnswersControllerSpec
 
   "Contact Details Check Answers Controller" should {
     "display captured group member details" in {
-      val resp = controller.displayPage(groupMember.id)(getRequest())
+      val resp = controller.displayPage(groupMember.id)(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Group member contact details check answers"
@@ -75,14 +75,14 @@ class ContactDetailsCheckAnswersControllerSpec
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails))))
 
         intercept[IllegalStateException] {
-          await(controller.displayPage(groupMember.id)(getRequest()))
+          await(controller.displayPage(groupMember.id)(FakeRequest()))
         }
       }
     }
 
     "redirect to group members list page" when {
       "submitted" in {
-        val resp = controller.submit()(getRequest())
+        val resp = controller.submit()(FakeRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.OrganisationListController.displayPage().url)

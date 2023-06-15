@@ -18,7 +18,6 @@ package controllers.group
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.dsl.MatcherWords
@@ -33,6 +32,8 @@ import models.registration.group.{GroupMember, OrganisationDetails => GroupOrgDe
 import models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import models.subscriptions.SubscriptionStatusResponse
+import org.mockito.MockitoSugar.{reset, verify}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
@@ -166,7 +167,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
           groupMemberSize(registration) mustBe 1
 
-          val result = controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+          val result = controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
 
           status(result) mustBe SEE_OTHER
 
@@ -197,7 +198,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           mockRegistrationUpdateFailure()
 
           intercept[DownstreamServiceError] {
-            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(FakeRequest()))
           }
 
         }
@@ -208,7 +209,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
           intercept[RuntimeException] {
-            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(FakeRequest()))
           }
         }
 
@@ -229,7 +230,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
           val result =
-            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
@@ -246,7 +247,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           spyJourneyAction.setReg(registrationWithSelectedGroupMember(orgType))
 
           intercept[IllegalStateException] {
-            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(FakeRequest()))
           }
         }
       }
@@ -256,7 +257,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
         spyJourneyAction.setReg(aRegistration(withGroupDetail(None)))
 
         intercept[IllegalStateException] {
-          await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
+          await(controller.grsCallbackNewMember("uuid-id")(FakeRequest()))
         }
       }
 
@@ -275,8 +276,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
     memberId match {
       case Some(memberId) =>
-        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(getRequest())
-      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(FakeRequest())
+      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
     }
   }
 
@@ -292,8 +293,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
     memberId match {
       case Some(memberId) =>
-        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(getRequest())
-      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(FakeRequest())
+      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
     }
   }
 

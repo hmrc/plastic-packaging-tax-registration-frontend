@@ -28,7 +28,6 @@ import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AddressCaptureConfig, AddressCaptureService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.organisation.confirm_business_address
 
@@ -75,8 +74,7 @@ class ConfirmBusinessAddressController @Inject() (
       }
     }
 
-  private def initialiseAddressLookup(request: JourneyRequest[AnyContent], forceUKAddress: Boolean)(
-    implicit header: HeaderCarrier): Future[Result] =
+  private def initialiseAddressLookup(request: JourneyRequest[AnyContent], forceUKAddress: Boolean): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.ConfirmBusinessAddressController.displayPage().url,

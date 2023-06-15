@@ -21,9 +21,9 @@ import controllers.amendment.{routes => amendmentRoutes}
 import forms.contact._
 import forms.group.MemberName
 import models.emailverification.EmailVerificationJourneyStatus
-import models.registration.{AmendRegistrationUpdateService, Registration}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -36,7 +36,6 @@ import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
 import services.{AddressCaptureConfig, EmailVerificationService}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 import views.html.partner.{partner_email_address_page, partner_job_title_page, partner_member_name_page, partner_phone_number_page}
 
@@ -223,7 +222,7 @@ class AmendPartnerContactDetailsControllerSpec
     forAll(showPageTestData) {
       (testName: String, call: (Request[AnyContent]) => Future[Result], verification: () => Any) =>
         s"Show the $testName page" in {
-          val resp = await(call(getRequest()))
+          val resp = await(call(FakeRequest()))
           resp.header.status mustBe OK
           verification()
         }
@@ -243,7 +242,7 @@ class AmendPartnerContactDetailsControllerSpec
       )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-      val resp = await(controller.address(nominatedPartner.id)(getRequest()))
+      val resp = await(controller.address(nominatedPartner.id)(FakeRequest()))
 
       redirectLocation(Future.successful(resp)) mustBe Some(addressCaptureRedirect.url)
     }
@@ -368,7 +367,7 @@ class AmendPartnerContactDetailsControllerSpec
             s"amending $partnerType partner" in {
               simulateValidAddressCapture()
 
-              val resp = controller.updateAddress(partnerId)(getRequest())
+              val resp = controller.updateAddress(partnerId)(FakeRequest())
 
               redirectLocation(resp) mustBe Some(redirect().url)
 
@@ -489,7 +488,7 @@ class AmendPartnerContactDetailsControllerSpec
         // and that the user has not url skipped to the end of the journey
         when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(Future.successful(true))
 
-        val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
+        val resp = controller.confirmEmailUpdate(nominatedPartner.id)(FakeRequest())
         status(resp) mustBe SEE_OTHER
 
         val updatedRegistration = getUpdatedRegistrationMethod().apply(reg)

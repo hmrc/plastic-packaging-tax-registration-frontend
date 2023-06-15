@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import views.html.organisation.check_answers_page
@@ -53,7 +54,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
       "user is authorised" in {
         spyJourneyAction.setReg(aRegistration())
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "CYA Page"

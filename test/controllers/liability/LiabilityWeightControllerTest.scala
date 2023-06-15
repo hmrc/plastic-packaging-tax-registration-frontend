@@ -18,7 +18,7 @@ package controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -27,6 +27,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import connectors.DownstreamServiceError
 import forms.liability.LiabilityWeight
+import play.api.test.FakeRequest
 import views.html.liability.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -58,7 +59,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -66,7 +67,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       "user is authorised, a registration already exists and display page method is invoked" in {
 
         spyJourneyAction.setReg(aRegistration())
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

@@ -5,15 +5,15 @@
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
 
 #Welsh Translation
-GET        /lang/enGb             controllers.LanguageController.enGb()
-GET        /lang/cyGb             controllers.LanguageController.cyGb()
+GET        /lang/enGb             controllers.LanguageController.enGb
+GET        /lang/cyGb             controllers.LanguageController.cyGb
 
 GET        /start                controllers.Default.redirect(to = "/register-for-plastic-packaging-tax/start-registration")
 GET        /start-registration   controllers.StartRegistrationController.startRegistration()
 
 # Liability
-GET        /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.displayPage()
-POST       /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.submit()
+GET        /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.displayPage
+POST       /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.submit
 
 GET        /date-met-threshold                  controllers.liability.ExceededThresholdWeightDateController.displayPage()
 POST       /date-met-threshold                  controllers.liability.ExceededThresholdWeightDateController.submit()
@@ -21,8 +21,8 @@ POST       /date-met-threshold                  controllers.liability.ExceededTh
 GET        /threshold-next-30-days              controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
 POST       /threshold-next-30-days              controllers.liability.ExpectToExceedThresholdWeightController.submit()
 
-GET         /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.displayPage()
-POST        /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.submit()
+GET         /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.displayPage
+POST        /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.submit
 
 GET        /tax-start-date                      controllers.liability.TaxStartDateController.displayPage()
 POST       /tax-start-date                      controllers.liability.TaxStartDateController.submit()
@@ -74,8 +74,8 @@ POST       /main-contact-job-title    controllers.contact.ContactDetailsJobTitle
 GET        /main-contact-email   controllers.contact.ContactDetailsEmailAddressController.displayPage()
 POST       /main-contact-email   controllers.contact.ContactDetailsEmailAddressController.submit()
 
-GET        /confirm-email-code   controllers.contact.ContactDetailsEmailAddressPasscodeController.displayPage()
-POST       /confirm-email-code   controllers.contact.ContactDetailsEmailAddressPasscodeController.submit()
+GET        /confirm-email-code   controllers.contact.ContactDetailsEmailAddressPasscodeController.displayPage
+POST       /confirm-email-code   controllers.contact.ContactDetailsEmailAddressPasscodeController.submit
 
 GET        /email-confirmed   controllers.contact.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
 POST       /email-confirmed   controllers.contact.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
@@ -88,8 +88,8 @@ POST       /main-contact-telephone    controllers.contact.ContactDetailsTelephon
 GET        /confirm-contact-address     controllers.contact.ContactDetailsConfirmAddressController.displayPage()
 POST       /confirm-contact-address     controllers.contact.ContactDetailsConfirmAddressController.submit()
 
-GET        /enter-contact-address           controllers.contact.ContactDetailsAddressController.displayPage()
-GET        /enter-contact-address-callback  controllers.contact.ContactDetailsAddressController.update()
+GET        /enter-contact-address           controllers.contact.ContactDetailsAddressController.displayPage
+GET        /enter-contact-address-callback  controllers.contact.ContactDetailsAddressController.update
 
 GET        /contact-check-answers    controllers.contact.ContactDetailsCheckAnswersController.displayPage()
 POST       /contact-check-answers    controllers.contact.ContactDetailsCheckAnswersController.submit()
@@ -117,8 +117,8 @@ POST       /partner-name/:partnerId             controllers.partner.PartnerNameC
 GET        /partner-grs-callback   controllers.partner.PartnerGrsController.grsCallbackNewPartner(journeyId)
 GET        /partner-grs-callback/:partnerId   controllers.partner.PartnerGrsController.grsCallbackExistingPartner(journeyId, partnerId)
 
-GET        /partner-contact-name                controllers.partner.PartnerContactNameController.displayNewPartner()
-POST       /partner-contact-name                controllers.partner.PartnerContactNameController.submitNewPartner()
+GET        /partner-contact-name                controllers.partner.PartnerContactNameController.displayNewPartner
+POST       /partner-contact-name                controllers.partner.PartnerContactNameController.submitNewPartner
 GET        /partner-contact-name/:partnerId     controllers.partner.PartnerContactNameController.displayExistingPartner(partnerId: String)
 POST       /partner-contact-name/:partnerId     controllers.partner.PartnerContactNameController.submitExistingPartner(partnerId: String)
 
@@ -375,8 +375,8 @@ GET        /amend-add-partner-grs-callback     controllers.amendment.partner.Add
 GET        /amend-add-partner-name     controllers.amendment.partner.AddPartnerNameController.displayPage()
 POST       /amend-add-partner-name     controllers.amendment.partner.AddPartnerNameController.submit()
 
-GET        /amend-add-partner-contact-name     controllers.amendment.partner.AddPartnerContactDetailsNameController.displayPage()
-POST       /amend-add-partner-contact-name     controllers.amendment.partner.AddPartnerContactDetailsNameController.submit()
+GET        /amend-add-partner-contact-name     controllers.amendment.partner.AddPartnerContactDetailsNameController.displayPage
+POST       /amend-add-partner-contact-name     controllers.amendment.partner.AddPartnerContactDetailsNameController.submit
 
 GET        /amend-add-partner-contact-email                         controllers.amendment.partner.AddPartnerContactDetailsEmailAddressController.displayPage()
 POST       /amend-add-partner-contact-email                         controllers.amendment.partner.AddPartnerContactDetailsEmailAddressController.submit()

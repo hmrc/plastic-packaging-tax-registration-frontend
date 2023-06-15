@@ -19,7 +19,6 @@ package controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.Mockito._
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.mvc.Call
@@ -28,6 +27,9 @@ import play.twirl.api.HtmlFormat
 import controllers.liability.{routes => liabilityRoutes}
 import forms.liability.RegType
 import models.registration.{LiabilityDetails, Registration}
+import org.mockito.Mockito.{never, verifyNoInteractions}
+import org.mockito.MockitoSugar.{reset, verify, when}
+import play.api.test.FakeRequest
 import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -78,7 +80,7 @@ class TaskListControllerSpec extends ControllerSpec {
             )
           )
 
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPage()(FakeRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Single Entity Page"
@@ -86,7 +88,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
         "a 'businessPartnerId' does not exist" in {
 
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPage()(FakeRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Single Entity Page"
@@ -97,7 +99,7 @@ class TaskListControllerSpec extends ControllerSpec {
         "a group registration is being performed" in {
 
           spyJourneyAction.setReg(aRegistration().copy(registrationType = Some(RegType.GROUP)))
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPage()(FakeRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Group Page"
@@ -109,7 +111,7 @@ class TaskListControllerSpec extends ControllerSpec {
             aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
           )
 
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPage()(FakeRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Partnership Page"
@@ -119,7 +121,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
           spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPage()(FakeRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Single Entity Page"
@@ -137,7 +139,7 @@ class TaskListControllerSpec extends ControllerSpec {
       val newRegistration = mock[Registration]
       when(registration.clearOldLiabilityAnswers).thenReturn(newRegistration)
       
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
       verify(registration).clearOldLiabilityAnswers
       verify(mockRegistrationConnector).update(same(newRegistration))(any())
     }
@@ -149,7 +151,7 @@ class TaskListControllerSpec extends ControllerSpec {
       when(registration.hasOldLiabilityQuestions).thenReturn(false)
       when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
       
-      await(controller.displayPage()(getRequest()))
+      await(controller.displayPage()(FakeRequest()))
       verify(registration, never()).clearOldLiabilityAnswers
       verify(mockRegistrationConnector, never()).update(any())(any())
     }
@@ -166,7 +168,7 @@ class TaskListControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(partialLiabilityDetails)
 
 
-      val result = controller.displayPage()(getRequest())
+      val result = controller.displayPage()(FakeRequest())
 
       status(result) mustBe OK
       verifyStartLink(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
@@ -177,7 +179,7 @@ class TaskListControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(aRegistration())
 
 
-      val result = controller.displayPage()(getRequest())
+      val result = controller.displayPage()(FakeRequest())
 
       status(result) mustBe OK
       verifyStartLink(liabilityRoutes.CheckLiabilityDetailsAnswersController.displayPage().url)

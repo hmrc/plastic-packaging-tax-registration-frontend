@@ -19,15 +19,16 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.MockitoSugar.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.JsObject
 import play.api.mvc.Results.{Ok, Redirect}
-import play.api.test.Helpers.{await, status}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.await
 import play.twirl.api.HtmlFormat
 import services.{TaxStartDate, TaxStartDateService}
-import views.html.liability.tax_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.liability.tax_start_date_page
 
 import java.time.LocalDate
 
@@ -49,10 +50,10 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(page, mockTaxStartDateService, mockRegistrationConnector)
-    authoriseAndSetRegistration
+    authoriseAndSetRegistration()
   }
 
-  private def authoriseAndSetRegistration = {
+  private def authoriseAndSetRegistration(): Unit = {
 
     spyJourneyAction.setReg(aRegistration())
   }
@@ -61,20 +62,20 @@ class TaxStartDateControllerSpec extends ControllerSpec {
     
     "pass the liability answers to the tax start date service" in {
       given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
-      await(sut.displayPage()(getRequest()))
+      await(sut.displayPage()(FakeRequest()))
       verify(mockTaxStartDateService).calculateTaxStartDate(eqq(aRegistration.liabilityDetails))
     }
 
     "bounce to the not liable page" in {
       given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
-      val result = await(sut.displayPage()(getRequest()))
+      val result = await(sut.displayPage()(FakeRequest()))
       result mustBe Redirect(routes.NotLiableController.displayPage())
     }
 
     "display tax start date page" in {
       given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromForwardsTest(aDate))
       given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.raw("tax start date blah"))
-      val result = await(sut.displayPage()(getRequest()))
+      val result = await(sut.displayPage()(FakeRequest()))
       verify(page).apply(eqq(aDate), eqq(false))(any(), any())
       result mustBe Ok(HtmlFormat.raw("tax start date blah"))
     }

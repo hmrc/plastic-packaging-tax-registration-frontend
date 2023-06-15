@@ -20,10 +20,10 @@ import base.unit.ControllerSpec
 import connectors.DownstreamServiceError
 import forms.contact.JobTitle
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.DefaultAwaitTimeout
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -54,16 +54,16 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner())
+      Some(aLimitedCompanyPartner)
     )
 
   private def registrationWithPartnershipDetailsAndNonNominatedInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(
       aSoleTraderPartner
-    ).withInflightPartner(Some(aLimitedCompanyPartner()))
+    ).withInflightPartner(Some(aLimitedCompanyPartner))
 
   private val existingPartner =
-    aLimitedCompanyPartner()
+    aLimitedCompanyPartner
 
   private def registrationWithExistingPartner =
     aRegistration(
@@ -77,7 +77,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.displayNewPartner()(getRequest())
+        val result = controller.displayNewPartner()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -86,7 +86,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+        val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -171,7 +171,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
         intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
         ))
       }
 

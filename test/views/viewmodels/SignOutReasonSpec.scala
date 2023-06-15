@@ -33,7 +33,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
                                     Map("signOutReason" -> Seq(SignOutReason.UserAction.toString))
           )
 
-        result.get.right.get mustBe SignOutReason.UserAction
+        result.get mustBe Right(SignOutReason.UserAction)
       }
     }
 
@@ -46,7 +46,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
                                     Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString))
           )
 
-        result.get.right.get mustBe SignOutReason.SessionTimeout
+        result.get mustBe Right(SignOutReason.SessionTimeout)
       }
     }
   }

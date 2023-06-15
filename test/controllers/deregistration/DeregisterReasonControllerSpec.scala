@@ -29,11 +29,8 @@ import play.twirl.api.HtmlFormat
 import forms.deregistration.DeregisterReasonForm
 import models.deregistration.DeregistrationDetails
 import models.deregistration.DeregistrationReason.CeasedTrading
-import repositories.{
-  DeregistrationDetailRepositoryImpl,
-  DeregistrationDetailsRepository,
-  UserDataRepository
-}
+import play.api.test.FakeRequest
+import repositories.{DeregistrationDetailRepositoryImpl, DeregistrationDetailsRepository, UserDataRepository}
 import views.html.deregistration.deregister_reason_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -75,7 +72,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
           Future.successful(Some(initialDeregistrationDetails))
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
@@ -85,7 +82,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
         when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
           Future.successful(Some(initialDeregistrationDetails.copy(reason = Some(CeasedTrading))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

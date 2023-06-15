@@ -19,7 +19,7 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -56,7 +56,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }

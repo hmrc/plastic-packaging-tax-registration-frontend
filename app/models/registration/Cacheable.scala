@@ -16,18 +16,17 @@
 
 package models.registration
 
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
 import models.request.JourneyRequest
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait Cacheable {
   def registrationConnector: RegistrationConnector
 
   protected def update(cache: Registration => Registration)(implicit
     hc: HeaderCarrier,
-    ec: ExecutionContext,
     request: JourneyRequest[_]
   ): Future[Either[ServiceError, Registration]] =
     registrationConnector.update(cache(request.registration))
