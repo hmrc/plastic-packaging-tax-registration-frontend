@@ -21,10 +21,8 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import controllers.contact.{routes => contactRoutes}
 import forms.contact.Address
-import models.registration.{
-  PrimaryContactDetails,
-  Registration
-}
+import models.addresslookup.CountryCode.GB
+import models.registration.{PrimaryContactDetails, Registration}
 import views.components.Styles.gdsPageHeading
 import views.html.contact.check_primary_contact_details_page
 
@@ -44,7 +42,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                                       addressLine3 = None,
                                       townOrCity = "London",
                                       maybePostcode = Some("W1T 2HN"),
-                                     countryCode = "GB"
+                                     countryCode = GB
                               )
                             )
       )

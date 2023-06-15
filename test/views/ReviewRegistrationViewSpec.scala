@@ -28,6 +28,7 @@ import forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import forms.organisation.{OrgType, PartnerTypeEnum}
 import forms.{Date, OldDate}
+import models.addresslookup.CountryCode.GB
 import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupMemberOrganisationDetails}
 import models.registration.{GroupDetail, LiabilityDetails, OrganisationDetails, Registration}
 import models.request.JourneyRequest
@@ -128,7 +129,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                          addressLine3 = None,
                                                                          townOrCity = "New Street",
                                                                          maybePostcode = Some("AB12CD"),
-                                                                         countryCode = "GB"
+                                                                         countryCode = GB
                                                                  )
                                                                )
                                                              )
@@ -139,7 +140,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                      addressLine3 = None,
                                                                      townOrCity = "New Street",
                                                                      maybePostcode = Some("AB12CD"),
-                                                                     countryCode = "GB"
+                                                                     countryCode = GB
                                                              )
                                                ),
                                                GroupMember(customerIdentification1 = "DEF",
@@ -163,7 +164,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                          addressLine3 = None,
                                                                          townOrCity = "New Street",
                                                                          maybePostcode = Some("AB12CE"),
-                                                                         countryCode = "GB"
+                                                                         countryCode = GB
                                                                  )
                                                                )
                                                              )
@@ -174,7 +175,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                      addressLine3 = None,
                                                                      townOrCity = "New Street",
                                                                      maybePostcode = Some("AB12CD"),
-                                                                     countryCode = "GB"
+                                                                     countryCode = GB
                                                              )
                                                )
                                  )

@@ -17,6 +17,7 @@
 package controllers.group
 
 import forms.group.MemberName
+import models.registration.OrganisationName.getMissingOrgMessage
 import models.registration.{Registration, RegistrationUpdater}
 import models.request.JourneyRequest
 import play.api.data.Form
@@ -50,7 +51,7 @@ abstract class ContactDetailsNameControllerBase(
       Ok(
         page(form,
              request.registration.findMember(memberId).map(_.businessName).getOrElse(
-               "your organisation"
+               getMissingOrgMessage
              ),
              getSubmitCall(memberId),
              memberId
@@ -72,7 +73,7 @@ abstract class ContactDetailsNameControllerBase(
               BadRequest(
                 page(formWithErrors,
                      request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                       "your organisation"
+                       getMissingOrgMessage
                      ),
                      getSubmitCall(memberId),
                      memberId

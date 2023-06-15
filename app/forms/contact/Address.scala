@@ -21,6 +21,7 @@ import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import forms.CommonFormValidators
+import models.addresslookup.CountryCode.GB
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
 sealed trait Address {
@@ -34,8 +35,6 @@ sealed trait Address {
   def isValid: Boolean = countryCode.trim.nonEmpty
   def isMissingCountryCode: Boolean = countryCode.trim.isEmpty
 
-  def isUkAndEmptyPostcode: Boolean = countryCode == "GB" && maybePostcode.fold(true)(_.isEmpty)
-
 }
 
 object Address extends CommonFormValidators {
@@ -46,7 +45,7 @@ object Address extends CommonFormValidators {
     addressLine3: Option[String],
     townOrCity: String,
     postCode: String,
-    countryCode: String = "GB"
+    countryCode: String = GB
   ) extends Address {
     val maybePostcode: Option[String] = Some(postCode)
   }
@@ -76,7 +75,7 @@ object Address extends CommonFormValidators {
   val ukWrites: OWrites[UKAddress]       = Json.writes[UKAddress]
 
   implicit val reads: Reads[Address] = (__ \ "countryCode").read[String] flatMap {
-    case "GB" => ukReads.widen[Address]
+    case GB => ukReads.widen[Address]
     case _    => nonUKFormat.widen[Address]
   }
 
@@ -93,7 +92,7 @@ object Address extends CommonFormValidators {
     maybePostcode: Option[String],
     countryCode: String
   ): Address =
-    if (countryCode == "GB")
+    if (countryCode == GB)
       UKAddress(
         addressLine1 = addressLine1,
         addressLine2 = addressLine2,
@@ -148,7 +147,7 @@ object Address extends CommonFormValidators {
       .verifying(notValidError(townOrCityFieldName), validateAddressField(addressFieldMaxSize)),
     postCodeFieldName -> mandatoryIfEqual(
       "countryCode",
-      "GB",
+      GB,
       text()
         .transform[String](postCode => postCode.toUpperCase, postCode => postCode)
         .verifying(emptyError(postCodeFieldName), isNonEmpty)

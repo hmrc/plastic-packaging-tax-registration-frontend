@@ -21,6 +21,7 @@ import forms.liability.RegType.{GROUP, RegType}
 import forms.liability.{LiabilityWeight, RegType}
 import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import forms.{Date, OldDate}
+import models.addresslookup.CountryCode.GB
 import models.emailverification.EmailStatus
 import models.genericregistration._
 import models.registration._
@@ -72,7 +73,7 @@ trait RegistrationBuilder {
             addressLine3 = None,
             townOrCity = "London",
             maybePostcode = Some("W1T 2HN"),
-            countryCode = "GB"
+            countryCode = GB
           )
         ),
         journeyId = Some("journey-id")
@@ -88,7 +89,7 @@ trait RegistrationBuilder {
               addressLine3 = None,
               townOrCity = "London",
               maybePostcode = Some("W1T 2HN"),
-              countryCode = "GB"
+              countryCode = GB
             )
           ),
         incorporationDetails =

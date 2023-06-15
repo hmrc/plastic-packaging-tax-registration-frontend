@@ -21,6 +21,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.GET
 import support.BaseViewSpec
 import forms.contact.Address
+import models.addresslookup.CountryCode.GB
 import views.html.address.address_page
 
 class AddressPageViewA11ySpec extends BaseViewSpec {
@@ -36,7 +37,7 @@ class AddressPageViewA11ySpec extends BaseViewSpec {
       "addressLine3" -> "Address Line 3",
       "townOrCity"   -> "Town or City",
       "postCode"     -> "LS4 1RH",
-      "countryCode"  -> "GB"
+      "countryCode"  -> GB
     )
 
     def render(form: Form[Address]): String =

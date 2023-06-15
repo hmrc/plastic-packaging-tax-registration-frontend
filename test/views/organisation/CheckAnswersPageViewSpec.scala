@@ -22,6 +22,7 @@ import forms.contact.Address
 import forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import models.addresslookup.CountryCode.GB
 import models.registration.group.{GroupMember, OrganisationDetails => GroupMemberOrganisationDetails}
 import models.registration.{GroupDetail, OrganisationDetails}
 import org.jsoup.nodes.{Document, Element}
@@ -58,7 +59,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                                                  addressLine3 = None,
                                                                  townOrCity = "New Street",
                                                                  maybePostcode = Some("AB12CD"),
-                                                                 countryCode = "GB"
+                                                                 countryCode = GB
                                                          )
                                            ),
                                            GroupMember(customerIdentification1 = "DEF",
@@ -75,7 +76,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                                                  addressLine3 = None,
                                                                  townOrCity = "New Street",
                                                                  maybePostcode = Some("AB12CD"),
-                                                                 countryCode = "GB"
+                                                                 countryCode = GB
                                                          )
                                            )
                              )

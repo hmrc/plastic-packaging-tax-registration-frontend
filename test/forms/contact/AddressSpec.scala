@@ -23,6 +23,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
 import play.api.libs.json.Json
 import forms.contact.Address.UKAddress
+import models.addresslookup.CountryCode.GB
 import models.addresslookup.{AddressLookupAddress, AddressLookupConfirmation, AddressLookupCountry}
 import utils.AddressConversionUtils
 
@@ -43,7 +44,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
           "addressLine3" -> "Address Line 3",
           "townOrCity"   -> "Town or City",
           "postCode"     -> "LS4 1RH",
-          "countryCode"  -> "GB"
+          "countryCode"  -> GB
         )
 
         val form = Address.form().bind(input)
@@ -57,7 +58,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
           "addressLine2" -> "Address Line 2 .'-&",
           "townOrCity"   -> "Town or City .'-&",
           "postCode"     -> "LS4 1RH",
-          "countryCode"  -> "GB"
+          "countryCode"  -> GB
         )
 
         val form = Address.form().bind(input)
@@ -71,7 +72,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
           "addressLine2" -> "Address Line 2 .'-&",
           "townOrCity"   -> "Town or City .'-&",
           "postCode"     -> "ls4 1rh",
-          "countryCode"  -> "GB"
+          "countryCode"  -> GB
         )
 
         val form = Address.form().bind(input)
@@ -84,7 +85,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
       "mandatory fields provided with empty data" in {
 
         val input =
-          Map("addressLine1" -> "", "townOrCity" -> "", "postCode" -> "", "countryCode" -> "GB")
+          Map("addressLine1" -> "", "townOrCity" -> "", "postCode" -> "", "countryCode" -> GB)
         val expectedErrors =
           Seq(
             FormError("addressLine1", "primaryContactDetails.address.addressLine1.empty.error"),
@@ -103,7 +104,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
           "addressLine3" -> "Address Line 3**********",
           "townOrCity"   -> "Town or City££$£$£$+",
           "postCode"     -> "LS4 1RH £$£$£$++---",
-          "countryCode"  -> "GB"
+          "countryCode"  -> GB
         )
         val expectedErrors =
           Seq(
@@ -125,7 +126,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
           "addressLine3" -> "Address Line 3",
           "townOrCity"   -> "Town ",
           "postCode"     -> "LSA41RH",
-          "countryCode"  -> "GB"
+          "countryCode"  -> GB
         )
         val expectedErrors =
           Seq(FormError("postCode", "primaryContactDetails.address.postCode.format.error"))
@@ -191,7 +192,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
         "addressLine2" -> "testLine2",
         "addressLine3" -> "testLine3",
         "townOrCity" -> "town",
-        "countryCode" -> "GB"
+        "countryCode" -> GB
       )
 
       gbAddressNoPostcode.as[Address] mustBe UKAddress(

@@ -22,8 +22,10 @@ import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendRoutes}
 import forms.contact._
 import forms.group.MemberName
+import models.registration.OrganisationName.getMissingOrgMessage
 import models.registration.Registration
 import models.request.JourneyRequest
+import play.api.i18n.Messages
 import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
 import views.html.group.{member_email_address_page, member_name_page, member_phone_number_page}
 
@@ -92,7 +94,7 @@ class AmendMemberContactDetailsController @Inject() (
   ) =
     contactNamePage(form,
                     request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                      "your organisation"
+                      getMissingOrgMessage
                     ),
                     routes.AmendMemberContactDetailsController.updateContactName(memberId),
                     memberId

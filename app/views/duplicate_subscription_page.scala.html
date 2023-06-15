@@ -36,7 +36,7 @@
     @pageHeading(text = messages("duplicateSubscription.title"))
     @paragraphBody(
         message = messages("duplicateSubscription.detail",
-            request.registration.organisationDetails.businessName.getOrElse("your organisation")
+            request.registration.organisationDetails.businessName.getOrElse(messages("missing.organisationName"))
         )
     )
 }

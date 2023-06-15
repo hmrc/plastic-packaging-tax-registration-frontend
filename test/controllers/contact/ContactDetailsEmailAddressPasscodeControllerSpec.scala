@@ -33,6 +33,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
+import models.addresslookup.CountryCode.GB
 import services.EmailVerificationService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.contact.email_address_passcode_page
@@ -209,7 +210,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                               addressLine3 = None,
                                               townOrCity = "London",
                                               maybePostcode = Some("W1T 2HN"),
-                                              countryCode = "GB"
+                                              countryCode = GB
                                       )
                                     ),
                                     journeyId = Some("journey-id")

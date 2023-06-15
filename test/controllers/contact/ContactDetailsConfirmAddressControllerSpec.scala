@@ -21,6 +21,7 @@ import connectors.DownstreamServiceError
 import controllers.{routes => pptRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, UK_COMPANY}
+import models.addresslookup.CountryCode.GB
 import models.genericregistration.IncorporationAddressDetails
 import models.registration.{OrganisationDetails, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
@@ -226,7 +227,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
       modifiedRegistration.primaryContactDetails.address.get.maybePostcode mustBe expected.postal_code
-      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe "GB"
+      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe GB
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
 
@@ -236,7 +237,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.maybePostcode mustBe expected.postal_code
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe "GB"
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe GB
     }
 
       "return 303 (OK) for " when {
