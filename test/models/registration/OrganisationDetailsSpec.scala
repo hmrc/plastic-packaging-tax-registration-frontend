@@ -283,7 +283,4 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
       subscriptionStatus = subscriptionStatus
     )
 
-  "should serialise to json as expected" in {
-    println(Json.toJson(createFailedUkCompanyOrg()).toString)
-  }
 }

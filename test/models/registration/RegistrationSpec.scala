@@ -79,7 +79,6 @@ class RegistrationSpec
       val notStartedRegistration = Registration("123")
 
       notStartedRegistration.isRegistrationComplete mustBe false
-      println(notStartedRegistration.numberOfCompletedSections)
       notStartedRegistration.numberOfCompletedSections mustBe 0
 
       notStartedRegistration.isLiabilityDetailsComplete mustBe false
