@@ -57,10 +57,10 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
     "display 'Sign in' button" in {
 
       view must containElementWithClass("govuk-button")
-      view.getElementsByClass("govuk-button").first() must containMessage(
+      view.getElementsByClass("govuk-button").get(1) must containMessage(
         "sessionTimout.signin.button"
       )
-      view.getElementsByClass("govuk-button").first() must haveHref(
+      view.getElementsByClass("govuk-button").get(1) must haveHref(
         routes.TaskListController.displayPage().url
       )
     }

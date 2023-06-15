@@ -67,18 +67,6 @@ Before submitting a commit or pushing code remotely, please run
 ```
 This will execute unit and integration tests, check the Scala style and code coverage
 
-### Scalastyle
-
-Project contains `scalafmt` plugin.
-
-Commands for code formatting:
-
-```
-sbt scalafmt        # format compile sources
-sbt test:scalafmt   # format test sources
-sbt sbt:scalafmt    # format .sbt source
-```
-
 ### Country Lookup
 
 On address entry pages we use a country lookup widget the contents of which is controlled by the file
