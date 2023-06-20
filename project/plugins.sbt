@@ -13,7 +13,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.3")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.9.0")
 
-addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.5.1")
+addSbtPlugin("io.github.irundaia" % "sbt-sassify" % "1.5.2")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.2.0")
 

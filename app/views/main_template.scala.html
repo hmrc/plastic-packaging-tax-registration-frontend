@@ -114,11 +114,14 @@
         }
     }
 
+
     <div class="govuk-back-link-div">
-    @backButton.map {
-        case BackButtonJs(call) => { @backLink(messages("site.back"), call.url, jsDisabledHide = true) }
-        case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
-    }
+        @backButton.map {
+            case _: BackButtonJs => {
+                @govukBackLink(BackLink(href = "#", content = Text(messages("site.back")), classes="js-visible"))
+            }
+            case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
+        }
     </div>
 }
 
