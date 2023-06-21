@@ -88,7 +88,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       verify(govUkLayout).apply(
 //        meq(Title("liability.expectToExceedThresholdDate.title")),
         any[Title], // todo fix to be like above
-        meq(Some(BackButtonJs())),
+        meq(Some(BackButtonJs)),
         any())(any())(meq(request), meq(mockMessages))
     }
 

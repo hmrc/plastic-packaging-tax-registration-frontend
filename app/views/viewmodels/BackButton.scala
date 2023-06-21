@@ -22,4 +22,4 @@ import uk.gov.hmrc.http.HttpVerbs.GET
 sealed trait BackButtonLink
 
 case class BackButton(title: String, call: Call,  hiddenText: String) extends BackButtonLink
-case class BackButtonJs(call: Call = Call(GET, "javascript:window.history.back()")) extends BackButtonLink
+case object BackButtonJs extends BackButtonLink
