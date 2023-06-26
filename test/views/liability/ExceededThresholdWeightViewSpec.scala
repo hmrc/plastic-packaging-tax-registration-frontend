@@ -88,7 +88,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       verify(govUkLayout).apply(
         //        eqTo(Title(form, "liability.exceededThresholdWeight.title")), 
         any[Title], // todo fix to be like above
-        eqTo(Some(BackButtonJs())),
+        eqTo(Some(BackButtonJs)),
         any)(any)(eqTo(request), eqTo(mockMessages))
     }
 

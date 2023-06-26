@@ -83,6 +83,19 @@
     <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
     <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
 
+    <script @CSPNonce.attr>
+        // handle back click
+        var backLinkElem = document.querySelector('.govuk-back-link');
+
+        if(backLinkElem != null) {
+            backLinkElem.addEventListener('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                window.history.back();
+            });
+        }
+    </script>
+
     @if(useTimeoutDialog) {
         <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")' @CSPNonce.attr> </script>
     }
@@ -114,11 +127,14 @@
         }
     }
 
+
     <div class="govuk-back-link-div">
-    @backButton.map {
-        case BackButtonJs(call) => { @backLink(messages("site.back"), call.url, jsDisabledHide = true) }
-        case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
-    }
+        @backButton.map {
+            case BackButtonJs => {
+                @govukBackLink(BackLink(href = "#", content = Text(messages("site.back")), classes="js-visible"))
+            }
+            case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
+        }
     </div>
 }
 

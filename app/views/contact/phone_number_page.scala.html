@@ -62,7 +62,7 @@
 }
 @govukLayout(
   title = Title(form, headingKey = "primaryContactDetails.phoneNumber.title", headingArg = contactName),
-  backButton = Some(BackButtonJs())) {
+  backButton = Some(BackButtonJs)) {
   @errorSummary(form.errors)
 
   @sectionHeader(caption)

@@ -39,7 +39,7 @@
 
 @govukLayout(
     title = Title(headingKey = "amend.group.remove.title", member.businessName),
-    backButton = Some(BackButtonJs())) {
+    backButton = Some(BackButtonJs)) {
 
     @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
