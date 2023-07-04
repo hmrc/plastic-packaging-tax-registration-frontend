@@ -33,7 +33,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//todo should this be called enrolledAuthAction or something? While its mostly use for amend there is exceptions
 @ImplementedBy(classOf[AmendAuthActionImpl])
 trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
 
@@ -60,7 +59,7 @@ class AmendAuthActionImpl @Inject()(
         case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
           request.session.get("clientPPT") match {
             case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
-            case None => Future.successful(Redirect(appConfig.pptAccountUrl)) //todo to the returns select page, or home page? thinking
+            case None => Future.successful(Redirect(appConfig.pptAccountUrl))
           }
 
         case credentials ~ internalId ~ allEnrolments ~ _ =>

@@ -35,7 +35,6 @@ import models.request.JourneyRequest
 
 import scala.concurrent.Future
 
-// TODO !Can be migrated from trait to a service to reduce dependency injections in callers
 trait GRSRedirections extends I18nSupport {
 
   def appConfig: AppConfig

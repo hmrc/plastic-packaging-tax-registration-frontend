@@ -36,7 +36,7 @@ object PartnershipName {
     partnershipName ->
       text()
         .verifying("partnership.name.empty.error", isNonEmpty)
-        .verifying("partnership.name.too-long", isShortEnough).verifying() // todo interpolate error with maxLength?
+        .verifying("partnership.name.too-long", isShortEnough).verifying()
         .verifying("partnership.name.format.error", matchesRegex)
   )(PartnershipName.apply)(PartnershipName.unapply)
 

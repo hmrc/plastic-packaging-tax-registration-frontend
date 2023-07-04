@@ -17,6 +17,7 @@
 package views.liability
 
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar.{mock, reset, times, verify, when}
 import org.mockito.captor.ArgCaptor
@@ -52,7 +53,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
     super.beforeEach()
     reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukDateInput, paragraphBody)
 
-    when(mockMessages.apply(any[String], any)).thenReturn("some message") //todo?
+    when(mockMessages.apply(any[String], any)).thenReturn("some message")
     when(sectionHeader.apply(any)).thenReturn(HtmlFormat.raw("SECTION HEADER"))
     when(pageHeading.apply(any, any, any)).thenReturn(HtmlFormat.raw("PAGE HEADING"))
     when(govUkLayout.apply(any, any, any)(contentCaptor)(any, any)).thenReturn(HtmlFormat.raw("GOVUK"))
@@ -79,8 +80,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
       instantiateView()
 
       verify(govUkLayout).apply(
-//        eqTo(Title("liability.exceededThresholdWeightDate.title")),
-        any[Title], // todo fix to be like above
+        refEq(Title("liability.exceededThresholdWeightDate.title")),
         eqTo(Some(BackButtonJs)),
         any)(any)(eqTo(request), eqTo(mockMessages))
     }
@@ -143,7 +143,6 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
     }
   }
 
-  //todo this is $h!t
   "Exercise generated rendering methods" in {
     page.f(form)(request, mockMessages)
     page.render(form, request, mockMessages)

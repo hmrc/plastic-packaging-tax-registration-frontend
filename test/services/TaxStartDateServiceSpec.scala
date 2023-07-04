@@ -16,90 +16,12 @@
 
 package services
 
-import org.mockito.MockitoSugar.{reset, verify, times, never}
-import org.mockito.ArgumentMatchers._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
-import play.api.mvc.Result
 import forms.Date
 import forms.liability.LiabilityWeight
 import models.registration.LiabilityDetails
-import services.MustHaveFieldExtension.ExtendedObject
+import org.scalatestplus.play.PlaySpec
 
 import java.time.LocalDate
-
-
-class MustHaveFieldExtensionSpec extends PlaySpec with BeforeAndAfterEach {
-  // TODO move to own files
-
-  case class Example(x: Option[String])
-  
-  "mustHave should return the field contents" in {
-    val example = Example(Some("the contents of x"))
-    example.mustHave(_.x, "x") mustBe "the contents of x" 
-  }
-  
-  "mustHave should complain about an empty field" in {
-    val example = Example(None)
-    the [IllegalStateException] thrownBy example.mustHave(_.x, "x") must have message "Missing field 'x'" 
-  }
-  
-  "mightHaveIf should ignore an empty field" in {
-    val example = Example(None)
-    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = false)
-  }
-  
-  "mightHaveIf should complain about an empty field" in {
-    val example = Example(None)
-    the [IllegalStateException] thrownBy example.mightHaveIf(_.x, "x", predicate = true) must have message "Missing field 'x'"
-  }
-  
-  "mightHaveIf should be happy with a defined field" in {
-    val example = Example(Some("the contents of x"))
-    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = true)
-  }
-}
-
-
-class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
-  // TODO move to own files
-
-  trait PossibleActions {
-    def notLiableAction: Result
-    def isLiableAction(date: LocalDate, isDateFromBackwardsTest: Boolean): Result 
-  }
-  
-  private val actions = mock[PossibleActions]
-  val aDate: LocalDate = LocalDate.ofEpochDay(0)
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(actions)
-  }
-
-  "Act should follow the not liable action" in {
-    TaxStartDate.notLiable.act(actions.notLiableAction, actions.isLiableAction)
-    verify(actions, times(1)).notLiableAction
-    verify(actions, never).isLiableAction(any(), any())
-  }
-
-  "Act should follow the is liable action" when {
-
-    "liable because of the backwards test" in {
-      TaxStartDate.liableFromBackwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
-      verify(actions, never).notLiableAction
-      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = true)
-    }
-
-    "liable because of the forwards test" in {
-      TaxStartDate.liableFromForwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
-      verify(actions, never).notLiableAction
-      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = false)
-    }
-
-  }
-}
 
 
 class TaxStartDateServiceSpec extends PlaySpec {

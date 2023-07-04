@@ -153,7 +153,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
             assertResults(liabilityElement, "task.status.completed")
           }
         }
-        "Organisation details" in { //todo: should the status logic be tested here?
+        "Organisation details" in {
           val businessElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
           header(businessElement) must include(
