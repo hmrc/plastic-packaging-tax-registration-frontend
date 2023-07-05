@@ -18,7 +18,7 @@ package views.liability
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
+import org.mockito.ArgumentMatchers.{any, anyString, refEq, eq => meq}
 import org.mockito.Mockito.{times, verify, when}
 import org.mockito.MockitoSugar.reset
 import org.scalatest.BeforeAndAfterEach
@@ -62,7 +62,7 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
     super.beforeEach()
     reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukRadios, paragraphBody, inset, bulletList, link)
 
-    when(mockMessages.apply(anyString(), any())).thenReturn("some message") //todo?
+    when(mockMessages.apply(anyString(), any())).thenReturn("some message")
     when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
     when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
     when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
@@ -94,8 +94,7 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
       instantiateView()
 
       verify(govUkLayout).apply(
-//        meq(Title("liability.expectToExceedThresholdWeight.title")),
-        any[Title](), // todo fix to be like above
+        refEq(Title("liability.expectToExceedThresholdWeight.title")),
         any(),
         any())(any())(meq(request), meq(mockMessages))
     }
@@ -191,7 +190,6 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
     }
   }
 
-  //todo this is $h!t
   "Exercise generated rendering methods" in {
     page.f(form)(request, mockMessages)
     page.render(form, request, mockMessages)

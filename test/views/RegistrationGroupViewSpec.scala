@@ -118,7 +118,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
-        "Nominated organisation details" in {//todo: should status logic be tested here?
+        "Nominated organisation details" in {
 
           val businessElement = view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
@@ -176,7 +176,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
             Some(GroupDetail(membersUnderGroupControl = Some(true)))
           ),
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true), //todo- check if this should pass
+            LiabilityDetails(exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight = Some(
                 Date(LocalDate.parse("2022-03-05")),
               ),
@@ -324,10 +324,6 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "application status should reflect the completed sections" in {
 
-          // TODO - fix when other groups done
-          //          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-          //            0
-          //          ).text() mustBe messages("registrationPage.subheading.complete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
@@ -381,7 +377,6 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
         }
 
-        // TODO - Other organisations in group "complete"
 
         "Review and send" in {
           val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
@@ -390,11 +385,6 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
-          // TODO - fix when other groups done
-          //          sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
-          //          sectionLink(reviewElement, 0) must haveHref(
-          //            routes.ReviewRegistrationController.displayPage()
-          //          )
         }
 
       }
@@ -413,11 +403,6 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
-        // TODO - fix when other groups done
-        //        sectionStatus(reviewElement, 0) mustBe messages("task.status.inProgress")
-        //        sectionLink(reviewElement, 0) must haveHref(
-        //          routes.ReviewRegistrationController.displayPage()
-        //        )
       }
 
       "Check and Submit is 'Completed'" in {
@@ -434,11 +419,6 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
-        // TODO - fix when other groups done
-        //        sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
-        //        sectionLink(reviewElement, 0) must haveHref(
-        //          routes.ReviewRegistrationController.displayPage()
-        //        )
       }
     }
   }

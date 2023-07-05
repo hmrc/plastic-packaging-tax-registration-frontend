@@ -112,7 +112,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ).text() mustBe messages("registrationPage.completedSections", 0, 4)
         }
 
-        "Eligibility check" in {//todo: should status logic be tested here?
+        "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(

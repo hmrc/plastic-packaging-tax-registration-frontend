@@ -109,7 +109,7 @@ class ReviewRegistrationController @Inject() (
     )
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
-        .flashing( //TODO NO NO NO NO
+        .flashing(
           Flash(
             Map(FlashKeys.referenceId -> response.pptReference,
                 FlashKeys.groupReg    -> registration.isGroup.toString
@@ -118,7 +118,7 @@ class ReviewRegistrationController @Inject() (
         )
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
-        .flashing( //TODO NO NO NO NO
+        .flashing(
           Flash(
             Map(FlashKeys.referenceId -> response.pptReference,
                 FlashKeys.groupReg    -> registration.isGroup.toString

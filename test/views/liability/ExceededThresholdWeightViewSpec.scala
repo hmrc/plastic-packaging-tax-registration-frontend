@@ -17,6 +17,7 @@
 package views.liability
 
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar
 import org.mockito.captor.ArgCaptor
@@ -58,7 +59,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    when(mockMessages.apply(any[String], any)).thenReturn("some message") //todo?
+    when(mockMessages.apply(any[String], any)).thenReturn("some message")
     when(sectionHeader.apply(any)).thenReturn(HtmlFormat.raw("SECTION HEADER"))
     when(pageHeading.apply(any, any, any)).thenReturn(HtmlFormat.raw("PAGE HEADING"))
     when(govUkLayout.apply(any, any, any)(contentCaptor)(any, any)).thenReturn(HtmlFormat.raw("GOVUK"))
@@ -86,8 +87,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       instantiateView()
 
       verify(govUkLayout).apply(
-        //        eqTo(Title(form, "liability.exceededThresholdWeight.title")), 
-        any[Title], // todo fix to be like above
+        refEq(Title(form, "liability.exceededThresholdWeight.title")),
         eqTo(Some(BackButtonJs)),
         any)(any)(eqTo(request), eqTo(mockMessages))
     }
@@ -181,7 +181,6 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
     }
   }
 
-  //todo this is $h!t
   "Exercise generated rendering methods" in {
     page.f(form)(request, mockMessages)
     page.render(form, request, mockMessages)

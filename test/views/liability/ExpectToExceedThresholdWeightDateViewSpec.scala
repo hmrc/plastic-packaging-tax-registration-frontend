@@ -18,7 +18,7 @@ package views.liability
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
+import org.mockito.ArgumentMatchers.{any, anyString, refEq, eq => meq}
 import org.mockito.Mockito.atLeastOnce
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -58,7 +58,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
     super.beforeEach()
     reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukDateInput, paragraphBody, bulletList)
 
-    when(mockMessages.apply(anyString(), any())).thenReturn("some message") //todo?
+    when(mockMessages.apply(anyString(), any())).thenReturn("some message")
     when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
     when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
     when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
@@ -86,8 +86,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       instantiateView()
 
       verify(govUkLayout).apply(
-//        meq(Title("liability.expectToExceedThresholdDate.title")),
-        any[Title], // todo fix to be like above
+        refEq(Title("liability.expectToExceedThresholdDate.title")),
         meq(Some(BackButtonJs)),
         any())(any())(meq(request), meq(mockMessages))
     }
@@ -191,7 +190,6 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
     }
   }
 
-  //todo this is $h!t
   "Exercise generated rendering methods" in {
     page.f(form)(request, mockMessages)
     page.render(form, request, mockMessages)

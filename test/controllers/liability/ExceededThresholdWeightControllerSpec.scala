@@ -111,7 +111,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(false)
-        // todo reset date to None test.
         redirectLocation(result) mustBe Some(
           routes.TaxStartDateController.displayPage().url
         )
