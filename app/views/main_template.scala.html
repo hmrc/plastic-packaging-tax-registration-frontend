@@ -26,7 +26,6 @@
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import models.request.AuthenticatedRequest
 @import models.request.JourneyRequest
-@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 
 @this(
@@ -42,8 +41,7 @@
         hmrcFooter: HmrcStandardFooter,
         hmrcTimeoutDialog: HmrcTimeoutDialog,
         hmrcStandardHeader: HmrcStandardHeader,
-        utils: LanguageUtils,
-        stdBanner: StandardBetaBanner,
+        utils: LanguageUtils
 )
 @(title: Title,
   backButton: Option[BackButtonLink] = None,
@@ -150,15 +148,6 @@
         None
 }
 
-@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
-@feedbackUrl = @{
-    if (isAuthenticated) {
-        s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-    } else {
-        s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-    }
-}
-
 @govukLayout(
     pageTitle = Some(title.toString),
     headBlock = Some(head),
@@ -168,7 +157,7 @@
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(pptRoutes.StartRegistrationController.startRegistration.url),
         signOutUrl  = signOutHref,
-        phaseBanner = Some(stdBanner(feedbackUrl)),
+        phaseBanner = None,
         userResearchBanner = Some(UserResearchBanner(
             utils.getCurrentLang(request).code.take(2) match {
                 case "cy" => Cy
