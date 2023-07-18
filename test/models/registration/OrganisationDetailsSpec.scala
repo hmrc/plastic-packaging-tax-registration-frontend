@@ -16,15 +16,14 @@
 
 package models.registration
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.Json
-import spec.PptTestData
 import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, UK_COMPANY}
 import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import models.genericregistration._
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED, Status, UNKNOWN}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.wordspec.AnyWordSpec
+import spec.PptTestData
 import utils.AddressConversionUtils
 import views.viewmodels.TaskStatus
 

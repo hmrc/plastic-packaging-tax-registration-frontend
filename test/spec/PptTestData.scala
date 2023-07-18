@@ -41,7 +41,6 @@ import utils.AddressConversionUtils
 import utils.FakeRequestCSRFSupport._
 
 import java.time.{ZoneOffset, ZonedDateTime}
-import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder {
 

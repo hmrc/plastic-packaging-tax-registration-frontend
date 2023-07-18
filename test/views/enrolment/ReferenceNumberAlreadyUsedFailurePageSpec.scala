@@ -44,8 +44,8 @@ class ReferenceNumberAlreadyUsedFailurePageSpec extends UnitViewSpec with Matche
 
     "contain detail" in {
       val detail = view.select("p")
-      detail.get(1).text() must include(messages("enrolment.referenceNumber.already.used.detail1"))
-      detail.get(2).text() must include(messages("enrolment.referenceNumber.already.used.detail2"))
+      detail.text() must include(messages("enrolment.referenceNumber.already.used.detail1"))
+      detail.text() must include(messages("enrolment.referenceNumber.already.used.detail2"))
     }
 
     "display 'Back to your business tax account' button" in {

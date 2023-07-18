@@ -126,13 +126,13 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "group user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.GROUP)))
-
           spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
-
           val correctForm = Seq("answer" -> PARTNERSHIP.toString)
-          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+
+          val result = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
+
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
         }
 
