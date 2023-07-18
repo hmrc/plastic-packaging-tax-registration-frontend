@@ -23,8 +23,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.LocalDate
-
 class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   private val validConfig: Config =
