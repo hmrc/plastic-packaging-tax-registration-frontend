@@ -151,6 +151,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       servicesConfig.baseUrl("ppt-account-frontend")
     )
 
+  lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
+
+  lazy val feedbackUnauthenticatedLink: String =
+    config.get[String]("urls.feedback.unauthenticatedLink")
 
   lazy val exitSurveyUrl   = config.get[String]("urls.exitSurvey")
   lazy val hmrcPrivacyUrl  = config.get[String]("urls.hmrcPrivacy")
@@ -196,6 +200,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def getSubmitPassscodeUrl(journeyId: String): String =
     s"$emailVerificationHost/email-verification/journey/$journeyId/passcode"
+
+  def authenticatedFeedbackUrl(): String =
+    s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
+
+  def unauthenticatedFeedbackUrl(): String =
+    s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
   lazy val pptNotEnrolledUrl = s"$pptAccountHost/plastic-packaging-tax/account/not-enrolled"
