@@ -19,23 +19,15 @@ package connectors.grs
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
-import models.genericregistration.{
-  GrsIncorporationDetails,
-  IncorpEntityGrsCreateRequest,
-  IncorporationDetails
-}
+import models.genericregistration.{GrsIncorporationDetails, IncorpEntityGrsCreateRequest, IncorporationDetails}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UkCompanyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(
-  implicit ec: ExecutionContext
-) extends GrsConnector[
-      IncorpEntityGrsCreateRequest,
-      GrsIncorporationDetails,
-      IncorporationDetails
-    ](httpClient,
+class UkCompanyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
+    extends GrsConnector[IncorpEntityGrsCreateRequest, GrsIncorporationDetails, IncorporationDetails](
+      httpClient,
       metrics,
       Some(config.incorpLimitedCompanyJourneyUrl),
       config.incorpDetailsUrl,
@@ -43,9 +35,7 @@ class UkCompanyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig
       "ppt.incorpId.get.details.timer"
     ) {
 
-  override def translateDetails(
-    grsIncorporationDetails: GrsIncorporationDetails
-  ): IncorporationDetails =
+  override def translateDetails(grsIncorporationDetails: GrsIncorporationDetails): IncorporationDetails =
     IncorporationDetails(grsIncorporationDetails)
 
 }

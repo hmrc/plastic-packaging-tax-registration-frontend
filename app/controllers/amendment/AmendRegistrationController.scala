@@ -28,12 +28,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendRegistrationController @Inject() (
-                                              journeyAction: JourneyAction,
-                                              amendRegistrationService: AmendRegistrationService,
-                                              amendAuthAction: AmendAuthAction,
-                                              mcc: MessagesControllerComponents,
-                                              amendRegistrationPage: amend_registration_page,
-                                              amendErrorPage: amend_error_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  amendAuthAction: AmendAuthAction,
+  mcc: MessagesControllerComponents,
+  amendRegistrationPage: amend_registration_page,
+  amendErrorPage: amend_error_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 

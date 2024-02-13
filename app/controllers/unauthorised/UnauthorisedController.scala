@@ -49,4 +49,5 @@ class UnauthorisedController @Inject() (
       logger.info("Agent attempting registration - showing unauthorised page")
       Ok(unauthorisedAgent())
     }
+
 }

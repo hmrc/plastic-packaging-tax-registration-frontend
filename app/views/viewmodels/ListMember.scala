@@ -18,9 +18,4 @@ package views.viewmodels
 
 import play.api.mvc.Call
 
-case class ListMember(
-  name: String,
-  subHeading: Option[String] = None,
-  change: Option[Call] = None,
-  remove: Option[Call] = None
-)
+case class ListMember(name: String, subHeading: Option[String] = None, change: Option[Call] = None, remove: Option[Call] = None)

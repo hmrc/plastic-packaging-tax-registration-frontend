@@ -37,12 +37,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipNameController @Inject() (
-                                            journeyAction: JourneyAction,
-                                            appConfig: AppConfig,
-                                            partnershipGrsConnector: PartnershipGrsConnector,
-                                            override val registrationConnector: RegistrationConnector,
-                                            mcc: MessagesControllerComponents,
-                                            page: partnership_name
+  journeyAction: JourneyAction,
+  appConfig: AppConfig,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: partnership_name
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -63,26 +63,23 @@ class PartnershipNameController @Inject() (
     journeyAction.register.async { implicit request =>
       PartnershipName.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PartnershipName]) => Future(BadRequest(page(formWithErrors))),
-              partnershipName =>
-                updatePartnershipName(partnershipName.value).flatMap { registration =>
-                  getGrsRedirectUrl(getPartnershipType(registration) match {
-                    case GENERAL_PARTNERSHIP  => appConfig.generalPartnershipJourneyUrl
-                    case SCOTTISH_PARTNERSHIP => appConfig.scottishPartnershipJourneyUrl
-                    case _                    => throw new IllegalStateException("Unexpected partnership type")
-                  }).map(grsRedirectUrl => Redirect(grsRedirectUrl))
-                }
+        .fold(
+          (formWithErrors: Form[PartnershipName]) => Future(BadRequest(page(formWithErrors))),
+          partnershipName =>
+            updatePartnershipName(partnershipName.value).flatMap { registration =>
+              getGrsRedirectUrl(getPartnershipType(registration) match {
+                case GENERAL_PARTNERSHIP  => appConfig.generalPartnershipJourneyUrl
+                case SCOTTISH_PARTNERSHIP => appConfig.scottishPartnershipJourneyUrl
+                case _                    => throw new IllegalStateException("Unexpected partnership type")
+              }).map(grsRedirectUrl => Redirect(grsRedirectUrl))
+            }
         )
     }
 
   private def getPartnershipType(registration: Registration) =
-    registration.organisationDetails.partnershipDetails.map(pd => pd.partnershipType).getOrElse(
-      throw new IllegalStateException("Assumed partnership details missing")
-    )
+    registration.organisationDetails.partnershipDetails.map(pd => pd.partnershipType).getOrElse(throw new IllegalStateException("Assumed partnership details missing"))
 
-  private def updatePartnershipName(
-    partnershipName: String
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updatePartnershipName(partnershipName: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     update {
       registration =>
         registration.copy(organisationDetails =
@@ -97,15 +94,14 @@ class PartnershipNameController @Inject() (
       case Left(ex)            => throw ex
     }
 
-  private def getGrsRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
+  private def getGrsRedirectUrl(url: String)(implicit request: JourneyRequest[AnyContent]): Future[String] =
     partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath
+      PartnershipGrsCreateRequest(
+        appConfig.grsCallbackUrl,
+        Some(request2Messages(request)("service.name")),
+        appConfig.serviceIdentifier,
+        appConfig.signOutLink,
+        appConfig.grsAccessibilityStatementPath
       ),
       url
     )

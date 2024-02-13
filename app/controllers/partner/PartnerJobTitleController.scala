@@ -35,36 +35,32 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerJobTitleController @Inject() (
-                                            journeyAction: JourneyAction,
-                                            override val registrationConnector: RegistrationConnector,
-                                            mcc: MessagesControllerComponents,
-                                            page: partner_job_title_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: partner_job_title_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
     journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        renderPageFor(partner,
-                      partnerRoutes.PartnerContactNameController.displayNewPartner,
-                      partnerRoutes.PartnerJobTitleController.submitNewPartner()
-        )
+        renderPageFor(partner, partnerRoutes.PartnerContactNameController.displayNewPartner, partnerRoutes.PartnerJobTitleController.submitNewPartner())
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     journeyAction.register { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
-        renderPageFor(partner,
-                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                      partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId)
+        renderPageFor(
+          partner,
+          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+          partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId)
         )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Result =
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result =
     partner.contactDetails.map { contactDetails =>
       contactDetails.name.map { contactName =>
         val form = contactDetails.jobTitle match {
@@ -80,16 +76,15 @@ class PartnerJobTitleController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        handleSubmission(partner,
-                         partnerRoutes.PartnerTypeController.displayNewPartner(),
-                         partnerRoutes.PartnerJobTitleController.submitNewPartner(),
-                         partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
-                         commonRoutes.TaskListController.displayPage(),
-                         updateInflightPartner
+        handleSubmission(
+          partner,
+          partnerRoutes.PartnerTypeController.displayNewPartner(),
+          partnerRoutes.PartnerJobTitleController.submitNewPartner(),
+          partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
+          commonRoutes.TaskListController.displayPage(),
+          updateInflightPartner
         )
-      }.getOrElse(
-        Future.successful(throw new IllegalStateException("Expected inflight partner missing"))
-      )
+      }.getOrElse(Future.successful(throw new IllegalStateException("Expected inflight partner missing")))
     }
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
@@ -98,18 +93,15 @@ class PartnerJobTitleController @Inject() (
         updateExistingPartner(jobTitle, partnerId)
 
       request.registration.findPartner(partnerId).map { partner =>
-        handleSubmission(partner,
-                         partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
-                           partnerId
-                         ),
-                         partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId),
-                         routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
-                         partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId),
-                         updateAction
+        handleSubmission(
+          partner,
+          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+          partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId),
+          routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+          partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId),
+          updateAction
         )
-      }.getOrElse(
-        Future.successful(throw new IllegalStateException("Expected existing partner missing"))
-      )
+      }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
 
   private def handleSubmission(
@@ -127,21 +119,15 @@ class PartnerJobTitleController @Inject() (
           partner.contactDetails.flatMap(_.name).map {
             contactName =>
               Future.successful(BadRequest(page(formWithErrors, contactName, submitCall)))
-          }.getOrElse(
-            Future.successful(
-              throw new IllegalStateException("Expected partner contact name missing")
-            )
-          ),
+          }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner contact name missing"))),
         jobTitle =>
           updateAction(jobTitle).map {
-            case Right(_) => Redirect(onwardsCall)
+            case Right(_)    => Redirect(onwardsCall)
             case Left(error) => throw error
           }
       )
 
-  private def updateInflightPartner(
-    formData: JobTitle
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateInflightPartner(formData: JobTitle)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
         registration.withInflightPartner(Some(withJobTitle(partner, formData)))
@@ -150,9 +136,7 @@ class PartnerJobTitleController @Inject() (
       }
     }
 
-  private def updateExistingPartner(formData: JobTitle, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
+  private def updateExistingPartner(formData: JobTitle, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.withUpdatedPartner(partnerId, partner => withJobTitle(partner, formData))
     }

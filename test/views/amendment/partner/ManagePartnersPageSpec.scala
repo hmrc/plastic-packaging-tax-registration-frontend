@@ -26,9 +26,7 @@ class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
 
   private val page: manage_partners_page = inject[manage_partners_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private def createView(registration: Registration): Html =
     page(registration)(amendsJourneyRequest, messages)
@@ -56,9 +54,7 @@ class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
     "display nominated partner" in {
       val dataList = view.select("dl")
       dataList.select("dt").get(0).text() must include(messages("amend.partner.manage.nominated"))
-      dataList.select("dd").get(0).text() must include(
-        partnershipRegistration.nominatedPartner.map(_.name).get
-      )
+      dataList.select("dd").get(0).text() must include(partnershipRegistration.nominatedPartner.map(_.name).get)
     }
 
     "display others partners" in {

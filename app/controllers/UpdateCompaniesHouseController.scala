@@ -35,32 +35,34 @@ import scala.concurrent.ExecutionContext
   from GRS as it is now out of date.
  */
 
-class UpdateCompaniesHouseController @Inject()(
-                                                journeyAction: JourneyAction,
-                                                registrationConnector: RegistrationConnector,
-                                                updateCompaniesHouse: UpdateCompaniesHouseView,
-                                                val messagesApi: MessagesApi
-)(implicit ec: ExecutionContext) extends Results with FrontendHeaderCarrierProvider with I18nSupport with Logging {
+class UpdateCompaniesHouseController @Inject() (
+  journeyAction: JourneyAction,
+  registrationConnector: RegistrationConnector,
+  updateCompaniesHouse: UpdateCompaniesHouseView,
+  val messagesApi: MessagesApi
+)(implicit ec: ExecutionContext)
+    extends Results with FrontendHeaderCarrierProvider with I18nSupport with Logging {
 
-  def onPageLoad(): Action[AnyContent] = journeyAction.register {
-    implicit request =>
-      {for {
-        crn <- request.registration.organisationDetails.incorporationDetails.map(_.companyNumber)
-        cn <- request.registration.organisationDetails.incorporationDetails.map(_.companyName)
-      } yield
-        Ok(updateCompaniesHouse(crn, cn))
-      }.getOrElse{
-        logger.warn("No incorporationDetails, can not advise user.")
-        Redirect(routes.TaskListController.displayPage())
-      }
-  }
+  def onPageLoad(): Action[AnyContent] =
+    journeyAction.register {
+      implicit request =>
+        for {
+          crn <- request.registration.organisationDetails.incorporationDetails.map(_.companyNumber)
+          cn  <- request.registration.organisationDetails.incorporationDetails.map(_.companyName)
+        } yield Ok(updateCompaniesHouse(crn, cn))
+    }.getOrElse {
+      logger.warn("No incorporationDetails, can not advise user.")
+      Redirect(routes.TaskListController.displayPage())
+    }
 
-  def reset(): Action[AnyContent] = journeyAction.register.async {
-    implicit request =>
-      registrationConnector.update(request.registration.clearAddressFromGrs)
-        .map{
-          case Left(e) => throw e
-          case Right(_) => Redirect(routes.TaskListController.displayPage())
-        }
-  }
+  def reset(): Action[AnyContent] =
+    journeyAction.register.async {
+      implicit request =>
+        registrationConnector.update(request.registration.clearAddressFromGrs)
+          .map {
+            case Left(e)  => throw e
+            case Right(_) => Redirect(routes.TaskListController.displayPage())
+          }
+    }
+
 }

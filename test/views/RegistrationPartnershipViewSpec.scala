@@ -32,13 +32,12 @@ import views.html.task_list_partnership
 
 import java.time.LocalDate
 
-
 class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS = 0
-  private val BUSINESS_DETAILS = 1
-  private val PARTNER_DETAILS = 2
-  private val CHECK_AND_SUBMIT = 3
+  private val LIABILITY_DETAILS                       = 0
+  private val BUSINESS_DETAILS                        = 1
+  private val PARTNER_DETAILS                         = 2
+  private val CHECK_AND_SUBMIT                        = 3
   private val registrationPage: task_list_partnership = inject[task_list_partnership]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
@@ -47,11 +46,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(
       Some(
         scottishPartnershipDetails.copy(partners =
-          Seq(
-            nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-              soleTraderDetails = Some(soleTraderDetails)
-            )
-          )
+          Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY, soleTraderDetails = Some(soleTraderDetails)))
         )
       )
     )
@@ -100,24 +95,17 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
       "Liability Details 'In Progress'" when {
 
-
         val view: Html = createView(Registration("123"))
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections", 0, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 0, 4)
         }
 
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -126,31 +114,21 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val businessElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(businessElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(businessElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(businessElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(businessElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(businessElement, 0) mustBe messages("task.status.cannotStartYet")
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
 
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -170,7 +148,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true),
+            LiabilityDetails(
+              exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight =
                 Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -185,20 +164,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections", 1, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 1, 4)
         }
 
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -207,33 +180,21 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(organisationElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(organisationElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(organisationElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.OrganisationDetailsTypeController.displayPage()
-          )
+          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.OrganisationDetailsTypeController.displayPage())
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -253,7 +214,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true),
+            LiabilityDetails(
+              exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight =
                 Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -268,20 +230,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections", 2, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 2, 4)
         }
 
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -290,36 +246,22 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(organisationElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(organisationElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(organisationElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
-          sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.CheckAnswersController.displayPage()
-          )
+          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.CheckAnswersController.displayPage())
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
-          )
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerTypeController.displayNewPartner())
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -339,14 +281,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration: Registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true),
+            LiabilityDetails(
+              exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight =
                 Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
               newLiabilityFinished = Some(NewLiability)
-
             )
           ),
           withPartnershipDetails(
@@ -361,20 +303,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections", 2, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 2, 4)
         }
 
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -383,40 +319,24 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(organisationElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(organisationElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(organisationElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
-          sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.CheckAnswersController.displayPage()
-          )
+          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.CheckAnswersController.displayPage())
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.notStarted")
-          sectionLink(contactElement, 1) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
+          sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
 
         }
 
@@ -435,7 +355,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true),
+            LiabilityDetails(
+              exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight =
                 Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -456,20 +377,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections", 3, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 3, 4)
         }
 
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -478,40 +393,24 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(organisationElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(organisationElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(organisationElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
-          sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.CheckAnswersController.displayPage()
-          )
+          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.CheckAnswersController.displayPage())
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 1) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
+          sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
 
         }
 
@@ -522,9 +421,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
           sectionStatus(reviewElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(reviewElement, 0) must haveHref(
-            routes.ReviewRegistrationController.displayPage()
-          )
+          sectionLink(reviewElement, 0) must haveHref(routes.ReviewRegistrationController.displayPage())
         }
 
       }
@@ -550,12 +447,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         "application status should reflect the completed sections" in {
 
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-            0
-          ).text() mustBe messages("registrationPage.subheading.complete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
-            0
-          ).text() mustBe messages("registrationPage.completedSections",
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.complete")
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
             completeRegistration.numberOfCompletedSections,
             4
           )
@@ -564,9 +458,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Eligibility check" in {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
+          header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
@@ -575,40 +467,24 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         "Partnership details" in {
           val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(organisationElement) must include(
-            messages("registrationPage.task.organisation.heading.partnership")
-          )
+          header(organisationElement) must include(messages("registrationPage.task.organisation.heading.partnership"))
 
-          sectionName(organisationElement, 0) mustBe messages(
-            "registrationPage.task.organisation.partnership"
-          )
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
-          sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.CheckAnswersController.displayPage()
-          )
+          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.CheckAnswersController.displayPage())
         }
 
         "Partners details" in {
           val contactElement = view.getElementsByClass("app-task").get(PARTNER_DETAILS)
 
-          header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.partnership")
-          )
+          header(contactElement) must include(messages("registrationPage.task.contactDetails.heading.partnership"))
 
-          sectionName(contactElement, 0) mustBe messages(
-            "registrationPage.task.contactDetails.partnership"
-          )
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
-          sectionName(contactElement, 1) mustBe messages(
-            "registrationPage.task.contactDetails.partnership.otherPartners"
-          )
+          sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
+          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
           sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 1) must haveHref(
-            partnerRoutes.PartnerListController.displayPage()
-          )
+          sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
         }
 
         "Review and send" in {
@@ -618,9 +494,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
           sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
-          sectionLink(reviewElement, 0) must haveHref(
-            routes.ReviewRegistrationController.displayPage()
-          )
+          sectionLink(reviewElement, 0) must haveHref(routes.ReviewRegistrationController.displayPage())
         }
 
       }
@@ -629,15 +503,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(registrationJourneyRequest,
-      messages
-    )
-    registrationPage.render(registrationWithPartnershipDetails,
-      liabilityStartLink,
-      false, 
-      registrationJourneyRequest,
-      messages
-    )
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(registrationJourneyRequest, messages)
+    registrationPage.render(registrationWithPartnershipDetails, liabilityStartLink, false, registrationJourneyRequest, messages)
   }
 
 }

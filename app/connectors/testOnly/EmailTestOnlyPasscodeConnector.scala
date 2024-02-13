@@ -20,18 +20,13 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
-import connectors.{
-  DownstreamServiceError,
-  ServiceError
-}
+import connectors.{DownstreamServiceError, ServiceError}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailTestOnlyPasscodeConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)(
-  implicit ec: ExecutionContext
-) {
+class EmailTestOnlyPasscodeConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)(implicit ec: ExecutionContext) {
 
   def getTestOnlyPasscode()(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
     httpClient.GET[HttpResponse](appConfig.getTestOnlyPasscodeUrl)

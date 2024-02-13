@@ -38,15 +38,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressCaptureController @Inject() (
-                                           authenticate: BasicAuthAction,
-                                           mcc: MessagesControllerComponents,
-                                           addressCaptureService: AddressCaptureService,
-                                           addressLookupFrontendConnector: AddressLookupFrontendConnector,
-                                           appConfig: AppConfig,
-                                           addressInUkPage: uk_address_page,
-                                           addressPage: address_page,
-                                           countryService: CountryService,
-                                           addressConversionUtils: AddressConversionUtils
+  authenticate: BasicAuthAction,
+  mcc: MessagesControllerComponents,
+  addressCaptureService: AddressCaptureService,
+  addressLookupFrontendConnector: AddressLookupFrontendConnector,
+  appConfig: AppConfig,
+  addressInUkPage: uk_address_page,
+  addressPage: address_page,
+  countryService: CountryService,
+  addressConversionUtils: AddressConversionUtils
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
 
@@ -117,14 +117,7 @@ class AddressCaptureController @Inject() (
     )
 
   private def buildAddressPage(form: Form[Address], config: AddressCaptureConfig)(implicit request: Request[_]) =
-    addressPage(
-      form,
-      countryService.getAll(),
-      routes.AddressCaptureController.submitAddress(),
-      config.pptHeadingKey,
-      config.entityName,
-      config.pptHintKey
-    )
+    addressPage(form, countryService.getAll(), routes.AddressCaptureController.submitAddress(), config.pptHeadingKey, config.entityName, config.pptHintKey)
 
   def alfCallback(id: Option[String]): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -145,8 +138,6 @@ class AddressCaptureController @Inject() (
     }
 
   private def getAddressCaptureConfig()(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureConfig] =
-    addressCaptureService.getAddressCaptureDetails().map(
-      acd => acd.map(_.config).getOrElse(throw new IllegalStateException("Address capture config absent"))
-    )
+    addressCaptureService.getAddressCaptureDetails().map(acd => acd.map(_.config).getOrElse(throw new IllegalStateException("Address capture config absent")))
 
 }

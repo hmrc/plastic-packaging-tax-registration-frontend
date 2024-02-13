@@ -27,28 +27,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class Auditor @Inject() (auditConnector: AuditConnector) {
 
-  def registrationSubmitted(
-    registration: Registration,
-    pptReference: Option[String] = None,
-    internalId: Option[String]
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
-    auditConnector.sendExplicitAudit(CreateRegistrationEvent.eventType,
-                                     CreateRegistrationEvent(registration, pptReference, internalId)
-    )
+  def registrationSubmitted(registration: Registration, pptReference: Option[String] = None, internalId: Option[String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit(CreateRegistrationEvent.eventType, CreateRegistrationEvent(registration, pptReference, internalId))
 
-  def newRegistrationStarted(
-    internalId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
-    auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType,
-                                     StartRegistrationEvent(UserType.NEW, internalId)
-    )
+  def newRegistrationStarted(internalId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType, StartRegistrationEvent(UserType.NEW, internalId))
 
-  def orgTypeSelected(internalId: String, orgType: Option[OrgType])(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Unit =
-    auditConnector.sendExplicitAudit((OrgTypeRegistrationEvent.eventType),
-                                     OrgTypeRegistrationEvent(internalId, orgType)
-    )
+  def orgTypeSelected(internalId: String, orgType: Option[OrgType])(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit((OrgTypeRegistrationEvent.eventType), OrgTypeRegistrationEvent(internalId, orgType))
 
 }

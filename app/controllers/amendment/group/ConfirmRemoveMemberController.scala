@@ -33,13 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemoveMemberController @Inject() (
-                                                journeyAction: JourneyAction,
-                                                amendRegistrationService: AmendRegistrationService,
-                                                mcc: MessagesControllerComponents,
-                                                page: confirm_remove_member_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: confirm_remove_member_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport
-    with RemoveMemberAction {
+    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport with RemoveMemberAction {
 
   private def onwardCall = routes.GroupMembersListController.displayPage()
 
@@ -73,9 +72,7 @@ class ConfirmRemoveMemberController @Inject() (
       }
     }
 
-  private def removeGroupMember(
-    groupMemberId: String
-  )(implicit req: JourneyRequest[AnyContent]): Future[Result] = {
+  private def removeGroupMember(groupMemberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Result] = {
     def doAction(registration: Registration): Registration =
       doRemoveMemberAction(registration, groupMemberId)
     updateRegistration(doAction, onwardCall)

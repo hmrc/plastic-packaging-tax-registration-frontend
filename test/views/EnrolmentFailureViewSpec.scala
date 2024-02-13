@@ -42,10 +42,7 @@ class EnrolmentFailureViewSpec extends UnitViewSpec with Matchers {
     "display detail with referenceId" in {
       val viewWithReferenceId = createView(Flash(Map(FlashKeys.referenceId -> "PPT123")))
       val pptReferenceText    = viewWithReferenceId.getElementsByClass(gdsPageBodyText)
-      pptReferenceText.get(0) must containMessage("enrolment.failure.detail.1",
-                                                  "PPT123",
-                                                  messages("enrolment.failure.detail.1.text")
-      )
+      pptReferenceText.get(0) must containMessage("enrolment.failure.detail.1", "PPT123", messages("enrolment.failure.detail.1.text"))
     }
 
     "display detail with no referenceId provided" in {

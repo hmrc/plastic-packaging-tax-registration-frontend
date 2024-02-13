@@ -31,9 +31,9 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val mcc = stubMessagesControllerComponents()
-  private val frontendConfig = mock[ContactFrontendConfig]
-  private val enrolmentVerificationFailurePage = mock[verification_failure_page]
+  private val mcc                                            = stubMessagesControllerComponents()
+  private val frontendConfig                                 = mock[ContactFrontendConfig]
+  private val enrolmentVerificationFailurePage               = mock[verification_failure_page]
   private val enrolmentReferenceNumberAlreadyUsedFailurePage = mock[reference_number_already_used_failure_page]
 
   private val controller = new NotableErrorController(
@@ -48,13 +48,9 @@ class NotableErrorControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(frontendConfig, enrolmentVerificationFailurePage, enrolmentReferenceNumberAlreadyUsedFailurePage)
-    
-    when(enrolmentVerificationFailurePage.apply(any())(any(), any())).thenReturn(
-      HtmlFormat.raw("error business not verified content")
-    )
-    when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw("error ppt reference already been used content")
-    )
+
+    when(enrolmentVerificationFailurePage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("error business not verified content"))
+    when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error ppt reference already been used content"))
     when(frontendConfig.referrerUrl(any())).thenReturn(Some("/referrer"))
   }
 

@@ -28,8 +28,7 @@ import play.api.test.Injecting
 import connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
 import models.enrolment._
 
-class UserEnrolmentConnectorISpec
-    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
+class UserEnrolmentConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: UserEnrolmentConnector = inject[UserEnrolmentConnector]
 

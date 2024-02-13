@@ -28,38 +28,29 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerTypeController @Inject() (
-                                        journeyAction: JourneyAction,
-                                        registrationUpdater: NewRegistrationUpdateService,
-                                        mcc: MessagesControllerComponents,
-                                        page: partner_type,
-                                        val appConfig: AppConfig,
-                                        val soleTraderGrsConnector: SoleTraderGrsConnector,
-                                        val ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                        val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                        val partnershipGrsConnector: PartnershipGrsConnector
+  journeyAction: JourneyAction,
+  registrationUpdater: NewRegistrationUpdateService,
+  mcc: MessagesControllerComponents,
+  page: partner_type,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
-    extends PartnerTypeControllerBase(
-                                      journeyAction = journeyAction.register,
-                                      mcc,
-                                      page,
-                                      registrationUpdater
-    ) {
+    extends PartnerTypeControllerBase(journeyAction = journeyAction.register, mcc, page, registrationUpdater) {
 
   def displayNewPartner(): Action[AnyContent] =
     doDisplayPage(submitCall = routes.PartnerTypeController.submitNewPartner())
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplayPage(partnerId = Some(partnerId),
-                  submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId)
-    )
+    doDisplayPage(partnerId = Some(partnerId), submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId))
 
   def submitNewPartner(): Action[AnyContent] =
     doSubmit(submitCall = routes.PartnerTypeController.submitNewPartner())
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    doSubmit(Some(partnerId),
-             submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId)
-    )
+    doSubmit(Some(partnerId), submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId))
 
   override def grsCallbackUrl(partnerId: Option[String]): String =
     appConfig.partnerGrsCallbackUrl(partnerId)

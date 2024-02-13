@@ -52,9 +52,7 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
       others.zip(members).map {
         case (other, member) =>
           other.name mustBe member.businessName
-          other.change mustBe Some(
-            routes.ContactDetailsCheckAnswersController.displayPage(member.id)
-          )
+          other.change mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
           other.remove mustBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
           other.subHeading mustBe None
       }

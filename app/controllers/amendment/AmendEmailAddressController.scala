@@ -31,15 +31,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendEmailAddressController @Inject() (
-                                              mcc: MessagesControllerComponents,
-                                              journeyAction: JourneyAction,
-                                              amendRegistrationService: AmendRegistrationService,
-                                              emailPage: email_address_page,
-                                              val emailPasscodePage: email_address_passcode_page,
-                                              val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-                                              val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-                                              val emailVerificationService: EmailVerificationService,
-                                              val registrationUpdater: AmendRegistrationUpdateService
+  mcc: MessagesControllerComponents,
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  emailPage: email_address_page,
+  val emailPasscodePage: email_address_passcode_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val emailVerificationService: EmailVerificationService,
+  val registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) with EmailVerificationActions {
 
@@ -61,8 +61,7 @@ class AmendEmailAddressController @Inject() (
       EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(BadRequest(buildEmailPage(formWithErrors))),
+          (formWithErrors: Form[EmailAddress]) => Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           email =>
             if (!isEmailChanged(email.value))
               // Not update required; we can exit straight to the next screen
@@ -71,12 +70,7 @@ class AmendEmailAddressController @Inject() (
               isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
                 case false => updateRegistration(updateEmail(email.value))
                 case true =>
-                  promptForEmailVerificationCode(
-                    request,
-                    email,
-                    routes.AmendRegistrationController.displayPage(),
-                    routes.AmendEmailAddressController.emailVerificationCode()
-                  )
+                  promptForEmailVerificationCode(request, email, routes.AmendRegistrationController.displayPage(), routes.AmendEmailAddressController.emailVerificationCode())
               }
         )
     }
@@ -91,22 +85,12 @@ class AmendEmailAddressController @Inject() (
       )
   }
 
-  private def buildEmailPage(
-    form: Form[EmailAddress]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    emailPage(form,
-              routes.AmendEmailAddressController.updateEmail()
-    )
+  private def buildEmailPage(form: Form[EmailAddress])(implicit request: JourneyRequest[AnyContent]) =
+    emailPage(form, routes.AmendEmailAddressController.updateEmail())
 
   def emailVerificationCode(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      Ok(
-        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
-                                             getProspectiveEmail(),
-                                             backCall,
-                                             submitCall
-        )
-      )
+      Ok(renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(), getProspectiveEmail(), backCall, submitCall))
     }
 
   def checkEmailVerificationCode(): Action[AnyContent] =
@@ -121,9 +105,7 @@ class AmendEmailAddressController @Inject() (
 
   def emailVerified(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      showEmailVerifiedPage(routes.AmendEmailAddressController.emailVerificationCode(),
-                            routes.AmendEmailAddressController.confirmEmailUpdate()
-      )
+      showEmailVerifiedPage(routes.AmendEmailAddressController.emailVerificationCode(), routes.AmendEmailAddressController.confirmEmailUpdate())
     }
 
   def confirmEmailUpdate(): Action[AnyContent] =

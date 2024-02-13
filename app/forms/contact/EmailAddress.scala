@@ -19,11 +19,7 @@ package forms.contact
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
-import forms.contact.Address.{
-  isNonEmpty,
-  isNotExceedingMaxLength,
-  isValidEmail
-}
+import forms.contact.Address.{isNonEmpty, isNotExceedingMaxLength, isValidEmail}
 
 case class EmailAddress(value: String)
 
@@ -40,9 +36,7 @@ object EmailAddress {
     emailAddress ->
       text()
         .verifying(emailAddressEmptyError, isNonEmpty)
-        .verifying(emailAddressFormatError,
-                   email => isNotExceedingMaxLength(email, maxLength) && isValidEmail(email)
-        )
+        .verifying(emailAddressFormatError, email => isNotExceedingMaxLength(email, maxLength) && isValidEmail(email))
   )(EmailAddress.apply)(EmailAddress.unapply)
 
   def form(): Form[EmailAddress] = Form(mapping)

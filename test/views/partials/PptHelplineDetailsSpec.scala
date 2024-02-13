@@ -25,16 +25,17 @@ class PptHelplineDetailsSpec extends UnitViewSpec with Matchers {
   private val pptHelplinePartial = inject[pptHelplineDetails]
 
   private def pageParagraphMessageKeys =
-    List("pptHelpline.intro",
-         "pptHelpline.telephone.title",
-         "pptHelpline.telephone.detail",
-         "pptHelpline.textphone.title",
-         "pptHelpline.textphone.detail",
-         "pptHelpline.telephone.outsideUK.title",
-         "pptHelpline.telephone.outsideUK.detail",
-         "pptHelpline.openingTimes.title",
-         "pptHelpline.openingTimes.detail.1",
-         "pptHelpline.openingTimes.detail.2"
+    List(
+      "pptHelpline.intro",
+      "pptHelpline.telephone.title",
+      "pptHelpline.telephone.detail",
+      "pptHelpline.textphone.title",
+      "pptHelpline.textphone.detail",
+      "pptHelpline.telephone.outsideUK.title",
+      "pptHelpline.telephone.outsideUK.detail",
+      "pptHelpline.openingTimes.title",
+      "pptHelpline.openingTimes.detail.1",
+      "pptHelpline.openingTimes.detail.2"
     )
 
   "PPT Helpline partial" should {

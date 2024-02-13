@@ -28,10 +28,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsCheckAnswersController @Inject() (
-                                                                 journeyAction: JourneyAction,
-                                                                 amendRegistrationService: AmendRegistrationService,
-                                                                 mcc: MessagesControllerComponents,
-                                                                 page: amend_add_partner_contact_check_answers_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: amend_add_partner_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
@@ -41,8 +41,8 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-   journeyAction.amend.async { implicit request =>
-     amendRegistrationService.updateSubscriptionWithRegistration(_ => request.registration.withPromotedInflightPartner()).map {
+    journeyAction.amend.async { implicit request =>
+      amendRegistrationService.updateSubscriptionWithRegistration(_ => request.registration.withPromotedInflightPartner()).map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManagePartnersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

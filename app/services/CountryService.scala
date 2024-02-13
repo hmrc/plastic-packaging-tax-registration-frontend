@@ -38,12 +38,12 @@ class CountryService {
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   val countries = parseCountriesResource()
-  val synonyms = parseSynonymsResource()
+  val synonyms  = parseSynonymsResource()
 
   def tryLookupCountryName(code: String): String =
     countries.getOrElse(code, code)
 
-  def getAll(): Map[String, String] = countries
+  def getAll(): Map[String, String]               = countries
   def getAllSynonyms(): Map[String, List[String]] = synonyms
 
   def getKeyForName(countryName: String): Option[String] = {
@@ -59,10 +59,12 @@ class CountryService {
     }
   }
 
-  def getKeyForSynonym(synonym: String): Option[String] = {
-    getAllSynonyms().find(tup => tup._2.map(_.toUpperCase)
-      .contains(synonym.toUpperCase)).map(_._1)
-  }
+  def getKeyForSynonym(synonym: String): Option[String] =
+    getAllSynonyms().find(
+      tup =>
+        tup._2.map(_.toUpperCase)
+          .contains(synonym.toUpperCase)
+    ).map(_._1)
 
   private def parseCountriesResource(): Map[String, String] = {
 
@@ -74,11 +76,10 @@ class CountryService {
     ListMap(countryMap.toSeq.sortBy(_._2): _*)
   }
 
-  private def parseSynonymsResource(): Map[String, List[String]] = {
+  private def parseSynonymsResource(): Map[String, List[String]] =
     Json.parse(getClass.getResourceAsStream("/resources/countrySynonyms.json")).as[Map[String, Synonyms]]
       .map { entry =>
         entry._1 -> entry._2.synonyms
       }
-  }
 
 }

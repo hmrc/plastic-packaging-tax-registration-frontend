@@ -26,54 +26,38 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class RegistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
 
-  def find(
-    id: String
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Registration]]] = {
+  def find(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Registration]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.find.timer").time()
     httpClient.GET[Option[Registration]](appConfig.pptRegistrationUrl(id))
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toRegistration)))
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Failed to retrieve registration, error: ${ex.getMessage}", ex)
-          )
+          Left(DownstreamServiceError(s"Failed to retrieve registration, error: ${ex.getMessage}", ex))
       }
   }
 
-  def create(
-    payload: Registration
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
+  def create(payload: Registration)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.create.timer").time()
     httpClient.POST[Registration, Registration](appConfig.pptRegistrationUrl, payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Failed to create registration, error: ${ex.getMessage}", ex)
-          )
+          Left(DownstreamServiceError(s"Failed to create registration, error: ${ex.getMessage}", ex))
       }
   }
 
-  def update(
-    payload: Registration
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
+  def update(payload: Registration)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.update.timer").time()
     httpClient.PUT[Registration, Registration](appConfig.pptRegistrationUrl(payload.id), payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Failed to update registration, error: ${ex.getMessage}", ex)
-          )
+          Left(DownstreamServiceError(s"Failed to update registration, error: ${ex.getMessage}", ex))
       }
   }
 

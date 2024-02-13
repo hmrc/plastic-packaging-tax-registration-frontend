@@ -18,11 +18,7 @@ package models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OrganisationDetails(
-  organisationType: String,
-  organisationName: String,
-  businessPartnerId: Option[String]
-)
+case class OrganisationDetails(organisationType: String, organisationName: String, businessPartnerId: Option[String])
 
 object OrganisationDetails {
   implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]

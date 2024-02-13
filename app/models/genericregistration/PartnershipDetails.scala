@@ -45,26 +45,21 @@ case class PartnershipDetails(
       case _                             => false
     }
 
-  def partnershipOrCompanyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = partnershipType match {
-    case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
-      partnershipBusinessDetails.flatMap(_.companyAddress(addressConversionUtils))
-    case _ => None
-  }
+  def partnershipOrCompanyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] =
+    partnershipType match {
+      case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
+        partnershipBusinessDetails.flatMap(_.companyAddress(addressConversionUtils))
+      case _ => None
+    }
 
   def isGroupMemberSameAsNominatedPartnership(customerIdentification1: String): Boolean =
-    partnershipBusinessDetails.exists(
-      _.isGroupMemberSameAsNominatedPartnership(customerIdentification1)
-    )
+    partnershipBusinessDetails.exists(_.isGroupMemberSameAsNominatedPartnership(customerIdentification1))
 
   def findPartner(partnerId: String): Option[Partner] =
     partners.find(_.id == partnerId)
 
   def withPromotedInflightPartner(): PartnershipDetails =
-    this.copy(partners = partners :+ inflightPartner.getOrElse(
-                throw new IllegalStateException("Inflight partner absent")
-              ),
-              inflightPartner = None
-    )
+    this.copy(partners = partners :+ inflightPartner.getOrElse(throw new IllegalStateException("Inflight partner absent")), inflightPartner = None)
 
 }
 
@@ -72,15 +67,10 @@ object PartnershipDetails {
   implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
 }
 
-case class PartnerPartnershipDetails(
-  partnershipName: Option[String] = None,
-  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
-) {
+case class PartnerPartnershipDetails(partnershipName: Option[String] = None, partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None) {
 
   def name: Option[String] =
-    Seq(partnershipName,
-        partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))
-    ).flatten.headOption
+    Seq(partnershipName, partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))).flatten.headOption
 
 }
 

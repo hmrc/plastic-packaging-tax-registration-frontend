@@ -32,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemovePartnerController @Inject() (
-                                                 journeyAction: JourneyAction,
-                                                 amendRegistrationService: AmendRegistrationService,
-                                                 mcc: MessagesControllerComponents,
-                                                 page: confirm_remove_partner_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: confirm_remove_partner_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) with I18nSupport {
 
@@ -45,9 +45,7 @@ class ConfirmRemovePartnerController @Inject() (
     }
 
   private def getPartner(partnerId: String, registration: Registration) =
-    registration.findPartner(partnerId).getOrElse(
-      throw new IllegalStateException("Specified partner not found")
-    )
+    registration.findPartner(partnerId).getOrElse(throw new IllegalStateException("Specified partner not found"))
 
   def submit(partnerId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
@@ -70,18 +68,14 @@ class ConfirmRemovePartnerController @Inject() (
       }
     }
 
-  private def doRemovePartner(
-    partnerId: String
-  )(implicit req: JourneyRequest[AnyContent]): Future[Result] =
+  private def doRemovePartner(partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Result] =
     updateRegistration(
       registration =>
         registration.copy(organisationDetails =
           registration.organisationDetails.copy(partnershipDetails =
             registration.organisationDetails.partnershipDetails.map(
               _.copy(partners =
-                registration.organisationDetails.partnershipDetails.map(
-                  _.partners.filter(_.id != partnerId)
-                ).getOrElse(Seq())
+                registration.organisationDetails.partnershipDetails.map(_.partners.filter(_.id != partnerId)).getOrElse(Seq())
               )
             )
           )

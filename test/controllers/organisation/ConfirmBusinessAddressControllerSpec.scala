@@ -36,13 +36,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmBusinessAddressController(
-      journeyAction = spyJourneyAction,
-      registrationConnector = mockRegistrationConnector,
-      mockAddressCaptureService,
-      mcc = mcc,
-      page = page
-    )
+    new ConfirmBusinessAddressController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mockAddressCaptureService, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

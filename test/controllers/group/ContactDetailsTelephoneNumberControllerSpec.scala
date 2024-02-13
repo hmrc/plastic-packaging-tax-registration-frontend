@@ -35,22 +35,15 @@ import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.group.member_phone_number_page
 
-class ContactDetailsTelephoneNumberControllerSpec
-    extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
+class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
 
   private val page = mock[member_phone_number_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction,
-                                                mcc = mcc,
-                                                page = page,
-                                                registrationUpdater = mockNewRegistrationUpdater
-    )
+    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction, mcc = mcc, page = page, registrationUpdater = mockNewRegistrationUpdater)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,9 +62,7 @@ class ContactDetailsTelephoneNumberControllerSpec
       "user is authorised display page method is invoked" in {
 
         val member = groupMember.copy(contactDetails = None)
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
-        )
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
@@ -79,9 +70,7 @@ class ContactDetailsTelephoneNumberControllerSpec
 
       "user is authorised, a registration already exists and display page method is invoked" in {
 
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-        )
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
@@ -89,25 +78,19 @@ class ContactDetailsTelephoneNumberControllerSpec
     }
 
     "return 303 (OK)" when {
-        "user submits the phone number" in {
+      "user submits the phone number" in {
 
-          spyJourneyAction.setReg(
-            aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-          )
-          mockRegistrationUpdate()
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
+        mockRegistrationUpdate()
 
-          val result =
-            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
+        val result =
+          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
 
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some(
-            "077123"
-          )
-          redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url
-          )
-          reset(mockRegistrationConnector)
-        }
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some("077123")
+        redirectLocation(result) mustBe Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url)
+        reset(mockRegistrationConnector)
+      }
     }
 
     "return pre populated form" when {
@@ -120,9 +103,7 @@ class ContactDetailsTelephoneNumberControllerSpec
 
       "data exist" in {
 
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-        )
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
 
         await(controller.displayPage(groupMember.id)(FakeRequest()))
 
@@ -146,18 +127,14 @@ class ContactDetailsTelephoneNumberControllerSpec
 
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(
-          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
 
-        intercept[RuntimeException](status(
-          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
-        ))
+        intercept[RuntimeException](status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))))
       }
     }
   }

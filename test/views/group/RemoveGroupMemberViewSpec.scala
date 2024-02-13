@@ -25,7 +25,6 @@ import forms.group.RemoveMember
 import views.html.group.remove_group_member_page
 import java.util.UUID
 
-
 class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[remove_group_member_page]

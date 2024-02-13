@@ -39,15 +39,16 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val errorPage = mock[error_page]
-  private val enrolmentFailurePage = mock[enrolment_failure_page]
-  private val grsFailurePage = mock[grs_failure_page]
-  private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val errorPage                        = mock[error_page]
+  private val enrolmentFailurePage             = mock[enrolment_failure_page]
+  private val grsFailurePage                   = mock[grs_failure_page]
+  private val businessVerificationFailedPage   = mock[business_verification_failure_page]
   private val soleTraderVerificationFailedPage = mock[sole_trader_verification_failure_page]
-  private val duplicateSubscriptionPage = mock[duplicate_subscription_page]
-  private val registrationFailedPage = mock[registration_failed_page]
+  private val duplicateSubscriptionPage        = mock[duplicate_subscription_page]
+  private val registrationFailedPage           = mock[registration_failed_page]
 
   object FakeGetRegistrationAction extends GetRegistrationAction {
+
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
       Future.successful(Right(JourneyRequest(getAuthenticatedRequest(request), aRegistration())))
 
@@ -55,7 +56,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
   }
 
   private val controller =
-    new NotableErrorController(authenticate = FakeRegistrationAuthAction,
+    new NotableErrorController(
+      authenticate = FakeRegistrationAuthAction,
       getRegistration = FakeGetRegistrationAction,
       mcc = mcc,
       errorPage = errorPage,
@@ -70,19 +72,11 @@ class NotableErrorControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
-    when(enrolmentFailurePage.apply()(any(), any(), any())).thenReturn(
-      HtmlFormat.raw("error no save page content")
-    )
+    when(enrolmentFailurePage.apply()(any(), any(), any())).thenReturn(HtmlFormat.raw("error no save page content"))
     when(grsFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("grs failure content"))
-    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw("error business verification failed content")
-    )
-    when(soleTraderVerificationFailedPage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw("error sole trader verification failed content")
-    )
-    when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw("duplicate subscription content")
-    )
+    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error business verification failed content"))
+    when(soleTraderVerificationFailedPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error sole trader verification failed content"))
+    when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("duplicate subscription content"))
   }
 
   "NotableErrorController" should {

@@ -54,11 +54,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
     )(ec)
 
   private def registrationWithSelectedGroupMember(orgType: OrgType, existingMembers: Seq[GroupMember] = Seq.empty) =
-    aRegistration(
-      withGroupDetail(
-        Some(GroupDetail(membersUnderGroupControl = Some(true), members = existingMembers, currentMemberOrganisationType = Some(orgType)))
-      )
-    )
+    aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = existingMembers, currentMemberOrganisationType = Some(orgType)))))
 
   private val supportedOrgTypes =
     Seq(OrgType.UK_COMPANY, OrgType.OVERSEAS_COMPANY_UK_BRANCH, OrgType.PARTNERSHIP)
@@ -115,9 +111,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
                 partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
-              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
-                partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress
-              )
+              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress)
             case _ =>
               await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
@@ -171,13 +165,12 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
           status(result) mustBe SEE_OTHER
 
-          if(orgType.equals(OrgType.PARTNERSHIP)){
+          if (orgType.equals(OrgType.PARTNERSHIP))
             redirectLocation(result).get should include("/register-for-plastic-packaging-tax/confirm-address")
-          } else {
-            redirectLocation(result) mustBe Some(routes.ConfirmBusinessAddressController.displayPage(
-              "123456ABC", "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC").url
+          else
+            redirectLocation(result) mustBe Some(
+              routes.ConfirmBusinessAddressController.displayPage("123456ABC", "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC").url
             )
-          }
 
           groupMemberSize(getLastSavedRegistration) mustBe 1
 
@@ -242,7 +235,6 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
     "throw exception" when {
       forAll(unsupportedOrgTypes) { orgType =>
         "invalid organisation type is selected " + orgType in {
-
 
           spyJourneyAction.setReg(registrationWithSelectedGroupMember(orgType))
 

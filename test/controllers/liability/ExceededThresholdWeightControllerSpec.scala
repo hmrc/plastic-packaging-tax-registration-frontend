@@ -39,23 +39,15 @@ import views.html.liability.exceeded_threshold_weight_page
 
 import scala.concurrent.Future
 
-class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAndAfterEach{
+class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
-
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val form = inject[ExceededThresholdWeight]
 
-  val controller = new ExceededThresholdWeightController(
-    journeyAction = spyJourneyAction,
-    config,
-    mockRegistrationConnector,
-    mcc = mcc,
-    form,
-    page = mockPage
-  )
+  val controller = new ExceededThresholdWeightController(journeyAction = spyJourneyAction, config, mockRegistrationConnector, mcc = mcc, form, page = mockPage)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -84,7 +76,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
         spyJourneyAction.setReg(existingRegistration)
 
-
         val result = controller.displayPage()(FakeRequest())
         status(result) mustBe Status.OK
 
@@ -100,20 +91,17 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
   "submit" should {
 
-
     "update registration and redirect" when {
 
       "user answers no" in {
         spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         val correctForm = Seq("value" -> "no")
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(false)
-        redirectLocation(result) mustBe Some(
-          routes.TaxStartDateController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
       }
 
       "user answers yes" in {
@@ -124,9 +112,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightDateController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightDateController.displayPage().url)
       }
     }
 
@@ -143,9 +129,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
         val correctForm = Seq("value" -> "yes")
 
-        intercept[DownstreamServiceError](await(
-          controller.submit()(postJsonRequestEncoded(correctForm: _*))
-        ))
+        intercept[DownstreamServiceError](await(controller.submit()(postJsonRequestEncoded(correctForm: _*))))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
@@ -155,9 +139,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
         val correctForm = Seq("value" -> "yes")
 
-        intercept[RuntimeException](await(
-          controller.submit()(postJsonRequestEncoded(correctForm: _*))
-        ))
+        intercept[RuntimeException](await(controller.submit()(postJsonRequestEncoded(correctForm: _*))))
       }
 
     }

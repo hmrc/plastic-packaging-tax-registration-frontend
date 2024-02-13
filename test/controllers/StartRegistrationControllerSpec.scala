@@ -35,16 +35,17 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
   private val emptyRegistration = Registration("123")
 
-  private val partialRegistration = Registration(id = "123",
-                                                 liabilityDetails = LiabilityDetails(
-                                                   expectToExceedThresholdWeight = Some(true),
-                                                   dateExceededThresholdWeight =
-                                                     Some(Date(LocalDate.parse("2022-03-05"))),
-                                                   expectedWeightNext12m =
-                                                     Some(LiabilityWeight(Some(12000))),
-                                                   startDate =
-                                                     Some(OldDate(Some(1), Some(4), Some(2022)))
-                                                 )
+  private val partialRegistration = Registration(
+    id = "123",
+    liabilityDetails = LiabilityDetails(
+      expectToExceedThresholdWeight = Some(true),
+      dateExceededThresholdWeight =
+        Some(Date(LocalDate.parse("2022-03-05"))),
+      expectedWeightNext12m =
+        Some(LiabilityWeight(Some(12000))),
+      startDate =
+        Some(OldDate(Some(1), Some(4), Some(2022)))
+    )
   )
 
   private val controller =
@@ -79,9 +80,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
       "partial registration exists with new liability" in {
 
-        spyJourneyAction.setReg(partialRegistration.copy(
-          liabilityDetails = partialRegistration.liabilityDetails.copy(newLiabilityStarted = Some(NewLiability)))
-        )
+        spyJourneyAction.setReg(partialRegistration.copy(liabilityDetails = partialRegistration.liabilityDetails.copy(newLiabilityStarted = Some(NewLiability))))
 
         val result = controller.startRegistration()(FakeRequest())
 

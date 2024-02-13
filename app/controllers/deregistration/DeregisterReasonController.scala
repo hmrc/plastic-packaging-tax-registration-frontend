@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterReasonController @Inject() (
-                                             authenticate: AmendAuthAction,
-                                             mcc: MessagesControllerComponents,
-                                             deregistrationDetailRepository: DeregistrationDetailRepository,
-                                             page: deregister_reason_page
+  authenticate: AmendAuthAction,
+  mcc: MessagesControllerComponents,
+  deregistrationDetailRepository: DeregistrationDetailRepository,
+  page: deregister_reason_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -53,13 +53,9 @@ class DeregisterReasonController @Inject() (
       DeregisterReasonForm.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[DeregisterReasonForm]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[DeregisterReasonForm]) => Future.successful(BadRequest(page(formWithErrors))),
           deregistrationReason =>
-            deregistrationDetailRepository.update(
-              deregistrationDetails =>
-                deregistrationDetails.copy(reason = deregistrationReason.answer)
-            ).map { _ =>
+            deregistrationDetailRepository.update(deregistrationDetails => deregistrationDetails.copy(reason = deregistrationReason.answer)).map { _ =>
               Redirect(routes.DeregisterCheckYourAnswersController.displayPage())
             }
         )

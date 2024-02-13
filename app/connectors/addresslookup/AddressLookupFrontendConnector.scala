@@ -22,42 +22,28 @@ import play.api.http.Status.ACCEPTED
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
-import models.addresslookup.{
-  AddressLookupConfigV2,
-  AddressLookupConfirmation,
-  AddressLookupOnRamp
-}
+import models.addresslookup.{AddressLookupConfigV2, AddressLookupConfirmation, AddressLookupOnRamp}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddressLookupFrontendConnector @Inject() (
-  http: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-) {
+class AddressLookupFrontendConnector @Inject() (http: HttpClient, appConfig: AppConfig, metrics: Metrics) {
 
-  def initialiseJourney(
-    addressLookupRequest: AddressLookupConfigV2
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
+  def initialiseJourney(addressLookupRequest: AddressLookupConfigV2)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.initialise.timer").time()
-    http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl,
-                                                   addressLookupRequest
-    ).andThen { case _ => timer.stop() }
+    http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl, addressLookupRequest).andThen { case _ => timer.stop() }
       .map {
         case response @ HttpResponse(ACCEPTED, _, _) =>
           response.header(LOCATION) match {
             case Some(redirectUrl) => AddressLookupOnRamp(redirectUrl)
-            case _              => throw new IllegalStateException("Missing re-direct url")
+            case _                 => throw new IllegalStateException("Missing re-direct url")
           }
         case error => throw new IllegalStateException(s"Error. Address look up frontend error with status: ${error.status}")
       }
   }
 
-  def getAddress(
-    id: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupConfirmation] = {
+  def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupConfirmation] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.getaddress.timer").time()
     http.GET[AddressLookupConfirmation](appConfig.addressLookupConfirmedUrl, Seq("id" -> id))
       .andThen { case _ => timer.stop() }

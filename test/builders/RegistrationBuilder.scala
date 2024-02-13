@@ -123,7 +123,6 @@ trait RegistrationBuilder {
         )
     )
 
-
   def withId(id: String): RegistrationModifier = _.copy(id = id)
 
   def withIncorpJourneyId(incorpJourneyId: Option[String]): RegistrationModifier =

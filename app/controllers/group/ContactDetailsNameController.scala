@@ -26,16 +26,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsNameController @Inject() (
-                                               journeyAction: JourneyAction,
-                                               mcc: MessagesControllerComponents,
-                                               page: member_name_page,
-                                               registrationUpdater: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: member_name_page,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsNameControllerBase(journeyAction.register,
-                                             mcc,
-                                             page,
-                                             registrationUpdater
-    ) {
+    extends ContactDetailsNameControllerBase(journeyAction.register, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, getSubmitCall)

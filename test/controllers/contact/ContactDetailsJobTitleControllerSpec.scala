@@ -39,11 +39,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsJobTitleController(journeyAction = spyJourneyAction,
-                                         registrationConnector = mockRegistrationConnector,
-                                         mcc = mcc,
-                                         page = page
-    )
+    new ContactDetailsJobTitleController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,94 +65,80 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     }
 
-      "return 303 (OK)" when {
-        "user submits the job title" in {
+    "return 303 (OK)" when {
+      "user submits the job title" in {
 
-          spyJourneyAction.setReg(aRegistration())
-          mockRegistrationUpdate()
+        spyJourneyAction.setReg(aRegistration())
+        mockRegistrationUpdate()
 
-          val result =
-            controller.submit()(postRequestEncoded(JobTitle("tester")))
+        val result =
+          controller.submit()(postRequestEncoded(JobTitle("tester")))
 
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
 
+        redirectLocation(result) mustBe Some(routes.ContactDetailsEmailAddressController.displayPage().url)
 
-          redirectLocation(result) mustBe Some(
-            routes.ContactDetailsEmailAddressController.displayPage().url
-          )
-
-          reset(mockRegistrationConnector)
-        }
+        reset(mockRegistrationConnector)
       }
     }
+  }
 
-    "return prepopulated form" when {
+  "return prepopulated form" when {
 
-      def pageForm: Form[JobTitle] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[JobTitle]])
-        verify(page).apply(captor.capture(), any(), any())(any(), any())
-        captor.getValue
-      }
-
-      "data exist" in {
-
-        spyJourneyAction.setReg(
-          aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester"))))
-        )
-
-        await(controller.displayPage()(FakeRequest()))
-
-        pageForm.get.value mustBe "tester"
-      }
+    def pageForm: Form[JobTitle] = {
+      val captor = ArgumentCaptor.forClass(classOf[Form[JobTitle]])
+      verify(page).apply(captor.capture(), any(), any())(any(), any())
+      captor.getValue
     }
 
-    "display page for a group organisation" in {
+    "data exist" in {
 
-      spyJourneyAction.setReg(
-        aRegistration(
-          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
-          withGroupDetail(Some(groupDetailsWithMembers))
-        )
-      )
+      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester")))))
 
       await(controller.displayPage()(FakeRequest()))
 
-      val captor = ArgumentCaptor.forClass(classOf[Boolean])
-      verify(page).apply(any(), any(), captor.capture())(any(), any())
-      captor.getValue mustBe true
+      pageForm.get.value mustBe "tester"
+    }
+  }
+
+  "display page for a group organisation" in {
+
+    spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))), withGroupDetail(Some(groupDetailsWithMembers))))
+
+    await(controller.displayPage()(FakeRequest()))
+
+    val captor = ArgumentCaptor.forClass(classOf[Boolean])
+    verify(page).apply(any(), any(), captor.capture())(any(), any())
+    captor.getValue mustBe true
+  }
+
+  "return 400 (BAD_REQUEST)" when {
+
+    "user submits invalid job title" in {
+
+      val result =
+        controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
+
+      status(result) mustBe BAD_REQUEST
+    }
+  }
+
+  "return an error" when {
+
+    "user submits form and the registration update fails" in {
+
+      mockRegistrationUpdateFailure()
+
+      intercept[DownstreamServiceError](status(controller.submit()(postRequestEncoded(JobTitle("tester")))))
     }
 
-    "return 400 (BAD_REQUEST)" when {
+    "user submits form and a registration update runtime exception occurs" in {
 
-      "user submits invalid job title" in {
+      mockRegistrationException()
 
-        val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
-
-        status(result) mustBe BAD_REQUEST
-      }
+      intercept[RuntimeException](status(controller.submit()(postRequestEncoded(JobTitle("tester")))))
     }
 
-    "return an error" when {
-
-      "user submits form and the registration update fails" in {
-
-        mockRegistrationUpdateFailure()
-
-        intercept[DownstreamServiceError](status(
-          controller.submit()(postRequestEncoded(JobTitle("tester")))
-        ))
-      }
-
-      "user submits form and a registration update runtime exception occurs" in {
-
-        mockRegistrationException()
-
-        intercept[RuntimeException](status(
-          controller.submit()(postRequestEncoded(JobTitle("tester")))
-        ))
-      }
-    
   }
 }

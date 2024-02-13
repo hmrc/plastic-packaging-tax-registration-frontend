@@ -59,8 +59,6 @@ class VerifyOrganisationViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("submit").text() mustBe "Continue"
     }
 
-
-
   }
 
   override def exerciseGeneratedRenderingMethods() = {

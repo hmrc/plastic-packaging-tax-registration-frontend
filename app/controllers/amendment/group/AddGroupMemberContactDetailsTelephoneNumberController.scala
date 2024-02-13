@@ -27,10 +27,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsTelephoneNumberController @Inject() (
-                                                                        journeyAction: JourneyAction,
-                                                                        mcc: MessagesControllerComponents,
-                                                                        page: member_phone_number_page,
-                                                                        registrationUpdater: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: member_phone_number_page,
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsTelephoneNumberControllerBase(journeyAction.amend, mcc, page, registrationUpdater) {
 

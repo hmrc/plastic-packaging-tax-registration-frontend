@@ -29,39 +29,33 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerNameController @Inject() (
-                                           journeyAction: JourneyAction,
-                                           override val appConfig: AppConfig,
-                                           ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                           soleTraderGrsConnector: SoleTraderGrsConnector,
-                                           partnershipGrsConnector: PartnershipGrsConnector,
-                                           registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                           registrationUpdater: AmendRegistrationUpdateService,
-                                           mcc: MessagesControllerComponents,
-                                           page: partner_name_page
+  journeyAction: JourneyAction,
+  override val appConfig: AppConfig,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  registrationUpdater: AmendRegistrationUpdateService,
+  mcc: MessagesControllerComponents,
+  page: partner_name_page
 )(implicit val executionContext: ExecutionContext)
-    extends PartnerNameControllerBase(journeyAction = journeyAction.amend,
-                                      ukCompanyGrsConnector = ukCompanyGrsConnector,
-                                      soleTraderGrsConnector = soleTraderGrsConnector,
-                                      partnershipGrsConnector = partnershipGrsConnector,
-                                      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
-                                      registrationUpdater = registrationUpdater,
-                                      mcc = mcc,
-                                      appConfig = appConfig,
-                                      page = page
+    extends PartnerNameControllerBase(
+      journeyAction = journeyAction.amend,
+      ukCompanyGrsConnector = ukCompanyGrsConnector,
+      soleTraderGrsConnector = soleTraderGrsConnector,
+      partnershipGrsConnector = partnershipGrsConnector,
+      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
+      registrationUpdater = registrationUpdater,
+      mcc = mcc,
+      appConfig = appConfig,
+      page = page
     ) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplay(None,
-              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-              routes.AddPartnerNameController.submit()
-    )
+    doDisplay(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerNameController.submit())
 
   def submit(): Action[AnyContent] =
-    doSubmit(None,
-             routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-             routes.AddPartnerNameController.submit(),
-             routes.PartnersListController.displayPage()
-    )
+    doSubmit(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerNameController.submit(), routes.PartnersListController.displayPage())
 
   override def grsCallbackUrl(partnerId: Option[String]): String =
     appConfig.amendPartnerGrsCallbackUrl()

@@ -28,17 +28,18 @@ import services.AmendRegistrationService
 import java.time.ZonedDateTime
 import scala.concurrent.Future
 
-trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmentRepository{
+trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmentRepository {
 
   val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository)
 
   val mockAmendRegService: AmendRegistrationService = mock[AmendRegistrationService]
-  val mockRegistrationUpdater: RegistrationUpdater = mock[RegistrationUpdater]
+  val mockRegistrationUpdater: RegistrationUpdater  = mock[RegistrationUpdater]
 
   protected def simulateUpdateWithRegSubscriptionSuccess(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
-        SubscriptionCreateOrUpdateResponseSuccess(pptReference = "XMPPT0000000123",
+        SubscriptionCreateOrUpdateResponseSuccess(
+          pptReference = "XMPPT0000000123",
           processingDate = ZonedDateTime.now(),
           formBundleNumber = "ABC123",
           nrsNotifiedSuccessfully = true,
@@ -49,15 +50,10 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
       )
     )
 
-  protected def simulateUpdateWithRegSubscriptionFailure(
-                                                   ex: RuntimeException
-                                                 ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
-    when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
-      Future.failed(ex)
-    )
+  protected def simulateUpdateWithRegSubscriptionFailure(ex: RuntimeException): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(Future.failed(ex))
 
-  protected def simulateUpdateSubscriptionWithRegFailureReturnedError()
-  : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateSubscriptionWithRegFailureReturnedError(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures =

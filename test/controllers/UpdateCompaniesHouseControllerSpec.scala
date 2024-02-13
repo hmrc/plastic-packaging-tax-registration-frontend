@@ -34,12 +34,7 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
   val mockView: UpdateCompaniesHouseView = mock[UpdateCompaniesHouseView]
   when(mockView.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
 
-  val sut = new UpdateCompaniesHouseController(
-    journeyAction = spyJourneyAction,
-    mockRegistrationConnector,
-    mockView,
-    stubMessagesControllerComponents().messagesApi
-  )
+  val sut = new UpdateCompaniesHouseController(journeyAction = spyJourneyAction, mockRegistrationConnector, mockView, stubMessagesControllerComponents().messagesApi)
 
   "onPageLoad" should {
     "return the view" in {

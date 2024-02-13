@@ -31,9 +31,7 @@ class UserEnrolmentDetailsSpec extends AnyWordSpec with Matchers with PptTestDat
         completeAnswers.isComplete mustBe true
       }
       "postcode is missing for non-uk organisation" in {
-        completeAnswers.copy(isUkAddress = Some(IsUkAddress(Some(false))),
-                             postcode = None
-        ).isComplete mustBe true
+        completeAnswers.copy(isUkAddress = Some(IsUkAddress(Some(false))), postcode = None).isComplete mustBe true
       }
     }
     "not be complete" when {

@@ -25,10 +25,7 @@ import play.twirl.api.HtmlFormat
 import config.AppConfig
 import controllers.amendment.group.routes
 import views.html.amendment.group.list_group_members_page
-import views.viewmodels.{
-  ListGroupMembersViewModel,
-  ListMember
-}
+import views.viewmodels.{ListGroupMembersViewModel, ListMember}
 import forms.group.AddOrganisationForm
 import forms.group.AddOrganisationForm._
 

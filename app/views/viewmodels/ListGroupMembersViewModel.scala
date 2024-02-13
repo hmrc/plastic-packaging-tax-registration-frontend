@@ -24,22 +24,21 @@ class ListGroupMembersViewModel(registration: Registration) {
 
   def listMembers(implicit messages: Messages): Seq[ListMember] =
     ListMember(
-      name = registration.organisationDetails.businessName.getOrElse(
-        throw new IllegalStateException("Missing Business Name")
-      ),
+      name = registration.organisationDetails.businessName.getOrElse(throw new IllegalStateException("Missing Business Name")),
       subHeading = Some(messages("amend.group.manage.representativeMember"))
     ) +:
       registration.groupDetail.toSeq.flatMap(
         o =>
           o.members.map(
             member =>
-              ListMember(name = member.businessName,
-                         change =
-                           Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                         remove =
-                           if (o.members.length > 1)
-                             Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-                           else None
+              ListMember(
+                name = member.businessName,
+                change =
+                  Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                remove =
+                  if (o.members.length > 1)
+                    Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+                  else None
               )
           )
       )

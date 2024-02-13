@@ -20,8 +20,7 @@ import play.api.i18n.Messages
 
 object OrganisationName {
 
-  def getMissingOrgMessage(implicit messages: Messages) = {
+  def getMissingOrgMessage(implicit messages: Messages) =
     messages("missing.organisationName")
-  }
 
 }

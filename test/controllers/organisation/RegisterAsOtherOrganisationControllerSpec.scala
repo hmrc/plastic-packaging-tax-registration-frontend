@@ -31,10 +31,7 @@ class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
   private val page = mock[register_as_other_organisation]
 
   val controller =
-    new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(),
-                                              page,
-                                              authenticate = FakeRegistrationAuthAction
-    )
+    new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(), page, authenticate = FakeRegistrationAuthAction)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

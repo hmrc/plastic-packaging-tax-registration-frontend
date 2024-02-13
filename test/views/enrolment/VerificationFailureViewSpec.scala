@@ -25,7 +25,7 @@ class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[verification_failure_page]
 
-  private def createView(): Document = page("contact-us-href") (registrationJourneyRequest, messages)
+  private def createView(): Document = page("contact-us-href")(registrationJourneyRequest, messages)
 
   "Enrolment not verified page" should {
 
@@ -50,7 +50,7 @@ class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f("contact-us-href") (request, messages)
+    page.f("contact-us-href")(request, messages)
     page.render("contact-us-href", request, messages)
   }
 

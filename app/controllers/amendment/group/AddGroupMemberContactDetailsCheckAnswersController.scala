@@ -29,10 +29,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
-                                                                     journeyAction: JourneyAction,
-                                                                     amendRegistrationService: AmendRegistrationService,
-                                                                     mcc: MessagesControllerComponents,
-                                                                     page: amend_member_contact_check_answers_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: amend_member_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 

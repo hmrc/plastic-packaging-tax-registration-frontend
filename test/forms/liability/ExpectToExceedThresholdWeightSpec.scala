@@ -26,7 +26,6 @@ class ExpectToExceedThresholdWeightSpec extends PlaySpec {
 
   private val sut: Form[Boolean] = formProvider()
 
-
   "ExpectToExceedThresholdWeight" must {
     "bind correctly" when {
       "yes is provided" in {

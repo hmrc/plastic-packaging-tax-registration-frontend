@@ -53,9 +53,7 @@ abstract class GroupMemberGrsControllerBase(
     HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
   def findCurrentMember(memberId: Option[String], registration: Registration): String =
-    memberId.fold(registration.lastMember)(registration.findMember).getOrElse(
-      throw new IllegalStateException("GRS member callback with no group members found")
-    ).id
+    memberId.fold(registration.lastMember)(registration.findMember).getOrElse(throw new IllegalStateException("GRS member callback with no group members found")).id
 
   protected def grsCallback(journeyId: String, memberId: Option[String], getRedirect: String => Call): Action[AnyContent] =
     journeyAction.async {
@@ -87,8 +85,10 @@ abstract class GroupMemberGrsControllerBase(
               case STATUS_OK =>
                 save(registration).map { _ =>
                   val member = findCurrentMember(None, registration)
-                  Redirect(amendRoutes.AddGroupMemberConfirmBusinessAddressController
-                    .displayPage(member).url)
+                  Redirect(
+                    amendRoutes.AddGroupMemberConfirmBusinessAddressController
+                      .displayPage(member).url
+                  )
                 }
               case DUPLICATE_SUBSCRIPTION =>
                 val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, None))
@@ -102,9 +102,9 @@ abstract class GroupMemberGrsControllerBase(
 
   private def registrationStatus(registration: Registration, memberId: Option[String])(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
     val organisationDetails: Option[OrganisationDetails] =
-      registration.findMember(
-        memberId.getOrElse(registration.lastMember.map(_.id).getOrElse(throw new IllegalStateException("Expected group member missing")))
-      ).flatMap(_.organisationDetails)
+      registration.findMember(memberId.getOrElse(registration.lastMember.map(_.id).getOrElse(throw new IllegalStateException("Expected group member missing")))).flatMap(
+        _.organisationDetails
+      )
 
     val status: Future[SubscriptionStatus.Status] =
       organisationDetails.flatMap(_.businessPartnerId) match {
@@ -141,23 +141,18 @@ abstract class GroupMemberGrsControllerBase(
   ): Future[Either[GroupError, Registration]] =
     updateGroupMemberDetails(journeyId, memberId, orgType, ukCompanyGrsConnector.getDetails)
 
-  private def updateGroupMemberDetails(
-    journeyId: String,
-    memberId: Option[String],
-    orgType: OrgType,
-    getDetails: String => Future[IncorporationDetails]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Either[GroupError, Registration]] =
+  private def updateGroupMemberDetails(journeyId: String, memberId: Option[String], orgType: OrgType, getDetails: String => Future[IncorporationDetails])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[GroupError, Registration]] =
     for {
       details <- getDetails(journeyId)
       groupMember = updateOrCreateMember(details, orgType, memberId)
       result      = updateGroupDetails(groupMember)
     } yield result
 
-  private def updateOrCreateMember(details: IncorporationDetails, orgType: OrgType, memberId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): GroupMember = {
+  private def updateOrCreateMember(details: IncorporationDetails, orgType: OrgType, memberId: Option[String])(implicit request: JourneyRequest[AnyContent]): GroupMember = {
 
-    def updatedGroupMember(groupMember: GroupMember): GroupMember = {
+    def updatedGroupMember(groupMember: GroupMember): GroupMember =
       groupMember.copy(
         customerIdentification1 = details.companyNumber,
         customerIdentification2 = details.ctutr,
@@ -171,11 +166,10 @@ abstract class GroupMemberGrsControllerBase(
         ),
         addressDetails = addressConversionUtils.toPptAddress(details.companyAddress)
       )
-    }
 
     request.registration.groupDetail.map { groupDetails =>
       groupDetails.findGroupMember(memberId, Some(details.companyNumber)) match {
-        case None => createGroupMember(details, orgType)
+        case None         => createGroupMember(details, orgType)
         case Some(member) => updatedGroupMember(member)
       }
     }.getOrElse(createGroupMember(details, orgType))
@@ -208,11 +202,9 @@ abstract class GroupMemberGrsControllerBase(
       result      = updateGroupDetails(groupMember)
     } yield result
 
-  private def updateOrCreateMember(details: PartnershipBusinessDetails, orgType: OrgType, memberId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): GroupMember = {
+  private def updateOrCreateMember(details: PartnershipBusinessDetails, orgType: OrgType, memberId: Option[String])(implicit request: JourneyRequest[AnyContent]): GroupMember = {
 
-    def updatedGroupMember(groupMember: GroupMember, companyProfile: CompanyProfile): GroupMember = {
+    def updatedGroupMember(groupMember: GroupMember, companyProfile: CompanyProfile): GroupMember =
       groupMember.copy(
         customerIdentification1 = companyProfile.companyNumber,
         customerIdentification2 = Some(details.sautr),
@@ -227,15 +219,14 @@ abstract class GroupMemberGrsControllerBase(
         ),
         addressDetails = addressConversionUtils.toPptAddress(companyProfile.companyAddress)
       )
-    }
 
     request.registration.groupDetail.map { groupDetails =>
       details.companyProfile match {
         case Some(companyProfile) =>
           groupDetails.findGroupMember(memberId, Some(companyProfile.companyNumber)) match {
-          case None => createGroupMember(details, orgType)
-          case Some(member) => updatedGroupMember(member, companyProfile)
-        }
+            case None         => createGroupMember(details, orgType)
+            case Some(member) => updatedGroupMember(member, companyProfile)
+          }
         case None => throw new IllegalStateException("No Company Profile")
       }
 
@@ -267,11 +258,11 @@ abstract class GroupMemberGrsControllerBase(
 
     registration.groupDetail match {
       case Some(groupDetail) =>
-          Right(
-            registration.copy(groupDetail =
-              Some(groupDetail.withUpdatedOrNewMember(groupMember))
-            )
+        Right(
+          registration.copy(groupDetail =
+            Some(groupDetail.withUpdatedOrNewMember(groupMember))
           )
+        )
       case None => throw new IllegalStateException(s"No group detail")
     }
 
@@ -280,9 +271,7 @@ abstract class GroupMemberGrsControllerBase(
   def isMemberNominated(member: GroupMember, groupDetail: GroupDetail, registration: Registration): Boolean =
     groupDetail.members.contains(member) ||
       registration.organisationDetails.incorporationDetails.exists(details => details.isGroupMemberSameAsNominated(member.customerIdentification1)) ||
-      registration.organisationDetails.partnershipDetails.exists(
-        details => details.isGroupMemberSameAsNominatedPartnership(member.customerIdentification1)
-      )
+      registration.organisationDetails.partnershipDetails.exists(details => details.isGroupMemberSameAsNominatedPartnership(member.customerIdentification1))
 
   private def save(registration: Registration)(implicit hc: HeaderCarrier, request: JourneyRequest[_]) =
     registrationUpdater.updateRegistration(_ => registration)

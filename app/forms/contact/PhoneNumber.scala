@@ -38,9 +38,7 @@ object PhoneNumber extends CommonFormValidators {
       mapping(
         phoneNumber -> text()
           .verifying(phoneNumberEmptyError, isNonEmpty)
-          .verifying(phoneNumberTooLongError,
-                     isNotExceedingMaxLengthExcludingWhitespaces(_, maxLength)
-          )
+          .verifying(phoneNumberTooLongError, isNotExceedingMaxLengthExcludingWhitespaces(_, maxLength))
           .verifying(phoneNumberInvalidFormat, isValidTelephoneNumber)
       )(PhoneNumber.apply)(PhoneNumber.unapply)
     )

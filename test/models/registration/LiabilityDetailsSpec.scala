@@ -43,40 +43,29 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         liabilityDetails.status mustBe TaskStatus.NotStarted
       }
       "liability details have flags (somehow) but no answers" in {
-        val liabilityDetails = LiabilityDetails(
-          newLiabilityStarted = Some(NewLiability)
-        )
+        val liabilityDetails = LiabilityDetails(newLiabilityStarted = Some(NewLiability))
         liabilityDetails.status mustBe TaskStatus.NotStarted
       }
     }
 
     "be IN_PROGRESS " when {
       "liability details are partially filled" in {
-        val liabilityDetails = LiabilityDetails(
-          expectToExceedThresholdWeight = Some(true),
-          newLiabilityStarted = Some(NewLiability)
-        )
+        val liabilityDetails = LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
         liabilityDetails.status mustBe TaskStatus.InProgress
       }
 
       "liability details are partially filled with forwards answer" in {
-        val liabilityDetails = LiabilityDetails(
-          expectToExceedThresholdWeight = Some(true),
-        )
+        val liabilityDetails = LiabilityDetails(expectToExceedThresholdWeight = Some(true))
         liabilityDetails.status mustBe TaskStatus.InProgress
       }
 
       "liability details are partially filled with backwards answer" in {
-        val liabilityDetails = LiabilityDetails(
-          exceededThresholdWeight = Some(true),
-        )
+        val liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true))
         liabilityDetails.status mustBe TaskStatus.InProgress
       }
 
       "liability details are partially filled with expectedWeight answer" in {
-        val liabilityDetails = LiabilityDetails(
-          expectedWeightNext12m = Some(LiabilityWeight(Some(6969))),
-        )
+        val liabilityDetails = LiabilityDetails(expectedWeightNext12m = Some(LiabilityWeight(Some(6969))))
         liabilityDetails.status mustBe TaskStatus.InProgress
       }
     }

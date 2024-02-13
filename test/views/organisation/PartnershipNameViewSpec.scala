@@ -45,9 +45,7 @@ class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        partnerRoutes.PartnershipTypeController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(partnerRoutes.PartnershipTypeController.displayPage())
     }
 
     "display title" in {

@@ -36,26 +36,22 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
   protected def simulateUpdateSubscriptionSuccess() =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.successful(
-        SubscriptionCreateOrUpdateResponseSuccess(pptReference = "XMPPT0000000123",
-                                                  processingDate = ZonedDateTime.now(),
-                                                  formBundleNumber = "ABC123",
-                                                  nrsNotifiedSuccessfully = true,
-                                                  nrsSubmissionId = Some("NRS123"),
-                                                  nrsFailureReason = None,
-                                                  enrolmentInitiatedSuccessfully = Some(true)
+        SubscriptionCreateOrUpdateResponseSuccess(
+          pptReference = "XMPPT0000000123",
+          processingDate = ZonedDateTime.now(),
+          formBundleNumber = "ABC123",
+          nrsNotifiedSuccessfully = true,
+          nrsSubmissionId = Some("NRS123"),
+          nrsFailureReason = None,
+          enrolmentInitiatedSuccessfully = Some(true)
         )
       )
     )
 
-  protected def simulateUpdateSubscriptionFailure(
-    ex: RuntimeException
-  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
-    when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
-      Future.failed(ex)
-    )
+  protected def simulateUpdateSubscriptionFailure(ex: RuntimeException): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(Future.failed(ex))
 
-  protected def simulateUpdateSubscriptionFailureReturnedError()
-    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateSubscriptionFailureReturnedError(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures =
@@ -64,17 +60,11 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
       )
     )
 
-  protected def simulateGetSubscriptionSuccess(
-    registration: Registration
-  ): ScalaOngoingStubbing[Future[Registration]] =
-    when(mockSubscriptionConnector.getSubscription(any())(any())).thenReturn(
-      Future.successful(registration)
-    )
+  protected def simulateGetSubscriptionSuccess(registration: Registration): ScalaOngoingStubbing[Future[Registration]] =
+    when(mockSubscriptionConnector.getSubscription(any())(any())).thenReturn(Future.successful(registration))
 
   protected def simulateGetSubscriptionFailure(): ScalaOngoingStubbing[Future[Registration]] =
-    when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(
-      new IllegalStateException("BANG!")
-    )
+    when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(new IllegalStateException("BANG!"))
 
   protected def getUpdatedRegistration(): Registration = {
     val registrationCaptor: ArgumentCaptor[Registration] =

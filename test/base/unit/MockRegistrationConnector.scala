@@ -29,8 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
 
-trait MockRegistrationConnector
-    extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
+trait MockRegistrationConnector extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
   protected val mockRegistrationConnector = mock[RegistrationConnector]
@@ -45,9 +44,7 @@ trait MockRegistrationConnector
 
   def mockRegistrationUpdateFailure(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
-      .thenReturn(
-        Future.successful(Left(DownstreamServiceError("some error", new Exception("some error"))))
-      )
+      .thenReturn(Future.successful(Left(DownstreamServiceError("some error", new Exception("some error")))))
 
   def modifiedRegistration: Registration = {
     val captor = ArgumentCaptor.forClass(classOf[Registration])

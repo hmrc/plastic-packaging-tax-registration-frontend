@@ -73,29 +73,24 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with Sc
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val grsGeneralPartnershipDetails = GrsPartnershipBusinessDetails(sautr = "1234567890",
-                                                                     postcode = "AA1 1AA",
-                                                                     identifiersMatch = true,
-                                                                     businessVerification =
-                                                                       Some(
-                                                                         GrsBusinessVerification(
-                                                                           "PASS"
-                                                                         )
-                                                                       ),
-                                                                     registration =
-                                                                       GrsRegistration(
-                                                                         registrationStatus =
-                                                                           "REGISTERED",
-                                                                         registeredBusinessPartnerId =
-                                                                           Some("123")
-                                                                       ),
-                                                                     companyProfile = None
+    val grsGeneralPartnershipDetails = GrsPartnershipBusinessDetails(
+      sautr = "1234567890",
+      postcode = "AA1 1AA",
+      identifiersMatch = true,
+      businessVerification =
+        Some(GrsBusinessVerification("PASS")),
+      registration =
+        GrsRegistration(
+          registrationStatus =
+            "REGISTERED",
+          registeredBusinessPartnerId =
+            Some("123")
+        ),
+      companyProfile = None
     )
 
     "obtain partnership details from the partnership identification service" in {
-      expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId,
-                                                                       grsGeneralPartnershipDetails
-      )
+      expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId, grsGeneralPartnershipDetails)
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
@@ -132,10 +127,7 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with Sc
         )
     )
 
-  private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
-    journeyId: String,
-    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
-  ) =
+  private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId: String, grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
@@ -155,12 +147,13 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with Sc
     )
 
   private def aCreateJourneyRequest() =
-    PartnershipGrsCreateRequest(continueUrl = "callbackUrl",
-                                optServiceName = Some("PPT"),
-                                deskProServiceId = "xxx",
-                                signOutUrl = "signoutUrl",
-                                accessibilityUrl = "accessibilityUrl",
-                                enableSautrCheck = true
+    PartnershipGrsCreateRequest(
+      continueUrl = "callbackUrl",
+      optServiceName = Some("PPT"),
+      deskProServiceId = "xxx",
+      signOutUrl = "signoutUrl",
+      accessibilityUrl = "accessibilityUrl",
+      enableSautrCheck = true
     )
 
 }

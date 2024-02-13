@@ -31,10 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[GetRegistrationForAmendmentActionImpl])
 trait GetRegistrationForAmendmentAction extends ActionTransformer[PPTEnrolledRequest, JourneyRequest]
 
-class GetRegistrationForAmendmentActionImpl @Inject()(
-  subscriptionsConnector: SubscriptionsConnector,
-  registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val executionContext: ExecutionContext) extends GetRegistrationForAmendmentAction {
+class GetRegistrationForAmendmentActionImpl @Inject() (subscriptionsConnector: SubscriptionsConnector, registrationAmendmentRepository: RegistrationAmendmentRepository)(implicit
+  val executionContext: ExecutionContext
+) extends GetRegistrationForAmendmentAction {
 
   override protected def transform[A](request: PPTEnrolledRequest[A]): Future[JourneyRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -45,8 +44,9 @@ class GetRegistrationForAmendmentActionImpl @Inject()(
       case None =>
         for {
           registration <- subscriptionsConnector.getSubscription(request.pptReference)
-          _ <- registrationAmendmentRepository.put(request.cacheId, registration)
-        } yield  JourneyRequest(request, registration)
+          _            <- registrationAmendmentRepository.put(request.cacheId, registration)
+        } yield JourneyRequest(request, registration)
     }
   }
+
 }

@@ -37,10 +37,7 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with AmendmentCont
 
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(spyJourneyAction,
-                                             Helpers.stubMessagesControllerComponents(),
-                                             view
-  )
+  val sut = new ManageGroupMembersController(spyJourneyAction, Helpers.stubMessagesControllerComponents(), view)
 
   "displayPage" must {
     "return 200 with view" in {

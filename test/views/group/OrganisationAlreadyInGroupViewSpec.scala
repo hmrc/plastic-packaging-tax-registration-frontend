@@ -21,10 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import controllers.group.{routes => groupRoutes}
 import models.registration.group.GroupError
-import models.registration.group.GroupErrorType.{
-  MEMBER_IN_GROUP,
-  MEMBER_IS_NOMINATED
-}
+import models.registration.group.GroupErrorType.{MEMBER_IN_GROUP, MEMBER_IS_NOMINATED}
 import views.html.group.organisation_already_in_group_page
 
 class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
@@ -42,37 +39,27 @@ class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
     val view: Html = createView()
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("organisation.already.in.group.title", "Member Name")
-      )
+      view.select("title").text() must include(messages("organisation.already.in.group.title", "Member Name"))
     }
 
     "display heading" in {
-      view.select("h1").text() must include(
-        messages("organisation.already.in.group.title", "Member Name")
-      )
+      view.select("h1").text() must include(messages("organisation.already.in.group.title", "Member Name"))
     }
 
     "display save and continue link-button" in {
       view.select("a.govuk-button").text() must include(messages("site.button.saveAndContinue"))
-      view.select("a.govuk-button").first() must haveHref(
-        groupRoutes.OrganisationListController.displayPage()
-      )
+      view.select("a.govuk-button").first() must haveHref(groupRoutes.OrganisationListController.displayPage())
     }
 
     "display detail" when {
       "nominated member is already group" in {
         val view = createView(GroupError(MEMBER_IS_NOMINATED, "Nominated Member"))
-        view.select("p.govuk-body").text() must include(
-          messages("organisation.already.in.group.detail.nominated", "Nominated Member")
-        )
+        view.select("p.govuk-body").text() must include(messages("organisation.already.in.group.detail.nominated", "Nominated Member"))
       }
 
       "member is already group" in {
         val view = createView(GroupError(MEMBER_IN_GROUP, "Member"))
-        view.select("p.govuk-body").text() must include(
-          messages("organisation.already.in.group.detail.member", "Member")
-        )
+        view.select("p.govuk-body").text() must include(messages("organisation.already.in.group.detail.member", "Member"))
       }
     }
 

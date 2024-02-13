@@ -24,8 +24,7 @@ import play.api.test.Helpers.stubMessagesApi
 import spec.PptTestData
 import views.html.error_template
 
-class ErrorHandlerTest
-    extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
+class ErrorHandlerTest extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
 
   private val errorPage    = inject[error_template]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())

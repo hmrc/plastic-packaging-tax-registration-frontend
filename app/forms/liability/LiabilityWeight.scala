@@ -37,17 +37,13 @@ object LiabilityWeight {
   val weightBelowThresholdError = "liabilityWeight.below.threshold.error"
   val weightDecimalError        = "liabilityWeight.decimal.error"
 
-  private val weightIsValidNumber: String => Boolean = weight =>
-    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
+  private val weightIsValidNumber: String => Boolean = weight => weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+  private val weightIsWholeNumber: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
-  private val weightWithinRange: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+  private val weightWithinRange: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
-  private val weightAboveThreshold: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
+  private val weightAboveThreshold: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
 
   def form(): Form[LiabilityWeight] =
     Form(
@@ -75,10 +71,10 @@ object LiabilityWeight {
 
     weight.trim
       .replace(",", "")
-      .replace(" ", "")
-    match {
+      .replace(" ", "") match {
       case extractNumberRegex(number) => number
-      case _ => weight
+      case _                          => weight
     }
   }
+
 }

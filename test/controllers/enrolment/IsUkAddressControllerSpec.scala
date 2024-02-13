@@ -48,12 +48,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[IsUkAddress]])(any(), any())).thenReturn(
-      HtmlFormat.raw("Is UK Address Page")
-    )
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-      Future.successful(Some(initialEnrolmentDetails))
-    )
+    when(page.apply(any[Form[IsUkAddress]])(any(), any())).thenReturn(HtmlFormat.raw("Is UK Address Page"))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(initialEnrolmentDetails)))
   }
 
   override protected def afterEach(): Unit = {
@@ -65,9 +61,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
     "display the is uk address page" when {
       "user is authorised" in {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(
-            Some(initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true)))))
-          )
+          Future.successful(Some(initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true))))))
         )
 
         val result = controller.displayPage()(FakeRequest())
@@ -76,9 +70,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Is UK Address Page"
       }
       "user is authorised and cache is empty" in {
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(None)
-        )
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -86,7 +78,6 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Is UK Address Page"
       }
     }
-
 
     "redisplay the is uk address page with a BAD REQUEST status" when {
       "no selection is made" in {
@@ -102,19 +93,14 @@ class IsUkAddressControllerSpec extends ControllerSpec {
       "is uk address is true" in {
         val expectedEnrolmentDetails =
           initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true))))
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
-          Future.successful(expectedEnrolmentDetails)
-        )
-
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(expectedEnrolmentDetails))
 
         val result = controller.submit()(postJsonRequestEncoded(("value", "yes")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.PostcodeController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
-                                  ArgumentMatchers.eq(expectedEnrolmentDetails)
-        )(any(), any())
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(expectedEnrolmentDetails))(any(), any())
       }
     }
 
@@ -122,19 +108,14 @@ class IsUkAddressControllerSpec extends ControllerSpec {
       "is uk address is false" in {
         val expectedEnrolmentDetails =
           initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(false))))
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
-          Future.successful(expectedEnrolmentDetails)
-        )
-
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(expectedEnrolmentDetails))
 
         val result = controller.submit()(postJsonRequestEncoded(("value", "no")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
-                                  ArgumentMatchers.eq(expectedEnrolmentDetails)
-        )(any(), any())
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(expectedEnrolmentDetails))(any(), any())
       }
     }
   }

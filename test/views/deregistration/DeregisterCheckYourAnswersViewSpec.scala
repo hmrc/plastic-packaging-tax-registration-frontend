@@ -21,10 +21,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import spec.PptTestData
 import controllers.deregistration.routes
-import models.deregistration.{
-  DeregistrationDetails,
-  DeregistrationReason
-}
+import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 import views.html.deregistration.deregister_check_your_answers_page
 
 class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
@@ -63,9 +60,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
       val row = getSummaryRow(view, 0)
       row must haveSummaryKey(messages("deregister.checkAnswers.wantToDeregister"))
       row must haveSummaryValue("")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "deregister.checkAnswers.wantToDeregister"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "deregister.checkAnswers.wantToDeregister")
       row must haveSummaryActionsHref(routes.DeregisterController.displayPage())
     }
 
@@ -73,9 +68,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
       val row = getSummaryRow(view, 1)
       row must haveSummaryKey(messages("deregister.checkAnswers.reasonToDeregister"))
       row must haveSummaryValue("")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "deregister.checkAnswers.reasonToDeregister"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "deregister.checkAnswers.reasonToDeregister")
       row must haveSummaryActionsHref(routes.DeregisterReasonController.displayPage())
     }
   }
@@ -97,9 +90,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
       val row = getSummaryRow(view, 0)
       row must haveSummaryKey(messages("deregister.checkAnswers.wantToDeregister"))
       row must haveSummaryValue("Yes")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "deregister.checkAnswers.wantToDeregister"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "deregister.checkAnswers.wantToDeregister")
       row must haveSummaryActionsHref(routes.DeregisterController.displayPage())
     }
 
@@ -107,9 +98,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
       val row = getSummaryRow(view, 1)
       row must haveSummaryKey(messages("deregister.checkAnswers.reasonToDeregister"))
       row must haveSummaryValue("Ceased trading")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "deregister.checkAnswers.reasonToDeregister"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "deregister.checkAnswers.reasonToDeregister")
       row must haveSummaryActionsHref(routes.DeregisterReasonController.displayPage())
     }
   }

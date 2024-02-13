@@ -24,11 +24,7 @@ class AddressLookupConfirmationSpec extends AnyWordSpec with Matchers {
   "AddressLookupConfirmation" should {
 
     def addressLookupConfirmation(lines: List[String]) =
-      AddressLookupConfirmation(
-        auditRef = "ref",
-        id = Some("id"),
-        address = AddressLookupAddress(lines = lines, postcode = Some("postcode"), country = None)
-      )
+      AddressLookupConfirmation(auditRef = "ref", id = Some("id"), address = AddressLookupAddress(lines = lines, postcode = Some("postcode"), country = None))
 
     "extract address lines" when {
 

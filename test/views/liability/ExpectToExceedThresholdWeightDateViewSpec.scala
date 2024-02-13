@@ -41,18 +41,18 @@ import views.viewmodels.{BackButtonJs, Title}
 
 class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val request = FakeRequest()
-  private val mockMessages = mock[Messages]
-  private val form = Form[Boolean]("value" -> ignored[Boolean](true))
-  private val sectionHeader = mock[sectionHeader]
-  private val pageHeading = mock[pageHeading]
-  private val govUkLayout = mock[main_template]
-  private val contentCaptor = ArgumentCaptor.forClass(classOf[Html])
-  private val saveButtons = mock[saveButtons]
-  private val errorSummary = mock[errorSummary]
+  private val request        = FakeRequest()
+  private val mockMessages   = mock[Messages]
+  private val form           = Form[Boolean]("value" -> ignored[Boolean](true))
+  private val sectionHeader  = mock[sectionHeader]
+  private val pageHeading    = mock[pageHeading]
+  private val govUkLayout    = mock[main_template]
+  private val contentCaptor  = ArgumentCaptor.forClass(classOf[Html])
+  private val saveButtons    = mock[saveButtons]
+  private val errorSummary   = mock[errorSummary]
   private val govukDateInput = mock[GovukDateInput]
-  private val paragraphBody = mock[paragraphBody]
-  private val bulletList = mock[bulletList]
+  private val paragraphBody  = mock[paragraphBody]
+  private val bulletList     = mock[bulletList]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -66,7 +66,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
     when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
     when(govukDateInput.apply(any())).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
     when(bulletList.apply(any())).thenReturn(HtmlFormat.raw("BULLET LIST"))
-    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
+    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")): _*)
   }
 
   private val page = new expect_to_exceed_threshold_weight_date_page(
@@ -85,10 +85,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
     "use govUk layout" in {
       instantiateView()
 
-      verify(govUkLayout).apply(
-        refEq(Title("liability.expectToExceedThresholdDate.title")),
-        meq(Some(BackButtonJs)),
-        any())(any())(meq(request), meq(mockMessages))
+      verify(govUkLayout).apply(refEq(Title("liability.expectToExceedThresholdDate.title")), meq(Some(BackButtonJs)), any())(any())(meq(request), meq(mockMessages))
     }
 
     "have the form" in {
@@ -137,10 +134,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       instantiateView()
 
       insideGovUkWrapper must include("BULLET LIST")
-      verify(bulletList).apply(Seq(
-        Html("some message"),
-        Html("some message")
-      ))
+      verify(bulletList).apply(Seq(Html("some message"), Html("some message")))
       verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.1")
       verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.2")
     }
@@ -167,12 +161,8 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       insideGovUkWrapper must include("GOV UK DATE INPUT")
       verify(govukDateInput).apply(
         DateViewModel(
-          field  = form("expect-to-exceed-threshold-weight-date"),
-          legend = Legend(
-            content = Text("some message"),
-            classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
-            isPageHeading = false
-          ),
+          field = form("expect-to-exceed-threshold-weight-date"),
+          legend = Legend(content = Text("some message"), classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m", isPageHeading = false),
           errors = form.errors
         )(mockMessages)
           .withHint(Hint(content = Text("some message")))
@@ -196,6 +186,6 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
   }
 
   def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  def insideGovUkWrapper = contentCaptor.getValue.toString
+  def insideGovUkWrapper                       = contentCaptor.getValue.toString
 
 }

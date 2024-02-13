@@ -28,59 +28,27 @@ case class AddressLookupConfigV2(version: Int = 2, options: JourneyOptions, labe
 object AddressLookupConfigV2 {
   implicit val format: OFormat[AddressLookupConfigV2] = Json.format[AddressLookupConfigV2]
 
-  def apply(
-    continue: Call,
-    appConfig: AppConfig,
-    messagesPrefix: String,
-    entityName: Option[String]
-  )(implicit messagesApi: MessagesApi): AddressLookupConfigV2 = {
+  def apply(continue: Call, appConfig: AppConfig, messagesPrefix: String, entityName: Option[String])(implicit messagesApi: MessagesApi): AddressLookupConfigV2 = {
     val en: Messages = MessagesImpl(Lang("en"), messagesApi)
 
     def getEntityName = entityName.getOrElse(en("missing.organisationName"))
 
-    new AddressLookupConfigV2(options = JourneyOptions(continueUrl = appConfig.selfUrl(continue),
-                                                       signOutHref = appConfig.signOutLink,
-                                                       serviceHref = appConfig.selfUrl(
-                                                         commonRoutes.StartRegistrationController.startRegistration()
-                                                       )
-                              ),
-                              labels = JourneyLabels(en =
-                                LanguageLabels(appLevelLabels =
-                                                 AppLevelLabels(navTitle = en("service.name")),
-                                               selectPageLabels = SelectPageLabels(
-                                                 title = en(s"${messagesPrefix}.select.title",
-                                                            getEntityName
-                                                 ),
-                                                 heading = en(s"${messagesPrefix}.select.heading",
-                                                              getEntityName
-                                                 )
-                                               ),
-                                               lookupPageLabels = LookupPageLabels(
-                                                 title = en(s"${messagesPrefix}.lookup.title",
-                                                            getEntityName
-                                                 ),
-                                                 heading = en(s"${messagesPrefix}.lookup.heading",
-                                                              getEntityName
-                                                 )
-                                               ),
-                                               confirmPageLabels = ConfirmPageLabels(
-                                                 title = en(s"${messagesPrefix}.confirm.title",
-                                                            getEntityName
-                                                 ),
-                                                 heading = en(s"${messagesPrefix}.confirm.heading",
-                                                              getEntityName
-                                                 )
-                                               ),
-                                               editPageLabels = EditPageLabels(
-                                                 title = en(s"${messagesPrefix}.edit.title",
-                                                            getEntityName
-                                                 ),
-                                                 heading = en(s"${messagesPrefix}.edit.heading",
-                                                              getEntityName
-                                                 )
-                                               )
-                                )
-                              )
+    new AddressLookupConfigV2(
+      options = JourneyOptions(
+        continueUrl = appConfig.selfUrl(continue),
+        signOutHref = appConfig.signOutLink,
+        serviceHref = appConfig.selfUrl(commonRoutes.StartRegistrationController.startRegistration())
+      ),
+      labels = JourneyLabels(en =
+        LanguageLabels(
+          appLevelLabels =
+            AppLevelLabels(navTitle = en("service.name")),
+          selectPageLabels = SelectPageLabels(title = en(s"${messagesPrefix}.select.title", getEntityName), heading = en(s"${messagesPrefix}.select.heading", getEntityName)),
+          lookupPageLabels = LookupPageLabels(title = en(s"${messagesPrefix}.lookup.title", getEntityName), heading = en(s"${messagesPrefix}.lookup.heading", getEntityName)),
+          confirmPageLabels = ConfirmPageLabels(title = en(s"${messagesPrefix}.confirm.title", getEntityName), heading = en(s"${messagesPrefix}.confirm.heading", getEntityName)),
+          editPageLabels = EditPageLabels(title = en(s"${messagesPrefix}.edit.title", getEntityName), heading = en(s"${messagesPrefix}.edit.heading", getEntityName))
+        )
+      )
     )
   }
 

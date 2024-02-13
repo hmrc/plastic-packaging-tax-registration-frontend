@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationTypeController @Inject() (
-                                             journeyAction: JourneyAction,
-                                             override val registrationConnector: RegistrationConnector,
-                                             mcc: MessagesControllerComponents,
-                                             page: registration_type_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: registration_type_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
@@ -51,8 +51,7 @@ class RegistrationTypeController @Inject() (
       RegistrationType.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[RegistrationType]) =>
-            Future.successful(BadRequest(page(formWithErrors, backLink))),
+          (formWithErrors: Form[RegistrationType]) => Future.successful(BadRequest(page(formWithErrors, backLink))),
           registrationType =>
             update(updateRegistration(registrationType)).map {
               case Right(registration) =>
@@ -70,7 +69,7 @@ class RegistrationTypeController @Inject() (
   private def backLink: Call =
     routes.LiabilityWeightController.displayPage()
 
-  private def updateRegistration(registrationType: RegistrationType): Registration => Registration = {
+  private def updateRegistration(registrationType: RegistrationType): Registration => Registration =
     registrationType.value match {
       case Some(RegType.GROUP) =>
         registration => registration.copy(registrationType = registrationType.value)
@@ -83,6 +82,5 @@ class RegistrationTypeController @Inject() (
           )
       case other => throw new IllegalStateException(s"Invalid registration type: $other")
     }
-  }
 
 }

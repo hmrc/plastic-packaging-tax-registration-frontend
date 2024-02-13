@@ -24,12 +24,10 @@ import play.api.test.Helpers.status
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class KeepAliveControllerSpec extends ControllerSpec {
-  private val mcc                    = stubMessagesControllerComponents()
+  private val mcc = stubMessagesControllerComponents()
 
   private val controller =
-    new KeepAliveController(journeyAction = spyJourneyAction,
-                            mcc = mcc
-    )
+    new KeepAliveController(journeyAction = spyJourneyAction, mcc = mcc)
 
   override protected def afterEach(): Unit =
     super.afterEach()

@@ -42,26 +42,12 @@ abstract class OrganisationDetailsTypeControllerBase(
       val isFirstMember: Boolean = request.registration.isFirstGroupMember
       memberId match {
         case Some(memberId) =>
-          val organisationType: String = request.registration.findMember(memberId).flatMap(
-            _.organisationDetails.map(_.organisationType)
-          ).getOrElse(throw new IllegalStateException("Organisation type is absent"))
-          Ok(
-            page(form = OrganisationType.form(ActionEnum.Group).fill(
-                   OrganisationType(OrgType.withNameOpt(organisationType))
-                 ),
-                 isFirstMember,
-                 Some(memberId),
-                 submitCall
-            )
+          val organisationType: String = request.registration.findMember(memberId).flatMap(_.organisationDetails.map(_.organisationType)).getOrElse(
+            throw new IllegalStateException("Organisation type is absent")
           )
+          Ok(page(form = OrganisationType.form(ActionEnum.Group).fill(OrganisationType(OrgType.withNameOpt(organisationType))), isFirstMember, Some(memberId), submitCall))
         case None =>
-          Ok(
-            page(form = OrganisationType.form(ActionEnum.Group),
-                 isFirstMember,
-                 memberId,
-                 submitCall
-            )
-          )
+          Ok(page(form = OrganisationType.form(ActionEnum.Group), isFirstMember, memberId, submitCall))
       }
 
     }
@@ -71,30 +57,15 @@ abstract class OrganisationDetailsTypeControllerBase(
       OrganisationType.form(ActionEnum.Group)
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[OrganisationType]) =>
-            Future(
-              BadRequest(
-                page(form = formWithErrors,
-                     request.registration.isFirstGroupMember,
-                     memberId,
-                     submitCall
-                )
-              )
-            ),
+          (formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(form = formWithErrors, request.registration.isFirstGroupMember, memberId, submitCall))),
           organisationType =>
             updateRegistration(organisationType).flatMap { registration =>
-              handleOrganisationType(organisationType, false, memberId)(
-                request.copy(registration = registration),
-                ec,
-                hc
-              )
+              handleOrganisationType(organisationType, false, memberId)(request.copy(registration = registration), ec, hc)
             }
         )
     }
 
-  private def updateRegistration(
-    formData: OrganisationType
-  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateRegistration(formData: OrganisationType)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       val updatedGroupDetail: Option[GroupDetail] = registration.groupDetail.map { details =>
         details.copy(currentMemberOrganisationType = formData.answer)

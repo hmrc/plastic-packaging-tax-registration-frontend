@@ -35,8 +35,10 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
 
     "be IN_PROGRESS" when {
       "there is a member with no contact details" in {
-        val groupDetail = GroupDetail().withUpdatedOrNewMember(aGroupMember("Barbie Plastic Ltd")
-          .copy(contactDetails = None))
+        val groupDetail = GroupDetail().withUpdatedOrNewMember(
+          aGroupMember("Barbie Plastic Ltd")
+            .copy(contactDetails = None)
+        )
         groupDetail.status mustBe TaskStatus.InProgress
       }
     }
@@ -88,25 +90,12 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
       customerIdentification1 = "cid1",
       customerIdentification2 = Some("cid2"),
       organisationDetails = Some(OrganisationDetails(organisationType = "UK Company", organisationName = name, businessPartnerId = Some("BP-123"))),
-      contactDetails = Some(
-        GroupMemberContactDetails(
-          firstName = "John",
-          lastName = "Benkson",
-          phoneNumber = Some("07875234567"),
-          email = Some("john@ppt.com"),
-          address = Some(anAddress())
-        )
-      ),
+      contactDetails =
+        Some(GroupMemberContactDetails(firstName = "John", lastName = "Benkson", phoneNumber = Some("07875234567"), email = Some("john@ppt.com"), address = Some(anAddress()))),
       addressDetails = anAddress()
     )
 
   private def anAddress() =
-    new UKAddress(
-      addressLine1 = "addressLine1",
-      addressLine2 = Some("addressLine2"),
-      addressLine3 = Some("addressLine3"),
-      townOrCity = "Wakefield",
-      postCode = "WF15 4HD"
-    )
+    new UKAddress(addressLine1 = "addressLine1", addressLine2 = Some("addressLine2"), addressLine3 = Some("addressLine3"), townOrCity = "Wakefield", postCode = "WF15 4HD")
 
 }

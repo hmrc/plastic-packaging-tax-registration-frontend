@@ -25,4 +25,3 @@ object StartRegistrationEvent {
   implicit val format: OFormat[StartRegistrationEvent] = Json.format[StartRegistrationEvent]
   val eventType: String                                = "startPPTRegistration"
 }
-

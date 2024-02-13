@@ -20,13 +20,7 @@ import base.unit.CommonTestUtils
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.contact.PhoneNumber.{
-  maxLength,
-  phoneNumber,
-  phoneNumberEmptyError,
-  phoneNumberInvalidFormat,
-  phoneNumberTooLongError
-}
+import forms.contact.PhoneNumber.{maxLength, phoneNumber, phoneNumberEmptyError, phoneNumberInvalidFormat, phoneNumberTooLongError}
 
 class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
@@ -95,10 +89,7 @@ class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = PhoneNumber.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

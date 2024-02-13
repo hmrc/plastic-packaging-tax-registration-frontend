@@ -23,22 +23,13 @@ import play.api.i18n.Messages
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
-private[mappings] class LocalDateFormatter(
-  emptyDateKey: String,
-  singleRequiredKey: String,
-  twoRequiredKey: String,
-  invalidKey: String,
-  args: Seq[String] = Seq.empty
-)(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
+private[mappings] class LocalDateFormatter(emptyDateKey: String, singleRequiredKey: String, twoRequiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
+  messages: Messages
+) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
-  private def toDate(
-    key: String,
-    day: Int,
-    month: Int,
-    year: Int
-  ): Either[Seq[FormError], LocalDate] =
+  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
         Right(date)
@@ -46,16 +37,9 @@ private[mappings] class LocalDateFormatter(
         Left(Seq(FormError(key, invalidKey, args)))
     }
 
-  private def formatDate(
-    key: String,
-    data: Map[String, String]
-  ): Either[Seq[FormError], LocalDate] = {
+  private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val int = intFormatter(requiredKey = invalidKey,
-                           wholeNumberKey = invalidKey,
-                           nonNumericKey = invalidKey,
-                           args
-    )
+    val int = intFormatter(requiredKey = invalidKey, wholeNumberKey = invalidKey, nonNumericKey = invalidKey, args)
 
     for {
       day   <- int.bind(s"$key.day", data)
@@ -85,24 +69,19 @@ private[mappings] class LocalDateFormatter(
       case 1 =>
         Left(
           List(
-            FormError(s"$key.${missingFields.head}",
+            FormError(
+              s"$key.${missingFields.head}",
               twoRequiredKey,
               Seq(messages("general.and", messages(s"general.${missingFields.head}"), messages(s"general.${missingFields.last}")))
             )
           )
         )
       case _ =>
-        Left(
-          List(FormError(s"$key.day", emptyDateKey, args)
-          )
-        )
+        Left(List(FormError(s"$key.day", emptyDateKey, args)))
     }
   }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
-    Map(s"$key.day"   -> value.getDayOfMonth.toString,
-        s"$key.month" -> value.getMonthValue.toString,
-        s"$key.year"  -> value.getYear.toString
-    )
+    Map(s"$key.day" -> value.getDayOfMonth.toString, s"$key.month" -> value.getMonthValue.toString, s"$key.year" -> value.getYear.toString)
 
 }

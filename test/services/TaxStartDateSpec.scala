@@ -32,7 +32,7 @@ class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
     def isLiableAction(date: LocalDate, isDateFromBackwardsTest: Boolean): Result
   }
 
-  private val actions = mock[PossibleActions]
+  private val actions  = mock[PossibleActions]
   val aDate: LocalDate = LocalDate.ofEpochDay(0)
 
   override protected def beforeEach(): Unit = {

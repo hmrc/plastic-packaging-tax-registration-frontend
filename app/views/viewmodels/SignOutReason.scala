@@ -31,10 +31,7 @@ object SignOutReason {
   implicit val binder: QueryStringBindable[SignOutReason] = new QueryStringBindable[SignOutReason] {
     private val strBinder: QueryStringBindable[String] = implicitly[QueryStringBindable[String]]
 
-    override def bind(
-      key: String,
-      params: Map[String, Seq[String]]
-    ): Option[Either[String, SignOutReason]] =
+    override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SignOutReason]] =
       Some(
         Right(
           params

@@ -40,25 +40,20 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
-  private val page                            = mock[check_liability_details_answers_page]
-  private val mcc                             = stubMessagesControllerComponents()
-  private val mockTaxStartDateService         = mock[TaxStartDateService]
-  private val aDate                           = LocalDate.of(2022, 4, 1)
+  private val page                    = mock[check_liability_details_answers_page]
+  private val mcc                     = stubMessagesControllerComponents()
+  private val mockTaxStartDateService = mock[TaxStartDateService]
+  private val aDate                   = LocalDate.of(2022, 4, 1)
 
   private val controller =
-    new CheckLiabilityDetailsAnswersController(journeyAction = spyJourneyAction,
-      mcc = mcc,
-      mockRegistrationConnector,
-      mockTaxStartDateService,
-      config,
-      page = page
-    )
+    new CheckLiabilityDetailsAnswersController(journeyAction = spyJourneyAction, mcc = mcc, mockRegistrationConnector, mockTaxStartDateService, config, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(page, mockTaxStartDateService, mockRegistrationConnector, config)
 
-    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
+    val registration =
+      aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
     spyJourneyAction.setReg(registration)
     given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
@@ -77,16 +72,13 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "user is authorised" should {
         "return 200" in {
 
-
           val registration = aRegistration()
           spyJourneyAction.setReg(registration)
 
           val result: Future[Result] = controller.displayPage()(FakeRequest())
           status(result) shouldEqual Status.OK
 
-          verify(mockTaxStartDateService).calculateTaxStartDate(
-            ArgumentMatchers.eq(registration.liabilityDetails)
-          )
+          verify(mockTaxStartDateService).calculateTaxStartDate(ArgumentMatchers.eq(registration.liabilityDetails))
         }
       }
     }
@@ -94,7 +86,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     "set expected page links" when {
 
       "check the backward look feature flags" in {
-
 
         given(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
 
@@ -105,8 +96,8 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
       "group registration enabled and group of organisation is selected" in {
 
-
-        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
+        val registration =
+          aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
         spyJourneyAction.setReg(registration)
         given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 
@@ -120,7 +111,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     "updates liability with the correct start date and redirects to registration page" when {
       "user proceed" in {
 
-
         val registration = aRegistration()
         spyJourneyAction.setReg(registration)
 
@@ -128,9 +118,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
 
-        verify(mockTaxStartDateService).calculateTaxStartDate(
-          ArgumentMatchers.eq(registration.liabilityDetails)
-        )
+        verify(mockTaxStartDateService).calculateTaxStartDate(ArgumentMatchers.eq(registration.liabilityDetails))
 
         modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe aDate
       }

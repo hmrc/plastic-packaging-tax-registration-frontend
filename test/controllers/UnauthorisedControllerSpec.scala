@@ -29,8 +29,8 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
-  private val page              = mock[unauthorised]
-  private val wrongCredRolePage = mock[unauthorised_not_admin]
+  private val page                  = mock[unauthorised]
+  private val wrongCredRolePage     = mock[unauthorised_not_admin]
   private val unauthorisedAgentPage = mock[unauthorised_agent]
 
   when(page.apply()(any(), any())).thenReturn(Html("unauthorised"))

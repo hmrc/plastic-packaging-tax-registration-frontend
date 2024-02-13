@@ -26,7 +26,7 @@ import views.html.contact.email_address_page
 
 class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[email_address_page]
+  private val page       = inject[email_address_page]
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroup: Boolean = false): Document =
@@ -52,43 +52,30 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("primaryContactDetails.emailAddress.title", mainContact)
-      )
+      view.select("title").text() must include(messages("primaryContactDetails.emailAddress.title", mainContact))
     }
-
 
     "display section header" when {
       "Single organisation" in {
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
       }
 
       "Group organisation" in {
         val view = createView(isGroup = true)
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          "Representative member details"
-        )
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.group.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
 
       }
     }
 
     "display hint" in {
 
-      view.getElementById("value-hint").text() must include(
-        messages("primaryContactDetails.emailAddress.hint")
-      )
+      view.getElementById("value-hint").text() must include(messages("primaryContactDetails.emailAddress.hint"))
     }
 
     "display email address label" in {
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(
-        messages("primaryContactDetails.emailAddress.title", mainContact)
-      )
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.emailAddress.title", mainContact))
     }
 
     "display email address input box" in {

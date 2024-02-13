@@ -36,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
-                                                   journeyAction: JourneyAction,
-                                                   override val registrationConnector: RegistrationConnector,
-                                                   addressCaptureService: AddressCaptureService,
-                                                   mcc: MessagesControllerComponents,
-                                                   page: confirm_business_address
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  page: confirm_business_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -61,7 +61,7 @@ class ConfirmBusinessAddressController @Inject() (
         case _ =>
           orgType match {
             case Some(OVERSEAS_COMPANY_UK_BRANCH) => initialiseAddressLookup(request, forceUKAddress = false)
-            case _ => initialiseAddressLookup(request, forceUKAddress = true)
+            case _                                => initialiseAddressLookup(request, forceUKAddress = true)
           }
       }
     }
@@ -70,7 +70,7 @@ class ConfirmBusinessAddressController @Inject() (
     journeyAction.register.async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(OVERSEAS_COMPANY_UK_BRANCH) => initialiseAddressLookup(request, forceUKAddress = false)
-        case _ => initialiseAddressLookup(request, forceUKAddress = true)
+        case _                                => initialiseAddressLookup(request, forceUKAddress = true)
       }
     }
 

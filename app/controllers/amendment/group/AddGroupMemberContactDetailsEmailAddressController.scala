@@ -27,10 +27,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsEmailAddressController @Inject() (
-                                                                    journeyAction: JourneyAction,
-                                                                     mcc: MessagesControllerComponents,
-                                                                     page: member_email_address_page,
-                                                                     registrationUpdater: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: member_email_address_page,
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsEmailAddressControllerBase(journeyAction.amend, mcc, page, registrationUpdater) {
 

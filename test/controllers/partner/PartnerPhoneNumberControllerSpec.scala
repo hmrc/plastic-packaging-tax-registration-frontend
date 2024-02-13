@@ -35,16 +35,15 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   private val page = mock[partner_phone_number_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new PartnerPhoneNumberController(journeyAction = spyJourneyAction,
-                                     registrationUpdateService =
-                                       mockNewRegistrationUpdater,
-                                     mcc = mcc,
-                                     page = page
+    new PartnerPhoneNumberController(
+      journeyAction = spyJourneyAction,
+      registrationUpdateService =
+        mockNewRegistrationUpdater,
+      mcc = mcc,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -58,24 +57,18 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
 
   private def registrationWithInflightPartnerWithMissingContactName = {
     val contactDetailsWithNoName =
       aLimitedCompanyPartner.contactDetails.map(_.copy(firstName = None, lastName = None))
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithNoName))
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithNoName)))
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
     val contactDetailsWithPhoneNumber =
       aLimitedCompanyPartner.contactDetails.map(_.copy(phoneNumber = Some("12345678")))
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber))
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber)))
   }
 
   private val existingPartner = {
@@ -85,9 +78,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   }
 
   private def registrationWithExistingPartner =
-    aRegistration(
-      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner)))))
 
   "PartnerPhoneNumberController" should {
 
@@ -123,15 +114,11 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     "return 400" when {
       "user submits an invalid phone number" in {
 
-        spyJourneyAction.setReg(
-          registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber
-        )
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber)
         mockRegistrationUpdate()
 
         val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(PhoneNumber("abcdef"))
-          )
+          controller.submitNewPartner()(postRequestEncoded(PhoneNumber("abcdef")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -140,20 +127,14 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     "update inflight registration" when {
       "user submits a valid phone number" in {
 
-        spyJourneyAction.setReg(
-          registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber
-        )
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber)
         mockRegistrationUpdate()
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(PhoneNumber("12345678"))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(PhoneNumber("12345678")))
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.phoneNumber)
-        ) mustBe Some("12345678")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.phoneNumber)) mustBe Some("12345678")
       }
 
       "user submits an amendment to an existing partners phone number" in {
@@ -161,15 +142,11 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequestEncoded(PhoneNumber("987654321"))
-        )
+        val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PhoneNumber("987654321")))
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.findPartner(existingPartner.id).flatMap(
-          _.contactDetails.flatMap(_.phoneNumber)
-        ) mustBe Some("987654321")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails.flatMap(_.phoneNumber)) mustBe Some("987654321")
       }
     }
 
@@ -177,19 +154,14 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
 
-
-        intercept[RuntimeException](status(
-          controller.displayNewPartner()(FakeRequest())
-        ))
+        intercept[RuntimeException](status(controller.displayNewPartner()(FakeRequest())))
       }
 
       "user tries to display an non existent partner" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
-        ))
+        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -197,22 +169,14 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-
-        intercept[RuntimeException](status(
-          controller.submitExistingPartner("not-an-existing-partners-id")(
-            postRequestEncoded(PhoneNumber("987654321"))
-          )
-        ))
+        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(PhoneNumber("987654321")))))
       }
 
       "user tries to submit before contact name for partner has been provided" in {
 
         spyJourneyAction.setReg(registrationWithInflightPartnerWithMissingContactName)
 
-
-        intercept[RuntimeException](status(
-          controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))
-        ))
+        intercept[RuntimeException](status(controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))))
       }
 
       "user submits form and the registration update fails" in {
@@ -220,10 +184,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
 
-
-        intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))))
       }
     }
   }

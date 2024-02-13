@@ -37,11 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
-                                                       journeyAction: JourneyAction,
-                                                       override val registrationConnector: RegistrationConnector,
-                                                       emailVerificationService: EmailVerificationService,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: email_address_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  emailVerificationService: EmailVerificationService,
+  mcc: MessagesControllerComponents,
+  page: email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -60,8 +60,7 @@ class ContactDetailsEmailAddressController @Inject() (
       EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(BadRequest(buildEmailPage(formWithErrors))),
+          (formWithErrors: Form[EmailAddress]) => Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           emailAddress =>
             updateRegistration(formData = emailAddress, credId = request.authenticatedRequest.credId).flatMap {
               case Right(registration) =>
@@ -71,26 +70,19 @@ class ContactDetailsEmailAddressController @Inject() (
         )
     }
 
-  private def buildEmailPage(
-    form: Form[EmailAddress]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    page(
-      form,
-      routes.ContactDetailsEmailAddressController.submit(),
-      request.registration.isGroup
-    )
+  private def buildEmailPage(form: Form[EmailAddress])(implicit request: JourneyRequest[AnyContent]) =
+    page(form, routes.ContactDetailsEmailAddressController.submit(), request.registration.isGroup)
 
-  private def updateRegistration(formData: EmailAddress, credId: String)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: EmailAddress, credId: String)(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     emailVerificationService.getStatus(credId).flatMap {
       case Right(emailStatusResponse) =>
         emailStatusResponse match {
           case Some(response) =>
             update { registration =>
-              registration.copy(primaryContactDetails =
-                                  updatedPrimaryContactDetails(formData, registration),
-                                metaData = registration.metaData.add(response.emails)
+              registration.copy(
+                primaryContactDetails =
+                  updatedPrimaryContactDetails(formData, registration),
+                metaData = registration.metaData.add(response.emails)
               )
             }
           case None =>
@@ -106,19 +98,14 @@ class ContactDetailsEmailAddressController @Inject() (
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
 
-  private def updatedJourneyId(registration: Registration, journeyId: String)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] = {
+  private def updatedJourneyId(registration: Registration, journeyId: String)(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
     val primaryContact = registration.primaryContactDetails.copy(journeyId = Some(journeyId))
     update {
       registration => registration.copy(primaryContactDetails = primaryContact)
     }
   }
 
-  private def saveAndContinue(registration: Registration, credId: String)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[Result] =
+  private def saveAndContinue(registration: Registration, credId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
     LocalEmailVerification.getPrimaryEmailStatus(registration) match {
       case VERIFIED =>
         Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
@@ -129,19 +116,10 @@ class ContactDetailsEmailAddressController @Inject() (
       case other => throw new IllegalStateException(s"Invalid email verification status: $other")
     }
 
-  private def createEmailVerification(credId: String, email: String)(implicit
-    hc: HeaderCarrier
-  ): Future[String] =
-    this.emailVerificationService.sendVerificationCode(
-      email,
-      credId,
-      routes.ContactDetailsEmailAddressController.displayPage().url
-    )
+  private def createEmailVerification(credId: String, email: String)(implicit hc: HeaderCarrier): Future[String] =
+    this.emailVerificationService.sendVerificationCode(email, credId, routes.ContactDetailsEmailAddressController.displayPage().url)
 
-  private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[Result] =
+  private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
     registration.primaryContactDetails.email match {
       case Some(emailAddress) =>
         createEmailVerification(credId, emailAddress).flatMap { journeyId =>

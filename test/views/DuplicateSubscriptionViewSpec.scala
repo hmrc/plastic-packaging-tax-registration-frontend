@@ -44,9 +44,7 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
-      )
+      view.select("p.govuk-body").text() must include(messages("duplicateSubscription.detail", "Plastic Packaging Ltd"))
     }
   }
 

@@ -31,21 +31,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class UserEnrolmentConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class UserEnrolmentConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(this.getClass)
 
-  def enrol(
-    payload: UserEnrolmentDetails
-  )(implicit hc: HeaderCarrier): Future[UserEnrolmentResponse] = {
+  def enrol(payload: UserEnrolmentDetails)(implicit hc: HeaderCarrier): Future[UserEnrolmentResponse] = {
     val timer = metrics.defaultRegistry.timer(UserEnrolmentTimer).time()
-    httpClient.POST[UserEnrolmentRequest, HttpResponse](appConfig.pptEnrolmentUrl,
-                                                        payload.toUserEnrolmentRequest
-    )
+    httpClient.POST[UserEnrolmentRequest, HttpResponse](appConfig.pptEnrolmentUrl, payload.toUserEnrolmentRequest)
       .andThen { case _ => timer.stop() }
       .map {
         enrolmentResponse =>
@@ -56,19 +48,13 @@ class UserEnrolmentConnector @Inject() (
             Try(enrolmentResponse.json.as[UserEnrolmentSuccessResponse]) match {
               case Success(userEnrolmentSuccessResponse) => userEnrolmentSuccessResponse
               case Failure(e) =>
-                throw new IllegalStateException(
-                  s"Unexpected successful user enrolment response - ${e.getMessage}",
-                  e
-                )
+                throw new IllegalStateException(s"Unexpected successful user enrolment response - ${e.getMessage}", e)
             }
           else
             Try(enrolmentResponse.json.as[UserEnrolmentFailedResponse]) match {
               case Success(userEnrolmentFailedResponse) => userEnrolmentFailedResponse
               case Failure(e) =>
-                throw new IllegalStateException(
-                  s"Unexpected failed user enrolment response - ${e.getMessage}",
-                  e
-                )
+                throw new IllegalStateException(s"Unexpected failed user enrolment response - ${e.getMessage}", e)
             }
       }
   }

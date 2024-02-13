@@ -28,8 +28,7 @@ import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.deregistration.deregistration_submitted_page
 
-class DeregistrationSubmittedControllerSpec
-    extends ControllerSpec with MockDeregistrationDetailRepository with PptTestData {
+class DeregistrationSubmittedControllerSpec extends ControllerSpec with MockDeregistrationDetailRepository with PptTestData {
 
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[deregistration_submitted_page]
@@ -41,7 +40,6 @@ class DeregistrationSubmittedControllerSpec
   "Deregistration Submitted Controller" should {
     "display page" when {
       "user authenticated" in {
-
 
         val resp = deregistrationSubmittedController.displayPage()(FakeRequest())
 

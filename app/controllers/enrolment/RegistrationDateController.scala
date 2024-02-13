@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationDateController @Inject() (
-                                             authenticate: RegistrationAuthAction,
-                                             mcc: MessagesControllerComponents,
-                                             cache: UserEnrolmentDetailsRepository,
-                                             page: registration_date_page
+  authenticate: RegistrationAuthAction,
+  mcc: MessagesControllerComponents,
+  cache: UserEnrolmentDetailsRepository,
+  page: registration_date_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -55,8 +55,7 @@ class RegistrationDateController @Inject() (
         RegistrationDate.form()
           .bindFromRequest()
           .fold(
-            (formWithErrors: Form[RegistrationDate]) =>
-              Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
+            (formWithErrors: Form[RegistrationDate]) => Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
             registrationDate =>
               cache.update(data => data.copy(registrationDate = Some(registrationDate))).map {
                 _ => Redirect(routes.CheckAnswersController.displayPage())

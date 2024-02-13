@@ -35,21 +35,20 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val page = mock[partner_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new PartnerNameController(journeyAction = spyJourneyAction,
-                              registrationUpdater =
-                                mockNewRegistrationUpdater,
-                              config,
-                              soleTraderGrsConnector = mockSoleTraderGrsConnector,
-                              ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-                              mockPartnershipGrsConnector,
-                              mockRegisteredSocietyGrsConnector,
-                              mcc = mcc,
-                              page = page
+    new PartnerNameController(
+      journeyAction = spyJourneyAction,
+      registrationUpdater =
+        mockNewRegistrationUpdater,
+      config,
+      soleTraderGrsConnector = mockSoleTraderGrsConnector,
+      ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+      mockPartnershipGrsConnector,
+      mockRegisteredSocietyGrsConnector,
+      mcc = mcc,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -63,22 +62,16 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aPartnershipPartner)
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aPartnershipPartner))
 
   private def registrationWithPartnershipDetailsAndInflightIncorporatedPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
 
   private val existingPartner =
     aPartnershipPartner
 
   private def registrationWithExistingPartner =
-    aRegistration(
-      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner)))))
 
   "PartnerNameController" should {
 
@@ -109,15 +102,11 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockRegistrationUpdate()
         mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(PartnerName("Test Partner"))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
-        modifiedRegistration.inflightPartner.flatMap(
-          _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("Test Partner")
+        modifiedRegistration.inflightPartner.flatMap(_.partnerPartnershipDetails.flatMap(_.partnershipName)) mustBe Some("Test Partner")
       }
 
       "user submits an amendment to an existing partners name" in {
@@ -126,15 +115,11 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockRegistrationUpdate()
         mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
-        val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequestEncoded(PartnerName("Test Partner"))
-        )
+        val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PartnerName("Test Partner")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
-        modifiedRegistration.findPartner(existingPartner.id).flatMap(
-          _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("Test Partner")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.partnerPartnershipDetails.flatMap(_.partnershipName)) mustBe Some("Test Partner")
       }
     }
 
@@ -144,9 +129,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(PartnerName(""))
-          )
+          controller.submitNewPartner()(postRequestEncoded(PartnerName("")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -155,9 +138,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(PartnerName("abced" * 40))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(PartnerName("abced" * 40)))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -169,10 +150,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-
-        intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
-        ))
+        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -180,16 +158,12 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        intercept[RuntimeException](status(
-          controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(PartnerName("Amended name"))
-        )))
+        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(PartnerName("Amended name")))))
       }
 
       "user tries to set a name on a partner with a type which has a GRS provided name" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
-
 
         intercept[RuntimeException](status(controller.displayNewPartner()(FakeRequest())))
       }
@@ -199,10 +173,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
         mockRegistrationUpdate()
 
-
-        intercept[RuntimeException](status(
-          controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
-        ))
+        intercept[RuntimeException](status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))))
       }
 
       "user submits form and the registration update fails" in {
@@ -210,10 +181,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-
-        intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))))
       }
     }
   }

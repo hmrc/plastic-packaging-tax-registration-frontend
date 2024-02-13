@@ -50,12 +50,12 @@ import views.html.{duplicate_subscription_page, review_registration_page}
 import java.time.LocalDate
 import java.util.UUID
 
-class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks with MetricsMocks{
+class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks with MetricsMocks {
   private val mockReviewRegistrationPage    = mock[review_registration_page]
   private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
   private val mcc                           = stubMessagesControllerComponents()
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
-  val mockAuditor: Auditor = mock[Auditor]
+  val mockAuditor: Auditor                  = mock[Auditor]
 
   private val controller =
     new ReviewRegistrationController(
@@ -93,7 +93,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     startDate = Some(OldDate.of(2022, 4, 1)),
     isLiable = Some(true),
     newLiabilityFinished = Some(NewLiability),
-    newLiabilityStarted = Some(NewLiability))
+    newLiabilityStarted = Some(NewLiability)
+  )
 
   "Review registration controller" should {
 
@@ -102,17 +103,19 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       ".displayPage is invoked with a uk company" in {
         val registration: Registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(UK_COMPANY),
-                                incorporationDetails =
-                                  Some(
-                                    IncorporationDetails(companyNumber = "123456",
-                                                         companyName = "NewPlastics",
-                                                         ctutr = Some("1890894"),
-                                                         companyAddress = testCompanyAddress,
-                                                         registration = Some(registrationDetails)
-                                    )
-                                  ),
-                                subscriptionStatus = Some(NOT_SUBSCRIBED)
+            OrganisationDetails(
+              organisationType = Some(UK_COMPANY),
+              incorporationDetails =
+                Some(
+                  IncorporationDetails(
+                    companyNumber = "123456",
+                    companyName = "NewPlastics",
+                    ctutr = Some("1890894"),
+                    companyAddress = testCompanyAddress,
+                    registration = Some(registrationDetails)
+                  )
+                ),
+              subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
@@ -122,21 +125,12 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
-        verify(mockReviewRegistrationPage).apply(
-          ArgumentMatchers.eq(registration))(
-          any(),
-          any()
-        )
+        verify(mockReviewRegistrationPage).apply(ArgumentMatchers.eq(registration))(any(), any())
       }
 
       ".displayPage is invoked with a sole trader" in {
         val registration = aRegistration(
-          withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                                soleTraderDetails = Some(soleTraderDetails),
-                                subscriptionStatus = Some(NOT_SUBSCRIBED)
-            )
-          )
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = Some(soleTraderDetails), subscriptionStatus = Some(NOT_SUBSCRIBED)))
         )
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
@@ -149,13 +143,14 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       ".displayPage is invoked with a partnership" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails = Some(
-                                  generalPartnershipDetails.copy(partners =
-                                    Seq(aLimitedCompanyPartner, aSoleTraderPartner)
-                                  )
-                                ),
-                                subscriptionStatus = Some(NOT_SUBSCRIBED)
+            OrganisationDetails(
+              organisationType = Some(PARTNERSHIP),
+              partnershipDetails = Some(
+                generalPartnershipDetails.copy(partners =
+                  Seq(aLimitedCompanyPartner, aSoleTraderPartner)
+                )
+              ),
+              subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
@@ -174,9 +169,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       "the registration contains a partial group member" in {
 
         val registrationWitPartialGroupMembers: Registration =
-          createRegistrationWithGroupMember(groupMember,
-            groupMember.copy(customerIdentification1 = "")
-          )
+          createRegistrationWithGroupMember(groupMember, groupMember.copy(customerIdentification1 = ""))
 
         val expectedReg: Registration = registrationWitPartialGroupMembers.copy(groupDetail =
           Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
@@ -227,11 +220,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
       }
-      
+
       "the user has not answered the new liability questions" in {
-        val oldLiability = completedLiabilityDetails.copy(
-          newLiabilityFinished = None,
-          newLiabilityStarted = None)
+        val oldLiability = completedLiabilityDetails.copy(newLiabilityFinished = None, newLiabilityStarted = None)
         spyJourneyAction.setReg(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
         mockRegistrationUpdate()
 
@@ -245,11 +236,12 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "the review registration details form is submitted" in {
 
-        val registrations = Table("Registration",
-                                  aCompletedUkCompanyRegistration,
-                                  aCompletedSoleTraderRegistration,
-                                  aCompletedGeneralPartnershipRegistration,
-                                  aCompletedScottishPartnershipRegistration
+        val registrations = Table(
+          "Registration",
+          aCompletedUkCompanyRegistration,
+          aCompletedSoleTraderRegistration,
+          aCompletedGeneralPartnershipRegistration,
+          aCompletedScottishPartnershipRegistration
         )
 
         var submissionCount = 0
@@ -270,16 +262,12 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
           )(any[HeaderCarrier])
 
-          metricsMock.defaultRegistry.counter(
-            "ppt.registration.success.submission.counter"
-          ).getCount mustBe submissionCount
+          metricsMock.defaultRegistry.counter("ppt.registration.success.submission.counter").getCount mustBe submissionCount
         }
       }
 
       "the user has not answered the new liability questions" in {
-        val oldLiability = completedLiabilityDetails.copy(
-          newLiabilityFinished = None,
-          newLiabilityStarted = None)
+        val oldLiability = completedLiabilityDetails.copy(newLiabilityFinished = None, newLiabilityStarted = None)
         spyJourneyAction.setReg(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
         mockRegistrationUpdate()
 
@@ -297,11 +285,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             .copy(organisationDetails =
               aCompletedUkCompanyRegistration.organisationDetails.copy(incorporationDetails =
                 Some(
-                  aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.copy(
-                    registration =
-                      aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.registration.map {
-                        reg => reg.copy(registeredBusinessPartnerId = None)
-                      }
+                  aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.copy(registration =
+                    aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.registration.map {
+                      reg => reg.copy(registeredBusinessPartnerId = None)
+                    }
                   )
                 )
               )
@@ -324,19 +311,14 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
           aCompletedUkCompanyRegistration.metaData.copy(nrsDetails =
-            Some(
-              NrsDetails(nrSubsmissionId = subscriptionCreateOrUpdate.nrsSubmissionId,
-                         failureReason = None
-              )
-            )
+            Some(NrsDetails(nrSubsmissionId = subscriptionCreateOrUpdate.nrsSubmissionId, failureReason = None))
           )
         )
 
-        verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(completedRegistrationWithNrsDetail),
-          ArgumentMatchers.eq(Some("XXPPTP123456789")),
+        verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(ArgumentMatchers.eq(completedRegistrationWithNrsDetail), ArgumentMatchers.eq(Some("XXPPTP123456789")), any())(
+          any(),
           any()
-        )(any(), any())
+        )
       }
     }
 
@@ -349,34 +331,22 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.NotableErrorController.subscriptionFailure().url
-        )
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.subscriptionFailure().url)
 
-        metricsMock.defaultRegistry.counter(
-          "ppt.registration.failed.submission.counter"
-        ).getCount mustBe 1
+        metricsMock.defaultRegistry.counter("ppt.registration.failed.submission.counter").getCount mustBe 1
       }
 
       "user submits form and the submission fails with an error response" in {
         val registration = aCompletedUkCompanyRegistration
         spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
-          SubscriptionCreateOrUpdateResponseFailure(
-            List(
-              EisError("INVALID_SAFEID",
-                       "The remote endpoint has indicated that the SAFEID provided is invalid."
-              )
-            )
-          )
+          SubscriptionCreateOrUpdateResponseFailure(List(EisError("INVALID_SAFEID", "The remote endpoint has indicated that the SAFEID provided is invalid.")))
         )
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.NotableErrorController.subscriptionFailure().url
-        )
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.subscriptionFailure().url)
       }
 
       "user submits form and the enrolment initiation fails" in {
@@ -395,83 +365,85 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
-            List(
-              EisError("ACTIVE_SUBSCRIPTION_EXISTS",
-                       "The remote endpoint has indicated that Business Partner already has active subscription for this regime."
-              )
-            )
+            List(EisError("ACTIVE_SUBSCRIPTION_EXISTS", "The remote endpoint has indicated that Business Partner already has active subscription for this regime."))
           )
         )
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.NotableErrorController.duplicateRegistration().url
-        )
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.duplicateRegistration().url)
       }
     }
   }
 
   private def aCompletedUkCompanyRegistration =
-    aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()),
-                  withLiabilityDetails(completedLiabilityDetails),
-                  withPrimaryContactDetails(primaryContactDetails),
-                  withMetaData(MetaData(registrationCompleted = true))
+    aRegistration(
+      withOrganisationDetails(registeredUkCompanyOrgDetails()),
+      withLiabilityDetails(completedLiabilityDetails),
+      withPrimaryContactDetails(primaryContactDetails),
+      withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedSoleTraderRegistration =
-    aRegistration(withOrganisationDetails(registeredSoleTraderOrgDetails()),
-                  withLiabilityDetails(completedLiabilityDetails),
-                  withPrimaryContactDetails(primaryContactDetails),
-                  withMetaData(MetaData(registrationCompleted = true))
+    aRegistration(
+      withOrganisationDetails(registeredSoleTraderOrgDetails()),
+      withLiabilityDetails(completedLiabilityDetails),
+      withPrimaryContactDetails(primaryContactDetails),
+      withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedGeneralPartnershipRegistration =
-    aRegistration(withOrganisationDetails(registeredGeneralPartnershipOrgDetails()),
-                  withLiabilityDetails(completedLiabilityDetails),
-                  withPrimaryContactDetails(primaryContactDetails),
-                  withMetaData(MetaData(registrationCompleted = true))
+    aRegistration(
+      withOrganisationDetails(registeredGeneralPartnershipOrgDetails()),
+      withLiabilityDetails(completedLiabilityDetails),
+      withPrimaryContactDetails(primaryContactDetails),
+      withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedScottishPartnershipRegistration =
-    aRegistration(withOrganisationDetails(registeredScottishPartnershipOrgDetails()),
-                  withLiabilityDetails(completedLiabilityDetails),
-                  withPrimaryContactDetails(primaryContactDetails),
-                  withMetaData(MetaData(registrationCompleted = true))
+    aRegistration(
+      withOrganisationDetails(registeredScottishPartnershipOrgDetails()),
+      withLiabilityDetails(completedLiabilityDetails),
+      withPrimaryContactDetails(primaryContactDetails),
+      withMetaData(MetaData(registrationCompleted = true))
     )
 
-  private val primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
-                                                            jobTitle = Some("Developer"),
-                                                            phoneNumber = Some("0203 4567 890"),
-                                                            email = Some("test@test.com"),
-                                                            address = Some(
-                                                              Address(addressLine1 =
-                                                                        "2 Scala Street",
-                                                                      addressLine2 = Some("Soho"),
-                                                                      addressLine3 = None,
-                                                                      townOrCity = "London",
-                                                                      maybePostcode = Some("W1T 2HN"),
-                                                                      countryCode = GB
-                                                              )
-                                                            )
+  private val primaryContactDetails = PrimaryContactDetails(
+    name = Some("Jack Gatsby"),
+    jobTitle = Some("Developer"),
+    phoneNumber = Some("0203 4567 890"),
+    email = Some("test@test.com"),
+    address = Some(
+      Address(
+        addressLine1 =
+          "2 Scala Street",
+        addressLine2 = Some("Soho"),
+        addressLine3 = None,
+        townOrCity = "London",
+        maybePostcode = Some("W1T 2HN"),
+        countryCode = GB
+      )
+    )
   )
 
   def createRegistrationWithGroupMember(members: GroupMember*): Registration =
     aRegistration(
       withOrganisationDetails(
-        OrganisationDetails(organisationType = Some(UK_COMPANY),
-                            incorporationDetails =
-                              Some(
-                                IncorporationDetails(companyNumber = "123456",
-                                                     companyName = "NewPlastics",
-                                                     ctutr = Some("1890894"),
-                                                     companyAddress = testCompanyAddress,
-                                                     registration =
-                                                       Some(registrationDetails)
-                                )
-                              ),
-                            subscriptionStatus = Some(NOT_SUBSCRIBED)
+        OrganisationDetails(
+          organisationType = Some(UK_COMPANY),
+          incorporationDetails =
+            Some(
+              IncorporationDetails(
+                companyNumber = "123456",
+                companyName = "NewPlastics",
+                ctutr = Some("1890894"),
+                companyAddress = testCompanyAddress,
+                registration =
+                  Some(registrationDetails)
+              )
+            ),
+          subscriptionStatus = Some(NOT_SUBSCRIBED)
         )
       ),
       withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = members)))

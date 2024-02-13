@@ -51,14 +51,12 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
 
-
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
 
     }
-
 
     "redirect to IsUkAddress page " when {
 

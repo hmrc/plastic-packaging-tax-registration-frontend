@@ -44,13 +44,12 @@ import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpecLike with MockRegistrationConnector with MockSubscriptionConnector with MockitoSugar with Matchers
-    with GuiceOneAppPerSuite with BeforeAndAfterEach with DefaultAwaitTimeout
-      with MockConnectors with PptTestData with Injecting {
+    extends AnyWordSpecLike with MockRegistrationConnector with MockSubscriptionConnector with MockitoSugar with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach
+    with DefaultAwaitTimeout with MockConnectors with PptTestData with Injecting {
 
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ec: ExecutionContext                                           = ExecutionContext.global
   def getAuthenticatedRequest[A](request: Request[A]): RegistrationRequest[A] = RegistrationRequest[A](request, IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)))
-  val spyJourneyAction: FakeJourneyAction.type = spy(FakeJourneyAction)
+  val spyJourneyAction: FakeJourneyAction.type                                = spy(FakeJourneyAction)
 
   object FakeBasicAuthAction extends BasicAuthAction {
     override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
@@ -82,35 +81,30 @@ trait ControllerSpec
   object FakeJourneyAction extends JourneyAction {
 
     var registration: Option[Registration] = None
-    def setReg(reg: Registration): Unit = registration = Some(reg)
-    def reset(): Unit = registration = None
+    def setReg(reg: Registration): Unit    = registration = Some(reg)
+    def reset(): Unit                      = registration = None
 
-    private def ab = new ActionBuilder[JourneyRequest, AnyContent] {
-      override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
+    private def ab =
+      new ActionBuilder[JourneyRequest, AnyContent] {
+        override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
-      override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
-        block(JourneyRequest(getAuthenticatedRequest(request), registration.getOrElse(fail("registration is not set in FakeJourneyAction"))))
+        override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
+          block(JourneyRequest(getAuthenticatedRequest(request), registration.getOrElse(fail("registration is not set in FakeJourneyAction"))))
 
-      override protected def executionContext: ExecutionContext = ec
-    }
+        override protected def executionContext: ExecutionContext = ec
+      }
 
     override def register: ActionBuilder[JourneyRequest, AnyContent] = ab
-    override def amend: ActionBuilder[JourneyRequest, AnyContent] = ab
+    override def amend: ActionBuilder[JourneyRequest, AnyContent]    = ab
   }
-
-
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  def authRequest(
-    headers: Headers = Headers(),
-    user: SignedInUser = PptTestData.newUser("123")
-  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
+  def authRequest(headers: Headers = Headers(), user: SignedInUser = PptTestData.newUser("123")): AuthenticatedRequest[AnyContentAsEmpty.type] =
     authRequest(FakeRequest().withHeaders(headers))
 
   def authRequest[A](fakeRequest: FakeRequest[A]) =
     RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
-
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
@@ -123,17 +117,11 @@ trait ControllerSpec
   protected def postRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "")
 
-  protected def postRequestEncoded(
-    form: AnyRef,
-    sessionId: String = "123"
-  ): Request[AnyContentAsFormUrlEncoded] =
+  protected def postRequestEncoded(form: AnyRef, sessionId: String = "123"): Request[AnyContentAsFormUrlEncoded] =
     postRequestTuplesEncoded(getTuples(form), sessionId)
 
   // This function exists because getTuples used in the above may not always encode values correctly
-  protected def postRequestTuplesEncoded(
-    formTuples: Seq[(String, String)],
-    sessionId: String = "123"
-  ): Request[AnyContentAsFormUrlEncoded] =
+  protected def postRequestTuplesEncoded(formTuples: Seq[(String, String)], sessionId: String = "123"): Request[AnyContentAsFormUrlEncoded] =
     postRequest
       .withFormUrlEncodedBody(formTuples: _*)
       .withCSRFToken
@@ -158,17 +146,12 @@ trait ControllerSpec
       case _         => ""
     }
 
-  protected def postJsonRequestEncoded(
-    body: (String, String)*
-  ): Request[AnyContentAsFormUrlEncoded] =
+  protected def postJsonRequestEncoded(body: (String, String)*): Request[AnyContentAsFormUrlEncoded] =
     postRequest
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
 
-  protected def postJsonRequestEncodedFormAction(
-    body: Seq[(String, String)],
-    sessionId: String = "123"
-  ): Request[AnyContentAsFormUrlEncoded] =
+  protected def postJsonRequestEncodedFormAction(body: Seq[(String, String)], sessionId: String = "123"): Request[AnyContentAsFormUrlEncoded] =
     postRequestTuplesEncoded(body, sessionId)
 
 }

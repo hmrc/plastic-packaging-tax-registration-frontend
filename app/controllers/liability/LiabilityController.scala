@@ -20,8 +20,7 @@ import play.api.mvc.MessagesControllerComponents
 import models.registration.LiabilityDetails
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-abstract class LiabilityController(mcc: MessagesControllerComponents)
-    extends FrontendController(mcc) {
+abstract class LiabilityController(mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   protected val deMinimisKg: Long = LiabilityDetails.minimumLiabilityWeightKg
 }

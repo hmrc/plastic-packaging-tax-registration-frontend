@@ -26,10 +26,7 @@ import repositories.AddressCaptureDetailRepository
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-case class AddressCaptureDetail(
-  config: AddressCaptureConfig,
-  capturedAddress: Option[Address] = None
-)
+case class AddressCaptureDetail(config: AddressCaptureConfig, capturedAddress: Option[Address] = None)
 
 object AddressCaptureDetail {
   implicit val format: OFormat[AddressCaptureDetail] = Json.format[AddressCaptureDetail]
@@ -50,20 +47,12 @@ object AddressCaptureConfig {
 }
 
 @Singleton
-class AddressCaptureService @Inject() (
-  addressCaptureDetailRepository: AddressCaptureDetailRepository
-)(implicit ec: ExecutionContext) {
+class AddressCaptureService @Inject() (addressCaptureDetailRepository: AddressCaptureDetailRepository)(implicit ec: ExecutionContext) {
 
-  def initAddressCapture(
-    config: AddressCaptureConfig
-  )(implicit request: AuthenticatedRequest[Any]): Future[Call] =
-    addressCaptureDetailRepository.put(AddressCaptureDetail(config)).map(
-      _ => routes.AddressCaptureController.initialiseAddressCapture()
-    )
+  def initAddressCapture(config: AddressCaptureConfig)(implicit request: AuthenticatedRequest[Any]): Future[Call] =
+    addressCaptureDetailRepository.put(AddressCaptureDetail(config)).map(_ => routes.AddressCaptureController.initialiseAddressCapture())
 
-  def getAddressCaptureDetails()(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[Option[AddressCaptureDetail]] =
+  def getAddressCaptureDetails()(implicit request: AuthenticatedRequest[Any]): Future[Option[AddressCaptureDetail]] =
     addressCaptureDetailRepository.get()
 
   def getCapturedAddress()(implicit request: AuthenticatedRequest[Any]): Future[Option[Address]] =
@@ -72,8 +61,6 @@ class AddressCaptureService @Inject() (
     }
 
   def setCapturedAddress(capturedAddress: Address)(implicit request: AuthenticatedRequest[Any]) =
-    addressCaptureDetailRepository.update(
-      addressCaptureDetails => addressCaptureDetails.copy(capturedAddress = Some(capturedAddress))
-    )
+    addressCaptureDetailRepository.update(addressCaptureDetails => addressCaptureDetails.copy(capturedAddress = Some(capturedAddress)))
 
 }

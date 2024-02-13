@@ -41,8 +41,7 @@ import views.html.partner.{partner_email_address_page, partner_job_title_page, p
 
 import scala.concurrent.Future
 
-class AmendPartnerContactDetailsControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with TableDrivenPropertyChecks with Injecting {
+class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with TableDrivenPropertyChecks with Injecting {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -72,7 +71,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val otherPartnerPhoneNumber  = otherPartner.contactDetails.get.phoneNumber.get
 
   private val isNominated = true
-  private val other = false
+  private val other       = false
 
   private val controller = new AmendPartnerContactDetailsController(
     mcc = mcc,
@@ -184,7 +183,8 @@ class AmendPartnerContactDetailsControllerSpec
             verify(mockContactPhoneNumberPage).apply(
               formCaptor.capture(),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(nominatedPartner.id)),
-              ArgumentMatchers.eq(nominatedPartner.name), any()
+              ArgumentMatchers.eq(nominatedPartner.name),
+              any()
             )(any(), any())
             formCaptor.getValue.value mustBe Some(PhoneNumber(nominatedPartnerPhoneNumber))
           }
@@ -198,7 +198,8 @@ class AmendPartnerContactDetailsControllerSpec
             verify(mockContactPhoneNumberPage).apply(
               formCaptor.capture(),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(otherPartner.id)),
-              ArgumentMatchers.eq(otherPartner.name), any()
+              ArgumentMatchers.eq(otherPartner.name),
+              any()
             )(any(), any())
             formCaptor.getValue.value mustBe Some(PhoneNumber(otherPartnerPhoneNumber))
           }
@@ -323,21 +324,12 @@ class AmendPartnerContactDetailsControllerSpec
 
     "update subscription and redirect to registration amendment page" when {
       forAll(updateSubscriptionTestData) {
-        (
-          testName: String,
-          _,
-          createValidForm: () => AnyRef,
-          call: Request[AnyContent] => Future[Result],
-          test: Registration => scalatest.Assertion,
-          redirect: () => Call,
-          _
-        ) =>
+        (testName: String, _, createValidForm: () => AnyRef, call: Request[AnyContent] => Future[Result], test: Registration => scalatest.Assertion, redirect: () => Call, _) =>
           s"$testName updated" in {
             val resp = call(postRequestEncoded(form = createValidForm(), sessionId = "123"))
 
             status(resp) mustBe SEE_OTHER
             redirectLocation(resp) mustBe Some(redirect().url)
-
 
             verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
             test(getUpdatedRegistrationMethod().apply(partnershipRegistration))
@@ -384,9 +376,7 @@ class AmendPartnerContactDetailsControllerSpec
         inMemoryRegistrationAmendmentRepository.put(partnershipRegistration)
         // Email verification will check if this address is already verified; trying to let the user through with no
         // friction if we already know this address
-        when(mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())).thenReturn(
-          Future.successful(false)
-        )
+        when(mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())).thenReturn(Future.successful(false))
         // Email verification will be called to setup an email verification journey for the new email address
         when(
           mockEmailVerificationService.sendVerificationCode(
@@ -409,10 +399,7 @@ class AmendPartnerContactDetailsControllerSpec
 
       "user is prompted to enter verification code for nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(
-            journeyId = Some("email-verification-journey-id"),
-            prospectiveEmail = Some("verified-amended-email@localhost")
-          )
+          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
 
         spyJourneyAction.setReg(
           partnershipRegistration.copy(primaryContactDetails =
@@ -428,10 +415,7 @@ class AmendPartnerContactDetailsControllerSpec
 
       "user submits correct email verification code for nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(
-            journeyId = Some("email-verification-journey-id"),
-            prospectiveEmail = Some("verified-amended-email@localhost")
-          )
+          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
         spyJourneyAction.setReg(
           partnershipRegistration.copy(primaryContactDetails =
             primaryContactDetailsWithEmailVerificationJourney
@@ -456,10 +440,7 @@ class AmendPartnerContactDetailsControllerSpec
 
       "user is prompted for confirm verified nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(
-            journeyId = Some("email-verification-journey-id"),
-            prospectiveEmail = Some("verified-amended-email@localhost")
-          )
+          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
         spyJourneyAction.setReg(
           partnershipRegistration.copy(primaryContactDetails =
             primaryContactDetailsWithEmailVerificationJourney
@@ -474,10 +455,7 @@ class AmendPartnerContactDetailsControllerSpec
 
       "nominated partner verified and confirmed email address is updated" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(
-            journeyId = Some("email-verification-journey-id"),
-            prospectiveEmail = Some("verified-amended-email@localhost")
-          )
+          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
         val reg = partnershipRegistration.copy(primaryContactDetails =
           primaryContactDetailsWithEmailVerificationJourney
         )
@@ -492,9 +470,7 @@ class AmendPartnerContactDetailsControllerSpec
         status(resp) mustBe SEE_OTHER
 
         val updatedRegistration = getUpdatedRegistrationMethod().apply(reg)
-        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some(
-          "verified-amended-email@localhost"
-        )
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some("verified-amended-email@localhost")
       }
 
       "nominated partner job title is updated" in {

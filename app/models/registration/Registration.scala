@@ -29,17 +29,17 @@ import views.viewmodels.TaskStatus
 import java.time.LocalDate
 
 case class Registration(
-                         id: String,
-                         dateOfRegistration: Option[LocalDate] = Some(LocalDate.now()),
-                         incorpJourneyId: Option[String] = None,
-                         registrationType: Option[RegType] = None,
-                         groupDetail: Option[GroupDetail] = None,
-                         liabilityDetails: LiabilityDetails = LiabilityDetails(),
-                         primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
-                         organisationDetails: OrganisationDetails = OrganisationDetails(),
-                         metaData: MetaData = MetaData(),
-                         userHeaders: Option[Map[String, String]] = None
-                       ) {
+  id: String,
+  dateOfRegistration: Option[LocalDate] = Some(LocalDate.now()),
+  incorpJourneyId: Option[String] = None,
+  registrationType: Option[RegType] = None,
+  groupDetail: Option[GroupDetail] = None,
+  liabilityDetails: LiabilityDetails = LiabilityDetails(),
+  primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
+  organisationDetails: OrganisationDetails = OrganisationDetails(),
+  metaData: MetaData = MetaData(),
+  userHeaders: Option[Map[String, String]] = None
+) {
 
   def clearAddressFromGrs =
     copy(organisationDetails = organisationDetails.clearGrsStuff)
@@ -67,7 +67,7 @@ case class Registration(
       TaskStatus.CannotStartYet
 
   def numberOfCompletedSections: Int = {
-   val sections = Array(
+    val sections = Array(
       isLiabilityDetailsComplete,
       isCompanyDetailsComplete,
       !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
@@ -75,7 +75,7 @@ case class Registration(
       isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
       isRegistrationComplete
     )
-      sections.count(isComplete => isComplete)
+    sections.count(isComplete => isComplete)
   }
 
   def isGroup: Boolean = registrationType.contains(RegType.GROUP)
@@ -89,7 +89,7 @@ case class Registration(
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)) ||
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)) ||
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP))
-        )
+      )
 
   def numberOfSections: Int = if (isGroup) 5 else 4
 
@@ -102,11 +102,10 @@ case class Registration(
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
-  def companyDetailsStatus: TaskStatus = {
+  def companyDetailsStatus: TaskStatus =
     if (organisationDetails.status == TaskStatus.NotStarted && !isLiabilityDetailsComplete)
       TaskStatus.CannotStartYet
     else organisationDetails.status
-  }
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
@@ -260,14 +259,13 @@ case class Registration(
     organisationDetails.partnershipDetails.exists(_.isNominatedPartner(partnerId))
 
   def isNominatedPartnerOrFirstInflightPartner(partner: Partner) = {
-    val isTheNominatedPartner = nominatedPartner.exists(_.id == partner.id)
+    val isTheNominatedPartner  = nominatedPartner.exists(_.id == partner.id)
     val isFirstInflightPartner = organisationDetails.partnershipDetails.forall(_.partners.isEmpty)
     isTheNominatedPartner || isFirstInflightPartner
   }
 
-  def hasOldLiabilityQuestions: Boolean = {
+  def hasOldLiabilityQuestions: Boolean =
     liabilityDetails.newLiabilityFinished.isEmpty || liabilityDetails.newLiabilityStarted.isEmpty
-  }
 
   def clearOldLiabilityAnswers: Registration = this.copy(liabilityDetails = liabilityDetails.clearOldLiabilityAnswers)
 

@@ -51,7 +51,6 @@ class ConfirmationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
 
-
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
@@ -65,7 +64,6 @@ class ConfirmationControllerSpec extends ControllerSpec {
       }
 
     }
-
 
   }
 

@@ -42,9 +42,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     page = page
   )
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetails))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,12 +52,8 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     mockRegistrationUpdate()
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
 
-    when(config.generalPartnershipJourneyUrl).thenReturn(
-      "/general-partnership-grs-journey-creation"
-    )
-    when(config.scottishPartnershipJourneyUrl).thenReturn(
-      "/scottish-partnership-grs-journey-creation"
-    )
+    when(config.generalPartnershipJourneyUrl).thenReturn("/general-partnership-grs-journey-creation")
+    when(config.scottishPartnershipJourneyUrl).thenReturn("/scottish-partnership-grs-journey-creation")
   }
 
   "Partnership Name Controller" should {
@@ -71,13 +65,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           contentAsString(resp) mustBe "Partnership name capture"
         }
         "registration does contain partnership name" in {
-          spyJourneyAction.setReg(
-            aRegistration(
-              withPartnershipDetails(
-                Some(generalPartnershipDetails.copy(partnershipName = Some("Partners in Plastics")))
-              )
-            )
-          )
+          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partnershipName = Some("Partners in Plastics"))))))
 
           val resp = controller.displayPage()(FakeRequest())
 
@@ -88,26 +76,14 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     "update partnership name" in {
 
+      await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
 
-      await(
-        controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"))
-        )
-      )
-
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipName mustBe Some(
-        "Partners in Plastic"
-      )
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipName mustBe Some("Partners in Plastic")
     }
 
     "redirect to general partnership grs journey" in {
 
-
-      await(
-        controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"))
-        )
-      )
+      await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
@@ -118,11 +94,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))))
 
-      await(
-        controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"))
-        )
-      )
+      await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
@@ -130,9 +102,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     }
 
     "reject invalid partnership names" in {
-      val resp = controller.submit()(
-        postRequestEncoded(PartnershipName("~~~"))
-      )
+      val resp = controller.submit()(postRequestEncoded(PartnershipName("~~~")))
 
       status(resp) mustBe BAD_REQUEST
     }
@@ -157,12 +127,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 
           intercept[IllegalStateException] {
-            await(
-              controller.submit()(
-                postRequestEncoded(PartnershipName("Partners in Plastic")
-                )
-              )
-            )
+            await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
           }
         }
       }

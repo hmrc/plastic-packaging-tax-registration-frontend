@@ -51,39 +51,26 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display panel" in {
-      view.getElementsByClass(gdsPanelTitle).get(0) must containMessage(
-        "enrolment.confirmation.title"
-      )
+      view.getElementsByClass(gdsPanelTitle).get(0) must containMessage("enrolment.confirmation.title")
 
     }
 
     "display 'What happens next'" in {
 
       withClue("title") {
-        view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
-          "enrolment.confirmation.whatHappensNext.title"
-        )
+        view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage("enrolment.confirmation.whatHappensNext.title")
       }
 
       val whatHappensNextDetail = view.getElementsByClass(gdsPageBodyText)
 
       withClue("ppt link") {
-        whatHappensNextDetail.get(0) must containMessage(
-          "enrolment.confirmation.whatHappensNext.detail.1",
-          messages("enrolment.confirmation.whatHappensNext.detail.1.link.text")
-        )
+        whatHappensNextDetail.get(0) must containMessage("enrolment.confirmation.whatHappensNext.detail.1", messages("enrolment.confirmation.whatHappensNext.detail.1.link.text"))
       }
       withClue("bta link") {
-        whatHappensNextDetail.get(1) must containMessage(
-          "enrolment.confirmation.whatHappensNext.detail.2",
-          messages("enrolment.confirmation.whatHappensNext.detail.2.link.text")
-        )
+        whatHappensNextDetail.get(1) must containMessage("enrolment.confirmation.whatHappensNext.detail.2", messages("enrolment.confirmation.whatHappensNext.detail.2.link.text"))
       }
       withClue("feedback link") {
-        whatHappensNextDetail.get(2) must containMessage(
-          "enrolment.confirmation.whatHappensNext.detail.3",
-          messages("enrolment.confirmation.whatHappensNext.detail.3.link.text")
-        )
+        whatHappensNextDetail.get(2) must containMessage("enrolment.confirmation.whatHappensNext.detail.3", messages("enrolment.confirmation.whatHappensNext.detail.3.link.text"))
       }
     }
 

@@ -19,10 +19,7 @@ package views.organisation
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import views.components.Styles.{
-  gdsPageBodyText,
-  gdsPageHeading
-}
+import views.components.Styles.{gdsPageBodyText, gdsPageHeading}
 import views.html.liability.grs_failure_page
 
 class GrsFailureViewSpec extends UnitViewSpec with Matchers {

@@ -32,30 +32,21 @@ import spec.PptTestData
 import scala.concurrent.{ExecutionContext, Future}
 
 class MongoRegistrationAmendmentRepositorySpec
-    extends AnyWordSpec with RegistrationBuilder with Matchers with MockitoSugar
-    with BeforeAndAfterEach with DefaultAwaitTimeout with PptTestData {
+    extends AnyWordSpec with RegistrationBuilder with Matchers with MockitoSugar with BeforeAndAfterEach with DefaultAwaitTimeout with PptTestData {
 
   private val mockUserDataRepository = mock[UserDataRepository]
 
-  private val mongoRegistrationAmendmentRepository = new RegistrationAmendmentRepositoryImpl(
-    mockUserDataRepository
-  )(ExecutionContext.global)
+  private val mongoRegistrationAmendmentRepository = new RegistrationAmendmentRepositoryImpl(mockUserDataRepository)(ExecutionContext.global)
 
-  private val sessionId        = "123"
-  private val registration     = aRegistration()
+  private val sessionId            = "123"
+  private val registration         = aRegistration()
   private implicit val authRequest = registrationRequest
 
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)
-    when(mockUserDataRepository.putData[Registration](any(), any())(any(), any())).thenAnswer(
-      (inv: InvocationOnMock) => Future.successful(inv.getArgument(0))
-    )
-    when(mockUserDataRepository.getData[Registration](any())(any(), any())).thenReturn(
-      Future.successful(Some(registration))
-    )
-    when(mockUserDataRepository.getData[Registration](any(), any())(any())).thenReturn(
-      Future.successful(Some(registration))
-    )
+    when(mockUserDataRepository.putData[Registration](any(), any())(any(), any())).thenAnswer((inv: InvocationOnMock) => Future.successful(inv.getArgument(0)))
+    when(mockUserDataRepository.getData[Registration](any())(any(), any())).thenReturn(Future.successful(Some(registration)))
+    when(mockUserDataRepository.getData[Registration](any(), any())(any())).thenReturn(Future.successful(Some(registration)))
   }
 
   "Mongo Registration Amendment Repository" should {
@@ -63,15 +54,10 @@ class MongoRegistrationAmendmentRepositorySpec
 
       "adding registration" in {
         mongoRegistrationAmendmentRepository.put(registration)
-        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey,
-                                               registration
-        )
+        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey, registration)
 
         mongoRegistrationAmendmentRepository.put(sessionId, registration)
-        verify(mockUserDataRepository).putData(sessionId,
-                                               RegistrationAmendmentRepositoryImpl.repositoryKey,
-                                               registration
-        )
+        verify(mockUserDataRepository).putData(sessionId, RegistrationAmendmentRepositoryImpl.repositoryKey, registration)
       }
 
       "getting registration" in {
@@ -82,19 +68,13 @@ class MongoRegistrationAmendmentRepositorySpec
       "updating a registration" in {
         val updatedRegistration = registration.copy(id = "08345982374")
         await(mongoRegistrationAmendmentRepository.update(_ => updatedRegistration))
-        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey,
-                                               updatedRegistration
-        )
+        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey, updatedRegistration)
       }
     }
 
     "throw exception when attempt to update a registration which does not exist" in {
-      when(mockUserDataRepository.getData[Registration](any())(any(), any())).thenReturn(
-        Future.successful(None)
-      )
-      when(mockUserDataRepository.getData[Registration](any(), any())(any())).thenReturn(
-        Future.successful(None)
-      )
+      when(mockUserDataRepository.getData[Registration](any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockUserDataRepository.getData[Registration](any(), any())(any())).thenReturn(Future.successful(None))
       intercept[IllegalStateException] {
         await(mongoRegistrationAmendmentRepository.update(reg => reg))
       }

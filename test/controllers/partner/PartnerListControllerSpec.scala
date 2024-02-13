@@ -37,15 +37,9 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerListController(journeyAction = spyJourneyAction,
-                              registrationConnector = mockRegistrationConnector,
-                              mcc = mcc,
-                              page = page
-    )
+    new PartnerListController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

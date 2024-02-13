@@ -24,11 +24,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class KeepAliveController @Inject() (
-  mcc: MessagesControllerComponents,
-  journeyAction: JourneyAction
-) extends FrontendController(mcc) with I18nSupport {
+class KeepAliveController @Inject() (mcc: MessagesControllerComponents, journeyAction: JourneyAction) extends FrontendController(mcc) with I18nSupport {
 
-  def keepAlive(): Action[AnyContent] = journeyAction.amend { Ok }
+  def keepAlive(): Action[AnyContent] = journeyAction.amend(Ok)
 
 }

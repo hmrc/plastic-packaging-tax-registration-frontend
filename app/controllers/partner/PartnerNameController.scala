@@ -30,51 +30,43 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerNameController @Inject() (
-                                        journeyAction: JourneyAction,
-                                        registrationUpdater: NewRegistrationUpdateService,
-                                        override val appConfig: AppConfig,
-                                        override val soleTraderGrsConnector: SoleTraderGrsConnector,
-                                        override val ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                        override val partnershipGrsConnector: PartnershipGrsConnector,
-                                        override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                        mcc: MessagesControllerComponents,
-                                        page: partner_name_page
+  journeyAction: JourneyAction,
+  registrationUpdater: NewRegistrationUpdateService,
+  override val appConfig: AppConfig,
+  override val soleTraderGrsConnector: SoleTraderGrsConnector,
+  override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  override val partnershipGrsConnector: PartnershipGrsConnector,
+  override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  mcc: MessagesControllerComponents,
+  page: partner_name_page
 )(implicit ec: ExecutionContext)
-    extends PartnerNameControllerBase(journeyAction = journeyAction.register,
-                                      ukCompanyGrsConnector = ukCompanyGrsConnector,
-                                      soleTraderGrsConnector = soleTraderGrsConnector,
-                                      partnershipGrsConnector = partnershipGrsConnector,
-                                      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
-                                      registrationUpdater = registrationUpdater,
-                                      mcc = mcc,
-                                      page = page,
-                                      appConfig = appConfig
+    extends PartnerNameControllerBase(
+      journeyAction = journeyAction.register,
+      ukCompanyGrsConnector = ukCompanyGrsConnector,
+      soleTraderGrsConnector = soleTraderGrsConnector,
+      partnershipGrsConnector = partnershipGrsConnector,
+      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
+      registrationUpdater = registrationUpdater,
+      mcc = mcc,
+      page = page,
+      appConfig = appConfig
     ) {
 
   def displayNewPartner(): Action[AnyContent] =
-    doDisplay(None,
-              partnerRoutes.PartnerTypeController.displayNewPartner(),
-              partnerRoutes.PartnerNameController.submitNewPartner()
-    )
+    doDisplay(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerNameController.submitNewPartner())
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplay(Some(partnerId),
-              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-              partnerRoutes.PartnerNameController.submitExistingPartner(partnerId)
-    )
+    doDisplay(Some(partnerId), partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId), partnerRoutes.PartnerNameController.submitExistingPartner(partnerId))
 
   def submitNewPartner(): Action[AnyContent] =
-    doSubmit(None,
-             partnerRoutes.PartnerTypeController.displayNewPartner(),
-             partnerRoutes.PartnerNameController.submitNewPartner(),
-             commonRoutes.TaskListController.displayPage()
-    )
+    doSubmit(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerNameController.submitNewPartner(), commonRoutes.TaskListController.displayPage())
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    doSubmit(Some(partnerId),
-             partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
-             partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
-             commonRoutes.TaskListController.displayPage()
+    doSubmit(
+      Some(partnerId),
+      partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
+      partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
+      commonRoutes.TaskListController.displayPage()
     )
 
   override def grsCallbackUrl(partnerId: Option[String]): String =

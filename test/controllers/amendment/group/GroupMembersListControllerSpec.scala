@@ -33,8 +33,7 @@ import views.viewmodels.ListGroupMembersViewModel
 
 import scala.concurrent.Future
 
-class GroupMembersListControllerSpec
-    extends ControllerSpec with AmendmentControllerSpec with BeforeAndAfterEach {
+class GroupMembersListControllerSpec extends ControllerSpec with AmendmentControllerSpec with BeforeAndAfterEach {
 
   val registration: Registration = aRegistration()
 
@@ -42,10 +41,7 @@ class GroupMembersListControllerSpec
 
   when(view.apply(any(), any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new GroupMembersListController(journeyAction = spyJourneyAction,
-                                           stubMessagesControllerComponents(),
-                                           view
-  )
+  val sut = new GroupMembersListController(journeyAction = spyJourneyAction, stubMessagesControllerComponents(), view)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -73,9 +69,7 @@ class GroupMembersListControllerSpec
 
         val result: Future[Result] = sut.onSubmit()(request)
 
-        redirectLocation(result) shouldBe Some(
-          group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage().url
-        )
+        redirectLocation(result) shouldBe Some(group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage().url)
       }
 
       "submitted no" in {
@@ -84,9 +78,7 @@ class GroupMembersListControllerSpec
 
         val result: Future[Result] = sut.onSubmit()(myRequest)
 
-        redirectLocation(result) shouldBe Some(
-          routes.ManageGroupMembersController.displayPage().url
-        )
+        redirectLocation(result) shouldBe Some(routes.ManageGroupMembersController.displayPage().url)
       }
     }
 

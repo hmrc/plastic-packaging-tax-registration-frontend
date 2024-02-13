@@ -36,16 +36,11 @@ import views.html.liability.expect_to_exceed_threshold_weight_page
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: expect_to_exceed_threshold_weight_page = mock[expect_to_exceed_threshold_weight_page]
-  val mockFormProvider = inject[ExpectToExceedThresholdWeight]
-  val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+  val mockFormProvider                                 = inject[ExpectToExceedThresholdWeight]
+  val mcc: MessagesControllerComponents                = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
-    new ExpectToExceedThresholdWeightController(journeyAction = spyJourneyAction,
-      mockRegistrationConnector,
-      mcc = mcc,
-      page = mockPage,
-      form = mockFormProvider
-    )
+    new ExpectToExceedThresholdWeightController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc = mcc, page = mockPage, form = mockFormProvider)
 
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
 
@@ -63,9 +58,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
       "user is authorised, a registration already exists and display page method is invoked" in {
         val registration =
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true)))
-          )
+          aRegistration(withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true))))
 
         spyJourneyAction.setReg(registration)
 
@@ -76,9 +69,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
       "user is authorised, a registration already exists and display page method without the expectToExceedThresholdWeight not set" in {
         val registration =
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = None))
-          )
+          aRegistration(withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = None)))
 
         spyJourneyAction.setReg(registration)
 
@@ -109,7 +100,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm = Seq("value" -> "no")
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
@@ -135,9 +126,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdateFailure()
 
-          intercept[DownstreamServiceError](status(
-            controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-          ))
+          intercept[DownstreamServiceError](status(controller.submit()(postJsonRequestEncoded(createRequestBody: _*))))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
@@ -145,15 +134,13 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration())
           mockRegistrationException()
 
-          intercept[RuntimeException](status(
-            controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-          ))
+          intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(createRequestBody: _*))))
         }
       }
     }
   }
 
-  private def createRequestBody: Seq[(String, String)] = {
+  private def createRequestBody: Seq[(String, String)] =
     Seq("value" -> YesNoValues.YES)
-  }
+
 }

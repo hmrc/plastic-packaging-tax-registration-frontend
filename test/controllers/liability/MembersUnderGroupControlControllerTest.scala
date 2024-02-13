@@ -37,11 +37,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new MembersUnderGroupControlController(journeyAction = spyJourneyAction,
-      mcc = mcc,
-      page = page,
-      mockRegistrationConnector
-    )
+    new MembersUnderGroupControlController(journeyAction = spyJourneyAction, mcc = mcc, page = page, mockRegistrationConnector)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -88,9 +84,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(
-          routes.CheckLiabilityDetailsAnswersController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
       }
     }
 
@@ -105,9 +99,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(
-          routes.NotMembersUnderGroupControlController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.NotMembersUnderGroupControlController.displayPage().url)
       }
     }
 
@@ -127,10 +119,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         mockRegistrationUpdateFailure()
         val correctForm = Seq("value" -> "no")
 
-
-        intercept[DownstreamServiceError](status(
-          controller.submit()(postJsonRequestEncoded(correctForm: _*))
-        ))
+        intercept[DownstreamServiceError](status(controller.submit()(postJsonRequestEncoded(correctForm: _*))))
       }
     }
   }

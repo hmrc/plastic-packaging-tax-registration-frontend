@@ -29,23 +29,22 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorISpec
-    extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData
-    with RegistrationBuilder {
+class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData with RegistrationBuilder {
 
   def overrideConfig: Map[String, Any] =
-    Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
-        "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
-        "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
-        "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
-        "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
-        "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
-        "microservice.services.partnership-identification-frontend.host"         -> wireHost,
-        "microservice.services.partnership-identification-frontend.port"         -> wirePort,
-        "microservice.services.email-verification.host"                          -> wireHost,
-        "microservice.services.email-verification.port"                          -> wirePort,
-        "microservice.services.address-lookup-frontend.host"                     -> wireHost,
-        "microservice.services.address-lookup-frontend.port"                     -> wirePort
+    Map(
+      "microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
+      "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
+      "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
+      "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
+      "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
+      "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
+      "microservice.services.partnership-identification-frontend.host"         -> wireHost,
+      "microservice.services.partnership-identification-frontend.port"         -> wirePort,
+      "microservice.services.email-verification.host"                          -> wireHost,
+      "microservice.services.email-verification.port"                          -> wirePort,
+      "microservice.services.address-lookup-frontend.host"                     -> wireHost,
+      "microservice.services.address-lookup-frontend.port"                     -> wirePort
     )
 
   override def fakeApplication(): Application = {

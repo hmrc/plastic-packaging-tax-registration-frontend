@@ -31,7 +31,6 @@ case class LiabilityDetails(
   expectToExceedThresholdWeight: Option[Boolean] = None,
   dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
   expectedWeightNext12m: Option[LiabilityWeight] = None,
-  
   // Derived fields - not directly input by user
   startDate: Option[OldDate] = None,
   isLiable: Option[Boolean] = None,
@@ -49,14 +48,15 @@ case class LiabilityDetails(
     else if (isInProgress) TaskStatus.InProgress
     else TaskStatus.NotStarted
 
-  def clearOldLiabilityAnswers: LiabilityDetails = this.copy(
-    exceededThresholdWeight = None,
-    dateExceededThresholdWeight = None,
-    expectToExceedThresholdWeight = None,
-    dateRealisedExpectedToExceedThresholdWeight = None,
-    startDate = None,
-    isLiable = None,
-  )
+  def clearOldLiabilityAnswers: LiabilityDetails =
+    this.copy(
+      exceededThresholdWeight = None,
+      dateExceededThresholdWeight = None,
+      expectToExceedThresholdWeight = None,
+      dateRealisedExpectedToExceedThresholdWeight = None,
+      startDate = None,
+      isLiable = None
+    )
 
 }
 

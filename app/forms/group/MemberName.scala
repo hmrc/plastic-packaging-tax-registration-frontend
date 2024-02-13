@@ -32,18 +32,19 @@ object MemberName extends CommonFormValidators {
   private val lastName = "lastName"
 
   private val mapping =
-    Forms.mapping(firstName ->
-                    text()
-                      .verifying(emptyError(firstName), isProvided)
-                      .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
-                      .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
-                      .verifying(nonAlphabeticError(firstName), isValidName),
-                  lastName ->
-                    text()
-                      .verifying(emptyError(lastName), isProvided)
-                      .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
-                      .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
-                      .verifying(nonAlphabeticError(lastName), isValidName)
+    Forms.mapping(
+      firstName ->
+        text()
+          .verifying(emptyError(firstName), isProvided)
+          .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
+          .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
+          .verifying(nonAlphabeticError(firstName), isValidName),
+      lastName ->
+        text()
+          .verifying(emptyError(lastName), isProvided)
+          .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
+          .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
+          .verifying(nonAlphabeticError(lastName), isValidName)
     )(MemberName.apply)(MemberName.unapply)
 
   def form(): Form[MemberName] = Form(mapping)

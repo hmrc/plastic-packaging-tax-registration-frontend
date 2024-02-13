@@ -26,11 +26,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class PartnersListController @Inject() (
-                                         journeyAction: JourneyAction,
-                                         mcc: MessagesControllerComponents,
-                                         page: list_partners_page
-) extends FrontendController(mcc) with I18nSupport {
+class PartnersListController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents, page: list_partners_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -42,12 +39,13 @@ class PartnersListController @Inject() (
       AddOrganisationForm
         .form()
         .bindFromRequest()
-        .fold(error => BadRequest(page(error, request.registration)),
-              add =>
-                if (add)
-                  Redirect(routes.AddPartnerOrganisationDetailsTypeController.displayPage())
-                else
-                  Redirect(routes.ManagePartnersController.displayPage())
+        .fold(
+          error => BadRequest(page(error, request.registration)),
+          add =>
+            if (add)
+              Redirect(routes.AddPartnerOrganisationDetailsTypeController.displayPage())
+            else
+              Redirect(routes.ManagePartnersController.displayPage())
         )
     }
 

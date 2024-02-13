@@ -27,10 +27,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
-                                                                       journeyAction: JourneyAction,
-                                                                       addressCaptureService: AddressCaptureService,
-                                                                       mcc: MessagesControllerComponents,
-                                                                       registrationUpdater: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsConfirmAddressControllerBase(journeyAction.amend, addressCaptureService, mcc, registrationUpdater) {
 

@@ -22,9 +22,7 @@ trait RemoveMemberAction {
 
   def doRemoveMemberAction(registration: Registration, groupMemberId: String): Registration =
     registration.copy(groupDetail =
-      registration.groupDetail.map(
-        groupDetail => groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))
-      )
+      registration.groupDetail.map(groupDetail => groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId)))
     )
 
 }

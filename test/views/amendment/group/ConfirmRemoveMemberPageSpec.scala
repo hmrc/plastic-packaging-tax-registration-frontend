@@ -36,9 +36,7 @@ class ConfirmRemoveMemberPageSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain title" in {
-      view.select("title").text() must include(
-        messages("amend.group.remove.title", groupMember.businessName)
-      )
+      view.select("title").text() must include(messages("amend.group.remove.title", groupMember.businessName))
     }
 
     "contain heading" in {

@@ -43,10 +43,7 @@ abstract class PartnerTypeControllerBase(
   private def form(nominated: Boolean): Form[PartnerType] =
     PartnerType.form(if (nominated) FormMode.NominatedPartnerType else FormMode.OtherPartnerType)
 
-  protected def doDisplayPage(
-    partnerId: Option[String] = None,
-    submitCall: Call
-  ): Action[AnyContent] =
+  protected def doDisplayPage(partnerId: Option[String] = None, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
       val partner: Option[Partner] =
         partnerId.fold(request.registration.inflightPartner)(request.registration.findPartner)
@@ -66,61 +63,44 @@ abstract class PartnerTypeControllerBase(
         form(nominated)
           .bindFromRequest()
           .fold(
-            (formWithErrors: Form[PartnerType]) =>
-              Future(BadRequest(page(formWithErrors, partnerId, submitCall))),
+            (formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors, partnerId, submitCall))),
             (partnershipPartnerType: PartnerType) =>
               updatePartnerType(partnershipPartnerType, partnerId).flatMap {
                 _ =>
                   partnershipPartnerType.answer match {
                     case SOLE_TRADER =>
-                      getSoleTraderRedirectUrl(appConfig.soleTraderJourneyInitUrl,
-                                               grsCallbackUrl(partnerId)
-                      )
+                      getSoleTraderRedirectUrl(appConfig.soleTraderJourneyInitUrl, grsCallbackUrl(partnerId))
                         .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
-                      getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
-                                              grsCallbackUrl(partnerId)
-                      )
+                      getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, grsCallbackUrl(partnerId))
                         .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case REGISTERED_SOCIETY =>
-                      getRegisteredSocietyRedirectUrl(appConfig.incorpRegistedSocietyJourneyUrl,
-                                                      grsCallbackUrl(partnerId)
-                      )
+                      getRegisteredSocietyRedirectUrl(appConfig.incorpRegistedSocietyJourneyUrl, grsCallbackUrl(partnerId))
                         .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case LIMITED_LIABILITY_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                                grsCallbackUrl(partnerId),
-                                                businessVerification = false
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl))
+                      getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, grsCallbackUrl(partnerId), businessVerification = false).map(
+                        journeyStartUrl => SeeOther(journeyStartUrl)
+                      )
                     case SCOTTISH_LIMITED_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
-                                                grsCallbackUrl(partnerId),
-                                                businessVerification = false
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl))
+                      getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl, grsCallbackUrl(partnerId), businessVerification = false).map(
+                        journeyStartUrl => SeeOther(journeyStartUrl)
+                      )
                     case SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
                       redirectToPartnerNamePrompt(partnerId)
                     case _ =>
-                      Future(
-                        Redirect(
-                          organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                        )
-                      )
+                      Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
                   }
               }
           )
     }
 
-  private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[Registration] =
+  private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
     partnerId match {
       case Some(partnerId) => updateExistingPartner(partnerType, partnerId)
       case _               => updateInflightPartner(partnerType)
     }
 
-  private def updateInflightPartner(
-    partnerType: PartnerType
-  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateInflightPartner(partnerType: PartnerType)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       val result = registration.inflightPartner match {
         case Some(partner) => partner.copy(partnerType = partnerType.answer)
@@ -129,13 +109,9 @@ abstract class PartnerTypeControllerBase(
       registration.withInflightPartner(Some(result))
     }
 
-  private def updateExistingPartner(partnerType: PartnerType, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Registration] =
+  private def updateExistingPartner(partnerType: PartnerType, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
-      registration.withUpdatedPartner(partnerId,
-                                      partner => partner.copy(partnerType = partnerType.answer)
-      )
+      registration.withUpdatedPartner(partnerId, partner => partner.copy(partnerType = partnerType.answer))
     }
 
   def redirectToPartnerNamePrompt(existingParterId: Option[String]): Future[Result]

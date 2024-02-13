@@ -33,13 +33,12 @@ class NotableErrorController @Inject() (
   verificationFailurePage: verification_failure_page,
   referenceNumberAlreadyUsedPage: reference_number_already_used_failure_page,
   frontendConfig: ContactFrontendConfig,
-  appConfig: AppConfig,
-  
+  appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
   def enrolmentVerificationFailurePage(): Action[AnyContent] =
     authenticate { implicit request =>
-      val referrer = frontendConfig.referrerUrl.map(Utils.urlEncode).getOrElse("<referrer-unknown>")
+      val referrer      = frontendConfig.referrerUrl.map(Utils.urlEncode).getOrElse("<referrer-unknown>")
       val contactUsHref = appConfig.reportTechincalProblemUrl + "&referrerUrl=" + referrer
       Ok(verificationFailurePage(contactUsHref))
     }

@@ -37,10 +37,11 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
   val sut = new UserEnrolmentDetailsRepository(mockUserDataRepository)(global)
 
   override val userEnrolmentDetails =
-    UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
-                         isUkAddress = Some(IsUkAddress(Some(true))),
-                         postcode = Some(Postcode("LS1 1AA")),
-                         registrationDate = Some(RegistrationDate(DateData("1", "2", "2022")))
+    UserEnrolmentDetails(
+      pptReference = Some(PptReference("ppt-ref")),
+      isUkAddress = Some(IsUkAddress(Some(true))),
+      postcode = Some(Postcode("LS1 1AA")),
+      registrationDate = Some(RegistrationDate(DateData("1", "2", "2022")))
     )
 
   override def beforeEach(): Unit = {

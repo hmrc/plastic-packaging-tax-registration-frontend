@@ -29,13 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PptReferenceController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         mcc: MessagesControllerComponents,
-                                         cache: UserEnrolmentDetailsRepository,
-                                         page: ppt_reference_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class PptReferenceController @Inject() (authenticate: RegistrationAuthAction, mcc: MessagesControllerComponents, cache: UserEnrolmentDetailsRepository, page: ppt_reference_page)(
+  implicit ec: ExecutionContext
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -52,8 +48,7 @@ class PptReferenceController @Inject() (
       PptReference.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PptReference]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[PptReference]) => Future.successful(BadRequest(page(formWithErrors))),
           pptReference =>
             cache.update(data => data.copy(pptReference = Some(pptReference))).map {
               _ => Redirect(routes.VerifyOrganisationController.displayPage())

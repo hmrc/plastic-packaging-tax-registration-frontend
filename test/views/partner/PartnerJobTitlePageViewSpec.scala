@@ -26,7 +26,7 @@ import views.html.partner.partner_job_title_page
 
 class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[partner_job_title_page]
+  private val page       = inject[partner_job_title_page]
   private val updateLink = Call("PUT", "/update")
 
   private val contactName = "A Contact"
@@ -52,9 +52,7 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("partnership.otherPartners.jobTitlePage.title", contactName)
-      )
+      view.select("title").text() must include(messages("partnership.otherPartners.jobTitlePage.title", contactName))
     }
 
     "display job title input box" in {

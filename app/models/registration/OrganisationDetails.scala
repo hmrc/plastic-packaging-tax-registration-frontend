@@ -18,7 +18,17 @@ package models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
-import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import forms.organisation.OrgType.{
+  CHARITABLE_INCORPORATED_ORGANISATION,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  OVERSEAS_COMPANY_UK_BRANCH,
+  OrgType,
+  PARTNERSHIP,
+  REGISTERED_SOCIETY,
+  SOLE_TRADER,
+  TRUST,
+  UK_COMPANY
+}
 import forms.organisation.PartnerTypeEnum
 import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import models.genericregistration._
@@ -37,8 +47,9 @@ case class OrganisationDetails(
   isBusinessAddressFromGrs: Option[Boolean] = None
 ) {
 
-  def clearGrsStuff: OrganisationDetails = OrganisationDetails()
-    .copy(organisationType = organisationType)
+  def clearGrsStuff: OrganisationDetails =
+    OrganisationDetails()
+      .copy(organisationType = organisationType)
 
   def status: TaskStatus =
     if (organisationType.isEmpty) TaskStatus.NotStarted
@@ -54,8 +65,8 @@ case class OrganisationDetails(
     case Some(PARTNERSHIP) =>
       partnershipDetails.flatMap { partnershipDetails =>
         partnershipDetails.partnershipType match {
-          case PartnerTypeEnum.LIMITED_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP | PartnerTypeEnum.SCOTTISH_PARTNERSHIP |
-              PartnerTypeEnum.GENERAL_PARTNERSHIP | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
+          case PartnerTypeEnum.LIMITED_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP | PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
+              PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
             partnershipDetails.partnershipBusinessDetails.flatMap { orgDetails =>
               orgDetails.registration
             }
@@ -83,8 +94,9 @@ case class OrganisationDetails(
     registrationStatus.contains("REGISTRATION_NOT_CALLED") && verificationStatus.contains("FAIL")
 
   lazy val businessName: Option[String] = organisationType match {
-    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) |
-         Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(TRUST) =>
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) | Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(
+          TRUST
+        ) =>
       incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
     case Some(PARTNERSHIP) =>
@@ -94,8 +106,9 @@ case class OrganisationDetails(
 
   def withBusinessRegisteredAddress(addressConversionUtils: AddressConversionUtils): OrganisationDetails = {
     val businessAddress = organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) |
-           Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(TRUST) =>
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) | Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(
+            TRUST
+          ) =>
         incorporationDetails.map(incorporationDetails => addressConversionUtils.toPptAddress(incorporationDetails.companyAddress))
       case _ => None
     }
@@ -147,9 +160,7 @@ case class OrganisationDetails(
     }
 
   def partnerBusinessVerificationFailed(partnerId: Option[String]): Boolean =
-    partnerGrsRegistration(partnerId).map(_.registrationStatus.contains("REGISTRATION_NOT_CALLED")).get && partnerVerificationStatus(
-      partnerId
-    ).contains("FAIL")
+    partnerGrsRegistration(partnerId).map(_.registrationStatus.contains("REGISTRATION_NOT_CALLED")).get && partnerVerificationStatus(partnerId).contains("FAIL")
 
   def partnerVerificationStatus(partnerId: Option[String]): Option[String] =
     partnerGrsRegistration(partnerId).flatMap { reg =>

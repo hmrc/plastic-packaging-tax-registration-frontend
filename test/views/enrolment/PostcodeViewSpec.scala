@@ -43,7 +43,7 @@ class PostcodeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "not display 'Back' button" in {
-      view.getElementById("back-link") mustBe null 
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {
@@ -51,9 +51,7 @@ class PostcodeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display postcode question" in {
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(
-        messages("enrolment.postcode.title")
-      )
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("enrolment.postcode.title"))
     }
 
     "display postcode input boxes" in {

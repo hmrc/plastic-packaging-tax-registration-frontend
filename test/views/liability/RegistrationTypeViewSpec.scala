@@ -60,18 +60,14 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
       view.getElementById("value").attr("value").text() mustBe SINGLE_ENTITY.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe messages(
-        "registrationType.singleEntity"
-      )
+      view.getElementsByClass("govuk-label").first().text() mustBe messages("registrationType.singleEntity")
 
       view.getElementById("value-2").attr("value").text() mustBe GROUP.toString
       view.getElementsByClass("govuk-label").get(1).text() mustBe messages("registrationType.group")
     }
 
     "display hint" in {
-      view.getElementsByClass("govuk-hint").text() must include(
-        messages("registrationType.group.hint")
-      )
+      view.getElementsByClass("govuk-hint").text() must include(messages("registrationType.group.hint"))
     }
 
     "display 'Save and continue' button" in {

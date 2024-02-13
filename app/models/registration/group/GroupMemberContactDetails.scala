@@ -19,13 +19,7 @@ package models.registration.group
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
 
-case class GroupMemberContactDetails(
-  firstName: String,
-  lastName: String,
-  phoneNumber: Option[String] = None,
-  email: Option[String] = None,
-  address: Option[Address] = None
-) {
+case class GroupMemberContactDetails(firstName: String, lastName: String, phoneNumber: Option[String] = None, email: Option[String] = None, address: Option[Address] = None) {
   val groupMemberName = s"$firstName $lastName"
 
   def isValid: Boolean =

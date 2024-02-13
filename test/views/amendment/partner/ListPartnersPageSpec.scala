@@ -30,9 +30,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
 
   private val page: list_partners_page = inject[list_partners_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private def createView(registration: Registration): Html =
     page(AddOrganisationForm.form(), registration)(amendsJourneyRequest, messages)
@@ -50,23 +48,17 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
     }
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("amend.partner.listPartners.title", 1 + partnershipRegistration.otherPartners.size)
-      )
+      view.select("title").text() must include(messages("amend.partner.listPartners.title", 1 + partnershipRegistration.otherPartners.size))
     }
 
     "display page heading" in {
-      view.select("h1").text() must include(
-        messages("amend.partner.listPartners.title", 1 + partnershipRegistration.otherPartners.size)
-      )
+      view.select("h1").text() must include(messages("amend.partner.listPartners.title", 1 + partnershipRegistration.otherPartners.size))
     }
 
     "display nominated partner" in {
       val dataList = view.select("main").select("ul")
       dataList.select("li").get(0).text() must include(messages("amend.partner.manage.nominated"))
-      dataList.select("li").get(0).text() must include(
-        partnershipRegistration.nominatedPartner.map(_.name).get
-      )
+      dataList.select("li").get(0).text() must include(partnershipRegistration.nominatedPartner.map(_.name).get)
     }
 
     "display others partners with change and remove links" in {
@@ -76,12 +68,8 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
           val row = dataList.select("li").get(idx + 1)
           row.text() must include(otherPartner.name)
           val links = row.select("a")
-          links.get(0) must haveHref(
-            routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)
-          )
-          links.get(1) must haveHref(
-            routes.ConfirmRemovePartnerController.displayPage(otherPartner.id)
-          )
+          links.get(0) must haveHref(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id))
+          links.get(1) must haveHref(routes.ConfirmRemovePartnerController.displayPage(otherPartner.id))
       }
     }
 
@@ -125,11 +113,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
       }
 
       "there is one partner only" in {
-        val regWithOnePartner = aRegistration(
-          withPartnershipDetails(
-            Some(generalPartnershipDetailsWithPartners.copy(partners = Seq(aPartnershipPartner)))
-          )
-        )
+        val regWithOnePartner = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners.copy(partners = Seq(aPartnershipPartner)))))
 
         val newView = createView(regWithOnePartner)
 

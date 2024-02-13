@@ -33,9 +33,7 @@ class ReferenceNumberAlreadyUsedFailurePageSpec extends UnitViewSpec with Matche
     val view = createView()
 
     "contain title" in {
-      view.select("title").text() must include(
-        messages("enrolment.referenceNumber.already.used.title")
-      )
+      view.select("title").text() must include(messages("enrolment.referenceNumber.already.used.title"))
     }
 
     "contain heading" in {

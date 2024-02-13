@@ -27,7 +27,7 @@ import views.html.deregistration.deregister_page
 class DeregisterViewSpec extends UnitViewSpec with Matchers {
 
   val appConfig: AppConfig = inject[AppConfig]
-  private val page                  = inject[deregister_page]
+  private val page         = inject[deregister_page]
 
   private def createView(form: Form[Boolean] = DeregisterForm.form()): Document =
     page(form)(registrationRequest, messages)

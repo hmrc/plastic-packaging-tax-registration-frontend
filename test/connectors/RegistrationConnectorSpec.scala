@@ -26,8 +26,7 @@ import play.api.test.Helpers.await
 import play.api.test.Injecting
 import models.registration.Registration
 
-class RegistrationConnectorSpec
-    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
+class RegistrationConnectorSpec extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: RegistrationConnector = inject[RegistrationConnector]
 
@@ -37,9 +36,7 @@ class RegistrationConnectorSpec
 
       "valid request send" in {
 
-        givenPostToRegistrationReturns(Status.CREATED,
-                                       Json.toJsObject(Registration("123")).toString
-        )
+        givenPostToRegistrationReturns(Status.CREATED, Json.toJsObject(Registration("123")).toString)
 
         val res = await(connector.create(Registration("123")))
 
@@ -96,12 +93,7 @@ class RegistrationConnectorSpec
 
       "exists" in {
 
-        givenGetRegistrationReturns(
-          Status.OK,
-          Json.toJsObject(
-            Registration(id = "123", incorpJourneyId = Some("incorpJourneyId"))
-          ).toString()
-        )
+        givenGetRegistrationReturns(Status.OK, Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpJourneyId"))).toString())
 
         val res = await(connector.find("123"))
 
@@ -154,11 +146,7 @@ class RegistrationConnectorSpec
 
       "valid request send" in {
 
-        givenPutToRegistrationReturns(
-          Status.CREATED,
-          "123",
-          Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpId"))).toString
-        )
+        givenPutToRegistrationReturns(Status.CREATED, "123", Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpId"))).toString)
 
         val res =
           await(connector.update(Registration(id = "123", incorpJourneyId = Some("incorpId"))))
@@ -171,10 +159,7 @@ class RegistrationConnectorSpec
 
       "registration already exists" in {
 
-        givenPutToRegistrationReturns(Status.OK,
-                                      "123",
-                                      Json.toJsObject(Registration("123")).toString
-        )
+        givenPutToRegistrationReturns(Status.OK, "123", Json.toJsObject(Registration("123")).toString)
 
         val res = await(connector.update(Registration("123")))
 

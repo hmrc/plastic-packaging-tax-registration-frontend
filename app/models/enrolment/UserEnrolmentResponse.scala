@@ -22,8 +22,7 @@ sealed trait UserEnrolmentResponse
 
 case class UserEnrolmentSuccessResponse(pptReference: String) extends UserEnrolmentResponse
 
-case class UserEnrolmentFailedResponse(pptReference: String, failureCode: String)
-    extends UserEnrolmentResponse
+case class UserEnrolmentFailedResponse(pptReference: String, failureCode: String) extends UserEnrolmentResponse
 
 object UserEnrolmentSuccessResponse {
 

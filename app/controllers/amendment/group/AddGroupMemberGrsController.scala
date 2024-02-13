@@ -29,13 +29,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberGrsController @Inject() (
-                                              journeyAction: JourneyAction,
-                                              ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                              subscriptionsConnector: SubscriptionsConnector,
-                                              partnershipGrsConnector: PartnershipGrsConnector,
-                                              registrationUpdater: AmendRegistrationUpdateService,
-                                              addressConversionUtils: AddressConversionUtils,
-                                              mcc: MessagesControllerComponents
+  journeyAction: JourneyAction,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  subscriptionsConnector: SubscriptionsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  registrationUpdater: AmendRegistrationUpdateService,
+  addressConversionUtils: AddressConversionUtils,
+  mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends GroupMemberGrsControllerBase(
       journeyAction.amend,

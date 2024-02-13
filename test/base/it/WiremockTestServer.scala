@@ -24,8 +24,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-trait WiremockTestServer
-    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+trait WiremockTestServer extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   val wireHost = "localhost"
 

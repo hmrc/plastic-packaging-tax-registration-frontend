@@ -20,30 +20,17 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import controllers.organisation.{
-  routes => organisationRoutes
-}
+import controllers.organisation.{routes => organisationRoutes}
 import forms.organisation.PartnerType.{form, FormMode}
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import forms.organisation.{
-  PartnerType,
-  PartnerTypeEnum
-}
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import forms.organisation.{PartnerType, PartnerTypeEnum}
 import views.html.organisation.partnership_type
 
 class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[partnership_type]
 
-  private def createView(
-    form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
-  ): Document =
+  private def createView(form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)): Document =
     page(form)(registrationJourneyRequest, messages)
 
   "Partnership Type View" should {
@@ -62,9 +49,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        organisationRoutes.OrganisationDetailsTypeController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(organisationRoutes.OrganisationDetailsTypeController.displayPage())
     }
 
     "display title" in {
@@ -74,37 +59,21 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("partnership.name.section-header")
-      )
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("partnership.name.section-header"))
     }
 
     "display radio inputs" in {
 
       view.getElementById("answer").attr("value").text() mustBe GENERAL_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe PartnerTypeEnum.displayName(
-        GENERAL_PARTNERSHIP
-      )
-      view.getElementById("answer-2").attr(
-        "value"
-      ).text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnerTypeEnum.displayName(
-        LIMITED_LIABILITY_PARTNERSHIP
-      )
+      view.getElementsByClass("govuk-label").first().text() mustBe PartnerTypeEnum.displayName(GENERAL_PARTNERSHIP)
+      view.getElementById("answer-2").attr("value").text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnerTypeEnum.displayName(LIMITED_LIABILITY_PARTNERSHIP)
       view.getElementById("answer-3").attr("value").text() mustBe LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnerTypeEnum.displayName(
-        LIMITED_PARTNERSHIP
-      )
+      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnerTypeEnum.displayName(LIMITED_PARTNERSHIP)
       view.getElementById("answer-4").attr("value").text() mustBe SCOTTISH_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnerTypeEnum.displayName(
-        SCOTTISH_PARTNERSHIP
-      )
-      view.getElementById("answer-5").attr(
-        "value"
-      ).text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnerTypeEnum.displayName(
-        SCOTTISH_LIMITED_PARTNERSHIP
-      )
+      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnerTypeEnum.displayName(SCOTTISH_PARTNERSHIP)
+      view.getElementById("answer-5").attr("value").text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnerTypeEnum.displayName(SCOTTISH_LIMITED_PARTNERSHIP)
     }
 
     "display 'Save and continue' button" in {
@@ -135,9 +104,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer",
-                                      "Select the type of partnership you are registering"
-        )
+        view must haveGovukFieldError("answer", "Select the type of partnership you are registering")
         view must haveGovukGlobalErrorSummary
       }
       "no radio button checked - nominated" in {
@@ -157,9 +124,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer",
-                                      "Select the partner organisation type"
-        )
+        view must haveGovukFieldError("answer", "Select the partner organisation type")
         view must haveGovukGlobalErrorSummary
       }
     }

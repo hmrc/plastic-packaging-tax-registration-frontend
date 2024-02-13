@@ -71,13 +71,9 @@ class GrsControllerSpec extends ControllerSpec {
 
   private val unregisteredSoleTrader = aRegistration(withOrganisationDetails(unregisteredSoleTraderOrgDetails()))
 
-  private val unregisteredGeneralPartnership = aRegistration(
-    withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership")))
-  )
+  private val unregisteredGeneralPartnership = aRegistration(withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership"))))
 
-  private val unregisteredScottishPartnership = aRegistration(
-    withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership")))
-  )
+  private val unregisteredScottishPartnership = aRegistration(withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership"))))
 
   "GRS Callback" should {
 
@@ -134,8 +130,10 @@ class GrsControllerSpec extends ControllerSpec {
         organisationDetails.incorporationDetails mustBe Some(incorporationDetails)
         organisationDetails.soleTraderDetails mustBe None
         organisationDetails.partnershipDetails mustBe None
-        organisationDetails.businessRegisteredAddress mustBe Some(addressConversionUtils
-          .toPptAddress(incorporationDetails.companyAddress))
+        organisationDetails.businessRegisteredAddress mustBe Some(
+          addressConversionUtils
+            .toPptAddress(incorporationDetails.companyAddress)
+        )
         organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
@@ -245,10 +243,10 @@ class GrsControllerSpec extends ControllerSpec {
         mockGetUkCompanyDetails(unregisteredIncorporationDetails)
         spyJourneyAction.setReg(unregisteredLimitedCompany)
         mockRegistrationUpdate()
-    
+
         val result: Future[Result] = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
-        val exception              = intercept[Exception](await(result))
+        val exception = intercept[Exception](await(result))
         exception.getMessage must include("some-journey-id")
       }
     }
@@ -318,9 +316,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get must include(
-          controllers.routes.NotableErrorController.registrationFailed("").url
-        )
+        redirectLocation(result).get must include(controllers.routes.NotableErrorController.registrationFailed("").url)
       }
     }
   }
@@ -342,7 +338,6 @@ class GrsControllerSpec extends ControllerSpec {
 
     controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
   }
-
 
   private def simulateBusinessVerificationFailureLimitedCompanyCallback() = {
 

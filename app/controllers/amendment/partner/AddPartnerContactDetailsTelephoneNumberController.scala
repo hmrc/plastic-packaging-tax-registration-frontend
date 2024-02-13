@@ -27,29 +27,22 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsTelephoneNumberController @Inject() (
-                                                                    journeyAction: JourneyAction,
-                                                                    mcc: MessagesControllerComponents,
-                                                                    page: partner_phone_number_page,
-                                                                    registrationUpdateService: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: partner_phone_number_page,
+  registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerPhoneNumberControllerBase(
-                                             journeyAction = journeyAction.amend,
-                                             mcc = mcc,
-                                             page = page,
-                                             registrationUpdater = registrationUpdateService
-    ) {
+    extends PartnerPhoneNumberControllerBase(journeyAction = journeyAction.amend, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplay(None,
-              routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-              routes.AddPartnerContactDetailsTelephoneNumberController.submit()
-    )
+    doDisplay(None, routes.AddPartnerContactDetailsEmailAddressController.displayPage(), routes.AddPartnerContactDetailsTelephoneNumberController.submit())
 
   def submit(): Action[AnyContent] =
-    doSubmit(None,
-             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-             routes.AddPartnerContactDetailsTelephoneNumberController.submit(),
-             routes.AddPartnerContactDetailsConfirmAddressController.displayPage()
+    doSubmit(
+      None,
+      routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+      routes.AddPartnerContactDetailsTelephoneNumberController.submit(),
+      routes.AddPartnerContactDetailsConfirmAddressController.displayPage()
     )
 
 }

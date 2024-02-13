@@ -24,11 +24,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
-class RegisterAsOtherOrganisationController @Inject() (
-  mcc: MessagesControllerComponents,
-  page: register_as_other_organisation,
-  authenticate: RegistrationAuthAction
-) extends FrontendController(mcc) with I18nSupport {
+class RegisterAsOtherOrganisationController @Inject() (mcc: MessagesControllerComponents, page: register_as_other_organisation, authenticate: RegistrationAuthAction)
+    extends FrontendController(mcc) with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
     authenticate { implicit request =>

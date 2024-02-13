@@ -33,10 +33,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new NotMembersUnderGroupControlController(journeyAction = spyJourneyAction,
-      mcc = mcc,
-      page = page
-    )
+    new NotMembersUnderGroupControlController(journeyAction = spyJourneyAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

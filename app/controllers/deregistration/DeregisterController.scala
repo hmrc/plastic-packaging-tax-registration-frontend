@@ -31,20 +31,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterController @Inject() (
-                                       authenticate: AmendAuthAction,
-                                       mcc: MessagesControllerComponents,
-                                       deregistrationDetailRepository: DeregistrationDetailRepository,
-                                       appConfig: AppConfig,
-                                       page: deregister_page
+  authenticate: AmendAuthAction,
+  mcc: MessagesControllerComponents,
+  deregistrationDetailRepository: DeregistrationDetailRepository,
+  appConfig: AppConfig,
+  page: deregister_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
       deregistrationDetailRepository.get().map { deregistrationDetails =>
-        val form = deregistrationDetails.deregister.map(DeregisterForm.form().fill(_)).getOrElse(
-          DeregisterForm.form()
-        )
+        val form = deregistrationDetails.deregister.map(DeregisterForm.form().fill(_)).getOrElse(DeregisterForm.form())
         Ok(page(form))
       }
     }
@@ -56,9 +54,7 @@ class DeregisterController @Inject() (
         .fold(
           (formWithErrors: Form[Boolean]) => Future.successful(BadRequest(page(formWithErrors))),
           deregister =>
-            deregistrationDetailRepository.update(
-              deregistrationDetails => deregistrationDetails.copy(deregister = Some(deregister))
-            ).map { deregistrationDetails =>
+            deregistrationDetailRepository.update(deregistrationDetails => deregistrationDetails.copy(deregister = Some(deregister))).map { deregistrationDetails =>
               if (deregistrationDetails.deregister.contains(true))
                 Redirect(routes.DeregisterReasonController.displayPage())
               else

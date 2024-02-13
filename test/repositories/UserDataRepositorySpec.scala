@@ -39,26 +39,20 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
 class UserDataRepositorySpec
-    extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MongoSupport with PptTestData {
+    extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach with DefaultAwaitTimeout with MongoSupport with PptTestData {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
 
-  private val mockConfig           = mock[Configuration]
+  private val mockConfig = mock[Configuration]
 
-  when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
-    FiniteDuration(1, TimeUnit.MINUTES)
-  )
+  when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(FiniteDuration(1, TimeUnit.MINUTES))
 
   val mockTimeStampSupport = new CurrentTimestampSupport()
 
   val repository = new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
-    RegistrationRequest(
-      FakeRequest().withSession("sessionId" -> sessionId),
-      identityData
-    )
+    RegistrationRequest(FakeRequest().withSession("sessionId" -> sessionId), identityData)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

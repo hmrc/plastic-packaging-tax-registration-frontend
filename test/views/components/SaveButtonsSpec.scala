@@ -22,7 +22,7 @@ import views.html.components.{saveAndContinue, saveButtons}
 
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 
-  private val saveAndContinueButton      = inject[saveAndContinue]
+  private val saveAndContinueButton = inject[saveAndContinue]
 
   protected val component: saveButtons =
     new saveButtons(saveAndContinueButton)

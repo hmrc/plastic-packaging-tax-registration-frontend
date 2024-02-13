@@ -70,11 +70,9 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(addressConversionUtils.toPptAddress(incorporationAddressDetails),
-      "company name", "url")(registrationJourneyRequest, messages)
+    page.f(addressConversionUtils.toPptAddress(incorporationAddressDetails), "company name", "url")(registrationJourneyRequest, messages)
 
-    page.render(addressConversionUtils.toPptAddress(incorporationAddressDetails),
-      "company name", "url", registrationJourneyRequest, messages)
+    page.render(addressConversionUtils.toPptAddress(incorporationAddressDetails), "company name", "url", registrationJourneyRequest, messages)
   }
 
 }

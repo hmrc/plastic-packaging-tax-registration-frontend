@@ -28,10 +28,10 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CheckAnswersController @Inject() (
-                                         journeyAction: JourneyAction,
-                                         override val registrationConnector: RegistrationConnector,
-                                         mcc: MessagesControllerComponents,
-                                         page: check_answers_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

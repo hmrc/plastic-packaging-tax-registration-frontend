@@ -37,14 +37,14 @@ class ErrorSummarySpec extends PlaySpec with BeforeAndAfterEach {
   }
 
   val mockGovukErrorSummary = mock[GovukErrorSummary]
-  val mockMessages = mock[Messages]
+  val mockMessages          = mock[Messages]
 
   val sut = new errorSummary(mockGovukErrorSummary)
 
   "apply" must {
     "display nothing" when {
       "there are no errors" in {
-        val html = sut.apply(Seq.empty)(mockMessages)
+        val html         = sut.apply(Seq.empty)(mockMessages)
         val errorSummary = Jsoup.parse(html.toString).body().children()
 
         assert(errorSummary.isEmpty)
@@ -58,21 +58,11 @@ class ErrorSummarySpec extends PlaySpec with BeforeAndAfterEach {
         when(mockMessages.apply(meq("error.message.key"), any())).thenReturn("test-error-message")
         when(mockMessages.apply(meq("site.error.summary.title"), any())).thenReturn("error-title")
 
-        val html = sut.apply(errors)(mockMessages)
+        val html         = sut.apply(errors)(mockMessages)
         val errorSummary = Jsoup.parse(html.toString).body().children()
-        
+
         errorSummary.text() mustBe "TEST ERROR SUMMARY"
-        verify(mockGovukErrorSummary).apply(
-          ErrorSummary(
-            errorList = Seq(
-              ErrorLink(
-                href = Some("#error.key"),
-                content = Text("test-error-message")
-              )
-            ),
-            title = Text("error-title")
-          )
-        )
+        verify(mockGovukErrorSummary).apply(ErrorSummary(errorList = Seq(ErrorLink(href = Some("#error.key"), content = Text("test-error-message"))), title = Text("error-title")))
       }
 
       "using the override error key" in {
@@ -80,20 +70,12 @@ class ErrorSummarySpec extends PlaySpec with BeforeAndAfterEach {
         when(mockMessages.apply(meq("error.message.key"), any())).thenReturn("test-error-message")
         when(mockMessages.apply(meq("site.error.summary.title"), any())).thenReturn("error-title")
 
-        val html = sut.apply(errors, Some("override-key"))(mockMessages)
+        val html         = sut.apply(errors, Some("override-key"))(mockMessages)
         val errorSummary = Jsoup.parse(html.toString).body().children()
 
         errorSummary.text() mustBe "TEST ERROR SUMMARY OVERRIDE"
         verify(mockGovukErrorSummary).apply(
-          ErrorSummary(
-            errorList = Seq(
-              ErrorLink(
-                href = Some("#override-key"),
-                content = Text("test-error-message")
-              )
-            ),
-            title = Text("error-title")
-          )
+          ErrorSummary(errorList = Seq(ErrorLink(href = Some("#override-key"), content = Text("test-error-message"))), title = Text("error-title"))
         )
       }
     }

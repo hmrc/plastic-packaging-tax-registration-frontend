@@ -23,9 +23,9 @@ class URLSanitisationUtilsSpec extends AnyWordSpec with Matchers {
 
   ".asRelativeUrl" should {
     "convert an absolute url to a relative url" in {
-      URLSanitisationUtils.asRelativeUrl(
-        "https://dodgy-website.com/register-for-plastic-packaging-tax/contact-name"
-      ) mustBe Some("/register-for-plastic-packaging-tax/contact-name")
+      URLSanitisationUtils.asRelativeUrl("https://dodgy-website.com/register-for-plastic-packaging-tax/contact-name") mustBe Some(
+        "/register-for-plastic-packaging-tax/contact-name"
+      )
     }
   }
 }

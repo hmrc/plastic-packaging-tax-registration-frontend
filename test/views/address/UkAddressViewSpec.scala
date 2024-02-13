@@ -29,9 +29,8 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
 
   "UK Address View" should {
 
-    def createView(form: Form[Boolean] ): Document = {
+    def createView(form: Form[Boolean]): Document =
       page(form, Some("entity"), "addressCapture.contact.heading.isUK")
-    }
 
     val view: Document = createView(UkAddressForm.form())
 
@@ -50,7 +49,6 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
       view.select("h1").text() must include(messages("ukAddress.title", "entity"))
     }
-
 
     "display radios" in {
       view must containElementWithID("ukAddress")

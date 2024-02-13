@@ -51,35 +51,25 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
       val rowDetails = view.select("dl div")
 
       def extractAddress(address: Address) =
-        Seq(address.addressLine1,
-            address.addressLine2.getOrElse(""),
-            address.addressLine3.getOrElse(""),
-            address.townOrCity,
-            address.maybePostcode.getOrElse(""),
-            countryService.tryLookupCountryName(address.countryCode)
+        Seq(
+          address.addressLine1,
+          address.addressLine2.getOrElse(""),
+          address.addressLine3.getOrElse(""),
+          address.townOrCity,
+          address.maybePostcode.getOrElse(""),
+          countryService.tryLookupCountryName(address.countryCode)
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(
-        (messages("partner.check.orgType"),
-         messages(s"organisationDetails.type.${partner.partnerType.toString}"),
-         None
-        ),
+        (messages("partner.check.orgType"), messages(s"organisationDetails.type.${partner.partnerType.toString}"), None),
         (messages("partner.check.orgName"), partner.name, None),
-        (messages("partner.check.contact.name"),
-         partner.contactDetails.get.name.get,
-         Some(routes.AmendPartnerContactDetailsController.contactName(partner.id).url)
-        ),
-        (messages("partner.check.contact.email"),
-         partner.contactDetails.get.emailAddress.get,
-         Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id).url)
-        ),
-        (messages("partner.check.contact.phone"),
-         partner.contactDetails.get.phoneNumber.get,
-         Some(routes.AmendPartnerContactDetailsController.phoneNumber(partner.id).url)
-        ),
-        (messages("partner.check.contact.address"),
-         extractAddress(partner.contactDetails.get.address.get),
-         Some(routes.AmendPartnerContactDetailsController.address(partner.id).url)
+        (messages("partner.check.contact.name"), partner.contactDetails.get.name.get, Some(routes.AmendPartnerContactDetailsController.contactName(partner.id).url)),
+        (messages("partner.check.contact.email"), partner.contactDetails.get.emailAddress.get, Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id).url)),
+        (messages("partner.check.contact.phone"), partner.contactDetails.get.phoneNumber.get, Some(routes.AmendPartnerContactDetailsController.phoneNumber(partner.id).url)),
+        (
+          messages("partner.check.contact.address"),
+          extractAddress(partner.contactDetails.get.address.get),
+          Some(routes.AmendPartnerContactDetailsController.address(partner.id).url)
         )
       )
 

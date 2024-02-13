@@ -19,30 +19,16 @@ package connectors.grs
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
-import connectors.grs.GeneralPartnershipGrsConnector.{
-  CreateJourneyTimer,
-  GetDetailsTimer
-}
-import models.genericregistration.{
-  GrsPartnershipBusinessDetails,
-  PartnershipBusinessDetails,
-  PartnershipGrsCreateRequest
-}
+import connectors.grs.GeneralPartnershipGrsConnector.{CreateJourneyTimer, GetDetailsTimer}
+import models.genericregistration.{GrsPartnershipBusinessDetails, PartnershipBusinessDetails, PartnershipGrsCreateRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PartnershipGrsConnector @Inject() (
-  httpClient: HttpClient,
-  config: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext)
-    extends GrsConnector[
-      PartnershipGrsCreateRequest,
-      GrsPartnershipBusinessDetails,
-      PartnershipBusinessDetails
-    ](httpClient,
+class PartnershipGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
+    extends GrsConnector[PartnershipGrsCreateRequest, GrsPartnershipBusinessDetails, PartnershipBusinessDetails](
+      httpClient,
       metrics,
       None,
       config.partnershipJourneyUrl,
@@ -50,9 +36,7 @@ class PartnershipGrsConnector @Inject() (
       GetDetailsTimer
     ) {
 
-  def translateDetails(
-    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
-  ): PartnershipBusinessDetails =
+  def translateDetails(grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails): PartnershipBusinessDetails =
     PartnershipBusinessDetails(grsPartnershipBusinessDetails)
 
 }

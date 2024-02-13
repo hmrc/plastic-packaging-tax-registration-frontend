@@ -25,11 +25,7 @@ import play.api.libs.json.Json.toJson
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import models.genericregistration.{
-  GrsIncorporationDetails,
-  IncorpEntityGrsCreateRequest,
-  IncorporationDetails
-}
+import models.genericregistration.{GrsIncorporationDetails, IncorpEntityGrsCreateRequest, IncorporationDetails}
 
 class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
@@ -39,10 +35,11 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injecting with Scal
   "createJourney" should {
     "call the test only route to stub the journey" in {
       val testJourneyConfig =
-        IncorpEntityGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                     deskProServiceId = "plastic-packaging-tax",
-                                     signOutUrl = "/feedback/plastic-packaging-tax",
-                                     accessibilityUrl = "accessibilityUrl"
+        IncorpEntityGrsCreateRequest(
+          continueUrl = "/plastic-packaging-tax/registration",
+          deskProServiceId = "plastic-packaging-tax",
+          signOutUrl = "/feedback/plastic-packaging-tax",
+          accessibilityUrl = "accessibilityUrl"
         )
       val testJourneyStartUrl  = "/identify-your-incorporated-business/uuid-id/company-number"
       val testDeskProServiceId = "plastic-packaging-tax"
@@ -52,11 +49,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injecting with Scal
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
-              .withBody(
-                Json.obj("journeyStartUrl"  -> testJourneyStartUrl,
-                         "deskProServiceId" -> testDeskProServiceId
-                ).toString
-              )
+              .withBody(Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString)
           )
       )
 
@@ -68,10 +61,11 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injecting with Scal
 
     "throw exception if http status is not 'CREATED'" in {
       val testJourneyConfig =
-        IncorpEntityGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                     deskProServiceId = "plastic-packaging-tax",
-                                     signOutUrl = "/feedback/plastic-packaging-tax",
-                                     accessibilityUrl = "accessibilityUrl"
+        IncorpEntityGrsCreateRequest(
+          continueUrl = "/plastic-packaging-tax/registration",
+          deskProServiceId = "plastic-packaging-tax",
+          signOutUrl = "/feedback/plastic-packaging-tax",
+          accessibilityUrl = "accessibilityUrl"
         )
 
       stubFor(

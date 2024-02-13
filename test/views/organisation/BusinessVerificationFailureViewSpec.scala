@@ -41,9 +41,7 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("businessEntityVerification.failure.detail")
-      )
+      view.select("p.govuk-body").text() must include(messages("businessEntityVerification.failure.detail"))
     }
 
     "display corp tax helpline details" in {

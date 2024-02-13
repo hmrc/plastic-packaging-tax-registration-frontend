@@ -72,9 +72,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
 
   lazy val signOutLink = {
-    val signOutUrl = controllers.routes.SignOutController.signOut(
-      views.viewmodels.SignOutReason.UserAction
-    )
+    val signOutUrl = controllers.routes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction)
     if (isRunningLocally())
       selfUrl(signOutUrl)
     else // Use a relative link
@@ -147,9 +145,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     servicesConfig.baseUrl("email-verification")
 
   lazy val pptAccountHost: String =
-    config.getOptional[String]("platform.frontend.host").getOrElse(
-      servicesConfig.baseUrl("ppt-account-frontend")
-    )
+    config.getOptional[String]("platform.frontend.host").getOrElse(servicesConfig.baseUrl("ppt-account-frontend"))
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
@@ -207,7 +203,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
-  lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
+  lazy val pptAccountUrl     = s"$pptAccountHost/plastic-packaging-tax/account"
   lazy val pptNotEnrolledUrl = s"$pptAccountHost/plastic-packaging-tax/account/not-enrolled"
 
   lazy val changeGroupLeadUrl = s"$pptAccountHost/plastic-packaging-tax/select-new-representative-member"

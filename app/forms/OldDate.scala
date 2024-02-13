@@ -31,8 +31,8 @@ case class OldDate(day: Option[Int], month: Option[Int], year: Option[Int]) {
 }
 
 object OldDate {
-  
-  def of(year: Int, month: Int, day: Int): OldDate = 
+
+  def of(year: Int, month: Int, day: Int): OldDate =
     OldDate(Some(day), Some(month), Some(year))
 
   implicit val format = Json.format[OldDate]
@@ -63,37 +63,27 @@ object OldDate {
   private val monthIsWithinRange: Option[Int] => Boolean =
     month => !month.exists(m => m < 1 || m > 12)
 
-  private val isValidNumber: Option[String] => Boolean = input =>
-    input.isEmpty || input.forall(i => Try(BigDecimal(i)).isSuccess)
+  private val isValidNumber: Option[String] => Boolean = input => input.isEmpty || input.forall(i => Try(BigDecimal(i)).isSuccess)
 
-  private val isWholeNumber: Option[String] => Boolean = input =>
-    input.isEmpty || !isValidNumber(input) || input.forall(i => Try(BigInt(i)).isSuccess)
+  private val isWholeNumber: Option[String] => Boolean = input => input.isEmpty || !isValidNumber(input) || input.forall(i => Try(BigInt(i)).isSuccess)
 
   def mapping(): Mapping[OldDate] =
     Forms.mapping(
-      day -> Forms.optional(text()).verifying(dayEmptyError, _.nonEmpty).transform[Option[String]](
-        input => input.map(_.trim),
-        input => input
-      ).verifying(dayFormatError, isValidNumber).verifying(dateDecimalError, isWholeNumber)
-        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
-        ).verifying(dayOutOfRangeError, dayIsWithinRange),
-      month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).transform[Option[
-        String
-      ]](input => input.map(_.trim), input => input).verifying(monthFormatError,
-                                                               isValidNumber
+      day -> Forms.optional(text()).verifying(dayEmptyError, _.nonEmpty).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
+        dayFormatError,
+        isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
-        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
-        ).verifying(monthOutOfRangeError, monthIsWithinRange),
-      year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).transform[Option[
-        String
-      ]](input => input.map(_.trim), input => input).verifying(yearFormatError,
-                                                               isValidNumber
+        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt), int => int.map(_.toString)).verifying(dayOutOfRangeError, dayIsWithinRange),
+      month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
+        monthFormatError,
+        isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
-        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
-        )
+        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt), int => int.map(_.toString)).verifying(monthOutOfRangeError, monthIsWithinRange),
+      year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
+        yearFormatError,
+        isValidNumber
+      ).verifying(dateDecimalError, isWholeNumber)
+        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt), int => int.map(_.toString))
     )(OldDate.apply)(OldDate.unapply)
 
 }

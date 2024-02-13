@@ -72,8 +72,4 @@ lazy val silencerSettings: Seq[Setting[_]] = {
 }
 
 lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
-all := Def.sequential(
-  Test / test,
-  IntegrationTest / test,
-  A11yTest / test
-).value
+all := Def.sequential(Test / test, IntegrationTest / test, A11yTest / test).value

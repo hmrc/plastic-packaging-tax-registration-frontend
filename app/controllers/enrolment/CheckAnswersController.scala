@@ -21,11 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.enrolment.UserEnrolmentConnector
 import controllers.actions.auth.RegistrationAuthAction
-import models.enrolment.{
-  EnrolmentFailureCode,
-  UserEnrolmentFailedResponse,
-  UserEnrolmentSuccessResponse
-}
+import models.enrolment.{EnrolmentFailureCode, UserEnrolmentFailedResponse, UserEnrolmentSuccessResponse}
 import repositories.UserEnrolmentDetailsRepository
 import views.html.enrolment.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -34,11 +30,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class CheckAnswersController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         mcc: MessagesControllerComponents,
-                                         cache: UserEnrolmentDetailsRepository,
-                                         userEnrolmentConnector: UserEnrolmentConnector,
-                                         page: check_answers_page
+  authenticate: RegistrationAuthAction,
+  mcc: MessagesControllerComponents,
+  cache: UserEnrolmentDetailsRepository,
+  userEnrolmentConnector: UserEnrolmentConnector,
+  page: check_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -56,22 +52,20 @@ class CheckAnswersController @Inject() (
         answers <- cache.get()
         result <-
           userEnrolmentConnector.enrol(answers).map {
-            
+
             case _ @UserEnrolmentSuccessResponse(_) =>
               cache.delete()
               Redirect(routes.ConfirmationController.displayPage())
-            
+
             case UserEnrolmentFailedResponse(_, failureCode) =>
               failureCode match {
-                
-                case "GroupEnrolmentFailed"
-                  | EnrolmentFailureCode.VerificationFailed
-                  | EnrolmentFailureCode.VerificationMissing =>
+
+                case "GroupEnrolmentFailed" | EnrolmentFailureCode.VerificationFailed | EnrolmentFailureCode.VerificationMissing =>
                   Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
-                
+
                 case EnrolmentFailureCode.GroupEnrolled =>
                   Redirect(routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage())
-                
+
                 case code => throw new Exception(s"Enrolment failed with code $code")
               }
           }

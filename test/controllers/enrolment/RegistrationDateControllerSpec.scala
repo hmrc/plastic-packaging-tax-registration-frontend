@@ -50,12 +50,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[RegistrationDate]], any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Registration Date Page")
-    )
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-      Future.successful(Some(enrolmentDetails))
-    )
+    when(page.apply(any[Form[RegistrationDate]], any())(any(), any())).thenReturn(HtmlFormat.raw("Registration Date Page"))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(enrolmentDetails)))
     SharedMetricRegistries.clear()
   }
 
@@ -76,9 +72,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
 
       "user is authorised and cache is empty" in {
 
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(None)
-        )
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
@@ -89,11 +83,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
     "redisplay the registration date page with a BAD REQUEST status" when {
       "an invalid registration date is submitted" in {
 
-        val correctForm = Seq("date.day" -> registrationDate.value.day,
-                              "date.month" -> registrationDate.value.month,
-                              "date.year"  -> "1980"
-        )
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("date.day" -> registrationDate.value.day, "date.month" -> registrationDate.value.month, "date.year" -> "1980")
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe "Registration Date Page"
@@ -103,25 +94,16 @@ class RegistrationDateControllerSpec extends ControllerSpec {
     "redirect to check answers page and persist registration date" when {
       "a valid registration date is submitted" in {
 
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
-          Future.successful(enrolmentDetails)
-        )
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(enrolmentDetails))
 
-
-
-        val correctForm = Seq("date.day" -> registrationDate.value.day,
-                              "date.month" -> registrationDate.value.month,
-                              "date.year"  -> registrationDate.value.year
-        )
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("date.day" -> registrationDate.value.day, "date.month" -> registrationDate.value.month, "date.year" -> registrationDate.value.year)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
 
         redirectLocation(result) mustBe Some(routes.CheckAnswersController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
-                                  ArgumentMatchers.eq(enrolmentDetails)
-        )(any(), any())
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(enrolmentDetails))(any(), any())
       }
     }
   }

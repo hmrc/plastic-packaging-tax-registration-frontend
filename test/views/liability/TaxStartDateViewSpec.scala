@@ -23,10 +23,9 @@ import views.html.liability.tax_start_date_page
 
 import java.time.LocalDate
 
-
 class TaxStartDateViewSpec extends UnitViewSpec {
 
-  private val page = inject[tax_start_date_page]
+  private val page             = inject[tax_start_date_page]
   private val aDate: LocalDate = LocalDate.of(2022, 4, 14)
 
   "liability tax start date page" when {

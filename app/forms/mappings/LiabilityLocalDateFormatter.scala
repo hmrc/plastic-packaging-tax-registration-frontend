@@ -23,8 +23,7 @@ import play.api.i18n.Messages
 
 import java.time.LocalDate
 
-private[mappings] class LiabilityLocalDateFormatter
-(
+private[mappings] class LiabilityLocalDateFormatter(
   emptyDateKey: String,
   singleRequiredKey: String,
   twoRequiredKey: String,
@@ -33,33 +32,24 @@ private[mappings] class LiabilityLocalDateFormatter
   beforeLiveDateErrorKey: String,
   appConfig: AppConfig,
   args: Seq[String] = Seq.empty
-)(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
+)(implicit messages: Messages)
+    extends Formatter[LocalDate] with Formatters {
 
-  private val dateFormatter  = new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args)
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-    dateFormatter.bind(key, stripWhiteSpaces(data)).fold(
-      error => Left(error),
-      date => validateDate(key, date)
-    )
-  }
+  private val dateFormatter = new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args)
 
-  private def stripWhiteSpaces(data: Map[String, String]) = {
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
+    dateFormatter.bind(key, stripWhiteSpaces(data)).fold(error => Left(error), date => validateDate(key, date))
+
+  private def stripWhiteSpaces(data: Map[String, String]) =
     data.map(o => o._1 -> o._2.replace(" ", ""))
-  }
 
-  private def validateDate(key: String, date: LocalDate): Either[Seq[FormError], LocalDate] = {
-
-    if(date.isAfter(LocalDate.now))
-      Left(
-        List(FormError(s"$key.day", dateOutOfRangeError, Seq(messages(s"general.day"))))
-      )
-    else if(date.isBefore(appConfig.goLiveDate))
-      Left(
-        List(FormError(s"$key.day", beforeLiveDateErrorKey, Seq(messages(goLiveDateArgs))))
-      )
+  private def validateDate(key: String, date: LocalDate): Either[Seq[FormError], LocalDate] =
+    if (date.isAfter(LocalDate.now))
+      Left(List(FormError(s"$key.day", dateOutOfRangeError, Seq(messages(s"general.day")))))
+    else if (date.isBefore(appConfig.goLiveDate))
+      Left(List(FormError(s"$key.day", beforeLiveDateErrorKey, Seq(messages(goLiveDateArgs)))))
     else
       Right(date)
-  }
 
   private def goLiveDateArgs = {
     val goLiveDate = appConfig.goLiveDate

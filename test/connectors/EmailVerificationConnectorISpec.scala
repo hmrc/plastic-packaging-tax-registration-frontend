@@ -26,32 +26,25 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import play.api.test.Injecting
-import models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  JOURNEY_NOT_FOUND,
-  TOO_MANY_ATTEMPTS
-}
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
 import models.emailverification._
 
-class EmailVerificationConnectorISpec
-    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
+class EmailVerificationConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: EmailVerificationConnector =
     inject[EmailVerificationConnector]
 
-  val emailVerificationRequest = CreateEmailVerificationRequest(credId = "credId",
-                                                                continueUrl = "http://continue",
-                                                                origin = "origin",
-                                                                accessibilityStatementUrl =
-                                                                  "http://accessibility",
-                                                                email =
-                                                                  Email(address = "test@hmrc.com",
-                                                                        enterUrl = "hhtp://enterUrl"
-                                                                  ),
-                                                                backUrl = "http://back",
-                                                                pageTitle = "PPT Title",
-                                                                deskproServiceName = "ppt"
+  val emailVerificationRequest = CreateEmailVerificationRequest(
+    credId = "credId",
+    continueUrl = "http://continue",
+    origin = "origin",
+    accessibilityStatementUrl =
+      "http://accessibility",
+    email =
+      Email(address = "test@hmrc.com", enterUrl = "hhtp://enterUrl"),
+    backUrl = "http://back",
+    pageTitle = "PPT Title",
+    deskproServiceName = "ppt"
   )
 
   val testJourneyStartUrl  = "/verify-email/uuid-id"
@@ -63,9 +56,7 @@ class EmailVerificationConnectorISpec
 
       "valid request send" in {
 
-        givenPostToEmailVerificationReturns(Status.CREATED,
-                                            Json.obj("redirectUri" -> testJourneyStartUrl).toString
-        )
+        givenPostToEmailVerificationReturns(Status.CREATED, Json.obj("redirectUri" -> testJourneyStartUrl).toString)
 
         val res = await(connector.create(emailVerificationRequest))
 
@@ -78,9 +69,7 @@ class EmailVerificationConnectorISpec
 
       "service returns non success status code" in {
 
-        givenPostToEmailVerificationReturns(Status.BAD_REQUEST,
-                                            Json.obj("redirectUri" -> testJourneyStartUrl).toString
-        )
+        givenPostToEmailVerificationReturns(Status.BAD_REQUEST, Json.obj("redirectUri" -> testJourneyStartUrl).toString)
 
         val res = await(connector.create(emailVerificationRequest))
 
@@ -103,11 +92,7 @@ class EmailVerificationConnectorISpec
 
     "returns valid email details" in {
       val validResponse = VerificationStatus(Seq(EmailStatus("mail@mail.com", true, false)))
-      givenGetEmailVerificationDetailsReturns(
-        OK,
-        credId,
-        toJson(validResponse)(VerificationStatus.format).toString
-      )
+      givenGetEmailVerificationDetailsReturns(OK, credId, toJson(validResponse)(VerificationStatus.format).toString)
 
       val res = await(connector.getStatus(credId))
 
@@ -117,10 +102,7 @@ class EmailVerificationConnectorISpec
 
     "service returns non success status code" in {
       val validResponse = Seq(EmailStatus("mail@mail.com", true, false))
-      givenGetEmailVerificationDetailsReturns(Status.BAD_REQUEST,
-                                              credId,
-                                              toJson(validResponse).toString
-      )
+      givenGetEmailVerificationDetailsReturns(Status.BAD_REQUEST, credId, toJson(validResponse).toString)
       val res = await(connector.getStatus(credId))
 
       res.left.value.isInstanceOf[DownstreamServiceError]

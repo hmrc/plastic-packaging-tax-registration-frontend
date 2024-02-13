@@ -44,47 +44,45 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
       }
 
       "primary contact details when only 'FullName' and 'JobTitle' are complete" in {
-        val contactDetails = PrimaryContactDetails(name =
-                                                     Some("firstName lastName"),
-                                                   jobTitle = Some("Dev")
+        val contactDetails = PrimaryContactDetails(
+          name =
+            Some("firstName lastName"),
+          jobTitle = Some("Dev")
         )
         contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName', 'JobTitle' and 'Email' are complete" in {
-        val contactDetails = PrimaryContactDetails(name =
-                                                     Some("firstName lastName"),
-                                                   jobTitle = Some("Dev"),
-                                                   email = Some("test@test.com")
+        val contactDetails = PrimaryContactDetails(
+          name =
+            Some("firstName lastName"),
+          jobTitle = Some("Dev"),
+          email = Some("test@test.com")
         )
         contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName', 'JobTitle', 'Email' and 'phoneNumber' are complete" in {
-        val contactDetails = PrimaryContactDetails(name =
-                                                     Some("firstName lastName"),
-                                                   jobTitle = Some("Dev"),
-                                                   email = Some("test@test.com"),
-                                                   phoneNumber = Some("0203 12345 678")
+        val contactDetails = PrimaryContactDetails(
+          name =
+            Some("firstName lastName"),
+          jobTitle = Some("Dev"),
+          email = Some("test@test.com"),
+          phoneNumber = Some("0203 12345 678")
         )
         contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details are all filled in but email not verified" in {
         val contactDetails =
-          PrimaryContactDetails(name = Some("FirstName LastName"),
-                                jobTitle = Some("Developer"),
-                                email = Some("test@test.com"),
-                                phoneNumber = Some("07712345678"),
-                                address = Some(
-                                  Address(addressLine1 = "first line",
-                                          addressLine2 = Some("second line"),
-                                          addressLine3 = None,
-                                          townOrCity = "Leeds",
-                                          maybePostcode = Some("LS1 8TY"),
-                                         countryCode = GB
-                                  )
-                                )
+          PrimaryContactDetails(
+            name = Some("FirstName LastName"),
+            jobTitle = Some("Developer"),
+            email = Some("test@test.com"),
+            phoneNumber = Some("07712345678"),
+            address = Some(
+              Address(addressLine1 = "first line", addressLine2 = Some("second line"), addressLine3 = None, townOrCity = "Leeds", maybePostcode = Some("LS1 8TY"), countryCode = GB)
+            )
           )
         contactDetails.status(emailNotVerified) mustBe TaskStatus.InProgress
       }
@@ -93,19 +91,14 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
     "be COMPLETED " when {
       "primary contact details are all filled in and email verified" in {
         val contactDetails =
-          PrimaryContactDetails(name = Some("FirstName LastName"),
-                                jobTitle = Some("Developer"),
-                                email = Some("test@test.com"),
-                                phoneNumber = Some("07712345678"),
-                                address = Some(
-                                  Address(addressLine1 = "first line",
-                                          addressLine2 = Some("second line"),
-                                          addressLine3 = None,
-                                          townOrCity = "Leeds",
-                                          maybePostcode = Some("LS1 8TY"),
-                                          countryCode = GB
-                                  )
-                                )
+          PrimaryContactDetails(
+            name = Some("FirstName LastName"),
+            jobTitle = Some("Developer"),
+            email = Some("test@test.com"),
+            phoneNumber = Some("07712345678"),
+            address = Some(
+              Address(addressLine1 = "first line", addressLine2 = Some("second line"), addressLine3 = None, townOrCity = "Leeds", maybePostcode = Some("LS1 8TY"), countryCode = GB)
+            )
           )
         contactDetails.status(emailVerified) mustBe TaskStatus.Completed
       }

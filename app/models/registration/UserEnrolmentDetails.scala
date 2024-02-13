@@ -17,12 +17,7 @@
 package models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference,
-  RegistrationDate
-}
+import forms.enrolment.{IsUkAddress, Postcode, PptReference, RegistrationDate}
 import models.enrolment.UserEnrolmentRequest
 
 case class UserEnrolmentDetails(
@@ -33,14 +28,13 @@ case class UserEnrolmentDetails(
 ) {
 
   def isComplete: Boolean =
-    pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(
-      !_.requiresPostCode
-    ) || postcode.isDefined)
+    pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(!_.requiresPostCode) || postcode.isDefined)
 
   def toUserEnrolmentRequest: UserEnrolmentRequest =
-    UserEnrolmentRequest(pptReference = pptReference.map(_.value).getOrElse(""),
-                         registrationDate = registrationDate.get.value.asLocalDate,
-                         postcode = Some(postcode.map(_.value).getOrElse(""))
+    UserEnrolmentRequest(
+      pptReference = pptReference.map(_.value).getOrElse(""),
+      registrationDate = registrationDate.get.value.asLocalDate,
+      postcode = Some(postcode.map(_.value).getOrElse(""))
     )
 
 }

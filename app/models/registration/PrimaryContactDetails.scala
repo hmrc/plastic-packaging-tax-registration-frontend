@@ -39,9 +39,7 @@ case class PrimaryContactDetails(
     else TaskStatus.NotStarted
 
   private def isCompleted(emailVerified: String => Boolean): Boolean =
-    name.isDefined && jobTitle.isDefined && email.exists(
-      emailVerified
-    ) && phoneNumber.isDefined && address.isDefined
+    name.isDefined && jobTitle.isDefined && email.exists(emailVerified) && phoneNumber.isDefined && address.isDefined
 
   private def isInProgress: Boolean =
     name.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined || address.isDefined

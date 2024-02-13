@@ -32,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsTelephoneNumberController @Inject() (
-                                                          journeyAction: JourneyAction,
-                                                          override val registrationConnector: RegistrationConnector,
-                                                          mcc: MessagesControllerComponents,
-                                                          page: phone_number_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: phone_number_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -54,31 +54,19 @@ class ContactDetailsTelephoneNumberController @Inject() (
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(
-              BadRequest(buildPage(formWithErrors))
-            ),
+          (formWithErrors: Form[PhoneNumber]) => Future.successful(BadRequest(buildPage(formWithErrors))),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
-              case Right(_) => Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
+              case Right(_)    => Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
               case Left(error) => throw error
             }
         )
     }
 
-  private def buildPage
-  (
-    form: Form[PhoneNumber]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    page(
-      form,
-      routes.ContactDetailsTelephoneNumberController.submit(),
-      request.registration.isGroup
-    )
+  private def buildPage(form: Form[PhoneNumber])(implicit request: JourneyRequest[AnyContent]) =
+    page(form, routes.ContactDetailsTelephoneNumberController.submit(), request.registration.isGroup)
 
-  private def updateRegistration(
-    formData: PhoneNumber
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: PhoneNumber)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val withUpdatedPhoneNumber =
         registration.primaryContactDetails.copy(phoneNumber = Some(formData.value))

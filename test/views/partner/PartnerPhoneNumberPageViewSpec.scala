@@ -30,7 +30,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
   private val updateLink = Call("PUT", "/update")
 
-  private val contactName = "A Contact"
+  private val contactName    = "A Contact"
   private val sectionHeading = true
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
@@ -54,9 +54,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("partnership.otherPartners.contactPhoneNumberPage.title", contactName)
-      )
+      view.select("title").text() must include(messages("partnership.otherPartners.contactPhoneNumberPage.title", contactName))
     }
 
     "display phone number input box" in {
@@ -86,7 +84,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
     page.f(PhoneNumber.form(), updateLink, contactName, sectionHeading)(registrationJourneyRequest, messages)
-    page.render(PhoneNumber.form(), updateLink, contactName, sectionHeading,registrationJourneyRequest, messages)
+    page.render(PhoneNumber.form(), updateLink, contactName, sectionHeading, registrationJourneyRequest, messages)
   }
 
 }

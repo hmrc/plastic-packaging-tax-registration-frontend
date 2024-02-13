@@ -32,21 +32,21 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExpectToExceedThresholdWeightDateController@Inject() (
-                                                             journeyAction: JourneyAction,
-                                                             override val registrationConnector: RegistrationConnector,
-                                                             mcc: MessagesControllerComponents,
-                                                             page: expect_to_exceed_threshold_weight_date_page,
-                                                             form: ExpectToExceedThresholdWeightDate,
-                                                             appConfig: AppConfig
-                                                           )(implicit ec: ExecutionContext)
-  extends FrontendController(mcc) with Cacheable with I18nSupport {
+class ExpectToExceedThresholdWeightDateController @Inject() (
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: expect_to_exceed_threshold_weight_date_page,
+  form: ExpectToExceedThresholdWeightDate,
+  appConfig: AppConfig
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
       request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight match {
         case Some(date) => Ok(page(form().fill(date.date)))
-        case _ => Ok(page(form()))
+        case _          => Ok(page(form()))
       }
     }
 
@@ -54,25 +54,21 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
     journeyAction.register.async { implicit request =>
       form()
         .bindFromRequest()
-        .fold(formWithErrors =>
-          Future.successful(BadRequest(page(formWithErrors))),
+        .fold(
+          formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
           expectToExceed =>
             updateRegistration(expectToExceed).map {
-              case Right(_) => Redirect(exceededThresholdLink)
+              case Right(_)    => Redirect(exceededThresholdLink)
               case Left(error) => throw error
             }
         )
 
     }
 
-  private def updateRegistration(
-    dateRealisedExpectedToExceedThresholdWeight: LocalDate
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(dateRealisedExpectedToExceedThresholdWeight: LocalDate)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
-        registration.liabilityDetails.copy(
-          dateRealisedExpectedToExceedThresholdWeight = Some(Date(dateRealisedExpectedToExceedThresholdWeight))
-        )
+        registration.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight = Some(Date(dateRealisedExpectedToExceedThresholdWeight)))
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 

@@ -30,9 +30,7 @@ class TitleSpec extends MessagesSpec with Matchers {
   "Title" should {
 
     "format title without section" in {
-      Title("notLiable.pageTitle").toString(messages) must equal(
-        s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK"
-      )
+      Title("notLiable.pageTitle").toString(messages) must equal(s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK")
     }
   }
 }

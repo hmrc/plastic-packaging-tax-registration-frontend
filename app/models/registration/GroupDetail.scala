@@ -29,9 +29,9 @@ case class GroupDetail(
 ) {
 
   def status: TaskStatus =
-    if(members.isEmpty)
+    if (members.isEmpty)
       TaskStatus.NotStarted
-    else if(members.exists(member => !member.isValid))
+    else if (members.exists(member => !member.isValid))
       TaskStatus.InProgress
     else TaskStatus.Completed
 
@@ -52,13 +52,12 @@ case class GroupDetail(
       updatedMembers
   }
 
-  def findGroupMember(memberId: Option[String], crn: Option[String]): Option[GroupMember] = {
+  def findGroupMember(memberId: Option[String], crn: Option[String]): Option[GroupMember] =
     (memberId, crn) match {
-      case (Some(id), _) => members.find(m => m.id == id)
+      case (Some(id), _)            => members.find(m => m.id == id)
       case (_, Some(companyNumber)) => members.find(m => m.customerIdentification1 == companyNumber)
-      case _ => None
+      case _                        => None
     }
-  }
 
   lazy val latestMember: Option[GroupMember] = members.lastOption
 }

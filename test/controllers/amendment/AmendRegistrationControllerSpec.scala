@@ -29,30 +29,19 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.amendment.amend_registration_page
 import views.html.partials.amendment.amend_error_page
 
-class AmendRegistrationControllerSpec
-    extends ControllerSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
+class AmendRegistrationControllerSpec extends ControllerSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
   private val amendRegistrationPage      = mock[amend_registration_page]
   private val amendRegistrationErrorPage = mock[amend_error_page]
 
-  when(amendRegistrationPage.apply(any())(any(), any())).thenReturn(
-    HtmlFormat.raw("registration amendment")
-  )
+  when(amendRegistrationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("registration amendment"))
 
-  when(amendRegistrationErrorPage.apply()(any(), any())).thenReturn(
-    HtmlFormat.raw("registration amendment error")
-  )
+  when(amendRegistrationErrorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("registration amendment error"))
 
   private val controller =
-    new AmendRegistrationController(spyJourneyAction,
-      mockAmendRegService,
-      FakeAmendAuthAction,
-      mcc,
-      amendRegistrationPage,
-      amendRegistrationErrorPage
-    )
+    new AmendRegistrationController(spyJourneyAction, mockAmendRegService, FakeAmendAuthAction, mcc, amendRegistrationPage, amendRegistrationErrorPage)
 
   private val populatedRegistration = aRegistration()
 
@@ -74,7 +63,6 @@ class AmendRegistrationControllerSpec
     }
 
     "display the amend error page" in {
-
 
       val resp = controller.registrationUpdateFailed()(FakeRequest())
 

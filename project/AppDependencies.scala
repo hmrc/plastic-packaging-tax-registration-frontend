@@ -28,4 +28,5 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play"                 % "5.1.0"          % "test, it",
     "org.mockito"            %% "mockito-scala-scalatest"            % "1.17.14"        % Test
   )
+
 }

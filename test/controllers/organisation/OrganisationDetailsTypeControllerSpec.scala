@@ -38,16 +38,15 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.organisation.organisation_type
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
-  private val page = mock[organisation_type]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page         = mock[organisation_type]
+  private val mcc          = stubMessagesControllerComponents()
   val mockAuditor: Auditor = mock[Auditor]
 
-  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new OrganisationDetailsTypeController(journeyAction = spyJourneyAction,
+    new OrganisationDetailsTypeController(
+      journeyAction = spyJourneyAction,
       auditor = mockAuditor,
       registrationConnector = mockRegistrationConnector,
       mcc = mcc,
@@ -58,8 +57,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       soleTraderGrsConnector = mockSoleTraderGrsConnector,
       appConfig = config,
       partnershipGrsConnector = mockPartnershipGrsConnector,
-      registrationUpdater = mockNewRegistrationUpdater,
-
+      registrationUpdater = mockNewRegistrationUpdater
     )
 
   override protected def beforeEach(): Unit = {
@@ -68,11 +66,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   }
 
   override protected def afterEach(): Unit = {
-    reset(page,
-          mockSoleTraderGrsConnector,
-          mockUkCompanyGrsConnector,
-          mockRegisteredSocietyGrsConnector
-    )
+    reset(page, mockSoleTraderGrsConnector, mockUkCompanyGrsConnector, mockRegisteredSocietyGrsConnector)
     super.afterEach()
   }
 
@@ -90,9 +84,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY)))
-        )
+        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
 
         spyJourneyAction.setReg(registration)
 
@@ -111,9 +103,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, a registration already exists and display page method is invoked for representative member" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY)))
-        )
+        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
 
         spyJourneyAction.setReg(registration)
 
@@ -123,216 +113,193 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
     }
 
-      "return 303 (OK)" when {
+    "return 303 (OK)" when {
 
-        "user submits organisation type: " + UK_COMPANY in {
-          mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
-          assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
-        }
-        "user submits organisation type: " + SOLE_TRADER in {
-          mockSoleTraderCreateIncorpJourneyId("http://test/redirect/sole-trader")
-          assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
-        }
-        "user submits organisation type: " + PARTNERSHIP in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          assertRedirectForOrgType(PARTNERSHIP,
-                                   partnerRoutes.PartnershipTypeController.displayPage().url
-          )
-        }
-
-        "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-          spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-
-
-          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
-        }
-
-        "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-          spyJourneyAction.setReg(
-            aRegistration(withRegistrationType(Some(RegType.GROUP)),
-                          withPartnershipDetails(
-                            Some(
-                              partnershipDetailsWithBusinessAddress(partnerTypeEnum =
-                                PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-                              )
-                            )
-                          )
-            )
-          )
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-
-          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
-        }
-
-        "user submits organisation type: " + REGISTERED_SOCIETY in {
-          mockRegisteredSocietyCreateIncorpJourneyId("http://test/redirect/reg-soc")
-          assertRedirectForOrgType(REGISTERED_SOCIETY, "http://test/redirect/reg-soc")
-        }
-
-        "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
-          assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION,
-                                   routes.RegisterAsOtherOrganisationController.onPageLoad().url
-          )
-        }
-        "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
-          mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
-          assertRedirectForOrgType(OVERSEAS_COMPANY_UK_BRANCH,
-                                   "http://test/redirect/overseas-uk-company"
-          )
-        }
-
-        "user submits organisation type: " + TRUST in {
-          assertRedirectForOrgType(TRUST,
-                                   routes.RegisterAsOtherOrganisationController.onPageLoad().url
-          )
-        }
-
-        "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP + " for representative member" in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-          spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString)
-          val result =
-            controller.submitRepresentativeMember()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-
-          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
-        }
+      "user submits organisation type: " + UK_COMPANY in {
+        mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
+        assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
+      }
+      "user submits organisation type: " + SOLE_TRADER in {
+        mockSoleTraderCreateIncorpJourneyId("http://test/redirect/sole-trader")
+        assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
+      }
+      "user submits organisation type: " + PARTNERSHIP in {
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        assertRedirectForOrgType(PARTNERSHIP, partnerRoutes.PartnershipTypeController.displayPage().url)
       }
 
-      def assertRedirectForOrgType(
-        orgType: OrgType,
-        redirectUrl: String
-      ): Unit = {
+      "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
-        spyJourneyAction.setReg(aRegistration())
+        spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
         mockRegistrationUpdate()
 
-        val correctForm = Seq("answer" -> orgType.toString)
+        val correctForm = Seq("answer" -> PARTNERSHIP.toString)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
-        modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
+        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 
-        verify(mockAuditor, atLeastOnce()).orgTypeSelected(any(), refEq(Some(orgType)))(any(),
-                                                                                        any()
+        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+      }
+
+      "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+
+        spyJourneyAction.setReg(
+          aRegistration(
+            withRegistrationType(Some(RegType.GROUP)),
+            withPartnershipDetails(
+              Some(
+                partnershipDetailsWithBusinessAddress(partnerTypeEnum =
+                  PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                )
+              )
+            )
+          )
         )
+        mockRegistrationUpdate()
 
-        redirectLocation(result) mustBe Some(redirectUrl)
+        val correctForm = Seq("answer" -> PARTNERSHIP.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+
+        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
       }
 
-      "return 400 (BAD_REQUEST)" when {
-        "user does not enter mandatory fields" in {
-
-          spyJourneyAction.setReg(aRegistration())
-          val result =
-            controller.submit()(postRequestEncoded(JsObject.empty))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters invalid data" in {
-
-          spyJourneyAction.setReg(aRegistration())
-          val incorrectForm = Seq("answer" -> "maybe")
-          val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
-
-          status(result) mustBe BAD_REQUEST
-        }
+      "user submits organisation type: " + REGISTERED_SOCIETY in {
+        mockRegisteredSocietyCreateIncorpJourneyId("http://test/redirect/reg-soc")
+        assertRedirectForOrgType(REGISTERED_SOCIETY, "http://test/redirect/reg-soc")
       }
 
-      "return an error" when {
+      "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
+        assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION, routes.RegisterAsOtherOrganisationController.onPageLoad().url)
+      }
+      "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
+        mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
+        assertRedirectForOrgType(OVERSEAS_COMPANY_UK_BRANCH, "http://test/redirect/overseas-uk-company")
+      }
 
-        "user submits form and the registration update fails" in {
+      "user submits organisation type: " + TRUST in {
+        assertRedirectForOrgType(TRUST, routes.RegisterAsOtherOrganisationController.onPageLoad().url)
+      }
 
-          spyJourneyAction.setReg(aRegistration())
-          mockRegistrationUpdateFailure()
+      "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP + " for representative member" in {
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
-          val correctForm = Seq("answer" -> UK_COMPANY.toString)
+        spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+        mockRegistrationUpdate()
 
-          intercept[DownstreamServiceError](status(
-            controller.submit()(postJsonRequestEncoded(correctForm: _*))
-          ))
-        }
+        val correctForm = Seq("answer" -> PARTNERSHIP.toString)
+        val result =
+          controller.submitRepresentativeMember()(postJsonRequestEncoded(correctForm: _*))
 
-        "user submits form and a registration update runtime exception occurs" in {
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 
-          spyJourneyAction.setReg(aRegistration())
-          mockRegistrationException()
-
-          val correctForm = Seq("answer" -> UK_COMPANY.toString)
-
-          intercept[RuntimeException](status(
-            controller.submit()(postJsonRequestEncoded(correctForm: _*))
-          ))
-        }
+        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
       }
     }
 
-    "should return error when create journey" when {
+    def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
 
-      "user submits form for sole trader" in {
+      spyJourneyAction.setReg(aRegistration())
+      mockRegistrationUpdate()
+
+      val correctForm = Seq("answer" -> orgType.toString)
+      val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+      status(result) mustBe SEE_OTHER
+      modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
+
+      verify(mockAuditor, atLeastOnce()).orgTypeSelected(any(), refEq(Some(orgType)))(any(), any())
+
+      redirectLocation(result) mustBe Some(redirectUrl)
+    }
+
+    "return 400 (BAD_REQUEST)" when {
+      "user does not enter mandatory fields" in {
 
         spyJourneyAction.setReg(aRegistration())
-        mockRegistrationUpdate()
-        mockSoleTraderCreateIncorpJourneyIdException()
+        val result =
+          controller.submit()(postRequestEncoded(JsObject.empty))
 
-        val correctForm = Seq("answer" -> SOLE_TRADER.toString)
-
-        intercept[RuntimeException](
-          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-        ).getMessage mustBe "sole trader create journey error"
+        status(result) mustBe BAD_REQUEST
       }
 
-      "user submits form for uk company" in {
+      "user enters invalid data" in {
 
         spyJourneyAction.setReg(aRegistration())
-        mockRegistrationUpdate()
-        mockUkCompanyCreateIncorpJourneyIdException()
+        val incorrectForm = Seq("answer" -> "maybe")
+        val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
+
+        status(result) mustBe BAD_REQUEST
+      }
+    }
+
+    "return an error" when {
+
+      "user submits form and the registration update fails" in {
+
+        spyJourneyAction.setReg(aRegistration())
+        mockRegistrationUpdateFailure()
 
         val correctForm = Seq("answer" -> UK_COMPANY.toString)
 
-        intercept[RuntimeException](
-          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-        ).getMessage mustBe "uk company create journey error"
+        intercept[DownstreamServiceError](status(controller.submit()(postJsonRequestEncoded(correctForm: _*))))
       }
 
-      "user submits form for registered society" in {
+      "user submits form and a registration update runtime exception occurs" in {
 
         spyJourneyAction.setReg(aRegistration())
-        mockRegistrationUpdate()
-        mockRegisteredSocietyCreateIncorpJourneyIdException()
+        mockRegistrationException()
 
-        val correctForm = Seq("answer" -> REGISTERED_SOCIETY.toString)
+        val correctForm = Seq("answer" -> UK_COMPANY.toString)
 
-        intercept[RuntimeException](
-          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-        ).getMessage mustBe "registered society create journey error"
+        intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*))))
       }
     }
+  }
+
+  "should return error when create journey" when {
+
+    "user submits form for sole trader" in {
+
+      spyJourneyAction.setReg(aRegistration())
+      mockRegistrationUpdate()
+      mockSoleTraderCreateIncorpJourneyIdException()
+
+      val correctForm = Seq("answer" -> SOLE_TRADER.toString)
+
+      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "sole trader create journey error"
+    }
+
+    "user submits form for uk company" in {
+
+      spyJourneyAction.setReg(aRegistration())
+      mockRegistrationUpdate()
+      mockUkCompanyCreateIncorpJourneyIdException()
+
+      val correctForm = Seq("answer" -> UK_COMPANY.toString)
+
+      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "uk company create journey error"
+    }
+
+    "user submits form for registered society" in {
+
+      spyJourneyAction.setReg(aRegistration())
+      mockRegistrationUpdate()
+      mockRegisteredSocietyCreateIncorpJourneyIdException()
+
+      val correctForm = Seq("answer" -> REGISTERED_SOCIETY.toString)
+
+      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "registered society create journey error"
+    }
+  }
 
 }

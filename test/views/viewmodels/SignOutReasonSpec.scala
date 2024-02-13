@@ -29,9 +29,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
       "valid" in {
 
         val result =
-          SignOutReason.binder.bind("signOutReason",
-                                    Map("signOutReason" -> Seq(SignOutReason.UserAction.toString))
-          )
+          SignOutReason.binder.bind("signOutReason", Map("signOutReason" -> Seq(SignOutReason.UserAction.toString)))
 
         result.get mustBe Right(SignOutReason.UserAction)
       }
@@ -42,9 +40,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
       "not valid" in {
 
         val result =
-          SignOutReason.binder.bind("signOutReason",
-                                    Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString))
-          )
+          SignOutReason.binder.bind("signOutReason", Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString)))
 
         result.get mustBe Right(SignOutReason.SessionTimeout)
       }

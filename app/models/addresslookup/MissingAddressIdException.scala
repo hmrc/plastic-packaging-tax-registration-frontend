@@ -16,5 +16,4 @@
 
 package models.addresslookup
 
-case class MissingAddressIdException()
-    extends RuntimeException("Address lookup called back without address id")
+case class MissingAddressIdException() extends RuntimeException("Address lookup called back without address id")

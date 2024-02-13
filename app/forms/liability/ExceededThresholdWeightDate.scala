@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 import java.time.LocalDate
 import javax.inject.Inject
 
-class ExceededThresholdWeightDate @Inject()(appConfig: AppConfig) extends Mappings {
+class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig) extends Mappings {
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
     Form(
@@ -46,10 +46,10 @@ class ExceededThresholdWeightDate @Inject()(appConfig: AppConfig) extends Mappin
 }
 
 object ExceededThresholdWeightDate {
-  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
-  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
-  val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
-  val twoRequiredKey = "liability.exceededThresholdWeightDate.two.required.fields"
-  val requiredKey = "liability.exceededThresholdWeightDate.one.field"
+  val dateFormattingError   = "liability.exceededThresholdWeightDate.formatting.error"
+  val dateOutOfRangeError   = "liability.exceededThresholdWeightDate.outOfRange.error"
+  val dateEmptyError        = "liability.exceededThresholdWeightDate.empty.error"
+  val twoRequiredKey        = "liability.exceededThresholdWeightDate.two.required.fields"
+  val requiredKey           = "liability.exceededThresholdWeightDate.one.field"
   val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
 }

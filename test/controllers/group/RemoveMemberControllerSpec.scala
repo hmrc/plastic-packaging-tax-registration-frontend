@@ -42,21 +42,13 @@ class RemoveMemberControllerSpec extends ControllerSpec {
   private val groupMember1 = aGroupMember("123")
   private val groupMember2 = aGroupMember("456")
 
-  private val groupRegistration = aRegistration(
-    withGroupDetail(Some(GroupDetail(members = List(groupMember1, groupMember2))))
-  )
+  private val groupRegistration = aRegistration(withGroupDetail(Some(GroupDetail(members = List(groupMember1, groupMember2)))))
 
-  private val removeMemberController = new RemoveMemberController(journeyAction = spyJourneyAction,
-                                                                  mockRegistrationConnector,
-                                                                  mcc,
-                                                                  mockPage
-  )
+  private val removeMemberController = new RemoveMemberController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(mockPage.apply(any[Form[RemoveMember]], any(), any())(any(), any())).thenReturn(
-      Html("Remove Member Page")
-    )
+    when(mockPage.apply(any[Form[RemoveMember]], any(), any())(any(), any())).thenReturn(Html("Remove Member Page"))
   }
 
   override protected def afterEach(): Unit = {
@@ -91,9 +83,7 @@ class RemoveMemberControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(groupRegistration)
       mockRegistrationUpdate()
 
-      await(
-        removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(("value", "yes")))
-      )
+      await(removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(("value", "yes"))))
 
       val registrationCaptor: ArgumentCaptor[Registration] =
         ArgumentCaptor.forClass(classOf[Registration])
@@ -108,11 +98,7 @@ class RemoveMemberControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(groupRegistration)
       mockRegistrationUpdate()
 
-      await(
-        removeMemberController.submit(s"${groupMember1.id}xxx")(
-          postJsonRequestEncoded(("value", "yes"))
-        )
-      )
+      await(removeMemberController.submit(s"${groupMember1.id}xxx")(postJsonRequestEncoded(("value", "yes"))))
 
       verify(mockRegistrationConnector, never()).update(any())(any())
     }
@@ -157,17 +143,19 @@ class RemoveMemberControllerSpec extends ControllerSpec {
   }
 
   private def aGroupMember(id: String) =
-    GroupMember(id = id,
-                customerIdentification1 = "ABC",
-                organisationDetails =
-                  Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
-                addressDetails = Address(addressLine1 = "addressLine1",
-                                         addressLine2 = Some("addressLine2"),
-                                         addressLine3 = None,
-                                         townOrCity = "addressLine2",
-                                         maybePostcode = Some("postCode"),
-                                         countryCode = "UK"
-                )
+    GroupMember(
+      id = id,
+      customerIdentification1 = "ABC",
+      organisationDetails =
+        Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
+      addressDetails = Address(
+        addressLine1 = "addressLine1",
+        addressLine2 = Some("addressLine2"),
+        addressLine3 = None,
+        townOrCity = "addressLine2",
+        maybePostcode = Some("postCode"),
+        countryCode = "UK"
+      )
     )
 
 }

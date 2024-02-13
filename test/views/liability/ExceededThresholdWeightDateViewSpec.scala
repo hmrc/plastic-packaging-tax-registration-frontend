@@ -36,18 +36,18 @@ import views.viewmodels.{BackButtonJs, Title}
 
 class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val request = FakeRequest()
+  private val request      = FakeRequest()
   private val mockMessages = mock[Messages]
 
-  private val form = Form[Boolean]("value" -> ignored[Boolean](true))
-  private val sectionHeader = mock[sectionHeader]
-  private val pageHeading = mock[pageHeading]
-  private val govUkLayout = mock[main_template]
-  private val contentCaptor = ArgCaptor[Html]
-  private val saveButtons = mock[saveButtons]
-  private val errorSummary = mock[errorSummary]
+  private val form           = Form[Boolean]("value" -> ignored[Boolean](true))
+  private val sectionHeader  = mock[sectionHeader]
+  private val pageHeading    = mock[pageHeading]
+  private val govUkLayout    = mock[main_template]
+  private val contentCaptor  = ArgCaptor[Html]
+  private val saveButtons    = mock[saveButtons]
+  private val errorSummary   = mock[errorSummary]
   private val govukDateInput = mock[GovukDateInput]
-  private val paragraphBody = mock[paragraphBody]
+  private val paragraphBody  = mock[paragraphBody]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,7 +60,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
     when(saveButtons.apply(any)(any)).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
     when(errorSummary.apply(any, any)(any)).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
     when(govukDateInput.apply(any)).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
-    when(paragraphBody.apply(any, any, any)).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
+    when(paragraphBody.apply(any, any, any)).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")): _*)
   }
 
   private val page = new exceeded_threshold_weight_date_page(
@@ -75,14 +75,11 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
   )
 
   "view" must {
-    
+
     "use govUk layout" in {
       instantiateView()
 
-      verify(govUkLayout).apply(
-        refEq(Title("liability.exceededThresholdWeightDate.title")),
-        eqTo(Some(BackButtonJs)),
-        any)(any)(eqTo(request), eqTo(mockMessages))
+      verify(govUkLayout).apply(refEq(Title("liability.exceededThresholdWeightDate.title")), eqTo(Some(BackButtonJs)), any)(any)(eqTo(request), eqTo(mockMessages))
     }
 
     "have the form" in {
@@ -149,6 +146,6 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
   }
 
   private def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  private def insideGovUkWrapper = contentCaptor.value.toString
+  private def insideGovUkWrapper                       = contentCaptor.value.toString
 
 }

@@ -36,23 +36,15 @@ class RemovePartnerControllerSpec extends ControllerSpec {
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[remove_partner_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private val soleTraderPartner = aSoleTraderPartner
 
-  private val removePartnerController = new RemovePartnerController(journeyAction = spyJourneyAction,
-                                                                    mockRegistrationConnector,
-                                                                    mcc,
-                                                                    mockPage
-  )
+  private val removePartnerController = new RemovePartnerController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(mockPage.apply(any[Form[RemovePartner]], any(), any())(any(), any())).thenReturn(
-      Html("Remove Partner Page")
-    )
+    when(mockPage.apply(any[Form[RemovePartner]], any(), any())(any(), any())).thenReturn(Html("Remove Partner Page"))
   }
 
   override protected def afterEach(): Unit = {
@@ -87,11 +79,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
-      await(
-        removePartnerController.submit(soleTraderPartner.id)(
-          postJsonRequestEncoded(("value", "yes"))
-        )
-      )
+      await(removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes"))))
 
       modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
       modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
@@ -103,11 +91,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
-      await(
-        removePartnerController.submit(soleTraderPartner.id)(
-          postJsonRequestEncoded(("value", "yes"))
-        )
-      )
+      await(removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes"))))
 
       modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
       modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
@@ -125,11 +109,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
-      await(
-        removePartnerController.submit(s"${soleTraderPartner.id}xxx")(
-          postJsonRequestEncoded(("value", "yes"))
-        )
-      )
+      await(removePartnerController.submit(s"${soleTraderPartner.id}xxx")(postJsonRequestEncoded(("value", "yes"))))
 
       verify(mockRegistrationConnector, never()).update(any())(any())
     }
@@ -139,9 +119,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(partnershipRegistration)
 
       val result =
-        removePartnerController.submit(soleTraderPartner.id)(
-          postJsonRequestEncoded(("value", "no"))
-        )
+        removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "no")))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)
@@ -154,9 +132,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       mockRegistrationUpdateFailure()
 
       val result =
-        removePartnerController.submit(soleTraderPartner.id)(
-          postJsonRequestEncoded(("value", "yes"))
-        )
+        removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes")))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)
@@ -170,9 +146,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
         val emptySelection = Seq()
         val result =
-          removePartnerController.submit(soleTraderPartner.id)(
-            postJsonRequestEncoded(emptySelection: _*)
-          )
+          removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(emptySelection: _*))
 
         status(result) mustBe BAD_REQUEST
       }

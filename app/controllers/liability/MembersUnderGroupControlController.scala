@@ -32,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MembersUnderGroupControlController @Inject() (
-                                                     journeyAction: JourneyAction,
-                                                     mcc: MessagesControllerComponents,
-                                                     page: members_under_group_control_page,
-                                                     override val registrationConnector: RegistrationConnector
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: members_under_group_control_page,
+  override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -43,15 +43,7 @@ class MembersUnderGroupControlController @Inject() (
     journeyAction.register { implicit request =>
       request.registration.groupDetail match {
         case Some(groupDetail) =>
-          Ok(
-            page(
-              MembersUnderGroupControl.form().fill(
-                MembersUnderGroupControl(
-                  Some(groupDetail.membersUnderGroupControl.getOrElse(false))
-                )
-              )
-            )
-          )
+          Ok(page(MembersUnderGroupControl.form().fill(MembersUnderGroupControl(Some(groupDetail.membersUnderGroupControl.getOrElse(false))))))
         case _ => Ok(page(MembersUnderGroupControl.form()))
       }
     }
@@ -61,8 +53,7 @@ class MembersUnderGroupControlController @Inject() (
       MembersUnderGroupControl.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[MembersUnderGroupControl]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[MembersUnderGroupControl]) => Future.successful(BadRequest(page(formWithErrors))),
           membersUnderGroupControl =>
             updateRegistration(membersUnderGroupControl).map {
               case Right(_)    => nextPage(membersUnderGroupControl)
@@ -71,9 +62,7 @@ class MembersUnderGroupControlController @Inject() (
         )
     }
 
-  private def updateRegistration(
-    formData: MembersUnderGroupControl
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: MembersUnderGroupControl)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedGroupDetail =
         registration.groupDetail.getOrElse(GroupDetail()).copy(membersUnderGroupControl =

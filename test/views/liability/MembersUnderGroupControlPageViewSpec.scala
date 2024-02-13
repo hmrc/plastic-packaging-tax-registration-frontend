@@ -20,9 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import controllers.liability.{
-  routes => liabilityRoutes
-}
+import controllers.liability.{routes => liabilityRoutes}
 import forms.liability.MembersUnderGroupControl
 import views.html.liability.members_under_group_control_page
 
@@ -30,9 +28,7 @@ class MembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[members_under_group_control_page]
 
-  private def createView(
-    form: Form[MembersUnderGroupControl] = MembersUnderGroupControl.form()
-  ): Document =
+  private def createView(form: Form[MembersUnderGroupControl] = MembersUnderGroupControl.form()): Document =
     page(form)(registrationJourneyRequest, messages)
 
   "Members under group control view" should {
@@ -51,9 +47,7 @@ class MembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        liabilityRoutes.RegistrationTypeController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(liabilityRoutes.RegistrationTypeController.displayPage())
     }
 
     "display title" in {

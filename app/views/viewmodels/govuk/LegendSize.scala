@@ -24,4 +24,3 @@ object LegendSize {
   case object Medium     extends WithCssClass("govuk-fieldset__legend--m") with LegendSize
   case object Small      extends WithCssClass("govuk-fieldset__legend--s") with LegendSize
 }
-

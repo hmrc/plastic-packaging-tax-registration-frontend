@@ -40,11 +40,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
   def appConfig: AppConfig
   def registrationUpdater: RegistrationUpdater
 
-  protected def handleOrganisationType(
-    organisationType: OrganisationType,
-    businessVerificationCheck: Boolean = true,
-    memberId: Option[String]
-  )(implicit
+  protected def handleOrganisationType(organisationType: OrganisationType, businessVerificationCheck: Boolean = true, memberId: Option[String])(implicit
     request: JourneyRequest[AnyContent],
     executionContext: ExecutionContext,
     headerCarrier: HeaderCarrier
@@ -70,73 +66,56 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
 
   def grsCallbackUrl(organisationId: Option[String] = None): String
 
-  private def getPartnershipRedirectUrl(
-    memberId: Option[String],
-    businessVerificationCheck: Boolean
-  )(implicit
+  private def getPartnershipRedirectUrl(memberId: Option[String], businessVerificationCheck: Boolean)(implicit
     request: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext
-  ): Future[Result] = {
-        if (request.registration.isGroup)
-          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                         businessVerificationCheck,
-                         memberId
-          ).map(journeyStartUrl => SeeOther(journeyStartUrl))
-        else
-          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
-  }
+  ): Future[Result] =
+    if (request.registration.isGroup)
+      getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, businessVerificationCheck, memberId).map(journeyStartUrl => SeeOther(journeyStartUrl))
+    else
+      Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
 
-  private def getSoleTraderRedirectUrl(
-    memberId: Option[String]
-  )(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
+  private def getSoleTraderRedirectUrl(memberId: Option[String])(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(grsCallbackUrl(memberId),
-                                 Some(request2Messages(request)("service.name")),
-                                 appConfig.serviceIdentifier,
-                                 appConfig.signOutLink,
-                                 appConfig.grsAccessibilityStatementPath
+      SoleTraderGrsCreateRequest(
+        grsCallbackUrl(memberId),
+        Some(request2Messages(request)("service.name")),
+        appConfig.serviceIdentifier,
+        appConfig.signOutLink,
+        appConfig.grsAccessibilityStatementPath
       )
     )
 
-  private def incorpEntityGrsCreateRequest(
-    businessVerificationCheck: Boolean,
-    memberId: Option[String]
-  )(implicit request: Request[_]) =
-    IncorpEntityGrsCreateRequest(grsCallbackUrl(memberId),
-                                 Some(request2Messages(request)("service.name")),
-                                 appConfig.serviceIdentifier,
-                                 appConfig.signOutLink,
-                                 appConfig.grsAccessibilityStatementPath,
-                                 businessVerificationCheck = businessVerificationCheck
+  private def incorpEntityGrsCreateRequest(businessVerificationCheck: Boolean, memberId: Option[String])(implicit request: Request[_]) =
+    IncorpEntityGrsCreateRequest(
+      grsCallbackUrl(memberId),
+      Some(request2Messages(request)("service.name")),
+      appConfig.serviceIdentifier,
+      appConfig.signOutLink,
+      appConfig.grsAccessibilityStatementPath,
+      businessVerificationCheck = businessVerificationCheck
     )
 
-  private def getUkCompanyRedirectUrl(
-    businessVerificationCheck: Boolean,
-    memberId: Option[String]
-  )(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
-    ukCompanyGrsConnector.createJourney(
-      incorpEntityGrsCreateRequest(businessVerificationCheck, memberId)
-    )
+  private def getUkCompanyRedirectUrl(businessVerificationCheck: Boolean, memberId: Option[String])(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(businessVerificationCheck, memberId))
 
-  private def getRegisteredSocietyRedirectUrl(
-    memberId: Option[String]
-  )(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+  private def getRegisteredSocietyRedirectUrl(memberId: Option[String])(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
     registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest(true, memberId))
 
-  private def getRedirectUrl(
-    url: String,
-    businessVerificationCheck: Boolean,
-    memberId: Option[String]
-  )(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
+  private def getRedirectUrl(url: String, businessVerificationCheck: Boolean, memberId: Option[String])(implicit
+    request: JourneyRequest[AnyContent],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
     partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(grsCallbackUrl(memberId),
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath,
-                                  businessVerificationCheck =
-                                    businessVerificationCheck
+      PartnershipGrsCreateRequest(
+        grsCallbackUrl(memberId),
+        Some(request2Messages(request)("service.name")),
+        appConfig.serviceIdentifier,
+        appConfig.signOutLink,
+        appConfig.grsAccessibilityStatementPath,
+        businessVerificationCheck =
+          businessVerificationCheck
       ),
       url
     )

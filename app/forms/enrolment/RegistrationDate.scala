@@ -49,33 +49,26 @@ object RegistrationDate extends Mappings {
           "enrolment.registrationDate.value.error.missing.values",
           "enrolment.registrationDate.value.error.missing.values",
           "enrolment.registrationDate.value.error.format"
-        ).verifying(
-          isTodayOrPast("enrolment.registrationDate.value.error.maxDate"),
-          isOnOrAfterMinimumRegDate("enrolment.registrationDate.value.error.minDate")
-        ))(pack)(unpack)
+        ).verifying(isTodayOrPast("enrolment.registrationDate.value.error.maxDate"), isOnOrAfterMinimumRegDate("enrolment.registrationDate.value.error.minDate"))
+      )(pack)(unpack)
     )
 
   private def isTodayOrPast(errorKey: String): Constraint[LocalDate] = {
     val today = LocalDate.now()
     Constraint {
       case date if date.isEqual(today) || date.isBefore(today) => Valid
-      case _ => Invalid(errorKey)
+      case _                                                   => Invalid(errorKey)
     }
   }
 
   private def isOnOrAfterMinimumRegDate(errorKey: String): Constraint[LocalDate] =
     Constraint {
       case date if date.isEqual(minRegistrationDate) || date.isAfter(minRegistrationDate) => Valid
-      case _ => Invalid(errorKey)
+      case _                                                                              => Invalid(errorKey)
     }
 
   private def pack(localDate: LocalDate) =
-    new RegistrationDate(
-      DateData(
-        localDate.getDayOfMonth.toString,
-        localDate.getMonthValue.toString,
-        localDate.getYear.toString)
-    )
+    new RegistrationDate(DateData(localDate.getDayOfMonth.toString, localDate.getMonthValue.toString, localDate.getYear.toString))
 
   private def unpack(r: RegistrationDate): Option[LocalDate] =
     Try(r.value.asLocalDate).toOption

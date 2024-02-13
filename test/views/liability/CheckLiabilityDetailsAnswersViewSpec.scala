@@ -29,7 +29,7 @@ import views.html.liability.check_liability_details_answers_page
 
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[check_liability_details_answers_page]
+  private val page         = inject[check_liability_details_answers_page]
   private val registration = aRegistration()
 
   "Check liability details answers View" should {
@@ -47,51 +47,25 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-
     "display title" in {
-      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-        "liability.checkAnswers.title"
-      )
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage("liability.checkAnswers.title")
     }
 
     "display expected content" when {
 
-
-      assertSummaryRows(view,
+      assertSummaryRows(
+        view,
         List(
-          SummaryRowDetail(
-            "liability.checkAnswers.expectToExceededThreshold",
-            "Yes",
-            Some(
-              liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
-            )
-          ),
+          SummaryRowDetail("liability.checkAnswers.expectToExceededThreshold", "Yes", Some(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)),
           SummaryRowDetail(
             "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
             "5 March 2022",
-            Some(
-              liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage.url
-            )
+            Some(liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage.url)
           ),
-          SummaryRowDetail(
-            "liability.checkAnswers.exceededThreshold",
-            "No",
-            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage.url)
-          ),
-          SummaryRowDetail("liability.checkAnswers.startDate",
-            "1 April 2022",
-            None
-          ),
-          SummaryRowDetail(
-            "liability.checkAnswers.expectedWeightNext12m",
-            "12000 kg",
-            Some(liabilityRoutes.LiabilityWeightController.displayPage().url)
-          ),
-          SummaryRowDetail(
-            "liability.checkAnswers.registrationType",
-            "A single organisation",
-            Some(liabilityRoutes.RegistrationTypeController.displayPage().url)
-          )
+          SummaryRowDetail("liability.checkAnswers.exceededThreshold", "No", Some(liabilityRoutes.ExceededThresholdWeightController.displayPage.url)),
+          SummaryRowDetail("liability.checkAnswers.startDate", "1 April 2022", None),
+          SummaryRowDetail("liability.checkAnswers.expectedWeightNext12m", "12000 kg", Some(liabilityRoutes.LiabilityWeightController.displayPage().url)),
+          SummaryRowDetail("liability.checkAnswers.registrationType", "A single organisation", Some(liabilityRoutes.RegistrationTypeController.displayPage().url))
         )
       )
     }
@@ -114,15 +88,15 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private def assertSummaryRows(view: Document, expectedRows: List[SummaryRowDetail]) = {
     val actualRows = view.getElementsByClass("govuk-summary-list__row")
 
-
-    actualRows.zip(expectedRows).zipWithIndex.foreach { case ((actualRow, expectedRow), index) =>
-      s"Row ${index+1} has correct key, value and action" in {
-        actualRow.getElementsByClass("govuk-summary-list__key").first must containMessage(expectedRow.label)
-        actualRow.getElementsByClass("govuk-summary-list__value").first must containText(expectedRow.value)
-        if (expectedRow.actionLink.isDefined)
-          actualRow.getElementsByTag("a").first must haveHref(expectedRow.actionLink.get)
-        else assert(actualRow.getElementsByTag("a").isEmpty)
-      }
+    actualRows.zip(expectedRows).zipWithIndex.foreach {
+      case ((actualRow, expectedRow), index) =>
+        s"Row ${index + 1} has correct key, value and action" in {
+          actualRow.getElementsByClass("govuk-summary-list__key").first must containMessage(expectedRow.label)
+          actualRow.getElementsByClass("govuk-summary-list__value").first must containText(expectedRow.value)
+          if (expectedRow.actionLink.isDefined)
+            actualRow.getElementsByTag("a").first must haveHref(expectedRow.actionLink.get)
+          else assert(actualRow.getElementsByTag("a").isEmpty)
+        }
     }
   }
 

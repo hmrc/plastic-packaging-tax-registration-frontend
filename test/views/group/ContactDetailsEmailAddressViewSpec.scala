@@ -53,18 +53,12 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("contactDetails.member.emailAddress.title",
-                 contactName.getOrElse(messages("primaryContactDetails.fullName.default"))
-        )
-      )
+      view.select("title").text() must include(messages("contactDetails.member.emailAddress.title", contactName.getOrElse(messages("primaryContactDetails.fullName.default"))))
     }
 
     "display hint" in {
 
-      view.getElementById("value-hint").text() must include(
-        messages("contactDetails.member.emailAddress.hint")
-      )
+      view.getElementById("value-hint").text() must include(messages("contactDetails.member.emailAddress.hint"))
     }
 
     "display email address input box" in {

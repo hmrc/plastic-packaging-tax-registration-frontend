@@ -28,7 +28,6 @@ import views.html.confirmation_page
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
 class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
 
   private val realAppConfig           = inject[AppConfig]
@@ -58,23 +57,13 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
     "display panel" when {
       "single entity registration" when {
         "no 'referenceId' has been provided" in {
-          verifyPanelContent(view,
-                             messages("confirmationPage.heading",
-                                      LocalDate.now.format(dateFormatter)
-                             ),
-                             messages("confirmationPage.panel.body.default")
-          )
+          verifyPanelContent(view, messages("confirmationPage.heading", LocalDate.now.format(dateFormatter)), messages("confirmationPage.panel.body.default"))
         }
         "a 'referenceId' has been provided" in {
           val viewWithReferenceId = createView(flash =
             Flash(Map(FlashKeys.referenceId -> "PPT123", FlashKeys.groupReg -> false.toString))
           )
-          verifyPanelContent(viewWithReferenceId,
-                             messages("confirmationPage.heading",
-                                      LocalDate.now.format(dateFormatter)
-                             ),
-                             messages("confirmationPage.panel.body", "PPT123")
-          )
+          verifyPanelContent(viewWithReferenceId, messages("confirmationPage.heading", LocalDate.now.format(dateFormatter)), messages("confirmationPage.panel.body", "PPT123"))
         }
       }
       "group registration" when {
@@ -82,22 +71,16 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
           val groupView = createView(flash =
             Flash(Map(FlashKeys.groupReg -> true.toString))
           )
-          verifyPanelContent(groupView,
-                             messages("confirmationPage.group.heading",
-                                      LocalDate.now.format(dateFormatter)
-                             ),
-                             messages("confirmationPage.panel.body.default")
-          )
+          verifyPanelContent(groupView, messages("confirmationPage.group.heading", LocalDate.now.format(dateFormatter)), messages("confirmationPage.panel.body.default"))
         }
         "a 'referenceId' has been provided" in {
           val groupViewWithReferenceId = createView(flash =
             Flash(Map(FlashKeys.referenceId -> "PPT123", FlashKeys.groupReg -> true.toString))
           )
-          verifyPanelContent(groupViewWithReferenceId,
-                             messages("confirmationPage.group.heading",
-                                      LocalDate.now.format(dateFormatter)
-                             ),
-                             messages("confirmationPage.panel.body", "PPT123")
+          verifyPanelContent(
+            groupViewWithReferenceId,
+            messages("confirmationPage.group.heading", LocalDate.now.format(dateFormatter)),
+            messages("confirmationPage.panel.body", "PPT123")
           )
         }
       }
@@ -107,9 +90,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
       val mainDetail = createView().select("div#detail p")
       mainDetail.get(0) must containMessage("confirmationPage.detail.1")
       mainDetail.get(1) must containMessage("confirmationPage.detail.2")
-      mainDetail.get(2).text must include(
-        messages("confirmationPage.detail.3", messages("confirmationPage.detail.3.link"))
-      )
+      mainDetail.get(2).text must include(messages("confirmationPage.detail.3", messages("confirmationPage.detail.3.link")))
 
       mainDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
     }
@@ -117,46 +98,28 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
     "display 'What happens next'" when {
 
       "post-launch" in {
-        view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
-          "confirmationPage.whatHappensNext.title"
-        )
+        view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage("confirmationPage.whatHappensNext.title")
 
         val whatHappensNextDetail = view.select("div#what-happens-next p")
-        whatHappensNextDetail.get(0).text must include(
-          messages("confirmationPage.whatHappensNext.detail",
-                   messages("confirmationPage.whatHappensNext.detail.link")
-          )
-        )
+        whatHappensNextDetail.get(0).text must include(messages("confirmationPage.whatHappensNext.detail", messages("confirmationPage.whatHappensNext.detail.link")))
         whatHappensNextDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
 
         val whatHappensNextDetailList = view.select("div#what-happens-next li")
-        whatHappensNextDetailList.get(0).text must include(
-          messages("confirmationPage.whatHappensNext.detail.item1")
-        )
-        whatHappensNextDetailList.get(1).text must include(
-          messages("confirmationPage.whatHappensNext.detail.item2")
-        )
+        whatHappensNextDetailList.get(0).text must include(messages("confirmationPage.whatHappensNext.detail.item1"))
+        whatHappensNextDetailList.get(1).text must include(messages("confirmationPage.whatHappensNext.detail.item2"))
       }
     }
 
     "display BTA info and link" in {
       val btaDetail = view.select("div#bta p")
-      btaDetail.get(0).text must include(
-        messages("confirmationPage.whatHappensNext.bta",
-                 messages("confirmationPage.whatHappensNext.bta.link")
-        )
-      )
+      btaDetail.get(0).text must include(messages("confirmationPage.whatHappensNext.bta", messages("confirmationPage.whatHappensNext.bta.link")))
 
       btaDetail.select("a").get(0) must haveHref(realAppConfig.businessAccountUrl)
     }
 
     "display exit survey link" in {
       val exitSurveyDetail = view.select("div#exit-survey p")
-      exitSurveyDetail.get(0).text must include(
-        messages("confirmationPage.exitSurvey.link",
-                 messages("confirmationPage.exitSurvey.link.text")
-        )
-      )
+      exitSurveyDetail.get(0).text must include(messages("confirmationPage.exitSurvey.link", messages("confirmationPage.exitSurvey.link.text")))
 
       exitSurveyDetail.select("a").get(0) must haveHref(realAppConfig.exitSurveyUrl)
     }

@@ -37,18 +37,19 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   private val page = mock[partnership_type]
   private val mcc  = stubMessagesControllerComponents()
 
-  val controller = new PartnershipTypeController(journeyAction = spyJourneyAction,
-                                                 appConfig = config,
-                                                 soleTraderGrsConnector =
-                                                   mockSoleTraderGrsConnector,
-                                                 ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-                                                 partnershipGrsConnector =
-                                                   mockPartnershipGrsConnector,
-                                                 registeredSocietyGrsConnector =
-                                                   mockRegisteredSocietyGrsConnector,
-                                                 registrationConnector = mockRegistrationConnector,
-                                                 mcc = mcc,
-                                                 page = page
+  val controller = new PartnershipTypeController(
+    journeyAction = spyJourneyAction,
+    appConfig = config,
+    soleTraderGrsConnector =
+      mockSoleTraderGrsConnector,
+    ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+    partnershipGrsConnector =
+      mockPartnershipGrsConnector,
+    registeredSocietyGrsConnector =
+      mockRegisteredSocietyGrsConnector,
+    registrationConnector = mockRegistrationConnector,
+    mcc = mcc,
+    page = page
   )
 
   override protected def beforeEach(): Unit = {
@@ -63,7 +64,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       "no previous partnership type in registration" in {
         val registration = aRegistration(withPartnershipDetails(None))
 
-
         spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(FakeRequest())
@@ -73,7 +73,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
       "previous partnership type in registration" in {
         val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
-
 
         spyJourneyAction.setReg(registration)
 
@@ -85,14 +84,10 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
     "redirect to partnership GRS" when {
       forAll(
-        Seq((SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails),
-            (LIMITED_PARTNERSHIP, limitedPartnershipDetails),
-            (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails)
-        )
+        Seq((SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails), (LIMITED_PARTNERSHIP, limitedPartnershipDetails), (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails))
       ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-
 
           spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
@@ -108,14 +103,9 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     }
 
     "capture partnership name" when {
-      forAll(
-        Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails),
-            (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
-        )
-      ) { partnershipDetails =>
+      forAll(Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails), (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails))) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-
 
           spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
@@ -129,36 +119,27 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       }
     }
 
-      forAll(
-        Seq(GENERAL_PARTNERSHIP,
-            SCOTTISH_PARTNERSHIP,
-            SCOTTISH_LIMITED_PARTNERSHIP,
-            LIMITED_PARTNERSHIP,
-            LIMITED_LIABILITY_PARTNERSHIP
-        )
-      ) { partnershipType =>
-        s"update registration with $partnershipType type" in {
-          val registration = aRegistration(withPartnershipDetails(None))
+    forAll(Seq(GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, LIMITED_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP)) { partnershipType =>
+      s"update registration with $partnershipType type" in {
+        val registration = aRegistration(withPartnershipDetails(None))
 
+        spyJourneyAction.setReg(registration)
+        mockRegistrationUpdate()
 
-          spyJourneyAction.setReg(registration)
-          mockRegistrationUpdate()
+        val correctForm = Seq("answer" -> partnershipType.toString)
+        await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
 
-          val correctForm = Seq("answer" -> partnershipType.toString)
-          await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-
-          val expectedRegistration = registration.copy(organisationDetails =
-            registration.organisationDetails.copy(partnershipDetails =
-              Some(PartnershipDetails(partnershipType))
-            )
+        val expectedRegistration = registration.copy(organisationDetails =
+          registration.organisationDetails.copy(partnershipDetails =
+            Some(PartnershipDetails(partnershipType))
           )
-          verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
-        }
+        )
+        verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
+      }
     }
 
     "throw errors resulting from failed registration updates for General Partnership" in {
       val registration = aRegistration(withPartnershipDetails(None))
-
 
       spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()
@@ -172,7 +153,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
     "returns bad request when empty form submitted" in {
       val registration = aRegistration(withPartnershipDetails(None))
-
 
       spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()

@@ -35,23 +35,17 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
         val stubRegisteredOfficeAddressNoPostcode = Json.obj(
           "address_line_1" -> "testLine1",
           "address_line_2" -> "test town",
-          "care_of" -> "test name",
-          "country" -> "United Kingdom",
-          "locality" -> "test city",
-          "po_box" -> "123",
-          "premises" -> "1",
-          "region" -> "test region"
+          "care_of"        -> "test name",
+          "country"        -> "United Kingdom",
+          "locality"       -> "test city",
+          "po_box"         -> "123",
+          "premises"       -> "1",
+          "region"         -> "test region"
         )
 
         val incAddress = stubRegisteredOfficeAddressNoPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe UKAddress(
-          "1",
-          Some("testLine1"),
-          Some("test town"),
-          "test city",
-          ""
-        )
+        acu.toPptAddress(incAddress) mustBe UKAddress("1", Some("testLine1"), Some("test town"), "test city", "")
 
       }
     }
@@ -62,24 +56,18 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
         val stubRegisteredOfficeAddressWithPostcode = Json.obj(
           "address_line_1" -> "testLine1",
           "address_line_2" -> "test town",
-          "care_of" -> "test name",
-          "country" -> "United Kingdom",
-          "locality" -> "test city",
-          "postal_code" -> "AA11AA",
-          "po_box" -> "123",
-          "premises" -> "1",
-          "region" -> "test region"
+          "care_of"        -> "test name",
+          "country"        -> "United Kingdom",
+          "locality"       -> "test city",
+          "postal_code"    -> "AA11AA",
+          "po_box"         -> "123",
+          "premises"       -> "1",
+          "region"         -> "test region"
         )
 
         val incAddress = stubRegisteredOfficeAddressWithPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe UKAddress(
-          "1",
-          Some("testLine1"),
-          Some("test town"),
-          "test city",
-          "AA11AA"
-        )
+        acu.toPptAddress(incAddress) mustBe UKAddress("1", Some("testLine1"), Some("test town"), "test city", "AA11AA")
 
       }
     }
@@ -90,24 +78,17 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
         val stubOverseasAddress = Json.obj(
           "address_line_1" -> "testLine1",
           "address_line_2" -> "test town",
-          "care_of" -> "test name",
-          "country" -> "Spain",
-          "locality" -> "test city",
-          "po_box" -> "123",
-          "premises" -> "1",
-          "region" -> "test region"
+          "care_of"        -> "test name",
+          "country"        -> "Spain",
+          "locality"       -> "test city",
+          "po_box"         -> "123",
+          "premises"       -> "1",
+          "region"         -> "test region"
         )
 
         val incAddress = stubOverseasAddress.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe NonUKAddress(
-          "1",
-          Some("testLine1"),
-          Some("test town"),
-          "test city",
-          None,
-          "ES"
-        )
+        acu.toPptAddress(incAddress) mustBe NonUKAddress("1", Some("testLine1"), Some("test town"), "test city", None, "ES")
 
       }
     }

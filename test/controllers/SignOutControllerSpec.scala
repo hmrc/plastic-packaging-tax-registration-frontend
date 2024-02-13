@@ -53,7 +53,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val exitSurveyUrl: String = givenExistSurveyUrl
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
@@ -63,7 +62,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val exitSurveyUrl: String = givenExistSurveyUrl
 
@@ -78,7 +76,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
@@ -86,7 +83,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
@@ -99,7 +95,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest().withSession("keyA" -> "valueA"))
 
         session(result).get("keyA") shouldBe None
@@ -107,7 +102,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest().withSession("keyA" -> "valueA"))
 
@@ -124,7 +118,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user session times out" in {
 
-
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
@@ -133,7 +126,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user session times out" in {
-
 
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
@@ -147,8 +139,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "session times out" in {
 
-
-
         val result =
           controller.signOut(SignOutReason.SessionTimeout)(FakeRequest().withSession("keyA" -> "valueA"))
 
@@ -159,8 +149,6 @@ class SignOutControllerSpec extends ControllerSpec {
     "return 200 (OK) status" when {
 
       "unauthorised user hits /we-sign-you-out page" in {
-
-
 
         val result = controller.sessionTimeoutSignedOut()(FakeRequest())
 

@@ -21,54 +21,29 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
-import models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  JOURNEY_NOT_FOUND,
-  JourneyStatus,
-  TOO_MANY_ATTEMPTS
-}
-import models.emailverification.{
-  CreateEmailVerificationRequest,
-  VerificationStatus,
-  VerifyPasscodeRequest
-}
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
+import models.emailverification.{CreateEmailVerificationRequest, VerificationStatus, VerifyPasscodeRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailVerificationConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
 
-  def getStatus(
-    id: String
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] = {
+  def getStatus(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.getStatus.timer").time()
     httpClient.GET[Option[VerificationStatus]](appConfig.getEmailVerificationStatusUrl(id))
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toVerificationStatus)))
       .recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to retrieve email verification status, error: ${ex.getMessage}",
-              ex
-            )
-          )
+          Left(DownstreamServiceError(s"Failed to retrieve email verification status, error: ${ex.getMessage}", ex))
       }
   }
 
-  def create(
-    payload: CreateEmailVerificationRequest
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] = {
+  def create(payload: CreateEmailVerificationRequest)(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.create.timer").time()
-    httpClient.POST[CreateEmailVerificationRequest, HttpResponse](appConfig.emailVerificationUrl,
-                                                                  payload
-    )
+    httpClient.POST[CreateEmailVerificationRequest, HttpResponse](appConfig.emailVerificationUrl, payload)
       .andThen { case _ => timer.stop() }
       .map {
         case response @ HttpResponse(CREATED, _, _) =>
@@ -86,14 +61,9 @@ class EmailVerificationConnector @Inject() (
       }
   }
 
-  def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[ServiceError, JourneyStatus]] = {
+  def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit hc: HeaderCarrier): Future[Either[ServiceError, JourneyStatus]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
-    httpClient.POST[VerifyPasscodeRequest, HttpResponse](
-      appConfig.getSubmitPassscodeUrl(journeyId = journeyId),
-      payload
-    )
+    httpClient.POST[VerifyPasscodeRequest, HttpResponse](appConfig.getSubmitPassscodeUrl(journeyId = journeyId), payload)
       .andThen { case _ => timer.stop() }
       .map {
         case _ @HttpResponse(OK, _, _) =>
@@ -105,17 +75,10 @@ class EmailVerificationConnector @Inject() (
         case _ @HttpResponse(NOT_FOUND, _, _) =>
           Right(JOURNEY_NOT_FOUND)
         case response =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to verify passcode, status: ${response.status}, error: ${response.body}",
-              VerifyPasscodeException("Failed to verify passcode")
-            )
-          )
+          Left(DownstreamServiceError(s"Failed to verify passcode, status: ${response.status}, error: ${response.body}", VerifyPasscodeException("Failed to verify passcode")))
       }.recover {
         case ex: Exception =>
-          Left(
-            DownstreamServiceError(s"Error while verifying passcode, error: ${ex.getMessage}", ex)
-          )
+          Left(DownstreamServiceError(s"Error while verifying passcode, error: ${ex.getMessage}", ex))
       }
   }
 

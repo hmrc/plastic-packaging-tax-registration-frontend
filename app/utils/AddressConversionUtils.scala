@@ -32,14 +32,14 @@ class AddressConversionUtils @Inject() (countryService: CountryService) {
       Seq(incAddress.premises, incAddress.address_line_1, incAddress.address_line_2)
         .flatten.map(_.trim).filter(_.nonEmpty)
 
-      Address(
-        addressLine1 = linesOneToThree.headOption.getOrElse(""),
-        addressLine2 = linesOneToThree.lift(1),
-        addressLine3 = linesOneToThree.lift(2),
-        townOrCity = incAddress.locality.getOrElse("").trim,
-        maybePostcode = incAddress.postal_code.map(_.trim),
-        countryCode = incAddress.country.flatMap(countryService.getKeyForName).getOrElse("")
-      )
+    Address(
+      addressLine1 = linesOneToThree.headOption.getOrElse(""),
+      addressLine2 = linesOneToThree.lift(1),
+      addressLine3 = linesOneToThree.lift(2),
+      townOrCity = incAddress.locality.getOrElse("").trim,
+      maybePostcode = incAddress.postal_code.map(_.trim),
+      countryCode = incAddress.country.flatMap(countryService.getKeyForName).getOrElse("")
+    )
   }
 
   def toPptAddress(addressLookupConfirmation: AddressLookupConfirmation): Address = {

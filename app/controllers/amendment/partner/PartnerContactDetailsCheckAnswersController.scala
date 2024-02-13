@@ -27,22 +27,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactDetailsCheckAnswersController @Inject() (
-                                                              journeyAction: JourneyAction,
-                                                              amendRegistrationService: AmendRegistrationService,
-                                                              mcc: MessagesControllerComponents,
-                                                              page: amend_partner_contact_check_answers_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: amend_partner_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      Ok(
-        page(
-          request.registration.findPartner(partnerId).getOrElse(
-            throw new IllegalStateException("Partner not found")
-          )
-        )
-      )
+      Ok(page(request.registration.findPartner(partnerId).getOrElse(throw new IllegalStateException("Partner not found"))))
     }
 
   def submit(): Action[AnyContent] =

@@ -36,7 +36,6 @@ object RegistrationType extends Enumeration {
   val Organisation, SoleTrader, Group, Partnership = Value
 }
 
-
 class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
 
   private val page: amend_registration_page = inject[amend_registration_page]
@@ -49,28 +48,20 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val soleTraderRegistration         = aRegistration(withSoleTraderDetails(Some(soleTraderDetails)))
   private val groupRegistration              = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
-
-
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private def createView(registration: Registration): Html =
     page(registration)(amendsJourneyRequest, messages)
 
   "Should display tax start date" in {
-    createView(registration).select("dt").text() must include ("Tax start date")
+    createView(registration).select("dt").text() must include("Tax start date")
 
   }
   "Should display value of the date" in {
-    createView(registration).select("dd").text() must include ("1 April 2022")
+    createView(registration).select("dd").text() must include("1 April 2022")
   }
 
-  Seq((Organisation, singleOrganisationRegistration),
-      (SoleTrader, soleTraderRegistration),
-      (Group, groupRegistration),
-      (Partnership, partnershipRegistration)
-  ).foreach {
+  Seq((Organisation, singleOrganisationRegistration), (SoleTrader, soleTraderRegistration), (Group, groupRegistration), (Partnership, partnershipRegistration)).foreach {
     case (organisationType, registration) =>
       "Amend Registration Page" when {
 
@@ -92,7 +83,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.title"
               case Group        => "amend.group.title"
               case Partnership  => "amend.partnership.title"
-              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
+              case other        => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 
@@ -113,7 +104,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.title"
               case Group        => "amend.group.title"
               case Partnership  => "amend.partnership.title"
-              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
+              case other        => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 
@@ -123,37 +114,22 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.individual.subheading"
               case Group        => "amend.group.subheading"
               case Partnership  => "amend.partnership.subheading"
-              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
+              case other        => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
             val descriptionList = view.select("dl").get(0).text()
             val expectedOrganisationDetails =
-              Seq(registration.organisationDetails.businessName.get,
-                  amendsJourneyRequest.pptReference.get,
-                  viewUtils.displayLocalDate(registration.dateOfRegistration).get,
-                  registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.addressLine1
-                  ).get,
-                  registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.addressLine2.getOrElse("")
-                  ).get,
-                  registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.addressLine3.getOrElse("")
-                  ).get,
-                  registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.townOrCity
-                  ).get,
-                  registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.maybePostcode.getOrElse("")
-                  ).get,
-                  countryService.tryLookupCountryName(
-                    registration.organisationDetails.businessRegisteredAddress.map(
-                      bra => bra.countryCode
-                    ).get
-                  )
+              Seq(
+                registration.organisationDetails.businessName.get,
+                amendsJourneyRequest.pptReference.get,
+                viewUtils.displayLocalDate(registration.dateOfRegistration).get,
+                registration.organisationDetails.businessRegisteredAddress.map(bra => bra.addressLine1).get,
+                registration.organisationDetails.businessRegisteredAddress.map(bra => bra.addressLine2.getOrElse("")).get,
+                registration.organisationDetails.businessRegisteredAddress.map(bra => bra.addressLine3.getOrElse("")).get,
+                registration.organisationDetails.businessRegisteredAddress.map(bra => bra.townOrCity).get,
+                registration.organisationDetails.businessRegisteredAddress.map(bra => bra.maybePostcode.getOrElse("")).get,
+                countryService.tryLookupCountryName(registration.organisationDetails.businessRegisteredAddress.map(bra => bra.countryCode).get)
               ).filter(_.nonEmpty)
-            expectedOrganisationDetails.foreach(
-              orgDetail => descriptionList must include(orgDetail)
-            )
+            expectedOrganisationDetails.foreach(orgDetail => descriptionList must include(orgDetail))
           }
 
           "display main contact details subheading" in {
@@ -162,7 +138,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               case SoleTrader   => "amend.contactDetails.individual.subheading"
               case Group        => "amend.contactDetails.group.subheading"
               case Partnership  => "amend.contactDetails.partnership.subheading"
-              case other => throw new IllegalStateException(s"Invalid organisation type: $other")
+              case other        => throw new IllegalStateException(s"Invalid organisation type: $other")
             }))
           }
 
@@ -172,31 +148,29 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               organisationType match {
                 case Partnership =>
                   val nominatedPartner = registration.nominatedPartner.get
-                  Seq(nominatedPartner.contactDetails.get.name.get,
-                      nominatedPartner.contactDetails.get.emailAddress.get,
-                      nominatedPartner.contactDetails.get.phoneNumber.get,
-                      nominatedPartner.contactDetails.get.address.get.addressLine1,
-                      nominatedPartner.contactDetails.get.address.get.addressLine2.getOrElse(""),
-                      nominatedPartner.contactDetails.get.address.get.addressLine3.getOrElse(""),
-                      nominatedPartner.contactDetails.get.address.get.townOrCity,
-                      nominatedPartner.contactDetails.get.address.get.maybePostcode.getOrElse(""),
-                      countryService.tryLookupCountryName(
-                        registration.primaryContactDetails.address.get.countryCode
-                      )
+                  Seq(
+                    nominatedPartner.contactDetails.get.name.get,
+                    nominatedPartner.contactDetails.get.emailAddress.get,
+                    nominatedPartner.contactDetails.get.phoneNumber.get,
+                    nominatedPartner.contactDetails.get.address.get.addressLine1,
+                    nominatedPartner.contactDetails.get.address.get.addressLine2.getOrElse(""),
+                    nominatedPartner.contactDetails.get.address.get.addressLine3.getOrElse(""),
+                    nominatedPartner.contactDetails.get.address.get.townOrCity,
+                    nominatedPartner.contactDetails.get.address.get.maybePostcode.getOrElse(""),
+                    countryService.tryLookupCountryName(registration.primaryContactDetails.address.get.countryCode)
                   ).filter(_.nonEmpty)
                 case _ =>
-                  Seq(registration.primaryContactDetails.name.get,
-                      registration.primaryContactDetails.jobTitle.get,
-                      registration.primaryContactDetails.email.get,
-                      registration.primaryContactDetails.phoneNumber.get,
-                      registration.primaryContactDetails.address.get.addressLine1,
-                      registration.primaryContactDetails.address.get.addressLine2.getOrElse(""),
-                      registration.primaryContactDetails.address.get.addressLine3.getOrElse(""),
-                      registration.primaryContactDetails.address.get.townOrCity,
-                      registration.primaryContactDetails.address.get.maybePostcode.getOrElse(""),
-                      countryService.tryLookupCountryName(
-                        registration.primaryContactDetails.address.get.countryCode
-                      )
+                  Seq(
+                    registration.primaryContactDetails.name.get,
+                    registration.primaryContactDetails.jobTitle.get,
+                    registration.primaryContactDetails.email.get,
+                    registration.primaryContactDetails.phoneNumber.get,
+                    registration.primaryContactDetails.address.get.addressLine1,
+                    registration.primaryContactDetails.address.get.addressLine2.getOrElse(""),
+                    registration.primaryContactDetails.address.get.addressLine3.getOrElse(""),
+                    registration.primaryContactDetails.address.get.townOrCity,
+                    registration.primaryContactDetails.address.get.maybePostcode.getOrElse(""),
+                    countryService.tryLookupCountryName(registration.primaryContactDetails.address.get.countryCode)
                   ).filter(_.nonEmpty)
               }
 
@@ -209,45 +183,17 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             organisationType match {
               case Partnership =>
                 val nominatedPartner = registration.nominatedPartner.get
-                changeLinks.get(0) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.contactName(
-                    nominatedPartner.id
-                  )
-                )
-                changeLinks.get(1) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.jobTitle(
-                    nominatedPartner.id
-                  )
-                )
-                changeLinks.get(2) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(
-                    nominatedPartner.id
-                  )
-                )
-                changeLinks.get(3) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(
-                    nominatedPartner.id
-                  )
-                )
-                changeLinks.get(4) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.address(
-                    nominatedPartner.id
-                  )
-                )
+                changeLinks.get(0) must haveHref(partnerAmendRoutes.AmendPartnerContactDetailsController.contactName(nominatedPartner.id))
+                changeLinks.get(1) must haveHref(partnerAmendRoutes.AmendPartnerContactDetailsController.jobTitle(nominatedPartner.id))
+                changeLinks.get(2) must haveHref(partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(nominatedPartner.id))
+                changeLinks.get(3) must haveHref(partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(nominatedPartner.id))
+                changeLinks.get(4) must haveHref(partnerAmendRoutes.AmendPartnerContactDetailsController.address(nominatedPartner.id))
               case _ =>
-                changeLinks.get(0) must haveHref(
-                  amendRoutes.AmendContactDetailsController.contactName()
-                )
-                changeLinks.get(1) must haveHref(
-                  amendRoutes.AmendContactDetailsController.jobTitle()
-                )
+                changeLinks.get(0) must haveHref(amendRoutes.AmendContactDetailsController.contactName())
+                changeLinks.get(1) must haveHref(amendRoutes.AmendContactDetailsController.jobTitle())
                 changeLinks.get(2) must haveHref(amendRoutes.AmendEmailAddressController.email())
-                changeLinks.get(3) must haveHref(
-                  amendRoutes.AmendContactDetailsController.phoneNumber()
-                )
-                changeLinks.get(4) must haveHref(
-                  amendRoutes.AmendContactDetailsController.address()
-                )
+                changeLinks.get(3) must haveHref(amendRoutes.AmendContactDetailsController.phoneNumber())
+                changeLinks.get(4) must haveHref(amendRoutes.AmendContactDetailsController.address())
             }
           }
 

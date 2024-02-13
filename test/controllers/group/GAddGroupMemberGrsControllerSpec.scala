@@ -40,18 +40,15 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with PptTestData with BeforeAndAfterEach {
 
-  private val reg = aRegistration(
-    withOrganisationDetails(registeredUkCompanyOrgDetails()),
-    withGroupDetail(Some(groupDetails.copy(currentMemberOrganisationType = Some(OrgType.UK_COMPANY))))
-  )
+  private val reg =
+    aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()), withGroupDetail(Some(groupDetails.copy(currentMemberOrganisationType = Some(OrgType.UK_COMPANY)))))
 
-  private val journeyAction = mock[JourneyAction]
+  private val journeyAction       = mock[JourneyAction]
   private val registrationUpdater = mock[AmendRegistrationUpdateService]
-  private val mcc  = stubMessagesControllerComponents()
-  private val actionBuilder = mock[ActionBuilder[JourneyRequest, AnyContent]]
+  private val mcc                 = stubMessagesControllerComponents()
+  private val actionBuilder       = mock[ActionBuilder[JourneyRequest, AnyContent]]
 
   type RequestAsyncFunction = JourneyRequest[AnyContent] => Future[Result]
 
@@ -74,7 +71,7 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
     val detailsFromGrs =
       incorporationDetails.copy(companyNumber = "22222", companyName = "Existing Company")
     mockGetUkCompanyDetails(detailsFromGrs)
-    when(registrationUpdater.updateRegistration(any)(any,any)).thenReturn(Future.successful(reg))
+    when(registrationUpdater.updateRegistration(any)(any, any)).thenReturn(Future.successful(reg))
 
   }
 
@@ -86,9 +83,7 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
       val result: Future[Result] = sut.grsCallbackNewMember("123")(createRequest(reg))
 
       status(result) mustBe SEE_OTHER
-      assertResult(
-        amendRoutes.AddGroupMemberConfirmBusinessAddressController.displayPage("uuid").url,
-        redirectLocation(result).value)
+      assertResult(amendRoutes.AddGroupMemberConfirmBusinessAddressController.displayPage("uuid").url, redirectLocation(result).value)
     }
 
     "redirect to the /group-organisation-already-registered page when user is alrready subscribed" in {
@@ -102,8 +97,8 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
   }
 
   private def assertResult(expectedLocation: String, actualLocation: String) = {
-    val regexp = expectedLocation.substring(0, expectedLocation.lastIndexOf('/'))
-    val uuid = actualLocation.substring(actualLocation.lastIndexOf('/') + 1, actualLocation.length)
+    val regexp      = expectedLocation.substring(0, expectedLocation.lastIndexOf('/'))
+    val uuid        = actualLocation.substring(actualLocation.lastIndexOf('/') + 1, actualLocation.length)
     val uuidPattern = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$".r
 
     assert(uuidPattern.matches(uuid))
@@ -113,13 +108,13 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
   private def authRequest[A](fakeRequest: FakeRequest[A]) =
     RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
 
-  private def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] = (function: RequestAsyncFunction) =>
-    when(mock[Action[AnyContent]].apply(any))
-      .thenAnswer((request: JourneyRequest[AnyContent]) => function(request))
-      .getMock[Action[AnyContent]]
+  private def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
+    (function: RequestAsyncFunction) =>
+      when(mock[Action[AnyContent]].apply(any))
+        .thenAnswer((request: JourneyRequest[AnyContent]) => function(request))
+        .getMock[Action[AnyContent]]
 
-  private def createRequest(reg: Registration): JourneyRequest[AnyContent] = {
+  private def createRequest(reg: Registration): JourneyRequest[AnyContent] =
     JourneyRequest(authRequest(FakeRequest()), reg)
-  }
 
 }

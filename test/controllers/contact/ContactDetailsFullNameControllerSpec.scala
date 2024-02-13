@@ -37,11 +37,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsFullNameController(journeyAction = spyJourneyAction,
-                                         mockRegistrationConnector,
-                                         mcc = mcc,
-                                         page = page
-    )
+    new ContactDetailsFullNameController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -58,11 +54,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     "return 200" when {
       "user is authorised, a registration already exists and display page method is invoked" in {
 
-        spyJourneyAction.setReg(
-          aRegistration(
-            withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))
-          )
-        )
+        spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))))
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
@@ -82,17 +74,13 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
         modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
 
-
-        redirectLocation(result) mustBe Some(
-          routes.ContactDetailsJobTitleController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.ContactDetailsJobTitleController.displayPage().url)
 
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
-
 
         val result = controller.submit()(postRequestEncoded(FullName("")))
 
@@ -109,9 +97,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       "user enters non-alphabetic characters" in {
 
         val result =
-          controller.submit()(
-            postRequestEncoded(FullName("FirstNam807980234£$ LastName"))
-          )
+          controller.submit()(postRequestEncoded(FullName("FirstNam807980234£$ LastName")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -139,29 +125,20 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(
-          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submit()(postRequestEncoded(FullName("FirstName LastName")))))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
 
-        intercept[RuntimeException](status(
-          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
-        ))
+        intercept[RuntimeException](status(controller.submit()(postRequestEncoded(FullName("FirstName LastName")))))
       }
     }
 
     "display page for a group organisation" in {
 
-      spyJourneyAction.setReg(
-        aRegistration(
-          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
-          withGroupDetail(Some(groupDetailsWithMembers))
-        )
-      )
+      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))), withGroupDetail(Some(groupDetailsWithMembers))))
 
       await(controller.displayPage()(FakeRequest()))
 

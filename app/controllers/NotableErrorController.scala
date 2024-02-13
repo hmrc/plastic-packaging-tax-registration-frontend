@@ -31,16 +31,16 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         getRegistration: GetRegistrationAction,
-                                         mcc: MessagesControllerComponents,
-                                         errorPage: error_page,
-                                         errorNoSavePage: enrolment_failure_page,
-                                         grsFailurePage: grs_failure_page,
-                                         businessVerificationFailurePage: business_verification_failure_page,
-                                         soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
-                                         duplicateSubscriptionPage: duplicate_subscription_page,
-                                         registrationFailedPage: registration_failed_page
+  authenticate: RegistrationAuthAction,
+  getRegistration: GetRegistrationAction,
+  mcc: MessagesControllerComponents,
+  errorPage: error_page,
+  errorNoSavePage: enrolment_failure_page,
+  grsFailurePage: grs_failure_page,
+  businessVerificationFailurePage: business_verification_failure_page,
+  soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
+  duplicateSubscriptionPage: duplicate_subscription_page,
+  registrationFailedPage: registration_failed_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =
@@ -74,11 +74,10 @@ class NotableErrorController @Inject() (
     }
 
   //noinspection ScalaUnusedSymbol
-  def registrationFailed(timestamp: String): Action[AnyContent] = {
+  def registrationFailed(timestamp: String): Action[AnyContent] =
     // Note - timestamp will appear as part of referrer link on "contact us" hyperlink
     authenticate { implicit request =>
       Ok(registrationFailedPage())
     }
-  }
 
 }

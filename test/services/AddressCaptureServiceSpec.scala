@@ -24,22 +24,20 @@ import spec.PptTestData
 
 import scala.concurrent.ExecutionContext
 
-class AddressCaptureServiceSpec
-    extends AnyWordSpecLike with MockAddressCaptureDetailRepository with PptTestData {
+class AddressCaptureServiceSpec extends AnyWordSpecLike with MockAddressCaptureDetailRepository with PptTestData {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
-  private val addressCaptureService = new AddressCaptureService(
-    inMemoryAddressCaptureDetailRepository
-  )
+  private val addressCaptureService = new AddressCaptureService(inMemoryAddressCaptureDetailRepository)
 
-  private val addressCaptureConfig = AddressCaptureConfig(backLink = "/back-link",
-                                                          successLink = "/success-link",
-                                                          alfHeadingsPrefix = "alf.prefix",
-                                                          pptHeadingKey = "ppt.heading",
-                                                          entityName = Some("Entity"),
-                                                          pptHintKey = None,
-                                                          forceUkAddress = false
+  private val addressCaptureConfig = AddressCaptureConfig(
+    backLink = "/back-link",
+    successLink = "/success-link",
+    alfHeadingsPrefix = "alf.prefix",
+    pptHeadingKey = "ppt.heading",
+    entityName = Some("Entity"),
+    pptHintKey = None,
+    forceUkAddress = false
   )
 
   "Address Capture Service" should {

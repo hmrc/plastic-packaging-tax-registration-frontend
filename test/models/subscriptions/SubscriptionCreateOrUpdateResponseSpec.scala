@@ -20,17 +20,12 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class SubscriptionCreateOrUpdateResponseSpec
-    extends AnyWordSpecLike with TableDrivenPropertyChecks {
+class SubscriptionCreateOrUpdateResponseSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
 
   "EisError" should {
     "identify duplicate subscription errors" in {
-      val duplicateSubscriptionErrorCodes = Table("Error code",
-                                                  "ACTIVE_SUBSCRIPTION_EXISTS",
-                                                  "BUSINESS_VALIDATION",
-                                                  "ACTIVE_GROUP_SUBSCRIPTION_EXISTS",
-                                                  "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION"
-      )
+      val duplicateSubscriptionErrorCodes =
+        Table("Error code", "ACTIVE_SUBSCRIPTION_EXISTS", "BUSINESS_VALIDATION", "ACTIVE_GROUP_SUBSCRIPTION_EXISTS", "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION")
 
       forAll(duplicateSubscriptionErrorCodes) { errorCode =>
         EisError(errorCode, "xxx").isDuplicateSubscription mustBe true

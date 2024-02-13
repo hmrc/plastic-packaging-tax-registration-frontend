@@ -30,12 +30,12 @@ trait JourneyAction {
   def amend: ActionBuilder[JourneyRequest, AnyContent]
 }
 
-class JourneyActionImpl @Inject()(
-                               registrationAuth: RegistrationAuthAction,
-                               getRegistrationAction: GetRegistrationAction,
-                               amendAuthAction: AmendAuthAction,
-                               getRegistrationForAmendmentAction: GetRegistrationForAmendmentAction
-                             ) extends JourneyAction {
+class JourneyActionImpl @Inject() (
+  registrationAuth: RegistrationAuthAction,
+  getRegistrationAction: GetRegistrationAction,
+  amendAuthAction: AmendAuthAction,
+  getRegistrationForAmendmentAction: GetRegistrationForAmendmentAction
+) extends JourneyAction {
 
   override def register: ActionBuilder[JourneyRequest, AnyContent] =
     registrationAuth andThen getRegistrationAction

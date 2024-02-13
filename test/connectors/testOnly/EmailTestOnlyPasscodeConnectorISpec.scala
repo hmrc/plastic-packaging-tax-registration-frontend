@@ -23,13 +23,9 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{await, OK}
 import play.api.test.Injecting
-import connectors.{
-  DownstreamServiceError,
-  ServiceError
-}
+import connectors.{DownstreamServiceError, ServiceError}
 
-class EmailTestOnlyPasscodeConnectorISpec
-    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
+class EmailTestOnlyPasscodeConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: EmailTestOnlyPasscodeConnector = inject[EmailTestOnlyPasscodeConnector]
 

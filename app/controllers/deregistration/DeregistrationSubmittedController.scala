@@ -25,11 +25,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DeregistrationSubmittedController @Inject() (
-                                                    authenticate: AmendAuthAction,
-                                                    mcc: MessagesControllerComponents,
-                                                    page: deregistration_submitted_page
-) extends FrontendController(mcc) with I18nSupport {
+class DeregistrationSubmittedController @Inject() (authenticate: AmendAuthAction, mcc: MessagesControllerComponents, page: deregistration_submitted_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>

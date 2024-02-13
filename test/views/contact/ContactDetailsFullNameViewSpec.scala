@@ -26,7 +26,7 @@ import views.html.contact.full_name_page
 
 class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[full_name_page]
+  private val page       = inject[full_name_page]
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[FullName] = FullName.form(), isGroup: Boolean = false): Document =
@@ -54,19 +54,13 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
     "display section header" when {
       "Single organisation" in {
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
       }
 
       "Group organisation" in {
         val view = createView(isGroup = true)
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          "Representative member details"
-        )
-        view.getElementsByClass("govuk-caption-l").text() must include(
-         messages("primaryContactDetails.group.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
 
       }
     }
@@ -74,15 +68,11 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     "display contact name question" in {
       val view = createView(isGroup = true)
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(
-        messages("primaryContactDetails.fullNamePage.title")
-      )
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.fullNamePage.title"))
     }
 
     "display question hint" in {
-      view.getElementById("value-hint").text() must include(
-        messages("primaryContactDetails.fullNamePage.hint")
-      )
+      view.getElementById("value-hint").text() must include(messages("primaryContactDetails.fullNamePage.hint"))
     }
 
     "display full name text input boxes" in {
@@ -152,10 +142,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError(
-        "value",
-        "Name must only include letters, hyphens, spaces, apostrophes and full stops"
-      )
+      view must haveGovukFieldError("value", "Name must only include letters, hyphens, spaces, apostrophes and full stops")
     }
 
     "user entered more than 160 characters" in {

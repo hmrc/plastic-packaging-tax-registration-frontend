@@ -27,22 +27,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       journeyAction: JourneyAction,
-                                                       amendRegistrationService: AmendRegistrationService,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: member_contact_check_answers_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  page: member_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      Ok(
-        page(
-          request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
-            throw new IllegalStateException("Missing group member")
-          )
-        )
-      )
+      Ok(page(request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(throw new IllegalStateException("Missing group member"))))
     }
 
   def submit(): Action[AnyContent] =

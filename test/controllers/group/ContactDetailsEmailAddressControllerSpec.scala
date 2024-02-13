@@ -39,16 +39,10 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val page = mock[member_email_address_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsEmailAddressController(journeyAction = spyJourneyAction,
-                                             mcc = mcc,
-                                             page = page,
-                                             registrationUpdater = mockNewRegistrationUpdater
-    )
+    new ContactDetailsEmailAddressController(journeyAction = spyJourneyAction, mcc = mcc, page = page, registrationUpdater = mockNewRegistrationUpdater)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -66,9 +60,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       "user is authorised display page method is invoked" in {
 
         val member = groupMember.copy(contactDetails = None)
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
-        )
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
@@ -76,90 +68,74 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "user is authorised, a registration already exists and display page method is invoked" in {
 
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-        )
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
         status(result) mustBe OK
       }
     }
 
-      "return 303 (OK)" when {
-        "user submits the email" in {
+    "return 303 (OK)" when {
+      "user submits the email" in {
 
-          spyJourneyAction.setReg(
-            aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-          )
-          mockRegistrationUpdate()
-
-          val result =
-            controller.submit(groupMember.id)(
-              postRequestEncoded(EmailAddress("test@test.com"))
-            )
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some(
-            "test@test.com"
-          )
-          redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
-          )
-          reset(mockRegistrationConnector)
-        }
-      }
-    }
-
-    "return pre populated form" when {
-
-      def pageForm: Form[EmailAddress] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
-        verify(page).apply(captor.capture(), any(), any())(any(), any())
-        captor.getValue
-      }
-
-      "data exist" in {
-
-        spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
-        )
-
-        await(controller.displayPage(groupMember.id)(FakeRequest()))
-
-        pageForm.get.value mustBe "test@test.com"
-      }
-    }
-
-    "return 400 (BAD_REQUEST)" when {
-
-      "user submits invalid email" in {
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
+        mockRegistrationUpdate()
 
         val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("$%^"))))
+          controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some("test@test.com")
+        redirectLocation(result) mustBe Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url)
+        reset(mockRegistrationConnector)
       }
     }
+  }
 
-    "return an error" when {
+  "return pre populated form" when {
 
-      "user submits form and the registration update fails" in {
+    def pageForm: Form[EmailAddress] = {
+      val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
+      verify(page).apply(captor.capture(), any(), any())(any(), any())
+      captor.getValue
+    }
 
-        mockRegistrationUpdateFailure()
+    "data exist" in {
 
-        intercept[DownstreamServiceError](status(
-          controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
-        ))
-      }
+      spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
 
-      "user submits form and a registration update runtime exception occurs" in {
+      await(controller.displayPage(groupMember.id)(FakeRequest()))
 
-        mockRegistrationException()
+      pageForm.get.value mustBe "test@test.com"
+    }
+  }
 
-        intercept[RuntimeException](status(
-          controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
-        ))
-      }
+  "return 400 (BAD_REQUEST)" when {
+
+    "user submits invalid email" in {
+
+      val result =
+        controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("$%^"))))
+
+      status(result) mustBe BAD_REQUEST
+    }
+  }
+
+  "return an error" when {
+
+    "user submits form and the registration update fails" in {
+
+      mockRegistrationUpdateFailure()
+
+      intercept[DownstreamServiceError](status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))))
+    }
+
+    "user submits form and a registration update runtime exception occurs" in {
+
+      mockRegistrationException()
+
+      intercept[RuntimeException](status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))))
+    }
 
   }
 

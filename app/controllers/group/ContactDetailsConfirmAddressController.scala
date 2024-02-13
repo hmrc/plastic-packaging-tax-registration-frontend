@@ -26,17 +26,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-                                                         journeyAction: JourneyAction,
-                                                         addressCaptureService: AddressCaptureService,
-                                                         mcc: MessagesControllerComponents,
-                                                         registrationUpdater: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(
-                                                       journeyAction.register,
-                                                       addressCaptureService,
-                                                       mcc,
-                                                       registrationUpdater
-    ) {
+    extends ContactDetailsConfirmAddressControllerBase(journeyAction.register, addressCaptureService, mcc, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, routes.ContactDetailsTelephoneNumberController.displayPage(memberId))

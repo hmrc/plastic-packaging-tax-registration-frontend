@@ -58,9 +58,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
     "display hint" in {
 
-      view.getElementsByClass("govuk-body").text() must include(
-        messages("contactDetails.member.name.hint")
-      )
+      view.getElementsByClass("govuk-body").text() must include(messages("contactDetails.member.name.hint"))
     }
 
     "display member name input box" in {
@@ -125,10 +123,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError(
-        "firstName",
-        "First name must only include letters, hyphens, spaces, apostrophes and full stops"
-      )
+      view must haveGovukFieldError("firstName", "First name must only include letters, hyphens, spaces, apostrophes and full stops")
     }
 
     "first name is > 35" in {
@@ -176,10 +171,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError(
-        "lastName",
-        "Last name must only include letters, hyphens, spaces, apostrophes and full stops"
-      )
+      view must haveGovukFieldError("lastName", "Last name must only include letters, hyphens, spaces, apostrophes and full stops")
     }
 
     "last name is > 35" in {
@@ -196,17 +188,8 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(MemberName.form(), organisationName, updateLink, groupMember.id)(
-      registrationJourneyRequest,
-      messages
-    )
-    page.render(MemberName.form(),
-                organisationName,
-                updateLink,
-                groupMember.id,
-                registrationJourneyRequest,
-                messages
-    )
+    page.f(MemberName.form(), organisationName, updateLink, groupMember.id)(registrationJourneyRequest, messages)
+    page.render(MemberName.form(), organisationName, updateLink, groupMember.id, registrationJourneyRequest, messages)
   }
 
 }

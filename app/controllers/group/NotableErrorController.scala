@@ -28,12 +28,12 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-                                         authenticate: BasicAuthAction,
-                                         getRegistration: GetRegistrationAction,
-                                         mcc: MessagesControllerComponents,
-                                         nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
-                                         organisationAlreadyInGroupPage: organisation_already_in_group_page,
-                                         groupMemberAlreadyRegisteredPage: group_member_already_registered_page
+  authenticate: BasicAuthAction,
+  getRegistration: GetRegistrationAction,
+  mcc: MessagesControllerComponents,
+  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
+  organisationAlreadyInGroupPage: organisation_already_in_group_page,
+  groupMemberAlreadyRegisteredPage: group_member_already_registered_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =

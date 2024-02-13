@@ -32,9 +32,7 @@ object DeregisterReasonForm extends CommonFormValidators with CommonFormValues {
     Form(
       mapping(
         "answer" -> nonEmptyString("deregistration.reason.empty.error")
-          .verifying("deregistration.reason.empty.error",
-                     contains(DeregistrationReason.values.toSeq.map(_.toString))
-          )
+          .verifying("deregistration.reason.empty.error", contains(DeregistrationReason.values.toSeq.map(_.toString)))
       )(DeregisterReasonForm.toForm)(DeregisterReasonForm.fromForm)
     )
 

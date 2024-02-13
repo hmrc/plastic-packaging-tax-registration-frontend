@@ -16,11 +16,11 @@
 
 package controllers.amendment.group
 
-import base.unit.{ControllerSpec, AmendmentControllerSpec}
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import controllers.amendment.{routes => amendRoutes}
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when, verify}
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -36,12 +36,8 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
   when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Group Member CYA"))
 
-  private val controller = new AddGroupMemberContactDetailsCheckAnswersController(
-    journeyAction = spyJourneyAction,
-    mcc = mcc,
-    page = cyaPage,
-    amendRegistrationService = mockAmendRegService
-  )
+  private val controller =
+    new AddGroupMemberContactDetailsCheckAnswersController(journeyAction = spyJourneyAction, mcc = mcc, page = cyaPage, amendRegistrationService = mockAmendRegService)
 
   private val groupRegistrationInAmendment: Registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 

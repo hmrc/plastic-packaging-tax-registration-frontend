@@ -40,9 +40,7 @@ object MembersUnderGroupControl extends CommonFormValidators with CommonFormValu
     }
 
   def fromForm(membersUnderGroupControl: MembersUnderGroupControl): Option[Option[String]] =
-    membersUnderGroupControl.value.map(
-      isMembersUnderSameGroupControl => if (isMembersUnderSameGroupControl) Some(YES) else Some(NO)
-    )
+    membersUnderGroupControl.value.map(isMembersUnderSameGroupControl => if (isMembersUnderSameGroupControl) Some(YES) else Some(NO))
 
   def form(): Form[MembersUnderGroupControl] = Form(mapping)
 }

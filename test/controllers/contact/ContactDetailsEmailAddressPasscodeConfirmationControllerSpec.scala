@@ -35,10 +35,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsEmailAddressPasscodeConfirmationController(journeyAction = spyJourneyAction,
-                                                                 mcc = mcc,
-                                                                 page = page
-    )
+    new ContactDetailsEmailAddressPasscodeConfirmationController(journeyAction = spyJourneyAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -92,13 +89,11 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
       "when form is submitted" in {
 
-
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
       }
     }
-
 
     "redirects to phone numbers page" when {
       "user submits answers" in {
@@ -110,9 +105,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
           controller.submit()(FakeRequest("POST", ""))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.ContactDetailsTelephoneNumberController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
       }
     }
   }

@@ -26,9 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserEnrolmentDetailsRepository @Inject() (userDataRepository: UserDataRepository)(implicit executionContext: ExecutionContext) {
 
-  def put(
-    registration: UserEnrolmentDetails
-  )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
+  def put(registration: UserEnrolmentDetails)(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
     userDataRepository.putData[UserEnrolmentDetails](repositoryKey, registration)
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
@@ -37,9 +35,7 @@ class UserEnrolmentDetailsRepository @Inject() (userDataRepository: UserDataRepo
       case _          => UserEnrolmentDetails()
     }
 
-  def update(
-    update: UserEnrolmentDetails => UserEnrolmentDetails
-  )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
+  def update(update: UserEnrolmentDetails => UserEnrolmentDetails)(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
     get().flatMap(data => put(update(data)))
 
   def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =

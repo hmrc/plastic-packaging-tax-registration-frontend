@@ -38,15 +38,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipTypeController @Inject() (
-                                            journeyAction: JourneyAction,
-                                            val appConfig: AppConfig,
-                                            val soleTraderGrsConnector: SoleTraderGrsConnector,
-                                            val ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                            val partnershipGrsConnector: PartnershipGrsConnector,
-                                            val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                            override val registrationConnector: RegistrationConnector,
-                                            mcc: MessagesControllerComponents,
-                                            page: partnership_type
+  journeyAction: JourneyAction,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: partnership_type
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
@@ -65,45 +65,32 @@ class PartnershipTypeController @Inject() (
     journeyAction.register.async { implicit request =>
       form
         .bindFromRequest()
-        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
-              partnerType =>
-                updateRegistration(partnerType).flatMap {
-                  case Right(_) =>
-                    partnerType.answer match {
-                      case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
-                        Future(Redirect(routes.PartnershipNameController.displayPage().url))
-                      case LIMITED_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
-                                                  appConfig.grsCallbackUrl
-                        )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
-                      case SCOTTISH_LIMITED_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(
-                          appConfig.scottishLimitedPartnershipJourneyUrl,
-                          appConfig.grsCallbackUrl
-                        )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
-                      case LIMITED_LIABILITY_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(
-                          appConfig.limitedLiabilityPartnershipJourneyUrl,
-                          appConfig.grsCallbackUrl
-                        )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
-                      case _ =>
-                        Future(
-                          Redirect(
-                            organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                          )
-                        )
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
+          partnerType =>
+            updateRegistration(partnerType).flatMap {
+              case Right(_) =>
+                partnerType.answer match {
+                  case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
+                    Future(Redirect(routes.PartnershipNameController.displayPage().url))
+                  case LIMITED_PARTNERSHIP =>
+                    getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl, appConfig.grsCallbackUrl)
+                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                  case SCOTTISH_LIMITED_PARTNERSHIP =>
+                    getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl, appConfig.grsCallbackUrl)
+                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                  case LIMITED_LIABILITY_PARTNERSHIP =>
+                    getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, appConfig.grsCallbackUrl)
+                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                  case _ =>
+                    Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
                 }
+              case Left(error) => throw error
+            }
         )
     }
 
-  private def updateRegistration(
-    formData: PartnerType
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
+  private def updateRegistration(formData: PartnerType)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
 
     val partnershipType = formData.answer
     update { registration =>

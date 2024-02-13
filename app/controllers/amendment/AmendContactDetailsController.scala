@@ -30,13 +30,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendContactDetailsController @Inject() (
-                                                journeyAction: JourneyAction,
-                                                amendRegistrationService: AmendRegistrationService,
-                                                mcc: MessagesControllerComponents,
-                                                contactNamePage: full_name_page,
-                                                jobTitlePage: job_title_page,
-                                                phoneNumberPage: phone_number_page,
-                                                addressCaptureService: AddressCaptureService
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  contactNamePage: full_name_page,
+  jobTitlePage: job_title_page,
+  phoneNumberPage: phone_number_page,
+  addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
@@ -63,19 +63,14 @@ class AmendContactDetailsController @Inject() (
       FullName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[FullName]) =>
-            Future.successful(BadRequest(buildContactNamePage(formWithErrors))),
+          (formWithErrors: Form[FullName]) => Future.successful(BadRequest(buildContactNamePage(formWithErrors))),
           fullName => updateRegistration(updateContactName(fullName.value))
         )
     }
   }
 
-  private def buildContactNamePage(
-    form: Form[FullName]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    contactNamePage(form,
-                    routes.AmendContactDetailsController.updateContactName()
-    )
+  private def buildContactNamePage(form: Form[FullName])(implicit request: JourneyRequest[AnyContent]) =
+    contactNamePage(form, routes.AmendContactDetailsController.updateContactName())
 
   def jobTitle(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -99,20 +94,12 @@ class AmendContactDetailsController @Inject() (
     journeyAction.amend.async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[JobTitle]) =>
-            Future.successful(BadRequest(buildJobTitlePage(formWithErrors))),
-          jobTitle => updateRegistration(updateJobTitle(jobTitle.value))
-        )
+        .fold((formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(buildJobTitlePage(formWithErrors))), jobTitle => updateRegistration(updateJobTitle(jobTitle.value)))
     }
   }
 
-  private def buildJobTitlePage(
-    form: Form[JobTitle]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    jobTitlePage(form,
-                 routes.AmendContactDetailsController.updateJobTitle()
-    )
+  private def buildJobTitlePage(form: Form[JobTitle])(implicit request: JourneyRequest[AnyContent]) =
+    jobTitlePage(form, routes.AmendContactDetailsController.updateJobTitle())
 
   def phoneNumber(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -137,30 +124,26 @@ class AmendContactDetailsController @Inject() (
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(BadRequest(buildPhoneNumberPage(formWithErrors))),
+          (formWithErrors: Form[PhoneNumber]) => Future.successful(BadRequest(buildPhoneNumberPage(formWithErrors))),
           phoneNumber => updateRegistration(updatePhoneNumber(phoneNumber.value))
         )
     }
   }
 
-  private def buildPhoneNumberPage(
-    form: Form[PhoneNumber]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    phoneNumberPage(form,
-                    routes.AmendContactDetailsController.updatePhoneNumber()
-    )
+  private def buildPhoneNumberPage(form: Form[PhoneNumber])(implicit request: JourneyRequest[AnyContent]) =
+    phoneNumberPage(form, routes.AmendContactDetailsController.updatePhoneNumber())
 
   def address(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
-        AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
-                             successLink = routes.AmendContactDetailsController.updateAddress().url,
-                             alfHeadingsPrefix = "addressLookup.contact",
-                             entityName = request.registration.organisationDetails.businessName,
-                             pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None,
-                             forceUkAddress = false
+        AddressCaptureConfig(
+          backLink = routes.AmendRegistrationController.displayPage().url,
+          successLink = routes.AmendContactDetailsController.updateAddress().url,
+          alfHeadingsPrefix = "addressLookup.contact",
+          entityName = request.registration.organisationDetails.businessName,
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None,
+          forceUkAddress = false
         )
       )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }

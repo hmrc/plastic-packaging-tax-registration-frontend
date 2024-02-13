@@ -38,15 +38,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewRegistrationController @Inject() (
-                                               appConfig: AppConfig,
-                                               journeyAction: JourneyAction,
-                                               mcc: MessagesControllerComponents,
-                                               subscriptionsConnector: SubscriptionsConnector,
-                                               metrics: Metrics,
-                                               override val registrationConnector: RegistrationConnector,
-                                               auditor: Auditor,
-                                               reviewRegistrationPage: review_registration_page,
-                                               registrationFilterService: RegistrationGroupFilterService
+  appConfig: AppConfig,
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  subscriptionsConnector: SubscriptionsConnector,
+  metrics: Metrics,
+  override val registrationConnector: RegistrationConnector,
+  auditor: Auditor,
+  reviewRegistrationPage: review_registration_page,
+  registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -58,10 +58,10 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
-        if (request.registration.isCheckAndSubmitReady)
-          displayReviewRegistrationPage()
-        else 
-          Future.successful(Redirect(routes.TaskListController.displayPage()))
+      if (request.registration.isCheckAndSubmitReady)
+        displayReviewRegistrationPage()
+      else
+        Future.successful(Redirect(routes.TaskListController.displayPage()))
     }
 
   def submit(): Action[AnyContent] =
@@ -73,18 +73,15 @@ class ReviewRegistrationController @Inject() (
         Future.successful(Redirect(routes.TaskListController.displayPage()))
     }
 
-  private def submitRegistration(request: JourneyRequest[AnyContent]) (implicit hc: HeaderCarrier) = {
+  private def submitRegistration(request: JourneyRequest[AnyContent])(implicit hc: HeaderCarrier) = {
     val completedRegistration = request.registration.asCompleted()
-    val internalId = request.authenticatedRequest.identityData.internalId
+    val internalId            = request.authenticatedRequest.identityData.internalId
     val completedRegistrationWithUserHeaders =
       completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
 
-    subscriptionsConnector.submitSubscription(
-      getSafeId(completedRegistration),
-      completedRegistrationWithUserHeaders
-    )
+    subscriptionsConnector.submitSubscription(getSafeId(completedRegistration), completedRegistrationWithUserHeaders)
       .map {
-        case successfulSubscription: SubscriptionCreateOrUpdateResponseSuccess  =>
+        case successfulSubscription: SubscriptionCreateOrUpdateResponseSuccess =>
           handleSuccessfulSubscription(completedRegistration, successfulSubscription, internalId)
         case SubscriptionCreateOrUpdateResponseFailure(failures) =>
           handleFailedSubscription(completedRegistration, failures, internalId)
@@ -94,44 +91,23 @@ class ReviewRegistrationController @Inject() (
       }
   }
 
-  private def handleSuccessfulSubscription(
-    registration: Registration,
-    response: SubscriptionCreateOrUpdateResponseSuccess,
-    internalId: Option[String]
-  )(implicit hc: HeaderCarrier): Result = {
+  private def handleSuccessfulSubscription(registration: Registration, response: SubscriptionCreateOrUpdateResponseSuccess, internalId: Option[String])(implicit
+    hc: HeaderCarrier
+  ): Result = {
     successSubmissionCounter.inc()
     val updatedMetadata = registration.metaData.copy(nrsDetails =
       Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason))
     )
-    auditor.registrationSubmitted(registration = registration.copy(metaData = updatedMetadata),
-                                  pptReference = Some(response.pptReference),
-                                  internalId = internalId
-    )
+    auditor.registrationSubmitted(registration = registration.copy(metaData = updatedMetadata), pptReference = Some(response.pptReference), internalId = internalId)
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
-        .flashing(
-          Flash(
-            Map(FlashKeys.referenceId -> response.pptReference,
-                FlashKeys.groupReg    -> registration.isGroup.toString
-            )
-          )
-        )
+        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)))
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
-        .flashing(
-          Flash(
-            Map(FlashKeys.referenceId -> response.pptReference,
-                FlashKeys.groupReg    -> registration.isGroup.toString
-            )
-          )
-        )
+        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)))
   }
 
-  private def handleFailedSubscription(
-    registration: Registration,
-    failures: Seq[EisError],
-    internalId: Option[String]
-  )(implicit hc: HeaderCarrier): Result = {
+  private def handleFailedSubscription(registration: Registration, failures: Seq[EisError], internalId: Option[String])(implicit hc: HeaderCarrier): Result = {
     performFailedSubscriptionCommonTasks(registration, internalId)
     if (failures.head.isDuplicateSubscription)
       Redirect(routes.NotableErrorController.duplicateRegistration())
@@ -139,25 +115,18 @@ class ReviewRegistrationController @Inject() (
       Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def handleFailedSubscription(registration: Registration, internalId: Option[String])(
-    implicit hc: HeaderCarrier
-  ): Result = {
+  private def handleFailedSubscription(registration: Registration, internalId: Option[String])(implicit hc: HeaderCarrier): Result = {
     performFailedSubscriptionCommonTasks(registration, internalId)
     Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def performFailedSubscriptionCommonTasks(
-    registration: Registration,
-    internalId: Option[String]
-  )(implicit hc: HeaderCarrier): Unit = {
+  private def performFailedSubscriptionCommonTasks(registration: Registration, internalId: Option[String])(implicit hc: HeaderCarrier): Unit = {
     failedSubmissionCounter.inc()
     auditor.registrationSubmitted(registration, internalId = internalId)
   }
 
   private def getSafeId(registration: Registration): String =
-    registration.organisationDetails.businessPartnerId.getOrElse(
-      throw new IllegalStateException("Safe Id is required for a Subscription create")
-    )
+    registration.organisationDetails.businessPartnerId.getOrElse(throw new IllegalStateException("Safe Id is required for a Subscription create"))
 
   private def displayReviewRegistrationPage()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
 
@@ -173,18 +142,14 @@ class ReviewRegistrationController @Inject() (
       markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(reg)))
   }
 
-  private def markRegistrationAsReviewed(
-    registration: Registration
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def markRegistrationAsReviewed(registration: Registration)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { _ =>
       val updatedMetaData =
         registration.metaData.copy(registrationReviewed = true)
       registration.copy(metaData = updatedMetaData)
     }
 
-  private def markAsCannotYetStarted(
-    registration: Registration
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def markAsCannotYetStarted(registration: Registration)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { _ =>
       val updatedMetaData =
         registration.metaData.copy(registrationReviewed = false, registrationCompleted = false)
@@ -200,4 +165,5 @@ class ReviewRegistrationController @Inject() (
     if (!registration.isGroup)
       registrationFilterService.removeGroupDetails(registration)
     else registration
+
 }

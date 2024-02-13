@@ -19,16 +19,7 @@ package forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.liability.LiabilityWeight.{
-  maxTotalKg,
-  minTotalKg,
-  totalKg,
-  weightBelowThresholdError,
-  weightDecimalError,
-  weightEmptyError,
-  weightFormatError,
-  weightOutOfRangeError
-}
+import forms.liability.LiabilityWeight.{maxTotalKg, minTotalKg, totalKg, weightBelowThresholdError, weightDecimalError, weightEmptyError, weightFormatError, weightOutOfRangeError}
 import models.registration.LiabilityDetails
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
@@ -145,10 +136,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = LiabilityWeight.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

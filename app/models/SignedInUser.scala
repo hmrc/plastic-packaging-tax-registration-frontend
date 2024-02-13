@@ -18,10 +18,4 @@ package models
 
 import models.request.IdentityData
 
-case class SignedInUser(
-  identityData: IdentityData
-) {
-
-
-
-}
+case class SignedInUser(identityData: IdentityData) {}

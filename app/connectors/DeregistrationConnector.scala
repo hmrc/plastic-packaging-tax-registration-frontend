@@ -28,30 +28,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeregistrationConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class DeregistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
 
-  def deregister(pptReference: String, deregistrationDetails: DeregistrationDetails)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[ServiceError, Unit]] = {
+  def deregister(pptReference: String, deregistrationDetails: DeregistrationDetails)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer = metrics.defaultRegistry.timer("ppt.deregister.timer").time()
-    httpClient.PUT[Option[DeregistrationReason], HttpResponse](
-      appConfig.pptSubscriptionDeregisterUrl(pptReference),
-      deregistrationDetails.reason
-    ).andThen { case _ => timer.stop() }
+    httpClient.PUT[Option[DeregistrationReason], HttpResponse](appConfig.pptSubscriptionDeregisterUrl(pptReference), deregistrationDetails.reason).andThen {
+      case _ => timer.stop()
+    }
       .map {
         case response @ HttpResponse(OK, _, _) =>
           Right(())
         case response =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to de-register, status: ${response.status}, error: ${response.body}",
-              FailedToDeregister("Failed to de-register")
-            )
-          )
+          Left(DownstreamServiceError(s"Failed to de-register, status: ${response.status}, error: ${response.body}", FailedToDeregister("Failed to de-register")))
       }.recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Error while de-registration, error: ${ex.getMessage}", ex))

@@ -26,8 +26,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait MockAddressCaptureDetailRepository extends RegistrationBuilder with MockitoSugar {
 
   protected val inMemoryAddressCaptureDetailRepository =
-    new AddressCaptureDetailRepositoryImpl(
-      new InMemoryUserDetailsRepository()(ExecutionContext.global)
-    )
+    new AddressCaptureDetailRepositoryImpl(new InMemoryUserDetailsRepository()(ExecutionContext.global))
 
 }

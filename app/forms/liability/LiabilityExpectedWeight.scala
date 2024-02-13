@@ -25,10 +25,7 @@ import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
 import scala.util.Try
 
-case class LiabilityExpectedWeight(
-  expectToExceedThresholdWeight: Option[Boolean],
-  totalKg: Option[Long]
-) {
+case class LiabilityExpectedWeight(expectToExceedThresholdWeight: Option[Boolean], totalKg: Option[Long]) {
 
   def overLiabilityThreshold: Boolean =
     totalKg.exists(_ >= LiabilityDetails.minimumLiabilityWeightKg)
@@ -48,34 +45,29 @@ object LiabilityExpectedWeight extends CommonFormValues {
   val weightFormatError         = "liabilityExpectedWeight.format.error"
   val weightDecimalError        = "liabilityExpectedWeight.decimal.error"
 
-  private val weightIsValidNumber: String => Boolean = weight =>
-    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
+  private val weightIsValidNumber: String => Boolean = weight => weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+  private val weightIsWholeNumber: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
-  private val weightAboveThreshold: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(
-      weight
-    ) >= LiabilityDetails.minimumLiabilityWeightKg
+  private val weightAboveThreshold: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= LiabilityDetails.minimumLiabilityWeightKg
 
-  private val weightWithinRange: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+  private val weightWithinRange: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
   def form(): Form[LiabilityExpectedWeight] =
     Form(
       mapping(
         answer -> optional(text())
           .verifying(answerError, _.nonEmpty),
-        totalKg -> mandatoryIfEqual(answer,
-                                    YES,
-                                    text()
-                                      .verifying(weightEmptyError, _.nonEmpty)
-                                      .transform[String](weight => weight.trim, weight => weight)
-                                      .verifying(weightFormatError, weightIsValidNumber)
-                                      .verifying(weightDecimalError, weightIsWholeNumber)
-                                      .verifying(weightBelowThresholdError, weightAboveThreshold)
-                                      .verifying(weightOutOfRangeError, weightWithinRange)
+        totalKg -> mandatoryIfEqual(
+          answer,
+          YES,
+          text()
+            .verifying(weightEmptyError, _.nonEmpty)
+            .transform[String](weight => weight.trim, weight => weight)
+            .verifying(weightFormatError, weightIsValidNumber)
+            .verifying(weightDecimalError, weightIsWholeNumber)
+            .verifying(weightBelowThresholdError, weightAboveThreshold)
+            .verifying(weightOutOfRangeError, weightWithinRange)
         )
       )(LiabilityExpectedWeight.fromForm)(LiabilityExpectedWeight.toForm)
     )
@@ -87,9 +79,7 @@ object LiabilityExpectedWeight extends CommonFormValues {
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 
-  def toForm(
-    liabilityExpectedWeight: LiabilityExpectedWeight
-  ): Option[(Option[String], Option[String])] =
+  def toForm(liabilityExpectedWeight: LiabilityExpectedWeight): Option[(Option[String], Option[String])] =
     liabilityExpectedWeight.expectToExceedThresholdWeight match {
       case Some(true) => Some((Some(YES), liabilityExpectedWeight.totalKg.map(_.toString)))
       case _          => Some((Some(NO), None))

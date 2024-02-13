@@ -20,11 +20,9 @@ import forms.CommonFormValidators
 import forms.mappings.Mappings
 import play.api.data.Form
 
-
 class ExceededThresholdWeight extends CommonFormValidators with Mappings {
 
   def apply(): Form[Boolean] =
     Form("value" -> yesNo("liability.exceededThresholdWeight.question.empty.error"))
 
 }
-

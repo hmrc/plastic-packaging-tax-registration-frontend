@@ -23,20 +23,17 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.test.Helpers.await
 import play.api.test.Injecting
-import models.deregistration.{
-  DeregistrationDetails,
-  DeregistrationReason
-}
+import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 
-class DeregistrationConnectorISpec
-    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
+class DeregistrationConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: DeregistrationConnector =
     inject[DeregistrationConnector]
 
-  val deregistrationDetails = DeregistrationDetails(deregister = Some(true),
-                                                    reason =
-                                                      Some(DeregistrationReason.CeasedTrading)
+  val deregistrationDetails = DeregistrationDetails(
+    deregister = Some(true),
+    reason =
+      Some(DeregistrationReason.CeasedTrading)
   )
 
   val pptReference = "XMPPT123456789"
@@ -60,10 +57,7 @@ class DeregistrationConnectorISpec
     "return error " when {
 
       "service returns non success status code" in {
-        givenPutDeregistration(pptReference,
-                               Status.BAD_REQUEST,
-                               DeregistrationReason.CeasedTrading.toString
-        )
+        givenPutDeregistration(pptReference, Status.BAD_REQUEST, DeregistrationReason.CeasedTrading.toString)
 
         val res: Either[ServiceError, Unit] =
           await(connector.deregister(pptReference, deregistrationDetails))

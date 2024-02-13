@@ -18,18 +18,13 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.scalatestplus.mockito.MockitoSugar
-import repositories.{
-  RegistrationAmendmentRepository,
-  RegistrationAmendmentRepositoryImpl
-}
+import repositories.{RegistrationAmendmentRepository, RegistrationAmendmentRepositoryImpl}
 
 import scala.concurrent.ExecutionContext
 
 trait MockRegistrationAmendmentRepository extends RegistrationBuilder with MockitoSugar {
 
-  private val inMemoryUserDetailsRepository = new InMemoryUserDetailsRepository()(
-    ExecutionContext.global
-  )
+  private val inMemoryUserDetailsRepository = new InMemoryUserDetailsRepository()(ExecutionContext.global)
 
   protected val inMemoryRegistrationAmendmentRepository: RegistrationAmendmentRepository =
     new RegistrationAmendmentRepositoryImpl(inMemoryUserDetailsRepository)(ExecutionContext.global)

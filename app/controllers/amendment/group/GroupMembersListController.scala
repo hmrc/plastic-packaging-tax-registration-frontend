@@ -28,11 +28,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class GroupMembersListController @Inject() (
-                                             journeyAction: JourneyAction,
-                                             mcc: MessagesControllerComponents,
-                                             page: list_group_members_page
-) extends FrontendController(mcc) with I18nSupport {
+class GroupMembersListController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents, page: list_group_members_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -44,14 +41,13 @@ class GroupMembersListController @Inject() (
       AddOrganisationForm
         .form()
         .bindFromRequest()
-        .fold(error => BadRequest(page(error, new ListGroupMembersViewModel(request.registration))),
-              add =>
-                if (add)
-                  Redirect(
-                    group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()
-                  )
-                else
-                  Redirect(routes.ManageGroupMembersController.displayPage())
+        .fold(
+          error => BadRequest(page(error, new ListGroupMembersViewModel(request.registration))),
+          add =>
+            if (add)
+              Redirect(group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage())
+            else
+              Redirect(routes.ManageGroupMembersController.displayPage())
         )
     }
 

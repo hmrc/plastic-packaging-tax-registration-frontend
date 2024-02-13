@@ -21,5 +21,5 @@ import uk.gov.hmrc.http.HttpVerbs.GET
 
 sealed trait BackButtonLink
 
-case class BackButton(title: String, call: Call,  hiddenText: String) extends BackButtonLink
-case object BackButtonJs extends BackButtonLink
+case class BackButton(title: String, call: Call, hiddenText: String) extends BackButtonLink
+case object BackButtonJs                                             extends BackButtonLink

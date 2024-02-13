@@ -134,10 +134,7 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = LiabilityExpectedWeight.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
     form.errors.size must equal(1)

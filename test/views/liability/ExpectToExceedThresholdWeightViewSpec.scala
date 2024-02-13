@@ -42,21 +42,21 @@ import views.viewmodels.govuk.radios._
 
 class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
 
-  val request = FakeRequest()
+  val request      = FakeRequest()
   val mockMessages = mock[Messages]
 
   val form: Form[Boolean] = Form[Boolean]("value" -> ignored[Boolean](true))
-  val sectionHeader = mock[sectionHeader]
-  val pageHeading = mock[pageHeading]
-  val govUkLayout = mock[main_template]
-  val contentCaptor = ArgumentCaptor.forClass(classOf[Html])
-  val saveButtons = mock[saveButtons]
-  val errorSummary = mock[errorSummary]
-  val govukRadios = mock[GovukRadios]
-  val paragraphBody = mock[paragraphBody]
-  val inset = mock[inset]
-  val bulletList = mock[bulletList]
-  val link = mock[link]
+  val sectionHeader       = mock[sectionHeader]
+  val pageHeading         = mock[pageHeading]
+  val govUkLayout         = mock[main_template]
+  val contentCaptor       = ArgumentCaptor.forClass(classOf[Html])
+  val saveButtons         = mock[saveButtons]
+  val errorSummary        = mock[errorSummary]
+  val govukRadios         = mock[GovukRadios]
+  val paragraphBody       = mock[paragraphBody]
+  val inset               = mock[inset]
+  val bulletList          = mock[bulletList]
+  val link                = mock[link]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,7 +69,7 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
     when(saveButtons.apply(any())(any())).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
     when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
     when(govukRadios.apply(any())).thenReturn(HtmlFormat.raw("GOV UK RADIOS"))
-    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
+    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")): _*)
     when(inset.apply(any())).thenReturn(HtmlFormat.raw("GOV UK INSET"))
     when(bulletList.apply(any())).thenReturn(HtmlFormat.raw("BULLET LIST"))
     when(link.apply(any(), any(), any(), any(), any(), any())).thenReturn(HtmlFormat.raw("LINK"))
@@ -93,10 +93,7 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
     "use govUk layout" in {
       instantiateView()
 
-      verify(govUkLayout).apply(
-        refEq(Title("liability.expectToExceedThresholdWeight.title")),
-        any(),
-        any())(any())(meq(request), meq(mockMessages))
+      verify(govUkLayout).apply(refEq(Title("liability.expectToExceedThresholdWeight.title")), any(), any())(any())(meq(request), meq(mockMessages))
     }
 
     "have the form" in {
@@ -158,7 +155,14 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
     "have the link" in {
       instantiateView()
 
-      verify(link).apply(meq("some message"), meq(Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register")), meq(false), any(), any(), any())
+      verify(link).apply(
+        meq("some message"),
+        meq(Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register")),
+        meq(false),
+        any(),
+        any(),
+        any()
+      )
       verify(mockMessages).apply("liability.expectToExceedThresholdWeight.p3", HtmlFormat.raw("LINK"))
       verify(mockMessages).apply("liability.expectToExceedThresholdWeight.p3.link")
     }
@@ -171,11 +175,7 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
       verify(govukRadios).apply(
         RadiosViewModel.yesNo(
           field = form("value"),
-          legend = Legend(
-            content = Text("some message"),
-            classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
-            isPageHeading = false
-          )
+          legend = Legend(content = Text("some message"), classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m", isPageHeading = false)
         )(mockMessages).inline().withHint(Hint(content = Text("some message")))
       )
 
@@ -196,6 +196,6 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
   }
 
   def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  def insideGovUkWrapper = contentCaptor.getValue.toString
+  def insideGovUkWrapper                       = contentCaptor.getValue.toString
 
 }

@@ -25,20 +25,14 @@ import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
 
-  protected def localDate(
-    emptyDateKey: String,
-    singleRequiredKey: String,
-    twoRequiredKey: String,
-    invalidKey: String,
-    args: Seq[String] = Seq.empty
-  )(implicit messages: Messages) : FieldMapping[LocalDate] =
+  protected def localDate(emptyDateKey: String, singleRequiredKey: String, twoRequiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
+    messages: Messages
+  ): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
-  protected def yesNo(emptyErrorKey: String) : FieldMapping[Boolean] = of(yesNoFormatter(emptyErrorKey))
+  protected def yesNo(emptyErrorKey: String): FieldMapping[Boolean] = of(yesNoFormatter(emptyErrorKey))
 
-
-  protected def liabilityLocalDate
-  (
+  protected def liabilityLocalDate(
     emptyDateKey: String,
     singleRequiredKey: String,
     twoRequiredKey: String,
@@ -47,16 +41,7 @@ trait Mappings extends Formatters with Constraints {
     beforeLiveDateErrorKey: String,
     appConfig: AppConfig,
     args: Seq[String] = Seq.empty
-  )(implicit messages: Messages) : FieldMapping[LocalDate] =
-    of(new LiabilityLocalDateFormatter(
-      emptyDateKey,
-      singleRequiredKey,
-      twoRequiredKey,
-      invalidKey,
-      dateOutOfRangeError,
-      beforeLiveDateErrorKey,
-      appConfig,
-      args)
-    )
+  )(implicit messages: Messages): FieldMapping[LocalDate] =
+    of(new LiabilityLocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, dateOutOfRangeError, beforeLiveDateErrorKey, appConfig, args))
 
 }
