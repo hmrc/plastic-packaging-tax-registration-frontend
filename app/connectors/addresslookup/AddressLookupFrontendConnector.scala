@@ -16,7 +16,7 @@
 
 package connectors.addresslookup
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status.ACCEPTED
 import uk.gov.hmrc.http.HttpReads.Implicits._

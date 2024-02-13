@@ -32,15 +32,14 @@ package base
  * limitations under the License.
  */
 
-import akka.stream.testkit.NoMaterializer
 import com.typesafe.config.{Config, ConfigFactory}
+import config.AppConfig
+import org.apache.pekko.actor.ActorSystem
 import play.api.Configuration
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.{Langs, MessagesApi}
 import play.api.mvc._
 import play.api.test.Helpers._
-import uk.gov.hmrc.govukfrontend.views.html.components.{Footer => _}
-import config.AppConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -57,9 +56,11 @@ trait Stubs {
                                                                   |tracking-consent-frontend.gtm.container=b
     """.stripMargin)
 
+  private implicit val as: ActorSystem = ActorSystem("Stubs")
+
   def stubMessagesControllerComponents(
     bodyParser: BodyParser[AnyContent] = stubBodyParser(AnyContentAsEmpty),
-    playBodyParsers: PlayBodyParsers = stubPlayBodyParsers(NoMaterializer),
+    playBodyParsers: PlayBodyParsers = stubPlayBodyParsers,
     messagesApi: MessagesApi = stubMessagesApi(),
     langs: Langs = stubLangs(),
     fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(FileMimeTypesConfiguration()),

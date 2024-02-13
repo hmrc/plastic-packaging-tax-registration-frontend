@@ -18,7 +18,7 @@ package base.it
 
 import builders.RegistrationBuilder
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

@@ -4,20 +4,21 @@ val appName = "plastic-packaging-tax-registration-frontend"
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8503")
 
-val silencerVersion = "1.7.12"
+val silencerVersion = "1.7.14"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtWeb)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    majorVersion                     := 0,
-    scalaVersion                     := "2.13.10",
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
-    TwirlKeys.templateImports        ++= Seq(
+    majorVersion := 0,
+    scalaVersion := "2.13.12",
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.govukfrontend.views.html.components._",
       "views.html.components._",
-      "views.components.Styles._"),
+      "views.components.Styles._"
+    ),
     // ***************
     // Use the silencer plugin to suppress warnings
     // You may turn it on for `views` too to suppress warnings from unused imports in compiled twirl templates, but this will hide other warnings.
@@ -38,7 +39,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(automateHeaderSettings(A11yTest))
   .settings(scoverageSettings)
   .settings(silencerSettings)
-
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
@@ -54,7 +54,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller"
   ).mkString(";"),
-  coverageMinimum := 85,
+  coverageMinimumStmtTotal := 85,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   Test / parallelExecution := false

@@ -16,7 +16,7 @@
 
 package connectors.grs
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import play.api.Logger
 import play.api.http.Status.CREATED
 import play.api.libs.json.Writes

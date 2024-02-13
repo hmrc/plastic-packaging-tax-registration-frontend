@@ -17,7 +17,7 @@
 package controllers
 
 import audit.Auditor
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.AppConfig
 import connectors._
 import controllers.actions.JourneyAction
