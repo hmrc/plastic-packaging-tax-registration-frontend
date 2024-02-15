@@ -17,10 +17,9 @@
 package forms.mappings
 
 import config.AppConfig
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.reset
+import org.mockito.MockitoSugar.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -82,11 +81,8 @@ class LiabilityLocalDateFormatterSpec extends PlaySpec with BeforeAndAfterEach {
 
         val result = formatter.bind("input", Map("input.day" -> "5", "input.month" -> "1", "input.year" -> "2023"))
 
-        result mustBe Left(Seq(FormError(s"input.day", "isBeforeLiveDateError", Seq("message"))))
+        result mustBe Left(Seq(FormError(s"input.day", "isBeforeLiveDateError", Seq("1 message 2023"))))
 
-        withClue("show the right message") {
-          verify(message, atLeastOnce()).apply("1 message 2023")
-        }
       }
     }
   }

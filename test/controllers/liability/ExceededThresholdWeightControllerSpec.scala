@@ -22,8 +22,8 @@ import forms.liability.ExceededThresholdWeight
 import models.registration.Registration
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
+import org.mockito.MockitoSugar.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form

@@ -16,186 +16,79 @@
 
 package views.liability
 
-import org.jsoup.Jsoup
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, refEq, eq => meq}
-import org.mockito.Mockito.{times, verify, when}
-import org.mockito.MockitoSugar.reset
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
+import base.unit.UnitViewSpec
+import forms.liability.ExpectToExceedThresholdWeight
+import org.jsoup.nodes.Document
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import play.api.data.Forms.ignored
-import play.api.i18n.Messages
-import play.api.mvc.Call
-import play.api.test.FakeRequest
-import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import views.html.components._
 import views.html.liability.expect_to_exceed_threshold_weight_page
-import views.html.main_template
-import views.viewmodels.Title
-import views.viewmodels.govuk.radios._
 
-class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
+class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
+  private val page: expect_to_exceed_threshold_weight_page = inject[expect_to_exceed_threshold_weight_page]
+  private val form: Form[Boolean] = new ExpectToExceedThresholdWeight().apply()
 
-  val request      = FakeRequest()
-  val mockMessages = mock[Messages]
+  private def createView(form: Form[Boolean] = form): Document =
+    page(form)(registrationJourneyRequest, messages)
 
-  val form: Form[Boolean] = Form[Boolean]("value" -> ignored[Boolean](true))
-  val sectionHeader       = mock[sectionHeader]
-  val pageHeading         = mock[pageHeading]
-  val govUkLayout         = mock[main_template]
-  val contentCaptor       = ArgumentCaptor.forClass(classOf[Html])
-  val saveButtons         = mock[saveButtons]
-  val errorSummary        = mock[errorSummary]
-  val govukRadios         = mock[GovukRadios]
-  val paragraphBody       = mock[paragraphBody]
-  val inset               = mock[inset]
-  val bulletList          = mock[bulletList]
-  val link                = mock[link]
+  "ExceededThresholdWeight View" should {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukRadios, paragraphBody, inset, bulletList, link)
+    val view = createView()
 
-    when(mockMessages.apply(anyString(), any())).thenReturn("some message")
-    when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
-    when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
-    when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
-    when(saveButtons.apply(any())(any())).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
-    when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
-    when(govukRadios.apply(any())).thenReturn(HtmlFormat.raw("GOV UK RADIOS"))
-    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")): _*)
-    when(inset.apply(any())).thenReturn(HtmlFormat.raw("GOV UK INSET"))
-    when(bulletList.apply(any())).thenReturn(HtmlFormat.raw("BULLET LIST"))
-    when(link.apply(any(), any(), any(), any(), any(), any())).thenReturn(HtmlFormat.raw("LINK"))
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+
+    }
+
+    "display title" in {
+
+      view.select("title").text() must include(messages("liability.expectToExceedThresholdWeight.title"))
+    }
+
+    "display header" in {
+
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
+      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.expectToExceedThresholdWeight.title"))
+    }
+
+    "display 'Save and continue' button" in {
+
+      view must containElementWithID("submit")
+      view.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+    "display paragraph contents" in {
+      println("================="+view)
+      view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.p1")
+      view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.p1")
+      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.1")
+      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.2")
+      view.getElementsByClass("govuk-body").get(4).text() mustBe messages("liability.expectToExceedThresholdWeight.example.1")
+      view.getElementsByClass("govuk-body").get(5).text() mustBe messages("liability.expectToExceedThresholdWeight.example.2")
+      val text = messages("liability.expectToExceedThresholdWeight.p3.link")
+
+      view.getElementsByClass("govuk-body").get(6).text() mustBe messages("liability.expectToExceedThresholdWeight.p3", text)
+    }
+
+    "display radio buttons" in {
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.expectToExceedThresholdWeight.question")
+      view.getElementById("value-hint").text() mustBe messages("liability.expectToExceedThresholdWeight.hint")
+      view.getElementsByClass("govuk-radios__item").get(0).text() mustBe "Yes"
+      view.getElementsByClass("govuk-radios__item").get(1).text() mustBe "No"
+    }
+
   }
 
-  private val page = new expect_to_exceed_threshold_weight_page(
-    formHelper = new FormWithCSRF,
-    sectionHeader = sectionHeader,
-    pageHeading = pageHeading,
-    govukLayout = govUkLayout,
-    saveButtons = saveButtons,
-    errorSummary = errorSummary,
-    govukRadios = govukRadios,
-    paragraphBody = paragraphBody,
-    inset = inset,
-    bulletList = bulletList,
-    link = link
-  )
-
-  "view" must {
-    "use govUk layout" in {
-      instantiateView()
-
-      verify(govUkLayout).apply(refEq(Title("liability.expectToExceedThresholdWeight.title")), any(), any())(any())(meq(request), meq(mockMessages))
-    }
-
-    "have the form" in {
-      instantiateView()
-
-      val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
-      form.attr("method") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightController.submit().method
-      form.attr("action") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightController.submit().url
-      form.attr("autoComplete") mustBe "off"
-      assert(form.hasAttr("novalidate"))
-    }
-
-    "have the error summary" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("ERROR SUMMARY")
-      verify(errorSummary).apply(form.errors)(mockMessages)
-    }
-
-    "have the section header" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("SECTION HEADER")
-      verify(sectionHeader).apply("some message")
-      verify(mockMessages).apply("liability.sectionHeader")
-    }
-
-    "have the h1" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PAGE HEADING")
-      verify(pageHeading).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.title")
-    }
-
-    "have the first paragraph" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PARAGRAPH 0")
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.p1")
-    }
-
-    "have the inset" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("GOV UK INSET")
-      verify(inset, times(1)).apply(HtmlFormat.raw("PARAGRAPH 1"), HtmlFormat.raw("BULLET LIST"))
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.inset.p1")
-    }
-
-    "have the bullet list" in {
-      instantiateView()
-
-      verify(bulletList).apply(Seq(HtmlFormat.raw("PARAGRAPH 2"), HtmlFormat.raw("PARAGRAPH 3")))
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.inset.bullet.1")
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.inset.bullet.2")
-    }
-
-    "have the link" in {
-      instantiateView()
-
-      verify(link).apply(
-        meq("some message"),
-        meq(Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register")),
-        meq(false),
-        any(),
-        any(),
-        any()
-      )
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.p3", HtmlFormat.raw("LINK"))
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.p3.link")
-    }
-
-    "have the radio buttons" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("GOV UK RADIOS")
-
-      verify(govukRadios).apply(
-        RadiosViewModel.yesNo(
-          field = form("value"),
-          legend = Legend(content = Text("some message"), classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m", isPageHeading = false)
-        )(mockMessages).inline().withHint(Hint(content = Text("some message")))
-      )
-
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.question")
-    }
-
-    "have the continue button" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("SAVE BUTTONS")
-      verify(saveButtons).apply()(mockMessages)
-    }
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(form)(registrationJourneyRequest, messages)
+    page.render(form, registrationJourneyRequest, messages)
   }
 
-  "Exercise generated rendering methods" in {
-    page.f(form)(request, mockMessages)
-    page.render(form, request, mockMessages)
-  }
-
-  def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  def insideGovUkWrapper                       = contentCaptor.getValue.toString
 
 }

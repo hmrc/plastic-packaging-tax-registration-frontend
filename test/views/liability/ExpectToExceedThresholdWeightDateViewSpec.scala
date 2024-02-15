@@ -16,176 +16,78 @@
 
 package views.liability
 
-import org.jsoup.Jsoup
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, refEq, eq => meq}
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
+import base.unit.UnitViewSpec
+import config.AppConfig
+import forms.liability.ExpectToExceedThresholdWeightDate
+import org.jsoup.nodes.Document
+import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import play.api.data.Forms.ignored
-import play.api.i18n.Messages
-import play.api.test.FakeRequest
-import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import views.html.components._
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
-import views.html.main_template
-import views.viewmodels.govuk.date.{DateViewModel, FluentDate}
-import views.viewmodels.{BackButtonJs, Title}
 
-class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
+import java.time.LocalDate
 
-  private val request        = FakeRequest()
-  private val mockMessages   = mock[Messages]
-  private val form           = Form[Boolean]("value" -> ignored[Boolean](true))
-  private val sectionHeader  = mock[sectionHeader]
-  private val pageHeading    = mock[pageHeading]
-  private val govUkLayout    = mock[main_template]
-  private val contentCaptor  = ArgumentCaptor.forClass(classOf[Html])
-  private val saveButtons    = mock[saveButtons]
-  private val errorSummary   = mock[errorSummary]
-  private val govukDateInput = mock[GovukDateInput]
-  private val paragraphBody  = mock[paragraphBody]
-  private val bulletList     = mock[bulletList]
+class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukDateInput, paragraphBody, bulletList)
+  private val page: expect_to_exceed_threshold_weight_date_page = inject[expect_to_exceed_threshold_weight_date_page]
+  private val appConfig: AppConfig = inject[AppConfig]
+  private val form: Form[LocalDate] = new ExpectToExceedThresholdWeightDate(appConfig).apply()
 
-    when(mockMessages.apply(anyString(), any())).thenReturn("some message")
-    when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
-    when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
-    when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
-    when(saveButtons.apply(any())(any())).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
-    when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
-    when(govukDateInput.apply(any())).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
-    when(bulletList.apply(any())).thenReturn(HtmlFormat.raw("BULLET LIST"))
-    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")): _*)
+  private def createView(form: Form[LocalDate] = form): Document =
+    page(form)(registrationJourneyRequest, messages)
+
+  "ExpectToExceedThresholdWeightDate View" should {
+
+    val view = createView()
+
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+
+    }
+
+    "display title" in {
+
+      view.select("title").text() must include(messages("liability.expectToExceedThresholdDate.title"))
+    }
+
+    "display header" in {
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
+      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.expectToExceedThresholdDate.title"))
+    }
+
+    "display 'Save and continue' button" in {
+
+      view must containElementWithID("submit")
+      view.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+    "display paragraph contents" in {
+      view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdDate.p1")
+      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdDate.p1.bullet.1")
+      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages("liability.expectToExceedThresholdDate.p1.bullet.2")
+      view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdDate.example.1")
+      view.getElementsByClass("govuk-body").get(2).text() mustBe messages("liability.expectToExceedThresholdDate.example.2")
+    }
+
+    "display date fields" in {
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.expectToExceedThresholdDate.question")
+      view.getElementById("expect-to-exceed-threshold-weight-date-hint").text() mustBe messages("liability.expectToExceedThresholdDate.hint")
+      view.getElementsByClass("govuk-date-input__label").get(0).text() mustBe "Day"
+      view.getElementsByClass("govuk-date-input__label").get(1).text() mustBe "Month"
+      view.getElementsByClass("govuk-date-input__label").get(2).text() mustBe "Year"
+    }
+
   }
 
-  private val page = new expect_to_exceed_threshold_weight_date_page(
-    formHelper = new FormWithCSRF,
-    sectionHeader = sectionHeader,
-    pageHeading = pageHeading,
-    govukLayout = govUkLayout,
-    saveButtons = saveButtons,
-    errorSummary = errorSummary,
-    paragraphBody = paragraphBody,
-    govukDateInput = govukDateInput,
-    bulletList = bulletList
-  )
-
-  "view" must {
-    "use govUk layout" in {
-      instantiateView()
-
-      verify(govUkLayout).apply(refEq(Title("liability.expectToExceedThresholdDate.title")), meq(Some(BackButtonJs)), any())(any())(meq(request), meq(mockMessages))
-    }
-
-    "have the form" in {
-      instantiateView()
-
-      val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
-
-      form.attr("method") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit.method
-      form.attr("action") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit.url
-      form.attr("autoComplete") mustBe "off"
-      assert(form.hasAttr("novalidate"))
-    }
-
-    "have the error summary" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("ERROR SUMMARY")
-      verify(errorSummary).apply(form.errors)(mockMessages)
-    }
-
-    "have the section header" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("SECTION HEADER")
-      verify(sectionHeader).apply("some message")
-      verify(mockMessages).apply("liability.sectionHeader")
-    }
-
-    "have the h1" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PAGE HEADING")
-      verify(pageHeading).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.question")
-    }
-
-    "have the first paragraph " in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PARAGRAPH 0")
-      verify(paragraphBody, atLeastOnce()).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1")
-    }
-
-    "have the bullet list" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("BULLET LIST")
-      verify(bulletList).apply(Seq(Html("some message"), Html("some message")))
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.1")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.2")
-    }
-
-    "have the example heading " in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PARAGRAPH 1")
-      verify(paragraphBody, atLeastOnce()).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.example.1")
-    }
-
-    "have the example heading message " in {
-      instantiateView()
-
-      insideGovUkWrapper must include("PARAGRAPH 1")
-      verify(paragraphBody, atLeastOnce()).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.example.2")
-    }
-
-    "have the date input" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("GOV UK DATE INPUT")
-      verify(govukDateInput).apply(
-        DateViewModel(
-          field = form("expect-to-exceed-threshold-weight-date"),
-          legend = Legend(content = Text("some message"), classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m", isPageHeading = false),
-          errors = form.errors
-        )(mockMessages)
-          .withHint(Hint(content = Text("some message")))
-      )
-
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.question")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.hint")
-    }
-
-    "have the continue button" in {
-      instantiateView()
-
-      insideGovUkWrapper must include("SAVE BUTTONS")
-      verify(saveButtons).apply()(mockMessages)
-    }
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f(form)(registrationJourneyRequest, messages)
+    page.render(form, registrationJourneyRequest, messages)
   }
-
-  "Exercise generated rendering methods" in {
-    page.f(form)(request, mockMessages)
-    page.render(form, request, mockMessages)
-  }
-
-  def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  def insideGovUkWrapper                       = contentCaptor.getValue.toString
 
 }

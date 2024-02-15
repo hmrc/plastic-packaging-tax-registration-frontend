@@ -108,7 +108,7 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         val boundForm = sut.bind(toMap("15", "3", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("expect-to-exceed-threshold-weight-date.day", beforeLiveDateError, Seq("some message")))
+        boundForm.errors mustBe Seq(FormError("expect-to-exceed-threshold-weight-date.day", beforeLiveDateError, Seq("1 some message 2022")))
       }
     }
   }

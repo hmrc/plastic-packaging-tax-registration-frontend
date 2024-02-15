@@ -18,8 +18,7 @@ package forms.liability
 
 import config.AppConfig
 import forms.liability.ExceededThresholdWeightDate._
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -101,7 +100,7 @@ class ExceededThresholdWeightDateSpec extends PlaySpec {
         val boundForm = sut.bind(toMap("15", "3", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("exceeded-threshold-weight-date.day", Seq(isBeforeLiveDateError), Seq("some message")))
+        boundForm.errors mustBe Seq(FormError("exceeded-threshold-weight-date.day", Seq(isBeforeLiveDateError), Seq("1 some message 2022")))
       }
 
     }
