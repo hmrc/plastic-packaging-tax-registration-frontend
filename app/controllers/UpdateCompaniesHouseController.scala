@@ -46,13 +46,13 @@ class UpdateCompaniesHouseController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     journeyAction.register {
       implicit request =>
-        for {
+        (for {
           crn <- request.registration.organisationDetails.incorporationDetails.map(_.companyNumber)
           cn  <- request.registration.organisationDetails.incorporationDetails.map(_.companyName)
-        } yield Ok(updateCompaniesHouse(crn, cn))
-    }.getOrElse {
-      logger.warn("No incorporationDetails, can not advise user.")
-      Redirect(routes.TaskListController.displayPage())
+        } yield Ok(updateCompaniesHouse(crn, cn))).getOrElse {
+          logger.warn("No incorporationDetails, can not advise user.")
+          Redirect(routes.TaskListController.displayPage())
+        }
     }
 
   def reset(): Action[AnyContent] =
