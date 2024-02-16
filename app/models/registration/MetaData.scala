@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ package models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import models.emailverification.EmailVerificationStatus.EmailVerificationStatus
-import models.emailverification.{
-  EmailStatus,
-  EmailVerificationStatus,
-  EmailVerificationStatusMapper
-}
+import models.emailverification.{EmailStatus, EmailVerificationStatus, EmailVerificationStatusMapper}
 import models.nrs.NrsDetails
 
 case class MetaData(
@@ -36,10 +32,7 @@ case class MetaData(
     getEmailStatus(email) == EmailVerificationStatus.VERIFIED
 
   def getEmailStatus(email: String): EmailVerificationStatus =
-    EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(
-      email,
-      EmailVerificationStatus.NOT_VERIFIED
-    )
+    EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(email, EmailVerificationStatus.NOT_VERIFIED)
 
   def add(emails: Seq[EmailStatus]): MetaData =
     this.copy(verifiedEmails =

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,14 +55,7 @@ abstract class ContactDetailsEmailAddressControllerBase(
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     request.registration.findMember(memberId).flatMap(
-                       _.contactDetails.map(_.groupMemberName)
-                     ),
-                     getSubmitCall(memberId)
-                )
-              )
+              BadRequest(page(formWithErrors, request.registration.findMember(memberId).flatMap(_.contactDetails.map(_.groupMemberName)), getSubmitCall(memberId)))
             ),
           emailAddress =>
             updateRegistration(emailAddress, memberId).map { _ =>
@@ -71,16 +64,12 @@ abstract class ContactDetailsEmailAddressControllerBase(
         )
     }
 
-  private def updateRegistration(emailAddress: EmailAddress, memberId: String)(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Registration] =
+  private def updateRegistration(emailAddress: EmailAddress, memberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(
-            registration.findMember(memberId).map(
-              _.withUpdatedGroupMemberEmail(emailAddress.value)
-            ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+            registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(emailAddress.value)).getOrElse(throw new IllegalStateException("Expected group member absent"))
           )
         )
       )

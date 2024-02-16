@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ package models.addresslookup
 
 import play.api.libs.json.{Json, OFormat}
 
-case class AddressLookupConfirmation(
-  auditRef: String,
-  id: Option[String],
-  address: AddressLookupAddress
-) {
+case class AddressLookupConfirmation(auditRef: String, id: Option[String], address: AddressLookupAddress) {
 
   // modified from the address-lookup-frontend, when it wants to split the address for manual edit
   def extractAddressLines(): (String, Option[String], Option[String], String) = {

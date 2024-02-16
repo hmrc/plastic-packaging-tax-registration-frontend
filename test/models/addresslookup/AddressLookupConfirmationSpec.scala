@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,7 @@ class AddressLookupConfirmationSpec extends AnyWordSpec with Matchers {
   "AddressLookupConfirmation" should {
 
     def addressLookupConfirmation(lines: List[String]) =
-      AddressLookupConfirmation(
-        auditRef = "ref",
-        id = Some("id"),
-        address = AddressLookupAddress(lines = lines, postcode = Some("postcode"), country = None)
-      )
+      AddressLookupConfirmation(auditRef = "ref", id = Some("id"), address = AddressLookupAddress(lines = lines, postcode = Some("postcode"), country = None))
 
     "extract address lines" when {
 

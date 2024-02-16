@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,22 +26,17 @@ import views.html.liability.tax_start_date_page
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class TaxStartDateController @Inject() (
-                                         journeyAction: JourneyAction,
-                                         taxStarDateService: TaxStartDateService,
-                                         mcc: MessagesControllerComponents,
-                                         page: tax_start_date_page,
-) 
-  extends FrontendController(mcc) with I18nSupport {
+class TaxStartDateController @Inject() (journeyAction: JourneyAction, taxStarDateService: TaxStartDateService, mcc: MessagesControllerComponents, page: tax_start_date_page)
+    extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] = 
+  def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
       taxStartDate.act(
         notLiableAction = Redirect(routes.NotLiableController.displayPage()),
         isLiableAction = (startDate, isBackwardsBasedDate) => Ok(page(startDate, isBackwardsBasedDate))
-    )
-  }
+      )
+    }
 
   def submit(): Action[AnyContent] =
     journeyAction.register {

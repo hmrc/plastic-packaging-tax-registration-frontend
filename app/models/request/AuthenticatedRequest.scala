@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,26 +23,17 @@ import play.api.mvc.{Request, WrappedRequest}
 sealed abstract class AuthenticatedRequest[+A](request: Request[A]) extends WrappedRequest[A](request) {
   val identityData: IdentityData
   val internalID: String = identityData.internalId.getOrElse(throw new RuntimeException("Internal ID not found."))
-  def cacheId: String = internalID
-  val credId: String = identityData.credentials.map(_.providerId).getOrElse(
-    throw DownstreamServiceError("Cannot find user credentials id",
-      RegistrationException("Cannot find user credentials id")
-    )
-  )
+  def cacheId: String    = internalID
+
+  val credId: String =
+    identityData.credentials.map(_.providerId).getOrElse(throw DownstreamServiceError("Cannot find user credentials id", RegistrationException("Cannot find user credentials id")))
+
 }
 
 object AuthenticatedRequest {
 
-  final case class RegistrationRequest[+A](
-                                      request: Request[A],
-                                      identityData: IdentityData
-                                    ) extends AuthenticatedRequest[A](request)
+  final case class RegistrationRequest[+A](request: Request[A], identityData: IdentityData) extends AuthenticatedRequest[A](request)
 
-  final case class PPTEnrolledRequest[+A](
-                                     request: Request[A],
-                                     identityData: IdentityData,
-                                     pptReference: String
-                                   ) extends AuthenticatedRequest[A](request)
+  final case class PPTEnrolledRequest[+A](request: Request[A], identityData: IdentityData, pptReference: String) extends AuthenticatedRequest[A](request)
 
 }
-

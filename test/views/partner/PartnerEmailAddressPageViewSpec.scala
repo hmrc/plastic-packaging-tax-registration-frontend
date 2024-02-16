@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
   private val contactName = "A Contact"
 
-  private val nominated        = true
-  private val notNominated     = false
+  private val nominated    = true
+  private val notNominated = false
 
   private def createViewNominated(form: Form[EmailAddress] = EmailAddress.form()): Document =
     page(form, updateLink, contactName, nominated)(registrationJourneyRequest, messages)
@@ -60,9 +60,7 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      viewNom.select("title").text() must include(
-        messages("partnership.otherPartners.contactEmailAddressPage.title", contactName)
-      )
+      viewNom.select("title").text() must include(messages("partnership.otherPartners.contactEmailAddressPage.title", contactName))
     }
 
     "display email address input box" in {
@@ -80,9 +78,7 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
       "display a hint for each name input" in {
 
-        viewNom.getElementById("value-hint").text() must include(
-          "We’ll only use this to send notifications about this registration, the account and returns."
-        )
+        viewNom.getElementById("value-hint").text() must include("We’ll only use this to send notifications about this registration, the account and returns.")
 
       }
     }
@@ -97,9 +93,7 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
       "not display a hint for each name input" in {
 
-        viewNom.getElementById("value-hint").text() must include(
-          "We’ll only use this to send notifications about this registration, the account and returns."
-        )
+        viewNom.getElementById("value-hint").text() must include("We’ll only use this to send notifications about this registration, the account and returns.")
 
       }
     }

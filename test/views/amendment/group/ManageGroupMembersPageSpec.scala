@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,7 @@ import play.twirl.api.HtmlFormat
 import config.AppConfig
 import controllers.amendment.group.routes
 import forms.organisation.OrgType.UK_COMPANY
-import models.registration.{
-  OrganisationDetails,
-  Registration
-}
+import models.registration.{OrganisationDetails, Registration}
 import views.html.amendment.group.manage_group_members_page
 
 class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting {
@@ -34,16 +31,14 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
   val view: manage_group_members_page = inject[manage_group_members_page]
   val realAppConfig: AppConfig        = inject[AppConfig]
 
-  val registration: Registration = Registration("someID",
-                                                organisationDetails = OrganisationDetails(
-                                                  organisationType = Some(UK_COMPANY),
-                                                  incorporationDetails = Some(incorporationDetails)
-                                                ),
-                                                groupDetail = Some(
-                                                  groupDetails.copy(members =
-                                                    Seq(groupMember, groupMember)
-                                                  )
-                                                )
+  val registration: Registration = Registration(
+    "someID",
+    organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
+    groupDetail = Some(
+      groupDetails.copy(members =
+        Seq(groupMember, groupMember)
+      )
+    )
   )
 
   val sut: HtmlFormat.Appendable = view(registration)(registrationJourneyRequest, messages)
@@ -72,9 +67,7 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
 
       key must include(messages("amend.group.manage.members"))
       value mustBe s"${groupMember.businessName} ${groupMember.businessName}"
-      changeLink.text() mustBe messages("site.link.change") + " " + messages(
-        "amend.group.manage.members"
-      )
+      changeLink.text() mustBe messages("site.link.change") + " " + messages("amend.group.manage.members")
       changeLink must haveHref(routes.GroupMembersListController.displayPage())
     }
   }

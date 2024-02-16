@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,7 @@ object DeregisterReasonForm extends CommonFormValidators with CommonFormValues {
     Form(
       mapping(
         "answer" -> nonEmptyString("deregistration.reason.empty.error")
-          .verifying("deregistration.reason.empty.error",
-                     contains(DeregistrationReason.values.toSeq.map(_.toString))
-          )
+          .verifying("deregistration.reason.empty.error", contains(DeregistrationReason.values.toSeq.map(_.toString)))
       )(DeregisterReasonForm.toForm)(DeregisterReasonForm.fromForm)
     )
 

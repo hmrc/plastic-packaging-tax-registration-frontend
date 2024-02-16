@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import views.html.deregistration.deregistration_submitted_page
 class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
 
   val appConfig: AppConfig = inject[AppConfig]
-  private val page                  = inject[deregistration_submitted_page]
+  private val page         = inject[deregistration_submitted_page]
 
   "The Deregistration Submitted View" should {
 
@@ -54,11 +54,7 @@ class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
       val mainContent = view.select("main").text()
       mainContent must include(messages("deregistration.confirmation.detail"))
       mainContent must include(messages("deregistration.confirmation.detail1"))
-      mainContent must include(
-        messages("deregistration.confirmation.detail2",
-                 messages("deregistration.confirmation.detail2.link")
-        )
-      )
+      mainContent must include(messages("deregistration.confirmation.detail2", messages("deregistration.confirmation.detail2.link")))
 
       val mainContentLink = view.select("main a").get(0)
       mainContentLink must haveHref(appConfig.pptAccountUrl)

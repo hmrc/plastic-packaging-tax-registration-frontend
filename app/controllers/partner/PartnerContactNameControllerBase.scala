@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ abstract class PartnerContactNameControllerBase(
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
-
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
 
         renderPageFor(partner, isNominated, backCall, submitCall)
@@ -47,9 +46,7 @@ abstract class PartnerContactNameControllerBase(
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Result = {
+  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result = {
     val existingNameFields = for {
       contactDetails <- partner.contactDetails
       firstName      <- contactDetails.firstName
@@ -87,14 +84,9 @@ abstract class PartnerContactNameControllerBase(
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
 
-  private def handleSubmission(
-    partner: Partner,
-    isNominated: Boolean,
-    backCall: Call,
-    submitCall: Call,
-    onwardsCall: Call,
-    updateAction: MemberName => Future[Registration]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+  private def handleSubmission(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call, onwardsCall: Call, updateAction: MemberName => Future[Registration])(
+    implicit request: JourneyRequest[AnyContent]
+  ): Future[Result] =
     MemberName.form()
       .bindFromRequest()
       .fold(

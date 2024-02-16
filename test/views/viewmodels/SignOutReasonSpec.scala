@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
       "valid" in {
 
         val result =
-          SignOutReason.binder.bind("signOutReason",
-                                    Map("signOutReason" -> Seq(SignOutReason.UserAction.toString))
-          )
+          SignOutReason.binder.bind("signOutReason", Map("signOutReason" -> Seq(SignOutReason.UserAction.toString)))
 
         result.get mustBe Right(SignOutReason.UserAction)
       }
@@ -42,9 +40,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
       "not valid" in {
 
         val result =
-          SignOutReason.binder.bind("signOutReason",
-                                    Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString))
-          )
+          SignOutReason.binder.bind("signOutReason", Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString)))
 
         result.get mustBe Right(SignOutReason.SessionTimeout)
       }

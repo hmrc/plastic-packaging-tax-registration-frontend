@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import forms.enrolment.IsUkAddress.{NO, YES}
 import forms.group.RemoveMember
 import views.html.group.remove_group_member_page
 import java.util.UUID
-
 
 class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
 

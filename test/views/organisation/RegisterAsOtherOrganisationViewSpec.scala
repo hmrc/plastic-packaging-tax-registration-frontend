@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,7 @@ class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-        "organisationDetails.registerAsOtherOrganisation.title"
-      )
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage("organisationDetails.registerAsOtherOrganisation.title")
     }
 
     "display page header" in {
@@ -55,29 +53,19 @@ class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
     "display paragraphs" in {
 
-      view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage(
-        "organisationDetails.registerAsOtherOrganisation.paragraph.1"
-      )
+      view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage("organisationDetails.registerAsOtherOrganisation.paragraph.1")
 
       view.getElementsByClass(Styles.gdsPageBodyText).get(1).text() must include(
-        messages("organisationDetails.registerAsOtherOrganisation.paragraph.2",
-                 messages("organisationDetails.registerAsOtherOrganisation.gform.link.description")
-        )
+        messages("organisationDetails.registerAsOtherOrganisation.paragraph.2", messages("organisationDetails.registerAsOtherOrganisation.gform.link.description"))
       )
 
-      view.getElementsByClass(Styles.gdsPageBodyText).get(2) must containMessage(
-        "organisationDetails.registerAsOtherOrganisation.paragraph.3"
-      )
+      view.getElementsByClass(Styles.gdsPageBodyText).get(2) must containMessage("organisationDetails.registerAsOtherOrganisation.paragraph.3")
     }
 
     "display gform link" in {
 
-      view.getElementById("gform-link") must haveHref(
-        "https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax"
-      )
-      view.getElementById("gform-text") must containMessage(
-        "organisationDetails.registerAsOtherOrganisation.gform.link.description"
-      )
+      view.getElementById("gform-link") must haveHref("https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax")
+      view.getElementById("gform-text") must containMessage("organisationDetails.registerAsOtherOrganisation.gform.link.description")
     }
   }
 

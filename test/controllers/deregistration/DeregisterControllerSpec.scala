@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class DeregisterControllerSpec
-    extends ControllerSpec with MockDeregistrationDetailRepository with PptTestData {
+class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDetailRepository with PptTestData {
 
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[deregister_page]
@@ -42,18 +41,10 @@ class DeregisterControllerSpec
   private val formCaptor: ArgumentCaptor[Form[Boolean]] =
     ArgumentCaptor.forClass(classOf[Form[Boolean]])
 
-  private val deregisterController = new DeregisterController(
-    FakeAmendAuthAction,
-    mcc,
-    inMemoryDeregistrationDetailRepository,
-    config,
-    mockPage
-  )
+  private val deregisterController = new DeregisterController(FakeAmendAuthAction, mcc, inMemoryDeregistrationDetailRepository, config, mockPage)
 
   override protected def beforeEach(): Unit = {
-    when(mockPage.apply(formCaptor.capture())(any(), any())).thenReturn(
-      HtmlFormat.raw("Deregister?")
-    )
+    when(mockPage.apply(formCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("Deregister?"))
     when(config.pptAccountUrl).thenReturn("/account")
   }
 
@@ -81,13 +72,10 @@ class DeregisterControllerSpec
     "redirect to the deregistration reason page and update repository" when {
       "user suggests they would like to deregister" in {
 
-
         val correctForm = Seq("deregister" -> "yes")
         val resp        = await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
 
-        redirectLocation(Future.successful(resp)) mustBe Some(
-          routes.DeregisterReasonController.displayPage().url
-        )
+        redirectLocation(Future.successful(resp)) mustBe Some(routes.DeregisterReasonController.displayPage().url)
 
         inMemoryDeregistrationDetailRepository.get().map { deregistrationDetail =>
           deregistrationDetail.deregister mustBe Some(true)
@@ -97,7 +85,6 @@ class DeregisterControllerSpec
 
     "redirect to the PPT account page" when {
       "user suggests they do not want to deregister" in {
-
 
         val correctForm = Seq("deregister" -> "no")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -109,7 +96,6 @@ class DeregisterControllerSpec
     "redisplay the deregister page" when {
       "user does not select an answer" in {
 
-
         val correctForm = Seq("deregister" -> "")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
 
@@ -120,7 +106,6 @@ class DeregisterControllerSpec
   }
 
   private def deregisterPageDisplayedAsExpected() = {
-
 
     val resp = deregisterController.displayPage()(FakeRequest())
 

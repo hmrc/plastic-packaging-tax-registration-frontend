@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,12 +48,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(
-      HtmlFormat.raw("PPT Reference Page")
-    )
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-      Future.successful(Some(enrolmentDetails))
-    )
+    when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(HtmlFormat.raw("PPT Reference Page"))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(enrolmentDetails)))
   }
 
   override protected def afterEach(): Unit = {
@@ -73,16 +69,13 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
       "user is authorised and cache is empty" in {
 
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(None)
-        )
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         contentAsString(result) mustBe "PPT Reference Page"
       }
     }
-
 
     "redisplay the ppt reference page with a BAD REQUEST status" when {
       "an invalid ppt reference is submitted" in {
@@ -97,19 +90,14 @@ class PptReferenceControllerSpec extends ControllerSpec {
     "redirect to next page and persist ppt reference" when {
       "a valid ppt reference is submitted" in {
 
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
-          Future.successful(enrolmentDetails)
-        )
-
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(enrolmentDetails))
 
         val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.VerifyOrganisationController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
-                                  ArgumentMatchers.eq(enrolmentDetails)
-        )(any(), any())
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(enrolmentDetails))(any(), any())
       }
     }
   }

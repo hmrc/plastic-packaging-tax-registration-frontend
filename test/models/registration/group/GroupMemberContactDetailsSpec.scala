@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,12 +44,7 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
     "update email address" when {
       "contact details exist" in {
         val member = groupMember.copy(contactDetails =
-          Some(
-            GroupMemberContactDetails(firstName = "Test",
-                                      lastName = "User",
-                                      email = Some("test@test.com")
-            )
-          )
+          Some(GroupMemberContactDetails(firstName = "Test", lastName = "User", email = Some("test@test.com")))
         )
         val result = member.withUpdatedGroupMemberEmail("t@t.com")
         result.contactDetails.map(_.email).get mustBe Some("t@t.com")
@@ -64,12 +59,7 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
     "update phone number" when {
       "contact details exist" in {
         val member = groupMember.copy(contactDetails =
-          Some(
-            GroupMemberContactDetails(firstName = "Test",
-                                      lastName = "User",
-                                      phoneNumber = Some("0777123")
-            )
-          )
+          Some(GroupMemberContactDetails(firstName = "Test", lastName = "User", phoneNumber = Some("0777123")))
         )
         val result = member.withUpdatedGroupMemberPhoneNumber("121212")
         result.contactDetails.map(_.phoneNumber).get mustBe Some("121212")
@@ -84,17 +74,10 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
     "update address" when {
       "contact details exist" in {
         val member = groupMember.copy(contactDetails =
-          Some(
-            GroupMemberContactDetails(firstName = "Test",
-                                      lastName = "User",
-                                      address = Some(addressDetails)
-            )
-          )
+          Some(GroupMemberContactDetails(firstName = "Test", lastName = "User", address = Some(addressDetails)))
         )
         val result =
-          member.withUpdatedGroupMemberAddress(
-            Some(addressDetails.copy(postCode = "AA1 1AA"))
-          )
+          member.withUpdatedGroupMemberAddress(Some(addressDetails.copy(postCode = "AA1 1AA")))
         result.contactDetails.map(_.address.get.maybePostcode).get mustBe Some("AA1 1AA")
       }
       "with no contact details" in {

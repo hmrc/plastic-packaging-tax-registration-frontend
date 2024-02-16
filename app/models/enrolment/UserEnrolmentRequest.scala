@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class UserEnrolmentRequest(
-  pptReference: String,
-  registrationDate: LocalDate,
-  postcode: Option[String] = None
-)
+case class UserEnrolmentRequest(pptReference: String, registrationDate: LocalDate, postcode: Option[String] = None)
 
 object UserEnrolmentRequest {
   implicit val format: OFormat[UserEnrolmentRequest] = Json.format[UserEnrolmentRequest]

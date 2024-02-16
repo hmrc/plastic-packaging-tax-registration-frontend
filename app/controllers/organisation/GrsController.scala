@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import models.registration.{Cacheable, OrganisationDetails, Registration}
 import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import org.joda.time.DateTime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -39,6 +38,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AddressConversionUtils
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,15 +55,15 @@ object RegistrationStatus extends Enumeration {
 
 @Singleton
 class GrsController @Inject() (
-                                journeyAction: JourneyAction,
-                                override val registrationConnector: RegistrationConnector,
-                                ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                soleTraderGrsConnector: SoleTraderGrsConnector,
-                                registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                partnershipGrsConnector: PartnershipGrsConnector,
-                                subscriptionsConnector: SubscriptionsConnector,
-                                addressConversionUtils: AddressConversionUtils,
-                                mcc: MessagesControllerComponents
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  subscriptionsConnector: SubscriptionsConnector,
+  addressConversionUtils: AddressConversionUtils,
+  mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with Logging {
 
@@ -71,7 +71,7 @@ class GrsController @Inject() (
     journeyAction.register.async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
-          case Right(registration) => 
+          case Right(registration) =>
             logger.info(
               s"PPT GRS callback for journeyId [$journeyId] " +
                 s"and organisation type [${registration.organisationDetails.organisationType}] " +
@@ -80,34 +80,32 @@ class GrsController @Inject() (
 
             if (registration.organisationDetails.businessVerificationFailed)
               Future.successful(businessVerificationFailed(registration))
-            else {
+            else
               registration.organisationDetails.businessPartnerId match {
                 case Some(businessPartnerId) =>
                   checkSubscriptionStatus(businessPartnerId, registration).map {
                     case SUBSCRIBED => duplicateSubscription(registration)
-                    case _ => Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
+                    case _          => Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
                   }
                 case None =>
                   Future.successful(registration.organisationDetails.grsRegistration match {
-                    case Some(RegistrationDetails(false, _, _, None)) => matchingFailed(registration)
+                    case Some(RegistrationDetails(false, _, _, None))                    => matchingFailed(registration)
                     case Some(RegistrationDetails(true, _, "REGISTRATION_FAILED", None)) => registrationFailed
-                    case _ => throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
+                    case _                                                               => throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
                   })
               }
-            }
           case Left(error) => throw error
         }
-      
+
     }
 
-    //this is very similar to below, do we want to combine them?
-    private def businessVerificationFailed(registration: Registration): Result = {
+  //this is very similar to below, do we want to combine them?
+  private def businessVerificationFailed(registration: Registration): Result =
     registration.organisationDetails.organisationType match {
       case Some(SOLE_TRADER) | Some(OrgType.PARTNERSHIP) =>
         Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
       case _ =>
         Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
-      }
     }
 
   private def matchingFailed(registration: Registration): Result = {
@@ -115,16 +113,16 @@ class GrsController @Inject() (
     val orgTypeEnum = registration.organisationDetails.organisationType.getOrElse(throw new IllegalStateException("Missing OrgType whilst handling organisation callback from GRS"))
     orgTypeEnum match {
       case OrgType.SOLE_TRADER | OrgType.PARTNERSHIP => Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
-      case _ => Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
+      case _                                         => Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
     }
   }
 
-private def registrationFailed =
-  Redirect(commonRoutes.NotableErrorController.registrationFailed(DateTime.now().toString))
+  private def registrationFailed =
+    Redirect(commonRoutes.NotableErrorController.registrationFailed(LocalDateTime.now().toString))
 
-private def duplicateSubscription(registration: Registration) = 
-  if (registration.isGroup) Redirect(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered())
-  else Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
+  private def duplicateSubscription(registration: Registration) =
+    if (registration.isGroup) Redirect(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered())
+    else Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(implicit
     hc: HeaderCarrier,
@@ -144,13 +142,10 @@ private def duplicateSubscription(registration: Registration) =
         }
     }
 
-  private def saveRegistrationDetails(
-    journeyId: String
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
+  private def saveRegistrationDetails(journeyId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
     request.registration.organisationDetails.organisationType match {
-      case Some(OrgType.UK_COMPANY) | Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) => {
+      case Some(OrgType.UK_COMPANY) | Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId)
-      }
       case Some(OrgType.REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId)
       case Some(OrgType.SOLE_TRADER)        => updateSoleTraderDetails(journeyId)
       case Some(OrgType.PARTNERSHIP)        => updatePartnershipDetails(journeyId)
@@ -161,9 +156,7 @@ private def duplicateSubscription(registration: Registration) =
   private def updateUkCompanyDetails(journeyId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     updateIncorporationDetails(journeyId, ukCompanyGrsConnector.getDetails)
 
-  private def updateRegisteredSocietyDetails(
-    journeyId: String
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateRegisteredSocietyDetails(journeyId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     updateIncorporationDetails(journeyId, registeredSocietyGrsConnector.getDetails)
 
   private def updateIncorporationDetails(journeyId: String, getDetails: String => Future[IncorporationDetails])(implicit
@@ -185,17 +178,13 @@ private def duplicateSubscription(registration: Registration) =
     soleTraderGrsConnector.getDetails(journeyId).map { soleTraderDetails =>
       request.registration.copy(
         incorpJourneyId = Some(journeyId),
-        organisationDetails = request.registration.organisationDetails.copy(
-          incorporationDetails = None,
-          partnershipDetails = None,
-          soleTraderDetails = Some(soleTraderDetails)
-        )
+        organisationDetails = request.registration.organisationDetails.copy(incorporationDetails = None, partnershipDetails = None, soleTraderDetails = Some(soleTraderDetails))
       )
     }
 
   private def updatePartnershipDetails(journeyId: String)(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
     request.registration.organisationDetails.partnershipDetails match {
-      case Some(partnershipDetails) => {
+      case Some(partnershipDetails) =>
         partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
           request.registration.copy(
             incorpJourneyId = Some(journeyId),
@@ -207,7 +196,6 @@ private def duplicateSubscription(registration: Registration) =
             )
           )
         }
-      }
       case _ => throw new IllegalStateException("Missing partnership details")
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,7 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
-      )
+      view.select("p.govuk-body").text() must include(messages("duplicateSubscription.detail", "Plastic Packaging Ltd"))
     }
   }
 

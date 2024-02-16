@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,7 @@ import views.html.session_timed_out
 import views.viewmodels.SignOutReason
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class SignOutController @Inject() (
-  appConfig: AppConfig,
-  sessionTimedOut: session_timed_out,
-  mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with I18nSupport {
+class SignOutController @Inject() (appConfig: AppConfig, sessionTimedOut: session_timed_out, mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
   def signOut(signOutReason: SignOutReason): Action[AnyContent] =
     Action {

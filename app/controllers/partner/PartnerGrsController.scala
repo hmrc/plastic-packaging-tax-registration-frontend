@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,32 +27,30 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerGrsController @Inject() (
-                                       journeyAction: JourneyAction,
-                                       ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                       soleTraderGrsConnector: SoleTraderGrsConnector,
-                                       partnershipGrsConnector: PartnershipGrsConnector,
-                                       registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                       registrationUpdater: NewRegistrationUpdateService,
-                                       subscriptionsConnector: SubscriptionsConnector,
-                                       mcc: MessagesControllerComponents
+  journeyAction: JourneyAction,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  registrationUpdater: NewRegistrationUpdateService,
+  subscriptionsConnector: SubscriptionsConnector,
+  mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends PartnerGrsControllerBase(journeyAction = journeyAction.register,
-                                     ukCompanyGrsConnector = ukCompanyGrsConnector,
-                                     soleTraderGrsConnector = soleTraderGrsConnector,
-                                     partnershipGrsConnector = partnershipGrsConnector,
-                                     registeredSocietyGrsConnector = registeredSocietyGrsConnector,
-                                     subscriptionsConnector = subscriptionsConnector,
-                                     registrationUpdater = registrationUpdater,
-                                     mcc = mcc
+    extends PartnerGrsControllerBase(
+      journeyAction = journeyAction.register,
+      ukCompanyGrsConnector = ukCompanyGrsConnector,
+      soleTraderGrsConnector = soleTraderGrsConnector,
+      partnershipGrsConnector = partnershipGrsConnector,
+      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
+      subscriptionsConnector = subscriptionsConnector,
+      registrationUpdater = registrationUpdater,
+      mcc = mcc
     ) {
 
   def grsCallbackNewPartner(journeyId: String): Action[AnyContent] =
     grsCallback(journeyId, None, routes.PartnerContactNameController.displayNewPartner)
 
   def grsCallbackExistingPartner(journeyId: String, partnerId: String): Action[AnyContent] =
-    grsCallback(journeyId,
-                Some(partnerId),
-                routes.PartnerContactNameController.displayExistingPartner(partnerId)
-    )
+    grsCallback(journeyId, Some(partnerId), routes.PartnerContactNameController.displayExistingPartner(partnerId))
 
 }

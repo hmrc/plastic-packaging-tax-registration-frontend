@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ package models.genericregistration
 
 import play.api.libs.json._
 
-case class GrsCompanyProfile(
-  companyNumber: String,
-  companyName: String,
-  unsanitisedCHROAddress: IncorporationAddressDetails
-)
+case class GrsCompanyProfile(companyNumber: String, companyName: String, unsanitisedCHROAddress: IncorporationAddressDetails)
 
 object GrsCompanyProfile {
   implicit val format: OFormat[GrsCompanyProfile] = Json.format[GrsCompanyProfile]
@@ -58,24 +54,25 @@ object IncorporationDetails {
   implicit val format: Format[IncorporationDetails] = Json.format[IncorporationDetails]
 
   def apply(grsIncorporationDetails: GrsIncorporationDetails): IncorporationDetails =
-    IncorporationDetails(grsIncorporationDetails.companyProfile.companyNumber,
-                         grsIncorporationDetails.companyProfile.companyName,
-                         Some(grsIncorporationDetails.ctutr),
-                         grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
-                         Some(
-                           RegistrationDetails(
-                             identifiersMatch =
-                               grsIncorporationDetails.identifiersMatch,
-                             verificationStatus =
-                               grsIncorporationDetails.businessVerification.map { bv =>
-                                 bv.verificationStatus
-                               },
-                             registrationStatus =
-                               grsIncorporationDetails.registration.registrationStatus,
-                             registeredBusinessPartnerId =
-                               grsIncorporationDetails.registration.registeredBusinessPartnerId
-                           )
-                         )
+    IncorporationDetails(
+      grsIncorporationDetails.companyProfile.companyNumber,
+      grsIncorporationDetails.companyProfile.companyName,
+      Some(grsIncorporationDetails.ctutr),
+      grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
+      Some(
+        RegistrationDetails(
+          identifiersMatch =
+            grsIncorporationDetails.identifiersMatch,
+          verificationStatus =
+            grsIncorporationDetails.businessVerification.map { bv =>
+              bv.verificationStatus
+            },
+          registrationStatus =
+            grsIncorporationDetails.registration.registrationStatus,
+          registeredBusinessPartnerId =
+            grsIncorporationDetails.registration.registeredBusinessPartnerId
+        )
+      )
     )
 
 }

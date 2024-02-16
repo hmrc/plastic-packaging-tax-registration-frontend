@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package base.it
 
 import builders.RegistrationBuilder
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -29,23 +29,22 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorISpec
-    extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData
-    with RegistrationBuilder {
+class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData with RegistrationBuilder {
 
   def overrideConfig: Map[String, Any] =
-    Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
-        "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
-        "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
-        "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
-        "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
-        "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
-        "microservice.services.partnership-identification-frontend.host"         -> wireHost,
-        "microservice.services.partnership-identification-frontend.port"         -> wirePort,
-        "microservice.services.email-verification.host"                          -> wireHost,
-        "microservice.services.email-verification.port"                          -> wirePort,
-        "microservice.services.address-lookup-frontend.host"                     -> wireHost,
-        "microservice.services.address-lookup-frontend.port"                     -> wirePort
+    Map(
+      "microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
+      "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
+      "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
+      "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
+      "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
+      "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
+      "microservice.services.partnership-identification-frontend.host"         -> wireHost,
+      "microservice.services.partnership-identification-frontend.port"         -> wirePort,
+      "microservice.services.email-verification.host"                          -> wireHost,
+      "microservice.services.email-verification.port"                          -> wirePort,
+      "microservice.services.address-lookup-frontend.host"                     -> wireHost,
+      "microservice.services.address-lookup-frontend.port"                     -> wirePort
     )
 
   override def fakeApplication(): Application = {

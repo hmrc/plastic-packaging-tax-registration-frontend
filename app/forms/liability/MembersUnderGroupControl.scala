@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,7 @@ object MembersUnderGroupControl extends CommonFormValidators with CommonFormValu
     }
 
   def fromForm(membersUnderGroupControl: MembersUnderGroupControl): Option[Option[String]] =
-    membersUnderGroupControl.value.map(
-      isMembersUnderSameGroupControl => if (isMembersUnderSameGroupControl) Some(YES) else Some(NO)
-    )
+    membersUnderGroupControl.value.map(isMembersUnderSameGroupControl => if (isMembersUnderSameGroupControl) Some(YES) else Some(NO))
 
   def form(): Form[MembersUnderGroupControl] = Form(mapping)
 }

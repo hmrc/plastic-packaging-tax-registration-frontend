@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,7 @@ class ReferenceNumberAlreadyUsedFailurePageSpec extends UnitViewSpec with Matche
     val view = createView()
 
     "contain title" in {
-      view.select("title").text() must include(
-        messages("enrolment.referenceNumber.already.used.title")
-      )
+      view.select("title").text() must include(messages("enrolment.referenceNumber.already.used.title"))
     }
 
     "contain heading" in {

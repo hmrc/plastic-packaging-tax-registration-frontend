@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-trait WiremockTestServer
-    extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+trait WiremockTestServer extends AnyWordSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   val wireHost = "localhost"
 

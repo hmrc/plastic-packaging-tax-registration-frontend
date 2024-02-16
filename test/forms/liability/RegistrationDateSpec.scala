@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
 
         val input = Map(year -> "", month -> "", day -> "")
         val expectedErrors =
-          Seq(FormError(day, "enrolment.registrationDate.value.error.empty")
-          )
+          Seq(FormError(day, "enrolment.registrationDate.value.error.empty"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -150,10 +149,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = RegistrationDate.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

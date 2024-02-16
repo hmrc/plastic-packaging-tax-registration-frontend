@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,37 +42,30 @@ import java.time.LocalDate
 class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
   private val page: expect_to_exceed_threshold_weight_date_page = mock[expect_to_exceed_threshold_weight_date_page]
-  private val mockFormProvider = mock[ExpectToExceedThresholdWeightDate]
-  private val form = mock[Form[LocalDate]]
-  private val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+  private val mockFormProvider                                  = mock[ExpectToExceedThresholdWeightDate]
+  private val form                                              = mock[Form[LocalDate]]
+  private val mcc: MessagesControllerComponents                 = stubMessagesControllerComponents()
 
-  private val sut = new ExpectToExceedThresholdWeightDateController(
-    journeyAction = spyJourneyAction,
-    mockRegistrationConnector,
-    mcc,
-    page,
-    mockFormProvider,
-    config
-  )
+  private val sut = new ExpectToExceedThresholdWeightDateController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, page, mockFormProvider, config)
 
   override def beforeEach() = {
     super.beforeEach()
 
     reset(mockFormProvider, page, form)
 
-    when(page.apply(any())(any(),any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
+
   "onPageLoad" should {
 
     "return 200" in {
 
+      spyJourneyAction.setReg(aRegistration())
+      when(mockFormProvider.apply()(any())).thenReturn(form)
 
-        spyJourneyAction.setReg(aRegistration())
-        when(mockFormProvider.apply()(any())).thenReturn(form)
+      val result = sut.displayPage()()(FakeRequest())
 
-        val result = sut.displayPage()()(FakeRequest())
-
-        status(result) mustBe OK
+      status(result) mustBe OK
     }
 
     "display a view with empty date" in {
@@ -85,7 +78,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
       await(sut.displayPage()(FakeRequest()))
 
-      verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
+      verify(page).apply(ArgumentMatchers.eq(form))(any(), any())
       verifyNoInteractions(form)
     }
 
@@ -97,8 +90,8 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
       await(sut.displayPage()(FakeRequest()))
 
-      verify(form).fill(LocalDate.of(2022,3,5))
-      verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
+      verify(form).fill(LocalDate.of(2022, 3, 5))
+      verify(page).apply(ArgumentMatchers.eq(form))(any(), any())
     }
 
   }
@@ -110,9 +103,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       val result = sut.submit()(FakeRequest())
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(
-        routes.ExceededThresholdWeightController.displayPage.url
-      )
+      redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightController.displayPage.url)
     }
 
     "save the date to cache" in {
@@ -133,7 +124,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         val result = sut.submit()(FakeRequest())
 
         status(result) mustBe BAD_REQUEST
-        verify(page).apply(ArgumentMatchers.eq(bindForm))(any(),any())
+        verify(page).apply(ArgumentMatchers.eq(bindForm))(any(), any())
       }
 
       "saving to cache" in {
@@ -154,17 +145,13 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
   private def createExpectedRegistration(reg: Registration) = {
     val updatedLiableDetails =
-      reg.liabilityDetails.copy(
-        dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 1))),
-        newLiabilityStarted = Some(NewLiability)
-      )
+      reg.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 1))), newLiabilityStarted = Some(NewLiability))
 
     reg.copy(liabilityDetails = updatedLiableDetails)
   }
 
-  private def createForm: Form[LocalDate] =  {
+  private def createForm: Form[LocalDate] =
     new ExpectToExceedThresholdWeightDate(config).apply()(mock[Messages])
-      .fill(LocalDate.of(2022,4,1))
-  }
+      .fill(LocalDate.of(2022, 4, 1))
 
 }

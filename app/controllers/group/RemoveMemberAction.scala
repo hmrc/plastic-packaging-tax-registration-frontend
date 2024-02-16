@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ trait RemoveMemberAction {
 
   def doRemoveMemberAction(registration: Registration, groupMemberId: String): Registration =
     registration.copy(groupDetail =
-      registration.groupDetail.map(
-        groupDetail => groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))
-      )
+      registration.groupDetail.map(groupDetail => groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId)))
     )
 
 }

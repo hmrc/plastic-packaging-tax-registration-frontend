@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ sealed trait UserEnrolmentResponse
 
 case class UserEnrolmentSuccessResponse(pptReference: String) extends UserEnrolmentResponse
 
-case class UserEnrolmentFailedResponse(pptReference: String, failureCode: String)
-    extends UserEnrolmentResponse
+case class UserEnrolmentFailedResponse(pptReference: String, failureCode: String) extends UserEnrolmentResponse
 
 object UserEnrolmentSuccessResponse {
 

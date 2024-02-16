@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,5 +21,5 @@ import uk.gov.hmrc.http.HttpVerbs.GET
 
 sealed trait BackButtonLink
 
-case class BackButton(title: String, call: Call,  hiddenText: String) extends BackButtonLink
-case object BackButtonJs extends BackButtonLink
+case class BackButton(title: String, call: Call, hiddenText: String) extends BackButtonLink
+case object BackButtonJs                                             extends BackButtonLink

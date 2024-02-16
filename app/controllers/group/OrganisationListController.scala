@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,30 +30,21 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class OrganisationListController @Inject() (
-                                             journeyAction: JourneyAction,
-                                             override val registrationConnector: RegistrationConnector,
-                                             mcc: MessagesControllerComponents,
-                                             page: organisation_list
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: organisation_list
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      request.registration.groupDetail.fold(
-        Redirect(controllers.routes.TaskListController.displayPage())
-      )(
+      request.registration.groupDetail.fold(Redirect(controllers.routes.TaskListController.displayPage()))(
         detail =>
           if (detail.members.isEmpty)
             // Must add at least one group member to use this page
-            Redirect(
-              controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-            )
+            Redirect(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember())
           else
-            Ok(
-              page(form(),
-                   request.registration.organisationDetails.businessName.get,
-                   detail.members
-              )
-            )
+            Ok(page(form(), request.registration.organisationDetails.businessName.get, detail.members))
       )
     }
 
@@ -61,12 +52,7 @@ class OrganisationListController @Inject() (
     journeyAction.register { implicit request =>
       form().bindFromRequest().fold(
         (formWithErrors: Form[Boolean]) =>
-          BadRequest(
-            page(formWithErrors,
-                 request.registration.organisationDetails.businessName.get,
-                 request.registration.groupDetail.map(_.members).get
-            )
-          ),
+          BadRequest(page(formWithErrors, request.registration.organisationDetails.businessName.get, request.registration.groupDetail.map(_.members).get)),
         addOrganisation =>
           if (addOrganisation)
             Redirect(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember())

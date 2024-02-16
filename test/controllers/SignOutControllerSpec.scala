@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package controllers
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, session, status}
 import play.twirl.api.HtmlFormat
@@ -53,7 +52,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val exitSurveyUrl: String = givenExistSurveyUrl
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
@@ -63,7 +61,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val exitSurveyUrl: String = givenExistSurveyUrl
 
@@ -78,7 +75,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
@@ -86,7 +82,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
@@ -99,7 +94,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest().withSession("keyA" -> "valueA"))
 
         session(result).get("keyA") shouldBe None
@@ -107,7 +101,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user signs out" in {
-
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest().withSession("keyA" -> "valueA"))
 
@@ -124,7 +117,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user session times out" in {
 
-
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
@@ -133,7 +125,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
 
       "unauth user session times out" in {
-
 
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
@@ -147,8 +138,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "session times out" in {
 
-
-
         val result =
           controller.signOut(SignOutReason.SessionTimeout)(FakeRequest().withSession("keyA" -> "valueA"))
 
@@ -160,11 +149,9 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauthorised user hits /we-sign-you-out page" in {
 
-
-
         val result = controller.sessionTimeoutSignedOut()(FakeRequest())
 
-        status(result) mustBe OK.intValue
+        status(result) mustBe OK
       }
     }
 

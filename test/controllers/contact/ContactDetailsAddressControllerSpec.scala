@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
   private val registration = aRegistration()
 
   private val controller =
-    new ContactDetailsAddressController(spyJourneyAction,
-                                        mockRegistrationConnector,
-                                        mockAddressCaptureService,
-                                        mcc = mcc
-    )
+    new ContactDetailsAddressController(spyJourneyAction, mockRegistrationConnector, mockAddressCaptureService, mcc = mcc)
 
   "Primary Contact Details Address Controller" should {
 
@@ -43,14 +39,15 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
       "display page method is invoked" in {
         spyJourneyAction.setReg(registration)
         val expectedAddressCaptureConfig =
-          AddressCaptureConfig(backLink =
-                                 routes.ContactDetailsConfirmAddressController.displayPage().url,
-                               successLink = routes.ContactDetailsAddressController.update.url,
-                               alfHeadingsPrefix = "addressLookup.contact",
-                               pptHeadingKey = "addressCapture.contact.heading",
-                               entityName = registration.organisationDetails.businessName,
-                               pptHintKey = None,
-                               forceUkAddress = false
+          AddressCaptureConfig(
+            backLink =
+              routes.ContactDetailsConfirmAddressController.displayPage().url,
+            successLink = routes.ContactDetailsAddressController.update.url,
+            alfHeadingsPrefix = "addressLookup.contact",
+            pptHeadingKey = "addressCapture.contact.heading",
+            entityName = registration.organisationDetails.businessName,
+            pptHintKey = None,
+            forceUkAddress = false
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
@@ -68,9 +65,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
 
         val result = controller.update()(FakeRequest())
 
-        redirectLocation(result) mustBe Some(
-          routes.ContactDetailsCheckAnswersController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage().url)
 
         modifiedRegistration.primaryContactDetails.address mustBe Some(validCapturedAddress)
       }

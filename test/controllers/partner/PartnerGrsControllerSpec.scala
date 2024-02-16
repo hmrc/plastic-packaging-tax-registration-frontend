@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,18 @@ import uk.gov.hmrc.http.InternalServerException
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => pptRoutes}
 import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum.{CHARITABLE_INCORPORATED_ORGANISATION, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import forms.organisation.PartnerTypeEnum.{
+  CHARITABLE_INCORPORATED_ORGANISATION,
+  LIMITED_LIABILITY_PARTNERSHIP,
+  LIMITED_PARTNERSHIP,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  OVERSEAS_COMPANY_UK_BRANCH,
+  REGISTERED_SOCIETY,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import models.genericregistration.PartnerPartnershipDetails
 import models.registration.NewRegistrationUpdateService
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
@@ -37,19 +48,18 @@ class PartnerGrsControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new PartnerGrsController(journeyAction = spyJourneyAction,
-                             mockUkCompanyGrsConnector,
-                             mockSoleTraderGrsConnector,
-                             mockPartnershipGrsConnector,
-                             mockRegisteredSocietyGrsConnector,
-                             mockNewRegistrationUpdater,
-                             mockSubscriptionsConnector,
-                             mcc
+    new PartnerGrsController(
+      journeyAction = spyJourneyAction,
+      mockUkCompanyGrsConnector,
+      mockSoleTraderGrsConnector,
+      mockPartnershipGrsConnector,
+      mockRegisteredSocietyGrsConnector,
+      mockNewRegistrationUpdater,
+      mockSubscriptionsConnector,
+      mcc
     )(ec)
 
   "PartnerGrsController " should {
@@ -57,50 +67,59 @@ class PartnerGrsControllerSpec extends ControllerSpec {
     "redirect from GRS to partner contact name or error page" when {
       forAll(
         Seq(
-          (SCOTTISH_LIMITED_PARTNERSHIP,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-           )
+          (
+            SCOTTISH_LIMITED_PARTNERSHIP,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
+            )
           ),
-          (LIMITED_LIABILITY_PARTNERSHIP,
-           llpPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
-           )
+          (
+            LIMITED_LIABILITY_PARTNERSHIP,
+            llpPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
+            )
           ),
-          (SOLE_TRADER,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
-           )
+          (
+            SOLE_TRADER,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
+            )
           ),
-          (UK_COMPANY,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
-           )
+          (
+            UK_COMPANY,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
+            )
           ),
-          (REGISTERED_SOCIETY,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY))
-           )
+          (
+            REGISTERED_SOCIETY,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY))
+            )
           ),
-          (OVERSEAS_COMPANY_UK_BRANCH,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
-           )
+          (
+            OVERSEAS_COMPANY_UK_BRANCH,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
+            )
           ),
-          (SCOTTISH_PARTNERSHIP,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
-           )
+          (
+            SCOTTISH_PARTNERSHIP,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
+            )
           ),
-          (OVERSEAS_COMPANY_NO_UK_BRANCH,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH))
-           )
+          (
+            OVERSEAS_COMPANY_NO_UK_BRANCH,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH))
+            )
           ),
-          (CHARITABLE_INCORPORATED_ORGANISATION,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION))
-           )
+          (
+            CHARITABLE_INCORPORATED_ORGANISATION,
+            scottishPartnershipDetails.copy(inflightPartner =
+              Some(nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION))
+            )
           )
         )
       ) { partnershipDetails =>
@@ -116,26 +135,19 @@ class PartnerGrsControllerSpec extends ControllerSpec {
               mockGetUkCompanyDetails(incorporationDetails)
             case REGISTERED_SOCIETY =>
               mockGetRegisteredSocietyDetails(incorporationDetails)
-            case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                SCOTTISH_LIMITED_PARTNERSHIP =>
+            case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
             case _ => None
           }
 
           partnershipDetails._1 match {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
-              intercept[InternalServerException](
-                await(
-                  controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
-                )
-              )
+              intercept[InternalServerException](await(controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())))
             case _ =>
               val result =
                 controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
               status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(
-                partnerRoutes.PartnerContactNameController.displayNewPartner.url
-              )
+              redirectLocation(result) mustBe Some(partnerRoutes.PartnerContactNameController.displayNewPartner.url)
           }
 
         }
@@ -147,18 +159,13 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetSoleTraderDetails(soleTraderDetails)
         val result =
-          controller.grsCallbackExistingPartner(registration.incorpJourneyId.get, "123")(
-            FakeRequest()
-          )
+          controller.grsCallbackExistingPartner(registration.incorpJourneyId.get, "123")(FakeRequest())
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          partnerRoutes.PartnerContactNameController.displayExistingPartner("123").url
-        )
+        redirectLocation(result) mustBe Some(partnerRoutes.PartnerContactNameController.displayExistingPartner("123").url)
       }
     }
 
@@ -183,9 +190,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          pptRoutes.NotableErrorController.duplicateRegistration().url
-        )
+        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.duplicateRegistration().url)
       }
     }
 
@@ -213,9 +218,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
 
         // businessPartnerId is an example of a field we would expect to have captured from GRS
-        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) mustBe Some(
-          "XXPPTP123456789"
-        )
+        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) mustBe Some("XXPPTP123456789")
       }
     }
 
@@ -252,9 +255,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
 
         // businessPartnerId is an example of a field we would expect to have captured from GRS
-        modifiedRegistration.inflightPartner.flatMap(
-          _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("User supplied partnership name")
+        modifiedRegistration.inflightPartner.flatMap(_.partnerPartnershipDetails.flatMap(_.partnershipName)) mustBe Some("User supplied partnership name")
       }
     }
 

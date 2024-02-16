@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,10 @@ import play.api.test.Helpers.status
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class KeepAliveControllerSpec extends ControllerSpec {
-  private val mcc                    = stubMessagesControllerComponents()
+  private val mcc = stubMessagesControllerComponents()
 
   private val controller =
-    new KeepAliveController(journeyAction = spyJourneyAction,
-                            mcc = mcc
-    )
+    new KeepAliveController(journeyAction = spyJourneyAction, mcc = mcc)
 
   override protected def afterEach(): Unit =
     super.afterEach()

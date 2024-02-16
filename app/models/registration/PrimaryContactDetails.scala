@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,7 @@ case class PrimaryContactDetails(
     else TaskStatus.NotStarted
 
   private def isCompleted(emailVerified: String => Boolean): Boolean =
-    name.isDefined && jobTitle.isDefined && email.exists(
-      emailVerified
-    ) && phoneNumber.isDefined && address.isDefined
+    name.isDefined && jobTitle.isDefined && email.exists(emailVerified) && phoneNumber.isDefined && address.isDefined
 
   private def isInProgress: Boolean =
     name.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined || address.isDefined

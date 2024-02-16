@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,19 +39,22 @@ trait DateFluency {
       def errorClass(subKey: String): String = if (errors.exists(_.key.contains(subKey))) "govuk-input--error" else ""
 
       val items = Seq(
-        InputItem(id = s"${field.id}.day",
+        InputItem(
+          id = s"${field.id}.day",
           name = s"${field.name}.day",
           value = field("day").value,
           label = Some(messages("date.day")),
           classes = s"govuk-input--width-2 ${errorClass("day")}".trim
         ),
-        InputItem(id = s"${field.id}.month",
+        InputItem(
+          id = s"${field.id}.month",
           name = s"${field.name}.month",
           value = field("month").value,
           label = Some(messages("date.month")),
           classes = s"govuk-input--width-2 ${errorClass("month")}".trim
         ),
-        InputItem(id = s"${field.id}.year",
+        InputItem(
+          id = s"${field.id}.year",
           name = s"${field.name}.year",
           value = field("year").value,
           label = Some(messages("date.year")),
@@ -59,11 +62,7 @@ trait DateFluency {
         )
       )
 
-      DateInput(fieldset = Some(fieldset),
-        items = items,
-        id = field.id,
-        errorMessage = errorMessage(errors)
-      )
+      DateInput(fieldset = Some(fieldset), items = items, id = field.id, errorMessage = errorMessage(errors))
     }
 
   }
@@ -92,9 +91,8 @@ trait DateFluency {
             val name = item.id.split('.').last
             item copy (autocomplete = Some(s"bday-$name"))
         }
-        )
+      )
 
   }
 
 }
-

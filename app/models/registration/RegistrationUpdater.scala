@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,33 +26,22 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait RegistrationUpdater {
 
-  def updateRegistration(
-    registrationUpdater: Registration => Registration
-  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration]
+  def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration]
 
 }
 
 @Singleton
-class AmendRegistrationUpdateService @Inject() (
-  registrationAmendmentRepository: RegistrationAmendmentRepository
-) extends RegistrationUpdater {
+class AmendRegistrationUpdateService @Inject() (registrationAmendmentRepository: RegistrationAmendmentRepository) extends RegistrationUpdater {
 
-  override def updateRegistration(
-    registrationUpdater: Registration => Registration
-  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
+  override def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
     registrationAmendmentRepository.update(registrationUpdater(_))(request.authenticatedRequest)
 
 }
 
 @Singleton
-class NewRegistrationUpdateService @Inject() (
-  override val registrationConnector: RegistrationConnector
-)(implicit ec: ExecutionContext)
-    extends RegistrationUpdater with Cacheable {
+class NewRegistrationUpdateService @Inject() (override val registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) extends RegistrationUpdater with Cacheable {
 
-  override def updateRegistration(
-    registrationUpdater: Registration => Registration
-  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
+  override def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
     update(registrationUpdater(_)).map {
       case Right(registration) => registration
       case Left(ex)            => throw ex

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import controllers.actions.JourneyAction
 import forms.contact.Address
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
-import models.addresslookup.CountryCode
 import models.addresslookup.CountryCode.GB
 import models.registration.Cacheable
 import models.request.JourneyRequest
@@ -37,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
-                                                   journeyAction: JourneyAction,
-                                                   override val registrationConnector: RegistrationConnector,
-                                                   addressCaptureService: AddressCaptureService,
-                                                   mcc: MessagesControllerComponents,
-                                                   page: confirm_business_address
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  page: confirm_business_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -52,16 +51,14 @@ class ConfirmBusinessAddressController @Inject() (
       val orgType = member.organisationDetails
         .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
 
-      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(
-        throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")
-      ){ url =>
+      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")) { url =>
         member.addressDetails match {
           case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
             Future.successful(Ok(page(registeredBusinessAddress, member.businessName, url)))
           case _ =>
             orgType match {
               case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
-              case _ => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
+              case _                          => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
             }
         }
       }
@@ -79,16 +76,14 @@ class ConfirmBusinessAddressController @Inject() (
   def changeBusinessAddress(memberId: String, redirectTo: String): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       val res = for {
-        member <- request.registration.findMember(memberId)
+        member     <- request.registration.findMember(memberId)
         orgDetails <- member.organisationDetails
         orgType = orgDetails.organisationType
-      } yield {
-        if(orgType == OrgType.value(OVERSEAS_COMPANY_UK_BRANCH)) {
+      } yield
+        if (orgType == OrgType.value(OVERSEAS_COMPANY_UK_BRANCH))
           initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
-        } else {
+        else
           initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
-        }
-      }
 
       res.getOrElse(initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false))
     }

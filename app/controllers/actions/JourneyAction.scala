@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,12 @@ trait JourneyAction {
   def amend: ActionBuilder[JourneyRequest, AnyContent]
 }
 
-class JourneyActionImpl @Inject()(
-                               registrationAuth: RegistrationAuthAction,
-                               getRegistrationAction: GetRegistrationAction,
-                               amendAuthAction: AmendAuthAction,
-                               getRegistrationForAmendmentAction: GetRegistrationForAmendmentAction
-                             ) extends JourneyAction {
+class JourneyActionImpl @Inject() (
+  registrationAuth: RegistrationAuthAction,
+  getRegistrationAction: GetRegistrationAction,
+  amendAuthAction: AmendAuthAction,
+  getRegistrationForAmendmentAction: GetRegistrationForAmendmentAction
+) extends JourneyAction {
 
   override def register: ActionBuilder[JourneyRequest, AnyContent] =
     registrationAuth andThen getRegistrationAction

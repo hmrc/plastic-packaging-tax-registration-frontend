@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,7 @@ abstract class PartnerPhoneNumberControllerBase(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  protected def doDisplay(
-    partnerId: Option[String],
-    backCall: Call,
-    submitCall: Call
-  ): Action[AnyContent] =
+  protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
         val sectionHeading = request.registration.isNominatedPartner(partnerId)
@@ -48,9 +44,7 @@ abstract class PartnerPhoneNumberControllerBase(
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call, sectionHeading: Boolean)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Result =
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call, sectionHeading: Boolean)(implicit request: JourneyRequest[AnyContent]): Result =
     partner.contactDetails.map {
       contactDetails =>
         contactDetails.name.map { contactName =>
@@ -64,12 +58,7 @@ abstract class PartnerPhoneNumberControllerBase(
         }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
 
-  def doSubmit(
-    partnerId: Option[String],
-    backCall: Call,
-    submitCall: Call,
-    onwardsCall: Call
-  ): Action[AnyContent] =
+  def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call, onwardsCall: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
       def updateAction(phoneNumber: PhoneNumber): Future[Registration] =
         partnerId match {
@@ -78,34 +67,23 @@ abstract class PartnerPhoneNumberControllerBase(
         }
       getPartner(partnerId).map { partner =>
         val sectionHeading = request.registration.isNominatedPartner(partnerId)
-        handleSubmission(partner, backCall, submitCall, onwardsCall, sectionHeading,updateAction)
-      }.getOrElse(
-        Future.failed(throw new IllegalStateException("Expected existing partner missing"))
-      )
+        handleSubmission(partner, backCall, submitCall, onwardsCall, sectionHeading, updateAction)
+      }.getOrElse(Future.failed(throw new IllegalStateException("Expected existing partner missing")))
     }
 
-  private def handleSubmission(
-    partner: Partner,
-    backCall: Call,
-    submitCall: Call,
-    onwardsCall: Call,
-    sectionHeading: Boolean,
-    updateAction: PhoneNumber => Future[Registration]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+  private def handleSubmission(partner: Partner, backCall: Call, submitCall: Call, onwardsCall: Call, sectionHeading: Boolean, updateAction: PhoneNumber => Future[Registration])(
+    implicit request: JourneyRequest[AnyContent]
+  ): Future[Result] =
     partner.contactDetails.flatMap(_.name).map { contactName =>
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(BadRequest(page(formWithErrors, submitCall, contactName,sectionHeading))),
-          phoneNumber =>
-            updateAction(phoneNumber).map( _ => Redirect(onwardsCall))
+          (formWithErrors: Form[PhoneNumber]) => Future.successful(BadRequest(page(formWithErrors, submitCall, contactName, sectionHeading))),
+          phoneNumber => updateAction(phoneNumber).map(_ => Redirect(onwardsCall))
         )
     }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner name missing")))
 
-  private def updateInflightPartner(
-    formData: PhoneNumber
-  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateInflightPartner(formData: PhoneNumber)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.inflightPartner.map { partner =>
         val withPhoneNumber =
@@ -120,9 +98,7 @@ abstract class PartnerPhoneNumberControllerBase(
       }
     }
 
-  private def updateExistingPartner(formData: PhoneNumber, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Registration] =
+  private def updateExistingPartner(formData: PhoneNumber, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.withUpdatedPartner(
         partnerId,
@@ -133,9 +109,7 @@ abstract class PartnerPhoneNumberControllerBase(
       )
     }
 
-  private def getPartner(
-    partnerId: Option[String]
-  )(implicit request: JourneyRequest[_]): Option[Partner] =
+  private def getPartner(partnerId: Option[String])(implicit request: JourneyRequest[_]): Option[Partner] =
     partnerId match {
       case Some(partnerId) => request.registration.findPartner(partnerId)
       case _               => request.registration.inflightPartner

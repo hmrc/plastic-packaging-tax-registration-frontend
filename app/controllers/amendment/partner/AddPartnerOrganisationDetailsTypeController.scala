@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,21 +29,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerOrganisationDetailsTypeController @Inject() (
-                                                              journeyAction: JourneyAction,
-                                                              registrationUpdater: AmendRegistrationUpdateService,
-                                                              mcc: MessagesControllerComponents,
-                                                              page: partner_type,
-                                                              val appConfig: AppConfig,
-                                                              val soleTraderGrsConnector: SoleTraderGrsConnector,
-                                                              val ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                                              val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-                                                              val partnershipGrsConnector: PartnershipGrsConnector
+  journeyAction: JourneyAction,
+  registrationUpdater: AmendRegistrationUpdateService,
+  mcc: MessagesControllerComponents,
+  page: partner_type,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
-    extends PartnerTypeControllerBase(journeyAction = journeyAction.amend,
-                                      mcc,
-                                      page,
-                                      registrationUpdater
-    ) {
+    extends PartnerTypeControllerBase(journeyAction = journeyAction.amend, mcc, page, registrationUpdater) {
 
   def displayPage(): Action[AnyContent] =
     doDisplayPage(submitCall = routes.AddPartnerOrganisationDetailsTypeController.submit())

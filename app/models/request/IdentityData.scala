@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,9 @@ import connectors.DownstreamServiceError
 import controllers.contact.RegistrationException
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 
-final case class IdentityData(
-  internalId: Option[String] = None,
-  credentials: Option[Credentials] = None
-) {
+final case class IdentityData(internalId: Option[String] = None, credentials: Option[Credentials] = None) {
 
-  def credId: String = credentials.map(_.providerId).getOrElse(
-    throw DownstreamServiceError("Cannot find user credentials id",
-      RegistrationException("Cannot find user credentials id")
-    )
-  )
+  def credId: String =
+    credentials.map(_.providerId).getOrElse(throw DownstreamServiceError("Cannot find user credentials id", RegistrationException("Cannot find user credentials id")))
+
 }

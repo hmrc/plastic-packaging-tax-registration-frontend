@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,39 +28,31 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactNameController @Inject() (
-                                               journeyAction: JourneyAction,
-                                               mcc: MessagesControllerComponents,
-                                               page: partner_member_name_page,
-                                               registrationUpdateService: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: partner_member_name_page,
+  registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(journeyAction = journeyAction.register,
-                                             mcc = mcc,
-                                             page = page,
-                                             registrationUpdater = registrationUpdateService
-    ) {
+    extends PartnerContactNameControllerBase(journeyAction = journeyAction.register, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
 
   def displayNewPartner: Action[AnyContent] =
-    doDisplay(None,
-              partnerRoutes.PartnerTypeController.displayNewPartner(),
-              partnerRoutes.PartnerContactNameController.submitNewPartner
-    )
+    doDisplay(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerContactNameController.submitNewPartner)
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplay(Some(partnerId),
-              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-              partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
+    doDisplay(
+      Some(partnerId),
+      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
     )
 
   def submitNewPartner: Action[AnyContent] =
-    doSubmit(None,
-             partnerRoutes.PartnerTypeController.displayNewPartner(),
-             partnerRoutes.PartnerContactNameController.submitNewPartner
-    )
+    doSubmit(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerContactNameController.submitNewPartner)
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    doSubmit(Some(partnerId),
-             partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-             partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
+    doSubmit(
+      Some(partnerId),
+      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
     )
 
   override def onwardCallNewPartner(implicit request: JourneyRequest[AnyContent]): Call =
@@ -71,9 +63,7 @@ class PartnerContactNameController @Inject() (
         routes.PartnerEmailAddressController.displayNewPartner()
     }.getOrElse(routes.PartnerEmailAddressController.displayNewPartner())
 
-  override def onwardCallExistingPartner(
-    partnerId: String
-  )(implicit request: JourneyRequest[AnyContent]): Call =
+  override def onwardCallExistingPartner(partnerId: String)(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.findPartner(partnerId).map { partner =>
       val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
       if (request.registration.isNominatedPartner(Some(partner.id)) || alreadyHasJobTitle)

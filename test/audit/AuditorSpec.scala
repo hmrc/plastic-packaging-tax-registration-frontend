@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,9 +57,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.registrationSubmitted(registration, None, None)
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 CreateRegistrationEvent(registration, None, None)
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None, None)) mustBe true
         }
       }
     }
@@ -67,16 +65,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     "post group registration event" when {
       "registrationSubmitted invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
-        val registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)),
-                                         withRegistrationType(Some(RegType.GROUP))
-        )
+        val registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)), withRegistrationType(Some(RegType.GROUP)))
 
         auditor.registrationSubmitted(registration, None, Some("123456"))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 CreateRegistrationEvent(registration, None, Some("123456"))
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None, Some("123456"))) mustBe true
         }
       }
     }
@@ -89,9 +83,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.registrationSubmitted(registration, None, Some("123456"))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 CreateRegistrationEvent(registration, None, Some("123456"))
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None, Some("123456"))) mustBe true
         }
       }
     }
@@ -103,9 +95,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.newRegistrationStarted("123456")
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 StartRegistrationEvent(UserType.NEW, "123456")
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW, "123456")) mustBe true
         }
       }
     }
@@ -117,9 +107,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.newRegistrationStarted("123456")
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 StartRegistrationEvent(UserType.NEW, "123456")
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW, "123456")) mustBe true
         }
       }
     }
@@ -131,9 +119,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))) mustBe true
         }
       }
 
@@ -155,9 +141,7 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
-          ) mustBe true
+          verifyEventSentToAudit(auditUrl, OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))) mustBe true
         }
       }
     }
@@ -172,32 +156,14 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         )
     )
 
-  private def verifyEventSentToAudit(
-    url: String,
-    createRegistrationEvent: CreateRegistrationEvent
-  ): Boolean =
-    verifyEventSentToAudit(url,
-                           CreateRegistrationEvent.eventType,
-                           Json.toJson(createRegistrationEvent).toString
-    )
+  private def verifyEventSentToAudit(url: String, createRegistrationEvent: CreateRegistrationEvent): Boolean =
+    verifyEventSentToAudit(url, CreateRegistrationEvent.eventType, Json.toJson(createRegistrationEvent).toString)
 
-  private def verifyEventSentToAudit(
-    url: String,
-    startRegistrationEvent: StartRegistrationEvent
-  ): Boolean =
-    verifyEventSentToAudit(url,
-                           StartRegistrationEvent.eventType,
-                           Json.toJson(startRegistrationEvent).toString()
-    )
+  private def verifyEventSentToAudit(url: String, startRegistrationEvent: StartRegistrationEvent): Boolean =
+    verifyEventSentToAudit(url, StartRegistrationEvent.eventType, Json.toJson(startRegistrationEvent).toString())
 
-  private def verifyEventSentToAudit(
-    url: String,
-    orgTypeRegistrationEvent: OrgTypeRegistrationEvent
-  ): Boolean =
-    verifyEventSentToAudit(url,
-                           OrgTypeRegistrationEvent.eventType,
-                           Json.toJson(orgTypeRegistrationEvent).toString()
-    )
+  private def verifyEventSentToAudit(url: String, orgTypeRegistrationEvent: OrgTypeRegistrationEvent): Boolean =
+    verifyEventSentToAudit(url, OrgTypeRegistrationEvent.eventType, Json.toJson(orgTypeRegistrationEvent).toString())
 
   private def verifyEventSentToAudit(url: String, eventType: String, body: String): Boolean =
     try {

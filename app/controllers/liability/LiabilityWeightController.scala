@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LiabilityWeightController @Inject() (
-                                            journeyAction: JourneyAction,
-                                            override val registrationConnector: RegistrationConnector,
-                                            mcc: MessagesControllerComponents,
-                                            page: liability_weight_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: liability_weight_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
@@ -51,8 +51,7 @@ class LiabilityWeightController @Inject() (
       LiabilityWeight.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[LiabilityWeight]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[LiabilityWeight]) => Future.successful(BadRequest(page(formWithErrors))),
           liabilityWeight =>
             updateRegistration(liabilityWeight).map {
               case Right(_)    => Redirect(routes.RegistrationTypeController.displayPage())
@@ -61,9 +60,7 @@ class LiabilityWeightController @Inject() (
         )
     }
 
-  private def updateRegistration(
-    formData: LiabilityWeight
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: LiabilityWeight)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(expectedWeightNext12m = Some(formData))

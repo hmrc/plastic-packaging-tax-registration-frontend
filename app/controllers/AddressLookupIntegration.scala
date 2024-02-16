@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors.addresslookup.AddressLookupFrontendConnector
-import models.addresslookup.{
-  AddressLookupConfigV2,
-  AddressLookupOnRamp
-}
+import models.addresslookup.{AddressLookupConfigV2, AddressLookupOnRamp}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,13 +33,7 @@ trait AddressLookupIntegration {
     continue: Call,
     messagesPrefix: String,
     entityName: Option[String]
-  )(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext,
-    messagesApi: MessagesApi
-  ): Future[AddressLookupOnRamp] =
-    addressLookupFrontendConnector.initialiseJourney(
-      AddressLookupConfigV2(continue, appConfig, messagesPrefix, entityName)
-    )
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext, messagesApi: MessagesApi): Future[AddressLookupOnRamp] =
+    addressLookupFrontendConnector.initialiseJourney(AddressLookupConfigV2(continue, appConfig, messagesPrefix, entityName))
 
 }

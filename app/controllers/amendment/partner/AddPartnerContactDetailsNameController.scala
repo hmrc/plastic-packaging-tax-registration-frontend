@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,35 +28,23 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsNameController @Inject() (
-                                                         journeyAction: JourneyAction,
-                                                         mcc: MessagesControllerComponents,
-                                                         page: partner_member_name_page,
-                                                         registrationUpdateService: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: partner_member_name_page,
+  registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(journeyAction = journeyAction.amend,
-                                             mcc = mcc,
-                                             page = page,
-                                             registrationUpdater = registrationUpdateService
-    ) {
+    extends PartnerContactNameControllerBase(journeyAction = journeyAction.amend, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
 
   def displayPage: Action[AnyContent] =
-    doDisplay(None,
-              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-              routes.AddPartnerContactDetailsNameController.submit
-    )
+    doDisplay(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerContactDetailsNameController.submit)
 
   def submit: Action[AnyContent] =
-    doSubmit(None,
-             routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-             routes.AddPartnerContactDetailsNameController.submit
-    )
+    doSubmit(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerContactDetailsNameController.submit)
 
   override def onwardCallNewPartner(implicit request: JourneyRequest[AnyContent]): Call =
     routes.AddPartnerContactDetailsEmailAddressController.displayPage()
 
-  override def onwardCallExistingPartner(
-    partnerId: String
-  )(implicit request: JourneyRequest[AnyContent]): Call =
+  override def onwardCallExistingPartner(partnerId: String)(implicit request: JourneyRequest[AnyContent]): Call =
     routes.AddPartnerContactDetailsEmailAddressController.displayPage()
 
 }

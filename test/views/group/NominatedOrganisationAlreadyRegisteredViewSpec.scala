@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,28 +34,19 @@ class NominatedOrganisationAlreadyRegisteredViewSpec extends UnitViewSpec with M
     val view: Html = createView()
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("nominated.organisation.already.registered.title")
-      )
+      view.select("title").text() must include(messages("nominated.organisation.already.registered.title"))
     }
 
     "display heading" in {
-      view.select("h1").text() must include(
-        messages("nominated.organisation.already.registered.title")
-      )
+      view.select("h1").text() must include(messages("nominated.organisation.already.registered.title"))
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("nominated.organisation.already.registered.detail1", "Plastic Packaging Ltd")
-      )
+      view.select("p.govuk-body").text() must include(messages("nominated.organisation.already.registered.detail1", "Plastic Packaging Ltd"))
 
       val details = view.getElementsByClass(gdsPageBodyText)
       details.get(1) must containMessage("nominated.organisation.already.registered.detail2")
-      details.get(2) must containMessage(
-        "nominated.organisation.already.registered.detail3",
-        messages("nominated.organisation.already.registered.detail3.link.text")
-      )
+      details.get(2) must containMessage("nominated.organisation.already.registered.detail3", messages("nominated.organisation.already.registered.detail3.link.text"))
     }
   }
 

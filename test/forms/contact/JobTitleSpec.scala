@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,7 @@ import base.unit.CommonTestUtils
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.contact.JobTitle.{
-  jobTitle,
-  jobTitleEmptyError,
-  jobTitleNonAlphaCharError,
-  jobTitleTooLongError,
-  maxLength
-}
+import forms.contact.JobTitle.{jobTitle, jobTitleEmptyError, jobTitleNonAlphaCharError, jobTitleTooLongError, maxLength}
 
 class JobTitleSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
@@ -95,10 +89,7 @@ class JobTitleSpec extends AnyWordSpec with Matchers with CommonTestUtils {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = JobTitle.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

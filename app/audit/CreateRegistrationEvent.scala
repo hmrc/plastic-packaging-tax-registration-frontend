@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,23 +42,20 @@ object CreateRegistrationEvent {
   implicit val format: OFormat[CreateRegistrationEvent] = Json.format[CreateRegistrationEvent]
   val eventType: String                                 = "createPPTRegistration"
 
-  def apply(
-    registration: Registration,
-    pptReference: Option[String],
-    internalId: Option[String]
-  ): CreateRegistrationEvent =
-    new CreateRegistrationEvent(id = registration.id,
-                            pptReference = pptReference,
-                            dateOfRegistration = registration.dateOfRegistration,
-                            incorpJourneyId = registration.incorpJourneyId,
-                            registrationType = registration.registrationType,
-                            liabilityDetails = registration.liabilityDetails,
-                            primaryContactDetails = registration.primaryContactDetails,
-                            organisationDetails = registration.organisationDetails,
-                            groupDetail = registration.groupDetail,
-                            metaData = registration.metaData,
-                            internalId = internalId,
-                            isGroup = registration.isGroup
+  def apply(registration: Registration, pptReference: Option[String], internalId: Option[String]): CreateRegistrationEvent =
+    new CreateRegistrationEvent(
+      id = registration.id,
+      pptReference = pptReference,
+      dateOfRegistration = registration.dateOfRegistration,
+      incorpJourneyId = registration.incorpJourneyId,
+      registrationType = registration.registrationType,
+      liabilityDetails = registration.liabilityDetails,
+      primaryContactDetails = registration.primaryContactDetails,
+      organisationDetails = registration.organisationDetails,
+      groupDetail = registration.groupDetail,
+      metaData = registration.metaData,
+      internalId = internalId,
+      isGroup = registration.isGroup
     )
 
 }

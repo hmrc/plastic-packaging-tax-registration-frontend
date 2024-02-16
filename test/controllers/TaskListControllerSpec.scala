@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,13 +51,9 @@ class TaskListControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(singleEntityPage.apply(any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Single Entity Page")
-    )
+    when(singleEntityPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Single Entity Page"))
     when(groupPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
-    when(partnershipPage.apply(any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Partnership Page")
-    )
+    when(partnershipPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Partnership Page"))
   }
 
   override protected def afterEach(): Unit = {
@@ -107,9 +103,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
         "show partnership task-list when a partnership with partners registration is being preformed" in {
 
-          spyJourneyAction.setReg(
-            aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
-          )
+          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))))
 
           val result = controller.displayPage()(FakeRequest())
 
@@ -128,29 +122,29 @@ class TaskListControllerSpec extends ControllerSpec {
         }
       }
     }
-    
+
     "old liability answers should be removed" in {
 
       val registration = mock[Registration]
       spyJourneyAction.setReg(registration)
       when(registration.hasOldLiabilityQuestions).thenReturn(true)
       when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
-      
+
       val newRegistration = mock[Registration]
       when(registration.clearOldLiabilityAnswers).thenReturn(newRegistration)
-      
+
       await(controller.displayPage()(FakeRequest()))
       verify(registration).clearOldLiabilityAnswers
       verify(mockRegistrationConnector).update(same(newRegistration))(any())
     }
-    
+
     "old liability answers should not be removed" in {
 
       val registration = mock[Registration]
       spyJourneyAction.setReg(registration)
       when(registration.hasOldLiabilityQuestions).thenReturn(false)
       when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
-      
+
       await(controller.displayPage()(FakeRequest()))
       verify(registration, never()).clearOldLiabilityAnswers
       verify(mockRegistrationConnector, never()).update(any())(any())
@@ -158,15 +152,9 @@ class TaskListControllerSpec extends ControllerSpec {
 
     "set liability start links" in {
       val partialLiabilityDetails =
-        aRegistration(withLiabilityDetails(
-          LiabilityDetails(
-            newLiabilityStarted = None,
-            newLiabilityFinished = None
-          ))
-        )
+        aRegistration(withLiabilityDetails(LiabilityDetails(newLiabilityStarted = None, newLiabilityFinished = None)))
 
       spyJourneyAction.setReg(partialLiabilityDetails)
-
 
       val result = controller.displayPage()(FakeRequest())
 
@@ -177,7 +165,6 @@ class TaskListControllerSpec extends ControllerSpec {
     "liability redirect to check your answer page when task is completed" in {
 
       spyJourneyAction.setReg(aRegistration())
-
 
       val result = controller.displayPage()(FakeRequest())
 

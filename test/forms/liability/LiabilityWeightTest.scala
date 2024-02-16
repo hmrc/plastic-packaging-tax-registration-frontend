@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,7 @@ package forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.liability.LiabilityWeight.{
-  maxTotalKg,
-  minTotalKg,
-  totalKg,
-  weightBelowThresholdError,
-  weightDecimalError,
-  weightEmptyError,
-  weightFormatError,
-  weightOutOfRangeError
-}
+import forms.liability.LiabilityWeight.{maxTotalKg, minTotalKg, totalKg, weightBelowThresholdError, weightDecimalError, weightEmptyError, weightFormatError, weightOutOfRangeError}
 import models.registration.LiabilityDetails
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
@@ -145,10 +136,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = LiabilityWeight.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

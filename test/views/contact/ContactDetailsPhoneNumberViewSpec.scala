@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,46 +52,36 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(
-        messages("primaryContactDetails.phoneNumber.title",
-                 registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
-                   messages("primaryContactDetails.fullName.default")
-                 )
+        messages(
+          "primaryContactDetails.phoneNumber.title",
+          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))
         )
       )
     }
 
     "display section header" when {
       "Single organisation" in {
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
       }
 
       "Group organisation" in {
         val view = createView(isGroup = true)
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          "Representative member details"
-        )
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.group.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
 
       }
     }
 
     "display hint" in {
 
-      view.getElementById("value-hint").text() must include(
-        messages("primaryContactDetails.phoneNumber.hint")
-      )
+      view.getElementById("value-hint").text() must include(messages("primaryContactDetails.phoneNumber.hint"))
     }
 
     "output hidden label correctly" in {
       view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
-        messages("contactDetails.member.phoneNumber.title",
-                 registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
-                   messages("primaryContactDetails.fullName.default")
-                 )
+        messages(
+          "contactDetails.member.phoneNumber.title",
+          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))
         )
       )
     }

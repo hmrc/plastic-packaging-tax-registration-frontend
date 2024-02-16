@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendRegistrationService @Inject()(
-                                          subscriptionsConnector: SubscriptionsConnector,
-                                          registrationAmendmentRepository: RegistrationAmendmentRepository
-                                        )(implicit val executionContext: ExecutionContext) {
+class AmendRegistrationService @Inject() (subscriptionsConnector: SubscriptionsConnector, registrationAmendmentRepository: RegistrationAmendmentRepository)(implicit
+  val executionContext: ExecutionContext
+) {
 
   def updateSubscriptionWithRegistration(
-                          updateFunction: Registration => Registration = identity
-                        )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse] =
+    updateFunction: Registration => Registration = identity
+  )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse] =
     registrationAmendmentRepository.update(updateFunction)(request.authenticatedRequest).flatMap { registration =>
-      subscriptionsConnector.updateSubscription(
-        request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")),
-        registration
-      )
+      subscriptionsConnector.updateSubscription(request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")), registration)
     }
+
 }

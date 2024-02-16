@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,7 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
     "display heading" in {
 
-      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-        "sessionTimout.title"
-      )
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage("sessionTimout.title")
     }
 
     "display detail" in {
@@ -57,12 +55,8 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
     "display 'Sign in' button" in {
 
       view must containElementWithClass("govuk-button")
-      view.getElementsByClass("govuk-button").get(1) must containMessage(
-        "sessionTimout.signin.button"
-      )
-      view.getElementsByClass("govuk-button").get(1) must haveHref(
-        routes.TaskListController.displayPage().url
-      )
+      view.getElementsByClass("govuk-button").get(1) must containMessage("sessionTimout.signin.button")
+      view.getElementsByClass("govuk-button").get(1) must haveHref(routes.TaskListController.displayPage().url)
     }
 
     "display 'back to gov' link" in {

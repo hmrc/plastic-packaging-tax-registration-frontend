@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,9 +53,7 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass(gdsFieldsetPageHeading).text() must include(
-        messages("deregistration.reason.title")
-      )
+      view.getElementsByClass(gdsFieldsetPageHeading).text() must include(messages("deregistration.reason.title"))
     }
 
     "display radio inputs" in {
@@ -64,8 +62,9 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(0).text() mustBe "Ceased trading"
 
       view.getElementById("answer-2").attr("value").text() mustBe BelowDeminimis.toString
-      view.getElementsByClass("govuk-label").get(1).text(
-      )mustBe "Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not expect to meet it in the next 12 months"
+      view.getElementsByClass("govuk-label").get(
+        1
+      ).text() mustBe "Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not expect to meet it in the next 12 months"
 
       view.getElementById("answer-3").attr("value").text() mustBe TakenIntoGroupRegistration.toString
       view.getElementsByClass("govuk-label").get(2).text() mustBe "Want to register as part of a group"

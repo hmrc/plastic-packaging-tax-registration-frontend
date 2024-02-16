@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,8 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
 
-class LanguageController @Inject() (
-  languageUtils: LanguageUtils,
-  appConfig: AppConfig,
-  cc: MessagesControllerComponents
-) extends uk.gov.hmrc.play.language.LanguageController(languageUtils, cc) {
+class LanguageController @Inject() (languageUtils: LanguageUtils, appConfig: AppConfig, cc: MessagesControllerComponents)
+    extends uk.gov.hmrc.play.language.LanguageController(languageUtils, cc) {
 
   def enGb: Action[AnyContent] = switchToLanguage(language = "english")
 

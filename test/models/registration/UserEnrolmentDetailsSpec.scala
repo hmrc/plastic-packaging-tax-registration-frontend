@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ class UserEnrolmentDetailsSpec extends AnyWordSpec with Matchers with PptTestDat
         completeAnswers.isComplete mustBe true
       }
       "postcode is missing for non-uk organisation" in {
-        completeAnswers.copy(isUkAddress = Some(IsUkAddress(Some(false))),
-                             postcode = None
-        ).isComplete mustBe true
+        completeAnswers.copy(isUkAddress = Some(IsUkAddress(Some(false))), postcode = None).isComplete mustBe true
       }
     }
     "not be complete" when {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package connectors
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -28,30 +28,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeregistrationConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class DeregistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
 
-  def deregister(pptReference: String, deregistrationDetails: DeregistrationDetails)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[ServiceError, Unit]] = {
+  def deregister(pptReference: String, deregistrationDetails: DeregistrationDetails)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     val timer = metrics.defaultRegistry.timer("ppt.deregister.timer").time()
-    httpClient.PUT[Option[DeregistrationReason], HttpResponse](
-      appConfig.pptSubscriptionDeregisterUrl(pptReference),
-      deregistrationDetails.reason
-    ).andThen { case _ => timer.stop() }
+    httpClient.PUT[Option[DeregistrationReason], HttpResponse](appConfig.pptSubscriptionDeregisterUrl(pptReference), deregistrationDetails.reason).andThen {
+      case _ => timer.stop()
+    }
       .map {
         case response @ HttpResponse(OK, _, _) =>
           Right(())
         case response =>
-          Left(
-            DownstreamServiceError(
-              s"Failed to de-register, status: ${response.status}, error: ${response.body}",
-              FailedToDeregister("Failed to de-register")
-            )
-          )
+          Left(DownstreamServiceError(s"Failed to de-register, status: ${response.status}, error: ${response.body}", FailedToDeregister("Failed to de-register")))
       }.recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Error while de-registration, error: ${ex.getMessage}", ex))

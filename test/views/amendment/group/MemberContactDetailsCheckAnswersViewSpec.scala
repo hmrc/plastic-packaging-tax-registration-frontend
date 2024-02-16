@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,45 +53,39 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
       val rowDetails = view.select("dl div")
 
       def extractAddress(address: Address) =
-        Seq(address.addressLine1,
-            address.addressLine2.getOrElse(""),
-            address.addressLine3.getOrElse(""),
-            address.townOrCity,
-            address.maybePostcode.getOrElse(""),
-            countryService.tryLookupCountryName(address.countryCode)
+        Seq(
+          address.addressLine1,
+          address.addressLine2.getOrElse(""),
+          address.addressLine3.getOrElse(""),
+          address.townOrCity,
+          address.maybePostcode.getOrElse(""),
+          countryService.tryLookupCountryName(address.countryCode)
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(
-        (messages("contactDetails.member.check.orgType"),
-         messages(
-           s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"
-         ),
-         None
-        ),
-        (messages("contactDetails.member.check.companyNumber"),
-         groupMember.customerIdentification1,
-         None
-        ),
+        (messages("contactDetails.member.check.orgType"), messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"), None),
+        (messages("contactDetails.member.check.companyNumber"), groupMember.customerIdentification1, None),
         (messages("contactDetails.member.check.orgName"), groupMember.businessName, None),
-        (messages("contactDetails.member.check.utr"),
-         groupMember.customerIdentification2.get,
-         None
+        (messages("contactDetails.member.check.utr"), groupMember.customerIdentification2.get, None),
+        (
+          messages("contactDetails.member.check.contact.name"),
+          groupMember.contactDetails.get.groupMemberName,
+          Some(routes.AmendMemberContactDetailsController.contactName(groupMember.id).url)
         ),
-        (messages("contactDetails.member.check.contact.name"),
-         groupMember.contactDetails.get.groupMemberName,
-         Some(routes.AmendMemberContactDetailsController.contactName(groupMember.id).url)
+        (
+          messages("contactDetails.member.check.contact.email"),
+          groupMember.contactDetails.get.email.get,
+          Some(routes.AmendMemberContactDetailsController.email(groupMember.id).url)
         ),
-        (messages("contactDetails.member.check.contact.email"),
-         groupMember.contactDetails.get.email.get,
-         Some(routes.AmendMemberContactDetailsController.email(groupMember.id).url)
+        (
+          messages("contactDetails.member.check.contact.phone"),
+          groupMember.contactDetails.get.phoneNumber.get,
+          Some(routes.AmendMemberContactDetailsController.phoneNumber(groupMember.id).url)
         ),
-        (messages("contactDetails.member.check.contact.phone"),
-         groupMember.contactDetails.get.phoneNumber.get,
-         Some(routes.AmendMemberContactDetailsController.phoneNumber(groupMember.id).url)
-        ),
-        (messages("contactDetails.member.check.contact.address"),
-         extractAddress(groupMember.contactDetails.get.address.get),
-         Some(routes.AmendMemberContactDetailsController.address(groupMember.id).url)
+        (
+          messages("contactDetails.member.check.contact.address"),
+          extractAddress(groupMember.contactDetails.get.address.get),
+          Some(routes.AmendMemberContactDetailsController.address(groupMember.id).url)
         )
       )
 

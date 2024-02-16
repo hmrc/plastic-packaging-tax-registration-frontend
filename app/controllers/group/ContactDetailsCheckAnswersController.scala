@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,21 +28,15 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       journeyAction: JourneyAction,
-                                                       override val registrationConnector: RegistrationConnector,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: member_contact_check_answers_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: member_contact_check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(memberId: String): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      Ok(
-        page(
-          request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
-            throw new IllegalStateException("Missing group member")
-          )
-        )
-      )
+      Ok(page(request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(throw new IllegalStateException("Missing group member"))))
     }
 
   def submit(): Action[AnyContent] =

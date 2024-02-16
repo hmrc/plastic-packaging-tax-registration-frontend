@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PostcodeController @Inject() (
-                                     authenticate: RegistrationAuthAction,
-                                     mcc: MessagesControllerComponents,
-                                     cache: UserEnrolmentDetailsRepository,
-                                     page: postcode_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class PostcodeController @Inject() (authenticate: RegistrationAuthAction, mcc: MessagesControllerComponents, cache: UserEnrolmentDetailsRepository, page: postcode_page)(implicit
+  ec: ExecutionContext
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>

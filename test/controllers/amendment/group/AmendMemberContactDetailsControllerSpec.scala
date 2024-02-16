@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,7 @@ import views.html.group.{member_email_address_page, member_name_page, member_pho
 
 import scala.concurrent.Future
 
-class AmendMemberContactDetailsControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec
-    with TableDrivenPropertyChecks {
+class AmendMemberContactDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -48,31 +46,16 @@ class AmendMemberContactDetailsControllerSpec
   private val amendPhoneNumberPage  = mock[member_phone_number_page]
   private val amendEmailAddressPage = mock[member_email_address_page]
 
-  when(amendNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("name amendment")
-  )
+  when(amendNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("name amendment"))
 
-  when(amendEmailAddressPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("email address amendment")
-  )
+  when(amendEmailAddressPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("email address amendment"))
 
-  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("phone number amendment")
-  )
+  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("phone number amendment"))
 
   private val controller =
-    new AmendMemberContactDetailsController(spyJourneyAction,
-                                            mcc,
-                                            mockAmendRegService,
-                                            mockAddressCaptureService,
-                                            amendNamePage,
-                                            amendPhoneNumberPage,
-                                            amendEmailAddressPage
-    )
+    new AmendMemberContactDetailsController(spyJourneyAction, mcc, mockAmendRegService, mockAddressCaptureService, amendNamePage, amendPhoneNumberPage, amendEmailAddressPage)
 
-  private val populatedRegistration = aRegistration(
-    withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
-  )
+  private val populatedRegistration = aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
 
   private val memberId = groupMember.id
 
@@ -86,27 +69,15 @@ class AmendMemberContactDetailsControllerSpec
 
     "show page" when {
       val showPageTestData =
-        Table(("Test Name", "Display Call", "Expected Page Content"),
-              ("main contact name",
-               (req: Request[AnyContent]) => controller.contactName(memberId)(req),
-               "name amendment"
-              ),
-              ("member phone number",
-               (req: Request[AnyContent]) => controller.phoneNumber(memberId)(req),
-               "phone number amendment"
-              ),
-              ("member email address",
-               (req: Request[AnyContent]) => controller.email(memberId)(req),
-               "email address amendment"
-              )
+        Table(
+          ("Test Name", "Display Call", "Expected Page Content"),
+          ("main contact name", (req: Request[AnyContent]) => controller.contactName(memberId)(req), "name amendment"),
+          ("member phone number", (req: Request[AnyContent]) => controller.phoneNumber(memberId)(req), "phone number amendment"),
+          ("member email address", (req: Request[AnyContent]) => controller.email(memberId)(req), "email address amendment")
         )
 
       forAll(showPageTestData) {
-        (
-          testName: String,
-          call: (Request[AnyContent]) => Future[Result],
-          expectedContent: String
-        ) =>
+        (testName: String, call: (Request[AnyContent]) => Future[Result], expectedContent: String) =>
           s"$testName page requested and registration populated" in {
             spyJourneyAction.setReg(populatedRegistration)
 
@@ -131,57 +102,42 @@ class AmendMemberContactDetailsControllerSpec
 
     val updateTestData =
       Table(
-        ("TestName",
-         "Invalid Form",
-         "Valid Form",
-         "Update Call",
-         "Update Test",
-         "Invalid Expected Page Content"
+        ("TestName", "Invalid Form", "Valid Form", "Update Call", "Update Test", "Invalid Expected Page Content"),
+        (
+          "main contact name",
+          () => MemberName("", ""),
+          () => MemberName("John", "Johnson"),
+          (req: Request[AnyContent]) => controller.updateContactName(memberId)(req),
+          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.firstName mustBe "John",
+          "name amendment"
         ),
-        ("main contact name",
-         () => MemberName("", ""),
-         () => MemberName("John", "Johnson"),
-         (req: Request[AnyContent]) => controller.updateContactName(memberId)(req),
-         (reg: Registration) =>
-           reg.groupDetail.get.members.head.contactDetails.get.firstName mustBe "John",
-         "name amendment"
+        (
+          "member phone number",
+          () => PhoneNumber("xxx"),
+          () => PhoneNumber("07123 123456"),
+          (req: Request[AnyContent]) => controller.updatePhoneNumber(memberId)(req),
+          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some("07123 123456"),
+          "phone number amendment"
         ),
-        ("member phone number",
-         () => PhoneNumber("xxx"),
-         () => PhoneNumber("07123 123456"),
-         (req: Request[AnyContent]) => controller.updatePhoneNumber(memberId)(req),
-         (reg: Registration) =>
-           reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some(
-             "07123 123456"
-           ),
-         "phone number amendment"
-        ),
-        ("member email address",
-         () => EmailAddress(""),
-         () => EmailAddress("test@test.com"),
-         (req: Request[AnyContent]) => controller.updateEmail(memberId)(req),
-         (reg: Registration) =>
-           reg.groupDetail.get.members.head.contactDetails.get.email mustBe Some("test@test.com"),
-         "email address amendment"
+        (
+          "member email address",
+          () => EmailAddress(""),
+          () => EmailAddress("test@test.com"),
+          (req: Request[AnyContent]) => controller.updateEmail(memberId)(req),
+          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.email mustBe Some("test@test.com"),
+          "email address amendment"
         )
       )
 
     "redisplay page" when {
       forAll(updateTestData) {
-        (
-          testName: String,
-          createInvalidForm: () => AnyRef,
-          _,
-          call: Request[AnyContent] => Future[Result],
-          _,
-          expectedPageContent
-        ) =>
+        (testName: String, createInvalidForm: () => AnyRef, _, call: Request[AnyContent] => Future[Result], _, expectedPageContent) =>
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
             inMemoryRegistrationAmendmentRepository.put("123", registration)
             spyJourneyAction.setReg(registration)
 
-            val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()):_*))
+            val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()): _*))
 
             status(resp) mustBe BAD_REQUEST
             contentAsString(resp) mustBe expectedPageContent
@@ -191,23 +147,14 @@ class AmendMemberContactDetailsControllerSpec
 
     "update registration and redirect to registration amendment page" when {
       forAll(updateTestData) {
-        (
-          testName: String,
-          _,
-          createValidForm: () => AnyRef,
-          call: Request[AnyContent] => Future[Result],
-          test: Registration => scalatest.Assertion,
-          _
-        ) =>
+        (testName: String, _, createValidForm: () => AnyRef, call: Request[AnyContent] => Future[Result], test: Registration => scalatest.Assertion, _) =>
           s"$testName updated" in {
-            val registration = aRegistration(
-              withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
-            )
+            val registration = aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
             inMemoryRegistrationAmendmentRepository.put("123", registration)
             spyJourneyAction.setReg(registration)
             simulateUpdateWithRegSubscriptionSuccess()
 
-            await(call(postRequest.withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
+            await(call(postRequest.withFormUrlEncodedBody(getTuples(createValidForm()): _*)))
 
             val registrationCaptor: ArgumentCaptor[Registration => Registration] =
               ArgumentCaptor.forClass(classOf[Registration => Registration])
@@ -221,17 +168,16 @@ class AmendMemberContactDetailsControllerSpec
     "redirect to address capture controller when updating address" in {
       spyJourneyAction.setReg(populatedRegistration)
       val expectedAddressCaptureConfig =
-        AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
-                             successLink =
-                               routes.AmendMemberContactDetailsController.updateAddress(
-                                 memberId
-                               ).url,
-                             alfHeadingsPrefix = "addressLookup.contact",
-                             pptHeadingKey = "addressCapture.contact.heading",
-                             entityName =
-                               populatedRegistration.findMember(memberId).map(_.businessName),
-                             pptHintKey = None,
-                             forceUkAddress = false
+        AddressCaptureConfig(
+          backLink = amendRoutes.AmendRegistrationController.displayPage().url,
+          successLink =
+            routes.AmendMemberContactDetailsController.updateAddress(memberId).url,
+          alfHeadingsPrefix = "addressLookup.contact",
+          pptHeadingKey = "addressCapture.contact.heading",
+          entityName =
+            populatedRegistration.findMember(memberId).map(_.businessName),
+          pptHintKey = None,
+          forceUkAddress = false
         )
       simulateUpdateWithRegSubscriptionSuccess()
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
@@ -245,18 +191,13 @@ class AmendMemberContactDetailsControllerSpec
       simulateValidAddressCapture()
       simulateUpdateWithRegSubscriptionSuccess()
 
-      populatedRegistration.findMember(memberId).flatMap(
-        _.contactDetails.flatMap(_.address)
-      ) mustNot equal(validCapturedAddress)
+      populatedRegistration.findMember(memberId).flatMap(_.contactDetails.flatMap(_.address)) mustNot equal(validCapturedAddress)
 
       await(controller.updateAddress(memberId)(FakeRequest()))
 
-      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(_.contactDetails).flatMap(
-        _.address
-      ) mustBe Some(validCapturedAddress)
+      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(_.contactDetails).flatMap(_.address) mustBe Some(validCapturedAddress)
     }
 
   }
-
 
 }

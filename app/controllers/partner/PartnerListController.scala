@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import views.html.partner.partner_list_page
 
 @Singleton
 class PartnerListController @Inject() (
-                                        journeyAction: JourneyAction,
-                                        override val registrationConnector: RegistrationConnector,
-                                        mcc: MessagesControllerComponents,
-                                        page: partner_list_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: partner_list_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
@@ -47,25 +47,18 @@ class PartnerListController @Inject() (
       AddPartner.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[AddPartner]) =>
-            BadRequest(
-              page(formWithErrors, getNominatedPartner(request), getOtherPartners(request))
-            ),
+          (formWithErrors: Form[AddPartner]) => BadRequest(page(formWithErrors, getNominatedPartner(request), getOtherPartners(request))),
           addPartner =>
             addPartner.answer match {
               case Some(true) =>
-                Redirect(
-                  routes.PartnerTypeController.displayNewPartner()
-                )
+                Redirect(routes.PartnerTypeController.displayNewPartner())
               case _ => Redirect(commonRoutes.TaskListController.displayPage())
             }
         )
     }
 
   private def getNominatedPartner(request: JourneyRequest[AnyContent]) =
-    request.registration.nominatedPartner.getOrElse(
-      throw new IllegalStateException("Nominated partner absent")
-    )
+    request.registration.nominatedPartner.getOrElse(throw new IllegalStateException("Nominated partner absent"))
 
   private def getOtherPartners(request: JourneyRequest[AnyContent]) =
     request.registration.otherPartners

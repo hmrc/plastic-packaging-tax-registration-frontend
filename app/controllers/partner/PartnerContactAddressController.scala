@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,37 +26,27 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactAddressController @Inject() (
-                                                  journeyAction: JourneyAction,
-                                                  addressCaptureService: AddressCaptureService,
-                                                  mcc: MessagesControllerComponents,
-                                                  registrationUpdater: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends PartnerContactAddressControllerBase(journeyAction.register,
-                                                addressCaptureService,
-                                                mcc,
-                                                registrationUpdater
-    ) {
+    extends PartnerContactAddressControllerBase(journeyAction.register, addressCaptureService, mcc, registrationUpdater) {
 
   def captureNewPartner(): Action[AnyContent] =
-    doDisplayPage(None,
-                  routes.PartnerPhoneNumberController.displayNewPartner(),
-                  routes.PartnerContactAddressController.addressCaptureCallbackNewPartner()
-    )
+    doDisplayPage(None, routes.PartnerPhoneNumberController.displayNewPartner(), routes.PartnerContactAddressController.addressCaptureCallbackNewPartner())
 
   def captureExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplayPage(Some(partnerId),
-                  routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                  routes.PartnerContactAddressController.addressCaptureCallbackExistingPartner(
-                    partnerId
-                  )
+    doDisplayPage(
+      Some(partnerId),
+      routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      routes.PartnerContactAddressController.addressCaptureCallbackExistingPartner(partnerId)
     )
 
   def addressCaptureCallbackNewPartner(): Action[AnyContent] =
     onAddressCaptureCallback(None, routes.PartnerCheckAnswersController.displayNewPartner())
 
   def addressCaptureCallbackExistingPartner(partnerId: String): Action[AnyContent] =
-    onAddressCaptureCallback(Some(partnerId),
-                             routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
-    )
+    onAddressCaptureCallback(Some(partnerId), routes.PartnerCheckAnswersController.displayExistingPartner(partnerId))
 
 }

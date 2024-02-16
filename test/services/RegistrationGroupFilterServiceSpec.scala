@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,7 @@ import spec.PptTestData
 import forms.organisation.OrgType.UK_COMPANY
 import models.genericregistration.IncorporationDetails
 import models.registration.group.GroupMember
-import models.registration.{
-  GroupDetail,
-  Registration,
-  OrganisationDetails => RegOrgDetails
-}
+import models.registration.{GroupDetail, Registration, OrganisationDetails => RegOrgDetails}
 import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
 class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with MockitoSugar {
@@ -69,23 +65,23 @@ class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with 
   def createDefaultOrganisationalDetails(groupMembers: GroupMember*): Registration =
     aRegistration(
       withOrganisationDetails(
-        RegOrgDetails(organisationType = Some(UK_COMPANY),
-                      incorporationDetails =
-                        Some(
-                          IncorporationDetails(companyNumber = "123456",
-                                               companyName = "NewPlastics",
-                                               ctutr = Some("1890894"),
-                                               companyAddress = testCompanyAddress,
-                                               registration =
-                                                 Some(registrationDetails)
-                          )
-                        ),
-                      subscriptionStatus = Some(NOT_SUBSCRIBED)
+        RegOrgDetails(
+          organisationType = Some(UK_COMPANY),
+          incorporationDetails =
+            Some(
+              IncorporationDetails(
+                companyNumber = "123456",
+                companyName = "NewPlastics",
+                ctutr = Some("1890894"),
+                companyAddress = testCompanyAddress,
+                registration =
+                  Some(registrationDetails)
+              )
+            ),
+          subscriptionStatus = Some(NOT_SUBSCRIBED)
         )
       ),
-      withGroupDetail(
-        Some(GroupDetail(membersUnderGroupControl = Some(true), members = groupMembers))
-      )
+      withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = groupMembers)))
     )
 
   def createExpectedResultFrom(reg: Registration, members: GroupMember*): Registration =

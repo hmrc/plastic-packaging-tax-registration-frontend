@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ import models.registration.Registration
 import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
 import play.api.mvc.WrappedRequest
 
-final case class JourneyRequest[+A](
-                                     authenticatedRequest: AuthenticatedRequest[A],
-                                     registration: Registration
-                                   ) extends WrappedRequest(authenticatedRequest){
-  def pptReference: Option[String] = authenticatedRequest match {
-    case _: RegistrationRequest[_] => None
-    case r: PPTEnrolledRequest[_] => Some(r.pptReference)
-  }
+final case class JourneyRequest[+A](authenticatedRequest: AuthenticatedRequest[A], registration: Registration) extends WrappedRequest(authenticatedRequest) {
+
+  def pptReference: Option[String] =
+    authenticatedRequest match {
+      case _: RegistrationRequest[_] => None
+      case r: PPTEnrolledRequest[_]  => Some(r.pptReference)
+    }
+
 }

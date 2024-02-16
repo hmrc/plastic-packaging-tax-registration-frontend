@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,26 @@
 
 package views.components
 
+import base.unit.UnitViewSpec
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
-import org.scalatestplus.play.PlaySpec
+import org.jsoup.select.Elements
+import org.scalatest.matchers.must.Matchers
 import play.api.data.FormError
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.{ErrorLink, ErrorSummary, Text}
-import uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary
 import views.html.components.errorSummary
 
-class ErrorSummarySpec extends PlaySpec with BeforeAndAfterEach {
+class ErrorSummarySpec extends UnitViewSpec with Matchers {
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     super.beforeEach()
-    reset(mockGovukErrorSummary, mockMessages)
-  }
 
-  val mockGovukErrorSummary = mock[GovukErrorSummary]
-  val mockMessages = mock[Messages]
+  val sut: errorSummary = inject[errorSummary]
 
-  val sut = new errorSummary(mockGovukErrorSummary)
+  val errors = Seq(FormError("liability.exceededThresholdWeight.question.empty.error ", "liability.exceededThresholdWeight.question.empty.error"))
 
   "apply" must {
     "display nothing" when {
       "there are no errors" in {
-        val html = sut.apply(Seq.empty)(mockMessages)
+        val html         = sut.apply(Seq.empty)(messages)
         val errorSummary = Jsoup.parse(html.toString).body().children()
 
         assert(errorSummary.isEmpty)
@@ -52,51 +43,32 @@ class ErrorSummarySpec extends PlaySpec with BeforeAndAfterEach {
     }
 
     "display the govUkErrorSummary" when {
-      val errors = Seq(FormError("error.key", "error.message.key"))
-      "using the form error key" in {
-        when(mockGovukErrorSummary.apply(any())).thenReturn(HtmlFormat.raw("<p>TEST ERROR SUMMARY</p>"))
-        when(mockMessages.apply(meq("error.message.key"), any())).thenReturn("test-error-message")
-        when(mockMessages.apply(meq("site.error.summary.title"), any())).thenReturn("error-title")
 
-        val html = sut.apply(errors)(mockMessages)
-        val errorSummary = Jsoup.parse(html.toString).body().children()
-        
-        errorSummary.text() mustBe "TEST ERROR SUMMARY"
-        verify(mockGovukErrorSummary).apply(
-          ErrorSummary(
-            errorList = Seq(
-              ErrorLink(
-                href = Some("#error.key"),
-                content = Text("test-error-message")
-              )
-            ),
-            title = Text("error-title")
-          )
-        )
+      "using the form error key" in {
+
+        val html                   = sut.apply(errors)(messages)
+        val errorSummary: Elements = Jsoup.parse(html.toString).body().children()
+
+        errorSummary.text() mustBe "There is a problem Select yes if you have met the threshold in the last 12 months"
+        errorSummary.html().contains("There is a problem") mustBe true
+        errorSummary.html().contains("Select yes if you have met the threshold in the last 12 months") mustBe true
+        errorSummary.html().contains("govuk-list govuk-error-summary__list") mustBe true
       }
 
       "using the override error key" in {
-        when(mockGovukErrorSummary.apply(any())).thenReturn(HtmlFormat.raw("<p>TEST ERROR SUMMARY OVERRIDE</p>"))
-        when(mockMessages.apply(meq("error.message.key"), any())).thenReturn("test-error-message")
-        when(mockMessages.apply(meq("site.error.summary.title"), any())).thenReturn("error-title")
-
-        val html = sut.apply(errors, Some("override-key"))(mockMessages)
+        val html         = sut.apply(errors, Some("override-key"))(messages)
         val errorSummary = Jsoup.parse(html.toString).body().children()
 
-        errorSummary.text() mustBe "TEST ERROR SUMMARY OVERRIDE"
-        verify(mockGovukErrorSummary).apply(
-          ErrorSummary(
-            errorList = Seq(
-              ErrorLink(
-                href = Some("#override-key"),
-                content = Text("test-error-message")
-              )
-            ),
-            title = Text("error-title")
-          )
-        )
+        errorSummary.text() mustBe "There is a problem Select yes if you have met the threshold in the last 12 months"
+        errorSummary.html().contains("#override-key") mustBe true
+
       }
     }
+  }
+
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    sut.f(errors, None)
+    sut.render(errors, None, messages)
   }
 
 }

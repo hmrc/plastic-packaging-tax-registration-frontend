@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,14 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class AmendOrganisationDetailsControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec {
+class AmendOrganisationDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
   private val registration = aRegistration()
 
   private val controller =
-    new AmendOrganisationDetailsController(spyJourneyAction,
-      mockAmendRegService,
-      mcc,
-      mockAddressCaptureService
-    )
+    new AmendOrganisationDetailsController(spyJourneyAction, mockAmendRegService, mcc, mockAddressCaptureService)
 
   override protected def beforeEach(): Unit = {
 
@@ -54,14 +49,15 @@ class AmendOrganisationDetailsControllerSpec
     "redirect to address lookup frontend" when {
       "change business address" in {
         val expectedAddressCaptureConfig =
-          AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
-                               successLink =
-                                 routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
-                               alfHeadingsPrefix = "addressLookup.business",
-                               pptHeadingKey = "addressCapture.business.heading",
-                               entityName = registration.organisationDetails.businessName,
-                               pptHintKey = None,
-                               forceUkAddress = false
+          AddressCaptureConfig(
+            backLink = routes.AmendRegistrationController.displayPage().url,
+            successLink =
+              routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+            alfHeadingsPrefix = "addressLookup.business",
+            pptHeadingKey = "addressCapture.business.heading",
+            entityName = registration.organisationDetails.businessName,
+            pptHintKey = None,
+            forceUkAddress = false
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
@@ -83,9 +79,7 @@ class AmendOrganisationDetailsControllerSpec
 
         verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
         val updatedRegistration = getUpdatedRegistrationMethod().apply(registration)
-        updatedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(
-          validCapturedAddress
-        )
+        updatedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(validCapturedAddress)
       }
     }
 

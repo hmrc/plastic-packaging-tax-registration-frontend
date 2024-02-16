@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,36 +27,25 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[AddressCaptureDetailRepositoryImpl])
 trait AddressCaptureDetailRepository {
 
-  def put(addressCaptureDetail: AddressCaptureDetail)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[AddressCaptureDetail]
+  def put(addressCaptureDetail: AddressCaptureDetail)(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail]
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[AddressCaptureDetail]]
 
-  def update(update: AddressCaptureDetail => AddressCaptureDetail)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[AddressCaptureDetail]
+  def update(update: AddressCaptureDetail => AddressCaptureDetail)(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail]
 
   def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit]
 }
 
 @Singleton
-class AddressCaptureDetailRepositoryImpl @Inject()
-(userDataRepository: UserDataRepository)
-(implicit ec: ExecutionContext)
-  extends AddressCaptureDetailRepository {
+class AddressCaptureDetailRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit ec: ExecutionContext) extends AddressCaptureDetailRepository {
 
-  def put(
-    addressCaptureDetail: AddressCaptureDetail
-  )(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail] =
+  def put(addressCaptureDetail: AddressCaptureDetail)(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail] =
     userDataRepository.putData[AddressCaptureDetail](repositoryKey, addressCaptureDetail)
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[AddressCaptureDetail]] =
     userDataRepository.getData[AddressCaptureDetail](repositoryKey)
 
-  def update(
-    update: AddressCaptureDetail => AddressCaptureDetail
-  )(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail] =
+  def update(update: AddressCaptureDetail => AddressCaptureDetail)(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureDetail] =
     get().flatMap {
       case Some(addressCaptureDetail) => put(update(addressCaptureDetail))
       case _                          => throw new IllegalStateException("Existing address capture detail not found")

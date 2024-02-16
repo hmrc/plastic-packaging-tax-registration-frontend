@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
     def isLiableAction(date: LocalDate, isDateFromBackwardsTest: Boolean): Result
   }
 
-  private val actions = mock[PossibleActions]
+  private val actions  = mock[PossibleActions]
   val aDate: LocalDate = LocalDate.ofEpochDay(0)
 
   override protected def beforeEach(): Unit = {

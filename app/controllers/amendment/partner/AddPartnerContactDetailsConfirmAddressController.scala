@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsConfirmAddressController @Inject() (
-                                                                   journeyAction: JourneyAction,
-                                                                   addressCaptureService: AddressCaptureService,
-                                                                   mcc: MessagesControllerComponents,
-                                                                   registrationUpdater: AmendRegistrationUpdateService
+  journeyAction: JourneyAction,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -66,8 +66,6 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
     }
 
   private def update(address: Option[Address])(implicit registration: Registration): Registration =
-    registration.withInflightPartner(
-      registration.inflightPartner.map(_.withContactAddress(address))
-    )
+    registration.withInflightPartner(registration.inflightPartner.map(_.withContactAddress(address)))
 
 }

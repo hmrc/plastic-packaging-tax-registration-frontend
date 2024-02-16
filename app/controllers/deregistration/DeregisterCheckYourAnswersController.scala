@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,19 +29,17 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeregisterCheckYourAnswersController @Inject() (
-                                                       authenticate: AmendAuthAction,
-                                                       mcc: MessagesControllerComponents,
-                                                       deregistrationDetailRepository: DeregistrationDetailRepository,
-                                                       deregistrationConnector: DeregistrationConnector,
-                                                       page: deregister_check_your_answers_page
+  authenticate: AmendAuthAction,
+  mcc: MessagesControllerComponents,
+  deregistrationDetailRepository: DeregistrationDetailRepository,
+  deregistrationConnector: DeregistrationConnector,
+  page: deregister_check_your_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.get().map(
-        deregistrationDetails => Ok(page(deregistrationDetails))
-      )
+      deregistrationDetailRepository.get().map(deregistrationDetails => Ok(page(deregistrationDetails)))
     }
 
   def continue(): Action[AnyContent] =

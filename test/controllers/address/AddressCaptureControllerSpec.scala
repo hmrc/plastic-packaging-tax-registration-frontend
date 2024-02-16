@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,28 +36,21 @@ import views.html.address.{address_page, uk_address_page}
 
 import scala.concurrent.Future
 
-class AddressCaptureControllerSpec
-    extends ControllerSpec with MockAddressCaptureDetailRepository with Injecting {
+class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptureDetailRepository with Injecting {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val addressCaptureService = new AddressCaptureService(
-    inMemoryAddressCaptureDetailRepository
-  )
+  private val addressCaptureService = new AddressCaptureService(inMemoryAddressCaptureDetailRepository)
 
-  private val realAppConfig = inject[AppConfig]
+  private val realAppConfig                                   = inject[AppConfig]
   override val addressConversionUtils: AddressConversionUtils = inject[AddressConversionUtils]
 
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
   private val mockInUkPage                       = mock[uk_address_page]
   private val mockAddressPage                    = mock[address_page]
 
-  when(mockInUkPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("Is UK Address?")
-  )
-  when(
-    mockAddressPage.apply(any(), any(), any(), any(), any(), any())(any(), any())
-  ).thenReturn(HtmlFormat.raw("Address Capture"))
+  when(mockInUkPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Is UK Address?"))
+  when(mockAddressPage.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Address Capture"))
 
   private val addressCaptureController = new AddressCaptureController(
     authenticate = FakeBasicAuthAction,
@@ -71,13 +64,14 @@ class AddressCaptureControllerSpec
     addressConversionUtils = addressConversionUtils
   )
 
-  private val addressCaptureConfig = AddressCaptureConfig(backLink = "/back-link",
-                                                          successLink = "/success-link",
-                                                          alfHeadingsPrefix = "alf.prefix",
-                                                          pptHeadingKey = "ppt.heading",
-                                                          entityName = Some("Entity"),
-                                                          pptHintKey = None,
-                                                          forceUkAddress = false
+  private val addressCaptureConfig = AddressCaptureConfig(
+    backLink = "/back-link",
+    successLink = "/success-link",
+    alfHeadingsPrefix = "alf.prefix",
+    pptHeadingKey = "ppt.heading",
+    entityName = Some("Entity"),
+    pptHintKey = None,
+    forceUkAddress = false
   )
 
   override protected def beforeEach(): Unit = {
@@ -85,9 +79,7 @@ class AddressCaptureControllerSpec
 
     addressCaptureService.initAddressCapture(addressCaptureConfig)(registrationJourneyRequest.authenticatedRequest)
 
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-      Future.successful(AddressLookupOnRamp("/alf-on-ramp"))
-    )
+    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(Future.successful(AddressLookupOnRamp("/alf-on-ramp")))
   }
 
   override protected def afterEach(): Unit = {
@@ -114,9 +106,7 @@ class AddressCaptureControllerSpec
 
     "redisplay the address in uk page" when {
       "user does not make a selection" in {
-        val resp = addressCaptureController.submitAddressInUk()(
-          postRequestTuplesEncoded(Seq(("ukAddress", "")))
-        )
+        val resp = addressCaptureController.submitAddressInUk()(postRequestTuplesEncoded(Seq(("ukAddress", ""))))
 
         status(resp) mustBe BAD_REQUEST
         contentAsString(resp) mustBe "Is UK Address?"
@@ -129,9 +119,7 @@ class AddressCaptureControllerSpec
         val request = FakeRequest()
 
         val forcedUkAddressCaptureConfig = addressCaptureConfig.copy(forceUkAddress = true)
-        addressCaptureService.initAddressCapture(forcedUkAddressCaptureConfig)(
-          getAuthenticatedRequest(request)
-        )
+        addressCaptureService.initAddressCapture(forcedUkAddressCaptureConfig)(getAuthenticatedRequest(request))
 
         val resp = await(addressCaptureController.initialiseAddressCapture()(request))
 
@@ -140,11 +128,7 @@ class AddressCaptureControllerSpec
       }
 
       "the user indicates that they wish to capture a UK address" in {
-        val resp = await(
-          addressCaptureController.submitAddressInUk()(
-            postRequestTuplesEncoded(Seq(("ukAddress", "yes")))
-          )
-        )
+        val resp = await(addressCaptureController.submitAddressInUk()(postRequestTuplesEncoded(Seq(("ukAddress", "yes")))))
 
         redirectLocation(Future.successful(resp)) mustBe Some("/alf-on-ramp")
         verifyAlfInitialisedAsExpected(addressCaptureConfig)
@@ -153,7 +137,7 @@ class AddressCaptureControllerSpec
 
     "obtain and store address obtained from ALF and redirect to address capture callback" when {
       "ALF address is valid" in {
-        val request = FakeRequest()
+        val request         = FakeRequest()
         val validAlfAddress = aValidAlfAddress()
         simulateAlfCallback(validAlfAddress)
 
@@ -197,9 +181,7 @@ class AddressCaptureControllerSpec
 
     "redirect to the PPT address capture page" when {
       "user indicates that they wish to capture a non-UK address" in {
-        val resp = addressCaptureController.submitAddressInUk()(
-          postRequestTuplesEncoded(Seq(("ukAddress", "no")))
-        )
+        val resp = addressCaptureController.submitAddressInUk()(postRequestTuplesEncoded(Seq(("ukAddress", "no"))))
 
         redirectLocation(resp) mustBe Some(routes.AddressCaptureController.captureAddress().url)
       }
@@ -214,13 +196,8 @@ class AddressCaptureControllerSpec
 
     "store address and redirect to address capture callback" when {
       "valid address captured in PPT address page" in {
-        val request = FakeRequest()
-        val validAddress = List(("addressLine1", "99 Edge Road"),
-                                ("addressLine2", "Notting Hill"),
-                                ("townOrCity", "London"),
-                                ("postCode", "NW1 1AA"),
-                                ("countryCode", GB)
-        )
+        val request      = FakeRequest()
+        val validAddress = List(("addressLine1", "99 Edge Road"), ("addressLine2", "Notting Hill"), ("townOrCity", "London"), ("postCode", "NW1 1AA"), ("countryCode", GB))
 
         val resp =
           await(addressCaptureController.submitAddress()(postRequestTuplesEncoded(validAddress)))
@@ -258,50 +235,41 @@ class AddressCaptureControllerSpec
   }
 
   private def simulateAlfCallback(addressLookupConfirmation: AddressLookupConfirmation) =
-    when(
-      mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("123"))(any(), any())
-    ).thenReturn(Future.successful(addressLookupConfirmation))
+    when(mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("123"))(any(), any())).thenReturn(Future.successful(addressLookupConfirmation))
 
   private def aValidAlfAddress() =
-    AddressLookupConfirmation(auditRef = "alf-123",
-                              id = Some("123"),
-                              address = AddressLookupAddress(
-                                lines = List("100 Old Bog Lane", "Shoreditch", "London"),
-                                postcode = Some("EC1 1AA"),
-                                country =
-                                  Some(AddressLookupCountry(GB, "United Kingdom"))
-                              )
+    AddressLookupConfirmation(
+      auditRef = "alf-123",
+      id = Some("123"),
+      address = AddressLookupAddress(
+        lines = List("100 Old Bog Lane", "Shoreditch", "London"),
+        postcode = Some("EC1 1AA"),
+        country =
+          Some(AddressLookupCountry(GB, "United Kingdom"))
+      )
     )
 
   private def anInvalidAlfAddress() =
-    AddressLookupConfirmation(auditRef = "alf-123",
-                              id = Some("123"),
-                              address = AddressLookupAddress(
-                                lines = List(
-                                  "This is an address line which is greater than 35 characters in length",
-                                  "Shoreditch",
-                                  "London"
-                                ),
-                                postcode = Some("EC1 1AA"),
-                                country =
-                                  Some(AddressLookupCountry(GB, "United Kingdom"))
-                              )
+    AddressLookupConfirmation(
+      auditRef = "alf-123",
+      id = Some("123"),
+      address = AddressLookupAddress(
+        lines = List("This is an address line which is greater than 35 characters in length", "Shoreditch", "London"),
+        postcode = Some("EC1 1AA"),
+        country =
+          Some(AddressLookupCountry(GB, "United Kingdom"))
+      )
     )
 
   private def verifyAlfInitialisedAsExpected(addressCaptureConfig: AddressCaptureConfig) = {
     val alfInitConfigCaptor: ArgumentCaptor[AddressLookupConfigV2] =
       ArgumentCaptor.forClass(classOf[AddressLookupConfigV2])
 
-    verify(mockAddressLookupFrontendConnector).initialiseJourney(alfInitConfigCaptor.capture())(
-      any(),
-      any()
-    )
+    verify(mockAddressLookupFrontendConnector).initialiseJourney(alfInitConfigCaptor.capture())(any(), any())
 
     val alfConfig = alfInitConfigCaptor.getValue
     alfConfig.options.ukMode mustBe true
-    alfConfig.options.continueUrl mustBe realAppConfig.selfUrl(
-      routes.AddressCaptureController.alfCallback(None)
-    )
+    alfConfig.options.continueUrl mustBe realAppConfig.selfUrl(routes.AddressCaptureController.alfCallback(None))
     alfConfig.labels.en.lookupPageLabels.heading mustBe s"${addressCaptureConfig.alfHeadingsPrefix}.lookup.heading"
   }
 

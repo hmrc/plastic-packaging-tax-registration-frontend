@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,10 @@ package views.viewmodels
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class Title(
-  headingKey: String,
-  headingArg: String = "",
-  headingArgs: Option[Seq[String]] = None,
-  hasErrors: Boolean = false
-) {
-  
+class Title(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None, hasErrors: Boolean = false) {
+
   def toString(implicit messages: Messages): String = {
-    def args = headingArgs.getOrElse(Seq(headingArg))
+    def args   = headingArgs.getOrElse(Seq(headingArg))
     val prefix = if (hasErrors) messages("error.browser.title.prefix") + " " else ""
     prefix + messages("title.format", messages(headingKey, args: _*), messages("service.name"))
   }
@@ -36,15 +31,16 @@ class Title(
 
 object Title {
 
-  def apply(form: Form[_], headingKey: String) = 
-    new Title (headingKey, "", None, form.hasErrors || form.hasGlobalErrors)
+  def apply(form: Form[_], headingKey: String) =
+    new Title(headingKey, "", None, form.hasErrors || form.hasGlobalErrors)
 
   def apply(form: Form[_], headingKey: String, headingArg: String) =
-    new Title (headingKey, headingArg, None, form.hasErrors || form.hasGlobalErrors)
+    new Title(headingKey, headingArg, None, form.hasErrors || form.hasGlobalErrors)
 
   def apply(form: Form[_], headingKey: String, headingArgs: Option[Seq[String]]) =
-    new Title (headingKey, "", headingArgs, form.hasErrors || form.hasGlobalErrors)
+    new Title(headingKey, "", headingArgs, form.hasErrors || form.hasGlobalErrors)
 
-  def apply(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None) = 
-    new Title (headingKey, headingArg, headingArgs, false)
+  def apply(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None) =
+    new Title(headingKey, headingArg, headingArgs, false)
+
 }

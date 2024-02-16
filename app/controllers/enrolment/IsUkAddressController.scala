@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IsUkAddressController @Inject() (
-                                        authenticate: RegistrationAuthAction,
-                                        mcc: MessagesControllerComponents,
-                                        cache: UserEnrolmentDetailsRepository,
-                                        page: is_uk_address_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+class IsUkAddressController @Inject() (authenticate: RegistrationAuthAction, mcc: MessagesControllerComponents, cache: UserEnrolmentDetailsRepository, page: is_uk_address_page)(
+  implicit ec: ExecutionContext
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -52,15 +48,9 @@ class IsUkAddressController @Inject() (
       IsUkAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[IsUkAddress]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[IsUkAddress]) => Future.successful(BadRequest(page(formWithErrors))),
           isUkAddress =>
-            cache.update(
-              data =>
-                data.copy(isUkAddress = Some(isUkAddress),
-                          postcode = if (isUkAddress.requiresPostCode) data.postcode else None
-                )
-            ).map {
+            cache.update(data => data.copy(isUkAddress = Some(isUkAddress), postcode = if (isUkAddress.requiresPostCode) data.postcode else None)).map {
               userEnrolmentDetails =>
                 userEnrolmentDetails.isUkAddress match {
                   case Some(IsUkAddress(Some(true))) =>

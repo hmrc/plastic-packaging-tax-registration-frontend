@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,8 @@ import views.html.contact.check_primary_contact_details_page
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ContactDetailsCheckAnswersController @Inject() (
-                                                       journeyAction: JourneyAction,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: check_primary_contact_details_page
-) extends FrontendController(mcc) with I18nSupport {
+class ContactDetailsCheckAnswersController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents, page: check_primary_contact_details_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>

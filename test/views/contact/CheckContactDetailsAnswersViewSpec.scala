@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,19 +32,13 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   private val registration = aRegistration(
     withPrimaryContactDetails(
-      PrimaryContactDetails(name = Some("Jack Gatsby"),
-                            jobTitle = Some("Developer"),
-                            phoneNumber = Some("0203 4567 890"),
-                            email = Some("test@test.com"),
-                            address = Some(
-                              Address(addressLine1 = "2 Scala Street",
-                                      addressLine2 = Some("Soho"),
-                                      addressLine3 = None,
-                                      townOrCity = "London",
-                                      maybePostcode = Some("W1T 2HN"),
-                                     countryCode = GB
-                              )
-                            )
+      PrimaryContactDetails(
+        name = Some("Jack Gatsby"),
+        jobTitle = Some("Developer"),
+        phoneNumber = Some("0203 4567 890"),
+        email = Some("test@test.com"),
+        address =
+          Some(Address(addressLine1 = "2 Scala Street", addressLine2 = Some("Soho"), addressLine3 = None, townOrCity = "London", maybePostcode = Some("W1T 2HN"), countryCode = GB))
       )
     )
   )
@@ -81,9 +75,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass(gdsPageHeading).first() must containMessage(
-        "primaryContactDetails.check.title"
-      )
+      view.getElementsByClass(gdsPageHeading).first() must containMessage("primaryContactDetails.check.title")
     }
 
     "display labels, values and change links" in {
@@ -92,9 +84,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       def getValueFor(index: Int) =
         view.getElementsByClass("govuk-summary-list__value").get(index).text()
       def getChangeLinkFor(index: Int) =
-        view.getElementsByClass("govuk-summary-list").first.getElementsByClass("govuk-link").get(
-          index
-        )
+        view.getElementsByClass("govuk-summary-list").first.getElementsByClass("govuk-link").get(index)
 
       getKeyFor(fullNameKey) must containMessage("primaryContactDetails.check.fullName")
       getKeyFor(jobTitleKey) must containMessage("primaryContactDetails.check.jobTitle")
@@ -108,21 +98,11 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       getValueFor(phoneNumberKey) mustBe registration.primaryContactDetails.phoneNumber.get
       getValueFor(emailKey) mustBe registration.primaryContactDetails.email.get
 
-      getChangeLinkFor(fullNameKey) must haveHref(
-        contactRoutes.ContactDetailsFullNameController.displayPage()
-      )
-      getChangeLinkFor(jobTitleKey) must haveHref(
-        contactRoutes.ContactDetailsJobTitleController.displayPage()
-      )
-      getChangeLinkFor(addressKey) must haveHref(
-        contactRoutes.ContactDetailsConfirmAddressController.displayPage()
-      )
-      getChangeLinkFor(phoneNumberKey) must haveHref(
-        contactRoutes.ContactDetailsTelephoneNumberController.displayPage()
-      )
-      getChangeLinkFor(emailKey) must haveHref(
-        contactRoutes.ContactDetailsEmailAddressController.displayPage()
-      )
+      getChangeLinkFor(fullNameKey) must haveHref(contactRoutes.ContactDetailsFullNameController.displayPage())
+      getChangeLinkFor(jobTitleKey) must haveHref(contactRoutes.ContactDetailsJobTitleController.displayPage())
+      getChangeLinkFor(addressKey) must haveHref(contactRoutes.ContactDetailsConfirmAddressController.displayPage())
+      getChangeLinkFor(phoneNumberKey) must haveHref(contactRoutes.ContactDetailsTelephoneNumberController.displayPage())
+      getChangeLinkFor(emailKey) must haveHref(contactRoutes.ContactDetailsEmailAddressController.displayPage())
     }
 
     "display 'Continue' button" in {

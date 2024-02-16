@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   private val validConfig: Config =
-    ConfigFactory.parseString(
-      s"""
+    ConfigFactory.parseString(s"""
         |microservice.services.incorporated-entity-identification-frontend.host=localhost
         |microservice.services.incorporated-entity-identification-frontend.port=9718
         |microservice.services.sole-trader-identification-frontend.host=localhost
@@ -44,8 +43,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
         |urls.businessAccount="http://localhost:9020/business-account"
-      """.stripMargin
-    )
+      """.stripMargin)
 
   private def appConfig(conf: Configuration) =
     new AppConfig(conf, servicesConfig(conf))
@@ -57,21 +55,15 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     val validAppConfig: AppConfig = appConfig(Configuration(validConfig))
 
     "have 'incorpJourneyUrl' defined" in {
-      validAppConfig.incorpDetailsUrl must be(
-        "http://localhost:9718/incorporated-entity-identification/api/journey"
-      )
+      validAppConfig.incorpDetailsUrl must be("http://localhost:9718/incorporated-entity-identification/api/journey")
     }
 
     "have 'soleTraderJourneyUrl' defined" in {
-      validAppConfig.soleTraderJourneyInitUrl must be(
-        "http://localhost:9717/sole-trader-identification/api/sole-trader-journey"
-      )
+      validAppConfig.soleTraderJourneyInitUrl must be("http://localhost:9717/sole-trader-identification/api/sole-trader-journey")
     }
 
     "have 'generalPartnershipJourneyUrl' defined" in {
-      validAppConfig.generalPartnershipJourneyUrl must be(
-        "http://localhost:9722/partnership-identification/api/general-partnership-journey"
-      )
+      validAppConfig.generalPartnershipJourneyUrl must be("http://localhost:9722/partnership-identification/api/general-partnership-journey")
     }
 
     "have 'pptRegistrationUrl' defined" in {
@@ -79,33 +71,23 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
 
     "have 'pptRegistrationUrl(...)' defined" in {
-      validAppConfig.pptRegistrationUrl("someId") must be(
-        "http://localhost:8502/registrations/someId"
-      )
+      validAppConfig.pptRegistrationUrl("someId") must be("http://localhost:8502/registrations/someId")
     }
 
     "have 'pptSubscriptionsStatusUrl(...)' defined" in {
-      validAppConfig.pptSubscriptionStatusUrl("someId") must be(
-        "http://localhost:8502/subscriptions/status/someId"
-      )
+      validAppConfig.pptSubscriptionStatusUrl("someId") must be("http://localhost:8502/subscriptions/status/someId")
     }
 
     "have 'pptSubscriptionsCreateUrl(...)' defined" in {
-      validAppConfig.pptSubscriptionCreateUrl("someId") must be(
-        "http://localhost:8502/subscriptions/someId"
-      )
+      validAppConfig.pptSubscriptionCreateUrl("someId") must be("http://localhost:8502/subscriptions/someId")
     }
 
     "have 'authenticatedFeedbackUrl' defined" in {
-      validAppConfig.authenticatedFeedbackUrl() must be(
-        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax"
-      )
+      validAppConfig.authenticatedFeedbackUrl() must be("http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax")
     }
 
     "have 'unauthenticatedFeedbackUrl' defined" in {
-      validAppConfig.unauthenticatedFeedbackUrl() must be(
-        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax"
-      )
+      validAppConfig.unauthenticatedFeedbackUrl() must be("http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax")
     }
 
     "have 'pptAccountUrl' defined" in {

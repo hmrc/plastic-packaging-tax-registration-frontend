@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,7 @@ object SignOutReason {
   implicit val binder: QueryStringBindable[SignOutReason] = new QueryStringBindable[SignOutReason] {
     private val strBinder: QueryStringBindable[String] = implicitly[QueryStringBindable[String]]
 
-    override def bind(
-      key: String,
-      params: Map[String, Seq[String]]
-    ): Option[Either[String, SignOutReason]] =
+    override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SignOutReason]] =
       Some(
         Right(
           params

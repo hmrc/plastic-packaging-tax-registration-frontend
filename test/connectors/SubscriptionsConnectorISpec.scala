@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,7 @@ import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import play.api.test.Injecting
 import models.registration.Registration
-import models.subscriptions.{
-  SubscriptionCreateOrUpdateResponseSuccess,
-  SubscriptionStatusResponse
-}
+import models.subscriptions.{SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatusResponse}
 
 class SubscriptionsConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
@@ -123,9 +120,7 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injecting with Sca
           post(urlMatching(s"/subscriptions/$safeNumber"))
             .willReturn(
               aResponse().withStatus(OK)
-                withBody toJson(validResponse)(
-                  SubscriptionCreateOrUpdateResponseSuccess.format
-                ).toString
+                withBody toJson(validResponse)(SubscriptionCreateOrUpdateResponseSuccess.format).toString
             )
         )
 
@@ -188,9 +183,7 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injecting with Sca
           put(urlMatching(s"/subscriptions/$pptReference"))
             .willReturn(
               aResponse().withStatus(OK)
-                withBody toJson(validResponse)(
-                  SubscriptionCreateOrUpdateResponseSuccess.format
-                ).toString
+                withBody toJson(validResponse)(SubscriptionCreateOrUpdateResponseSuccess.format).toString
             )
         )
 

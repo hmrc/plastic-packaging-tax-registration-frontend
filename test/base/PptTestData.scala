@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ object PptTestData {
   val nrsCredentials: Credentials =
     Credentials(providerId = "providerId", providerType = "providerType")
 
-  def newUser(
-    internalId: String = "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-  ): SignedInUser = SignedInUser(IdentityData(Some(internalId), Some(nrsCredentials)))
+  def newUser(internalId: String = "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"): SignedInUser = SignedInUser(IdentityData(Some(internalId), Some(nrsCredentials)))
 
 }

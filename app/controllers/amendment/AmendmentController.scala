@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,16 +28,13 @@ import services.AmendRegistrationService
 
 import scala.concurrent.ExecutionContext
 
-abstract class AmendmentController(
-  mcc: MessagesControllerComponents,
-  service: AmendRegistrationService
-)(implicit ec: ExecutionContext)
+abstract class AmendmentController(mcc: MessagesControllerComponents, service: AmendRegistrationService)(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  protected def updateRegistration(
-    registrationAmendment: Registration => Registration,
-    successfulRedirect: Call = routes.AmendRegistrationController.displayPage()
-  )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
+  protected def updateRegistration(registrationAmendment: Registration => Registration, successfulRedirect: Call = routes.AmendRegistrationController.displayPage())(implicit
+    request: JourneyRequest[_],
+    hc: HeaderCarrier
+  ) =
     service.updateSubscriptionWithRegistration(registrationAmendment).map {
       case _: SubscriptionCreateOrUpdateResponseSuccess =>
         Redirect(successfulRedirect)
@@ -45,14 +42,9 @@ abstract class AmendmentController(
         Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
     }
 
-  protected def updateGroupMemberRegistration(
-    registrationAmendment: Registration => Registration,
-    memberId: String
-  )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
+  protected def updateGroupMemberRegistration(registrationAmendment: Registration => Registration, memberId: String)(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
     service.updateSubscriptionWithRegistration(registrationAmendment)
-      .map(
-        _ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId))
-      )
+      .map(_ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId)))
       .recover {
         case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
       }

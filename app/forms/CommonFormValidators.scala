@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,29 +39,20 @@ trait CommonFormValidators {
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
-  val isNoneWhiteSpace: String => Boolean = value =>
-    value.isEmpty || value.exists(char => !char.isWhitespace)
+  val isNoneWhiteSpace: String => Boolean = value => value.isEmpty || value.exists(char => !char.isWhitespace)
 
-  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
-    value.isEmpty || value.length <= maxLength
+  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) => value.isEmpty || value.length <= maxLength
 
-  val isNotExceedingMaxLengthExcludingWhitespaces: (String, Int) => Boolean = (value, maxLength) =>
-    {
-      val cleaned = value.filter(c => !Character.isWhitespace(c)).mkString
-      cleaned.isEmpty || cleaned.length <= maxLength
-    }
+  val isNotExceedingMaxLengthExcludingWhitespaces: (String, Int) => Boolean = (value, maxLength) => {
+    val cleaned = value.filter(c => !Character.isWhitespace(c)).mkString
+    cleaned.isEmpty || cleaned.length <= maxLength
+  }
 
   val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
     (value, allowedChars) =>
-      value.isEmpty || value.chars().allMatch(
-        char =>
-          Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(
-            _.contains(char.toChar)
-          )
-      )
+      value.isEmpty || value.chars().allMatch(char => Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(_.contains(char.toChar)))
 
-  val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
-    pattern.matcher(value).matches()
+  val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) => pattern.matcher(value).matches()
 
   val isValidFullName: String => Boolean =
     isValidAnyName(fullNameRegexPattern, 160)
@@ -69,31 +60,24 @@ trait CommonFormValidators {
   val isValidName: String => Boolean =
     isValidAnyName(nameRegexPattern, 35)
 
-  val isValidEmail: String => Boolean = (email: String) =>
-    email.isEmpty || isMatchingPattern(email, emailPattern)
+  val isValidEmail: String => Boolean = (email: String) => email.isEmpty || isMatchingPattern(email, emailPattern)
 
-  val isValidTelephoneNumber: String => Boolean = (value: String) =>
-    value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
+  val isValidTelephoneNumber: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
 
-  val isValidAddressInput: String => Boolean = (value: String) =>
-    value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
+  val isValidAddressInput: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
 
-  val isValidPostcode: String => Boolean = (value: String) =>
-    value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
+  val isValidPostcode: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
 
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 
   protected val validatePostcode: Int => String => Boolean =
-    (length: Int) =>
-      (input: String) =>
-        isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
+    (length: Int) => (input: String) => isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
 
-  def nonEmptyString(errorKey: String): Mapping[String] = {
+  def nonEmptyString(errorKey: String): Mapping[String] =
     optional(text)
       .verifying(errorKey, _.nonEmpty)
       .transform[String](_.get, Some.apply)
       .verifying(errorKey, _.trim.nonEmpty)
-  }
 
   private def isValidAnyName(pattern: Pattern, len: Int): String => Boolean =
     (name: String) => (name.size > len || name.isEmpty) || isMatchingPattern(name, pattern)

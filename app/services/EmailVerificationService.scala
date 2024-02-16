@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,16 @@ package services
 
 import com.google.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
-import connectors.{
-  EmailVerificationConnector,
-  ServiceError
-}
+import connectors.{EmailVerificationConnector, ServiceError}
 import models.emailverification._
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerificationConnector)(
-  implicit ec: ExecutionContext
-) {
+class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerificationConnector)(implicit ec: ExecutionContext) {
 
-  def getStatus(
-    credId: String
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] =
+  def getStatus(credId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] =
     emailVerificationConnector.getStatus(credId)
 
   def isEmailVerified(email: String, credId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
@@ -49,27 +42,24 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
       case Left(ex) => throw ex
     }
 
-  def sendVerificationCode(email: String, credId: String, continueUrl: String)(implicit
-    hc: HeaderCarrier
-  ): Future[String] =
+  def sendVerificationCode(email: String, credId: String, continueUrl: String)(implicit hc: HeaderCarrier): Future[String] =
     emailVerificationConnector.create(
-      CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl = continueUrl,
-                                     origin = "ppt",
-                                     accessibilityStatementUrl = "/accessibility",
-                                     email = Email(address = email, enterUrl = "/start"),
-                                     backUrl = "/back",
-                                     pageTitle = "PPT Title",
-                                     deskproServiceName = "plastic-packaging-tax"
+      CreateEmailVerificationRequest(
+        credId = credId,
+        continueUrl = continueUrl,
+        origin = "ppt",
+        accessibilityStatementUrl = "/accessibility",
+        email = Email(address = email, enterUrl = "/start"),
+        backUrl = "/back",
+        pageTitle = "PPT Title",
+        deskproServiceName = "plastic-packaging-tax"
       )
     ).map {
       case Right(resp) => resp.split("/").slice(0, 4).last
       case Left(ex)    => throw ex
     }
 
-  def checkVerificationCode(code: String, email: String, journeyId: String)(implicit
-    hc: HeaderCarrier
-  ): Future[EmailVerificationJourneyStatus.Value] =
+  def checkVerificationCode(code: String, email: String, journeyId: String)(implicit hc: HeaderCarrier): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationConnector.verifyPasscode(journeyId, VerifyPasscodeRequest(code, email)).map {
       case Right(verificationStatus) => verificationStatus
       case Left(ex)                  => throw ex

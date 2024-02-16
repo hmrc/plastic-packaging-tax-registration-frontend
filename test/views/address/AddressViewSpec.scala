@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page           = inject[address_page]
   private val countryService = inject[CountryService]
-  private val updateLink  = Call("PUT", "/update")
-  private val headingKey  = "addressLookup.partner.lookup.heading"
-  private val contactName = Some("the contact")
+  private val updateLink     = Call("PUT", "/update")
+  private val headingKey     = "addressLookup.partner.lookup.heading"
+  private val contactName    = Some("the contact")
 
   private def createView(form: Form[Address] = Address.form()): Document =
     page(form, countryService.getAll(), updateLink, headingKey, contactName)(registrationJourneyRequest, messages)
@@ -125,13 +125,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "address fields are not valid" in {
       val anInvalidAddress =
-        UKAddress(
-          addressLine1 = "*&%^",
-          addressLine2 = Some("Address Line 2*&%^"),
-          addressLine3 = Some("Address Line 3*&%^"),
-          townOrCity = "*&%^",
-          postCode = "*&%^"
-        )
+        UKAddress(addressLine1 = "*&%^", addressLine2 = Some("Address Line 2*&%^"), addressLine3 = Some("Address Line 3*&%^"), townOrCity = "*&%^", postCode = "*&%^")
 
       val form = Address
         .form()

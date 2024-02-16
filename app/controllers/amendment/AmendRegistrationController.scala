@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendRegistrationController @Inject() (
-                                              journeyAction: JourneyAction,
-                                              amendRegistrationService: AmendRegistrationService,
-                                              amendAuthAction: AmendAuthAction,
-                                              mcc: MessagesControllerComponents,
-                                              amendRegistrationPage: amend_registration_page,
-                                              amendErrorPage: amend_error_page
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  amendAuthAction: AmendAuthAction,
+  mcc: MessagesControllerComponents,
+  amendRegistrationPage: amend_registration_page,
+  amendErrorPage: amend_error_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 

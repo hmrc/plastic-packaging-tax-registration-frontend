@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,38 +26,37 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 import java.util.UUID
 import javax.inject.Inject
 
-class SkipAuthStubController  @Inject()(
-  val controllerComponents: ControllerComponents,
-  appConfig: AppConfig,
-  skipAuthView: SkipAuthView
-) extends BaseController with FrontendHeaderCarrierProvider with Logging with I18nSupport  {
+class SkipAuthStubController @Inject() (val controllerComponents: ControllerComponents, appConfig: AppConfig, skipAuthView: SkipAuthView)
+    extends BaseController with FrontendHeaderCarrierProvider with Logging with I18nSupport {
 
-  def returns(): Action[AnyContent] = Action { implicit request =>
-    val params: Map[String, Seq[String]] = Map(
-      "authorityId" -> "",
-      "redirectionUrl" -> appConfig.pptAccountUrl,
-      "credentialStrength" -> "strong",
-      "confidenceLevel" -> "50",
-      "affinityGroup" -> "Organisation",
-      "enrolment[0].name" -> "HMRC-PPT-ORG",
-      "enrolment[0].taxIdentifier[0].name"-> "EtmpRegistrationNumber",
-      "enrolment[0].taxIdentifier[0].value" -> "XMPPT0000000003",
-      "enrolment[0].state" -> "Activated"
-    ).map{case (key, default) => key -> request.queryString.getOrElse(key, Seq(default))}
+  def returns(): Action[AnyContent] =
+    Action { implicit request =>
+      val params: Map[String, Seq[String]] = Map(
+        "authorityId"                         -> "",
+        "redirectionUrl"                      -> appConfig.pptAccountUrl,
+        "credentialStrength"                  -> "strong",
+        "confidenceLevel"                     -> "50",
+        "affinityGroup"                       -> "Organisation",
+        "enrolment[0].name"                   -> "HMRC-PPT-ORG",
+        "enrolment[0].taxIdentifier[0].name"  -> "EtmpRegistrationNumber",
+        "enrolment[0].taxIdentifier[0].value" -> "XMPPT0000000003",
+        "enrolment[0].state"                  -> "Activated"
+      ).map { case (key, default) => key -> request.queryString.getOrElse(key, Seq(default)) }
 
-    Ok(skipAuthView("Returns", params))
-  }
+      Ok(skipAuthView("Returns", params))
+    }
 
-  def registration(): Action[AnyContent] = Action { implicit request =>
-    val params: Map[String, Seq[String]] = Map(
-      "authorityId" -> UUID.randomUUID().toString,
-      "redirectionUrl" -> appConfig.loginContinueUrl,
-      "credentialStrength" -> "strong",
-      "confidenceLevel" -> "50",
-      "affinityGroup" -> "Organisation",
-    ).map{case (key, default) => key -> request.queryString.getOrElse(key, Seq(default))}
-    logger.info("PPT_UR user CredId(authorityId)= " + params("authorityId").head)
-    Ok(skipAuthView("Registration", params))
-  }
+  def registration(): Action[AnyContent] =
+    Action { implicit request =>
+      val params: Map[String, Seq[String]] = Map(
+        "authorityId"        -> UUID.randomUUID().toString,
+        "redirectionUrl"     -> appConfig.loginContinueUrl,
+        "credentialStrength" -> "strong",
+        "confidenceLevel"    -> "50",
+        "affinityGroup"      -> "Organisation"
+      ).map { case (key, default) => key -> request.queryString.getOrElse(key, Seq(default)) }
+      logger.info("PPT_UR user CredId(authorityId)= " + params("authorityId").head)
+      Ok(skipAuthView("Registration", params))
+    }
 
 }

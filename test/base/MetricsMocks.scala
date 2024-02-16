@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@
 package base
 
 import com.codahale.metrics.MetricRegistry
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 trait MetricsMocks {
 
   val metricsMock: Metrics = new Metrics {
     override def defaultRegistry: MetricRegistry = metricRegistryMock
 
-    override def toJson: String = ""
   }
 
   val metricRegistryMock = new MetricRegistry()

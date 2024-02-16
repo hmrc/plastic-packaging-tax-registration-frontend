@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,28 +35,22 @@ abstract class PartnerContactAddressControllerBase(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  protected def doDisplayPage(
-    partnerId: Option[String],
-    backLink: Call,
-    captureAddressCallback: Call
-  ): Action[AnyContent] =
+  protected def doDisplayPage(partnerId: Option[String], backLink: Call, captureAddressCallback: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
       addressCaptureService.initAddressCapture(
-        AddressCaptureConfig(backLink = backLink.url,
-                             successLink = captureAddressCallback.url,
-                             alfHeadingsPrefix = "addressLookup.contact",
-                             entityName = getPartner(partnerId).map(_.name),
-                             pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None,
-                             forceUkAddress = false
+        AddressCaptureConfig(
+          backLink = backLink.url,
+          successLink = captureAddressCallback.url,
+          alfHeadingsPrefix = "addressLookup.contact",
+          entityName = getPartner(partnerId).map(_.name),
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None,
+          forceUkAddress = false
         )
       )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
-  protected def onAddressCaptureCallback(
-    partnerId: Option[String],
-    successfulRedirect: Call
-  ): Action[AnyContent] =
+  protected def onAddressCaptureCallback(partnerId: Option[String], successfulRedirect: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
@@ -69,27 +63,22 @@ abstract class PartnerContactAddressControllerBase(
       }
     }
 
-  private def update(partnerId: Option[String], address: Option[Address])(implicit
-    registration: Registration
-  ): Registration =
+  private def update(partnerId: Option[String], address: Option[Address])(implicit registration: Registration): Registration =
     partnerId match {
       case Some(partnerId) =>
-        registration.withUpdatedPartner(partnerId,
-                                        partner =>
-                                          partner.copy(contactDetails =
-                                            partner.contactDetails.map(_.copy(address = address))
-                                          )
+        registration.withUpdatedPartner(
+          partnerId,
+          partner =>
+            partner.copy(contactDetails =
+              partner.contactDetails.map(_.copy(address = address))
+            )
         )
       case _ =>
-        val updatedInflightPartner = registration.withInflightPartner(
-          registration.inflightPartner.map(_.withContactAddress(address))
-        )
+        val updatedInflightPartner = registration.withInflightPartner(registration.inflightPartner.map(_.withContactAddress(address)))
         updatedInflightPartner.withPromotedInflightPartner()
     }
 
-  private def getPartner(
-    partnerId: Option[String]
-  )(implicit request: JourneyRequest[_]): Option[Partner] =
+  private def getPartner(partnerId: Option[String])(implicit request: JourneyRequest[_]): Option[Partner] =
     partnerId match {
       case Some(partnerId) => request.registration.findPartner(partnerId)
       case _               => request.registration.inflightPartner

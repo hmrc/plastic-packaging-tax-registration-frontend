@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import forms.partner.RemovePartner
 import views.html.partner.remove_partner_page
 import java.util.UUID
 
-
 class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[remove_partner_page]
@@ -49,15 +48,11 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("partnership.removePartner.title", partnerName)
-      )
+      view.select("title").text() must include(messages("partnership.removePartner.title", partnerName))
     }
 
     "display heading question" in {
-      view.select("h1").text() must include(
-        messages("partnership.removePartner.title", partnerName)
-      )
+      view.select("h1").text() must include(messages("partnership.removePartner.title", partnerName))
     }
 
     "display radio inputs" in {

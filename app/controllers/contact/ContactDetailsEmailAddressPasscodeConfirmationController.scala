@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,14 @@ import views.html.contact.email_address_passcode_confirmation_page
 import javax.inject.Inject
 
 class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
-                                                                           journeyAction: JourneyAction,
-                                                                           mcc: MessagesControllerComponents,
-                                                                           page: email_address_passcode_confirmation_page
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: email_address_passcode_confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      Ok(
-        page(routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(),
-             Some(sectionName())
-        )
-      )
+      Ok(page(routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), Some(sectionName())))
     }
 
   def submit(): Action[AnyContent] =
@@ -45,10 +41,9 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
       Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
     }
 
-  private def sectionName()(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
-    if(request.registration.isGroup)
+  private def sectionName()(implicit request: JourneyRequest[AnyContent], messages: Messages): String =
+    if (request.registration.isGroup)
       messages("primaryContactDetails.group.sectionHeader")
     else messages("primaryContactDetails.sectionHeader")
-  }
 
 }

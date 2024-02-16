@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import java.util.regex.Pattern
 
-class CommonFormValidatorsSpec
-    extends AnyWordSpec with Matchers with CommonFormValidators with CommonTestUtils {
+class CommonFormValidatorsSpec extends AnyWordSpec with Matchers with CommonFormValidators with CommonTestUtils {
 
   "CommonFormValidators" should {
 
@@ -135,29 +134,13 @@ class CommonFormValidatorsSpec
       }
     }
 
-    forAll(
-      Seq("AA9A 9AA",
-          "A9A 9AA",
-          "A9 9AA",
-          "A99 9AA",
-          "AA99AA",
-          "aa9a 9aa",
-          "a9a 9aa",
-          "a9 9aa",
-          "a99 9aa",
-          "aa9 9aa",
-          "aa9a9aa",
-          "a9a9aa",
-          "a99aa",
-          "a999aa",
-          "aa99aa"
-      )
-    ) { postcode =>
-      "return true for " + postcode when {
-        "valid" in {
-          isValidPostcode(postcode.toUpperCase) must be(true)
+    forAll(Seq("AA9A 9AA", "A9A 9AA", "A9 9AA", "A99 9AA", "AA99AA", "aa9a 9aa", "a9a 9aa", "a9 9aa", "a99 9aa", "aa9 9aa", "aa9a9aa", "a9a9aa", "a99aa", "a999aa", "aa99aa")) {
+      postcode =>
+        "return true for " + postcode when {
+          "valid" in {
+            isValidPostcode(postcode.toUpperCase) must be(true)
+          }
         }
-      }
     }
   }
 }

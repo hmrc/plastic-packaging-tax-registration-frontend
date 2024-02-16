@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ import views.viewmodels.TaskStatus
 
 import javax.inject.Inject
 
-class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
-    extends AnyWordSpec with PptTestData with Matchers with TableDrivenPropertyChecks {
+class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extends AnyWordSpec with PptTestData with Matchers with TableDrivenPropertyChecks {
 
   override val addressConversionUtils: AddressConversionUtils = acUtils
 
@@ -80,9 +79,9 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     }
 
     "identify that partner business partner id is present for existing partner" in {
-      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerGrsRegistration(
-        Some("123")
-      ) mustBe Some(RegistrationDetails(true, Some("Verified"), "REGISTERED", Some("XM654321")))
+      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerGrsRegistration(Some("123")) mustBe Some(
+        RegistrationDetails(true, Some("Verified"), "REGISTERED", Some("XM654321"))
+      )
     }
 
     "identify that partner business verification failed " in {
@@ -114,9 +113,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     }
 
     "identify that partner business partner verification status" in {
-      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerVerificationStatus(
-        Some("123")
-      ) mustBe Some("Verified")
+      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerVerificationStatus(Some("123")) mustBe Some("Verified")
     }
 
     "identify that business partner id is absent" in {
@@ -182,12 +179,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     )
 
   private def createRegistrationDetails(status: Option[String], registrationStatus: String, partnerId: Option[String]) =
-    RegistrationDetails(
-      identifiersMatch = true,
-      verificationStatus = status,
-      registrationStatus = registrationStatus,
-      registeredBusinessPartnerId = partnerId
-    )
+    RegistrationDetails(identifiersMatch = true, verificationStatus = status, registrationStatus = registrationStatus, registeredBusinessPartnerId = partnerId)
 
   private def createdFailedSoleTradeOrg(subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
     OrganisationDetails(
@@ -235,10 +227,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createRegisteredPartnership(
-    partnershipType: PartnerTypeEnum,
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
-  ): OrganisationDetails =
+  private def createRegisteredPartnership(partnershipType: PartnerTypeEnum, subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
       partnershipDetails = Some(
@@ -258,10 +247,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createFailedPartnership(
-    partnershipType: PartnerTypeEnum,
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
-  ): OrganisationDetails =
+  private def createFailedPartnership(partnershipType: PartnerTypeEnum, subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
       partnershipDetails = Some(

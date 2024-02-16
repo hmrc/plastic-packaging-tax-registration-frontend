@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ import views.viewmodels.TaskStatus
 
 import java.time.LocalDate
 
-class RegistrationSpec
-  extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {
+class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {
 
   "Registration status" should {
     "other sections should keep their status" when {
@@ -94,7 +93,6 @@ class RegistrationSpec
       notStartedRegistration.checkAndSubmitStatus mustBe TaskStatus.CannotStartYet
     }
 
-
     "be 'In Progress' " when {
       "All sections are complete and the user is reviewing the registration" in {
         val registrationReviewedMetaData =
@@ -152,7 +150,8 @@ class RegistrationSpec
       }
       "be started" when {
         "liability weight captured" in {
-          Registration(id = "123",
+          Registration(
+            id = "123",
             liabilityDetails =
               LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
           ).isStarted mustBe true
@@ -164,7 +163,8 @@ class RegistrationSpec
       //before new liability questions
 
       val newCompletedLiabilityDetails =
-        LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+        LiabilityDetails(
+          expectToExceedThresholdWeight = Some(true),
           dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
           expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
           startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
@@ -175,31 +175,34 @@ class RegistrationSpec
 
       "be Not Started" when {
         "liability details are missing entirely" in {
-          Registration(id = "123",
-            liabilityDetails = LiabilityDetails(),
-            registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+          Registration(id = "123", liabilityDetails = LiabilityDetails(), registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
         }
       }
 
       "be In Progress " when {
         "old liability questions have been answered" in {
-          Registration(id = "123",
+          Registration(
+            id = "123",
             liabilityDetails =
               createOldLiabilityDetails,
-            registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
+            registrationType = Some(RegType.SINGLE_ENTITY)
+          ).liabilityDetailsStatus mustBe TaskStatus.InProgress
         }
         "new liability started but not finished" in {
           val newInProgressLiabilityDetails = createOldLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability))
 
-          Registration(id = "123",
+          Registration(
+            id = "123",
             liabilityDetails = newInProgressLiabilityDetails,
-            registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
+            registrationType = Some(RegType.SINGLE_ENTITY)
+          ).liabilityDetailsStatus mustBe TaskStatus.InProgress
         }
 
       }
 
       "be complete for single organisation registration with completed liability details and selected registration type" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)
@@ -207,7 +210,8 @@ class RegistrationSpec
       }
 
       "be incomplete for registration with completed liability details but no registration type" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails,
           registrationType = None
@@ -215,14 +219,16 @@ class RegistrationSpec
       }
 
       "be in progress for single organisation registration with incomplete liability details" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails.copy(expectedWeightNext12m = None)
         ).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
 
       "be complete for group registration with under group control set to 'true'" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
@@ -231,7 +237,8 @@ class RegistrationSpec
       }
 
       "be in progress for group registration with under group control set to 'false'" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
@@ -240,7 +247,8 @@ class RegistrationSpec
       }
 
       "be in progress for group registration with under group control un-answered" in {
-        Registration(id = "123",
+        Registration(
+          id = "123",
           liabilityDetails =
             newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
@@ -249,29 +257,22 @@ class RegistrationSpec
       }
     }
 
-
     "Registration for single organisation number of completed sections" should {
       "have the correct value " when {
 
         "registration is complete" in {
           val registrationCompletedMetaData =
             aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
-          aRegistration(
-            withMetaData(registrationCompletedMetaData)
-          ).numberOfCompletedSections mustBe 4
+          aRegistration(withMetaData(registrationCompletedMetaData)).numberOfCompletedSections mustBe 4
         }
         "registration has not been completed" in {
           aRegistration().numberOfCompletedSections mustBe 3
         }
         "registration does not have complete contact details" in {
-          aRegistration(
-            withPrimaryContactDetails(PrimaryContactDetails())
-          ).numberOfCompletedSections mustBe 2
+          aRegistration(withPrimaryContactDetails(PrimaryContactDetails())).numberOfCompletedSections mustBe 2
         }
         "registration does not have complete contact or organisation details" in {
-          aRegistration(withPrimaryContactDetails(PrimaryContactDetails()),
-            withOrganisationDetails(OrganisationDetails())
-          ).numberOfCompletedSections mustBe 1
+          aRegistration(withPrimaryContactDetails(PrimaryContactDetails()), withOrganisationDetails(OrganisationDetails())).numberOfCompletedSections mustBe 1
         }
         "registration not started" in {
           Registration("123").numberOfCompletedSections mustBe 0
@@ -289,29 +290,24 @@ class RegistrationSpec
         "registration is complete" in {
           val registrationCompletedMetaData =
             aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
-          aRegistration(withRegistrationType(Some(GROUP)),
-            withMetaData(registrationCompletedMetaData),
-            withGroupDetail(Some(groupDetails))
-          ).numberOfCompletedSections mustBe 5
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(registrationCompletedMetaData), withGroupDetail(Some(groupDetails))).numberOfCompletedSections mustBe 5
         }
         "registration has not been completed" in {
-          aRegistration(withRegistrationType(Some(GROUP)),
-            withGroupDetail(Some(groupDetails))
-          ).numberOfCompletedSections mustBe 4
+          aRegistration(withRegistrationType(Some(GROUP)), withGroupDetail(Some(groupDetails))).numberOfCompletedSections mustBe 4
         }
         "registration does not have complete group members" in {
-          aRegistration(withRegistrationType(Some(GROUP)),
-            withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))
-          ).numberOfCompletedSections mustBe 3
+          aRegistration(withRegistrationType(Some(GROUP)), withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))).numberOfCompletedSections mustBe 3
         }
         "registration does not have complete group members or contact details" in {
-          aRegistration(withRegistrationType(Some(GROUP)),
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
             withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
             withPrimaryContactDetails(PrimaryContactDetails())
           ).numberOfCompletedSections mustBe 2
         }
         "registration does not have complete group members, contact details or nominated organisation details" in {
-          aRegistration(withRegistrationType(Some(GROUP)),
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
             withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
             withPrimaryContactDetails(PrimaryContactDetails()),
             withOrganisationDetails(OrganisationDetails())
@@ -329,10 +325,7 @@ class RegistrationSpec
       "should report number of completed sections" when {
 
         val generalPartnershipRegistration =
-          aRegistration(
-            withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)),
-            withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
-          )
+          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)), withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true)))
 
         "registration is complete" in {
           generalPartnershipRegistration.numberOfCompletedSections mustBe 4
@@ -345,18 +338,14 @@ class RegistrationSpec
         "registration does not have other partners" in {
           generalPartnershipRegistration.copy(organisationDetails =
             generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
-              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
-                _.copy(partners = Seq(aLimitedCompanyPartner))
-              )
+              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(_.copy(partners = Seq(aLimitedCompanyPartner)))
             )
           ).numberOfCompletedSections mustBe 2
         }
         "registration does not have nominated partner" in {
           generalPartnershipRegistration.copy(organisationDetails =
             generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
-              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
-                _.copy(partners = Seq())
-              )
+              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(_.copy(partners = Seq()))
             )
           ).numberOfCompletedSections mustBe 2
         }
@@ -371,9 +360,7 @@ class RegistrationSpec
       }
 
       "identify partnerships from registration organisation type" in {
-        val aPartnershipRegistration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP)))
-        )
+        val aPartnershipRegistration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP))))
         aPartnershipRegistration.isPartnership mustBe true
       }
       "report nominated partner details as complete when we have a complete nominated partner" in {
@@ -388,9 +375,7 @@ class RegistrationSpec
         ).nominatedPartnerDetailsStatus mustBe TaskStatus.Completed
       }
       "report nominated partner details as not started before we have a complete nominated partner" in {
-        aRegistration(
-          withPartnershipDetails(Some(scottishPartnershipDetails))
-        ).nominatedPartnerDetailsStatus mustBe TaskStatus.NotStarted
+        aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))).nominatedPartnerDetailsStatus mustBe TaskStatus.NotStarted
       }
       "report other partner details as complete when we have a complete nominated partner and 1 other partner" in {
         aRegistration(
@@ -417,12 +402,12 @@ class RegistrationSpec
     }
   }
 
-  private def createOldLiabilityDetails = {
-    LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+  private def createOldLiabilityDetails =
+    LiabilityDetails(
+      expectToExceedThresholdWeight = Some(true),
       dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
       expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
       startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
     )
-  }
-}
 
+}

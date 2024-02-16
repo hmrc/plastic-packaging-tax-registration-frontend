@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,14 @@ abstract class ContactDetailsConfirmAddressControllerBase(
   protected def doDisplayPage(memberId: String, backLink: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
       addressCaptureService.initAddressCapture(
-        AddressCaptureConfig(backLink = backLink.url,
-                             successLink = getAddressCaptureCallback(memberId).url,
-                             alfHeadingsPrefix = "addressLookup.partner",
-                             entityName = request.registration.findMember(memberId).map(_.businessName),
-                             pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None,
-                             forceUkAddress = false
+        AddressCaptureConfig(
+          backLink = backLink.url,
+          successLink = getAddressCaptureCallback(memberId).url,
+          alfHeadingsPrefix = "addressLookup.partner",
+          entityName = request.registration.findMember(memberId).map(_.businessName),
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None,
+          forceUkAddress = false
         )
       )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
@@ -53,25 +54,16 @@ abstract class ContactDetailsConfirmAddressControllerBase(
     journeyAction.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
-
           registrationUpdater.updateRegistration { registration =>
             registration.copy(groupDetail =
               registration.groupDetail.map(
                 _.withUpdatedOrNewMember(
-                  registration.findMember(memberId).map(
-                    _.withUpdatedGroupMemberAddress(capturedAddress)
-                  ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+                  registration.findMember(memberId).map(_.withUpdatedGroupMemberAddress(capturedAddress)).getOrElse(throw new IllegalStateException("Expected group member absent"))
                 )
               )
             )
           }.map { registration =>
-            Redirect(
-              getSuccessfulRedirect(
-                registration.findMember(memberId).map(_.id).getOrElse(
-                  throw new IllegalStateException("Expected group member missing")
-                )
-              )
-            )
+            Redirect(getSuccessfulRedirect(registration.findMember(memberId).map(_.id).getOrElse(throw new IllegalStateException("Expected group member missing"))))
           }
       }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[GetRegistrationActionImpl])
 trait GetRegistrationAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest]
 
-class GetRegistrationActionImpl @Inject()(
-  registrationConnector: RegistrationConnector,
-  auditor: Auditor,
-)(implicit val executionContext: ExecutionContext) extends GetRegistrationAction with Logging {
+class GetRegistrationActionImpl @Inject() (registrationConnector: RegistrationConnector, auditor: Auditor)(implicit val executionContext: ExecutionContext)
+    extends GetRegistrationAction with Logging {
 
-  override protected def refine[A](
-    request: AuthenticatedRequest[A]
-  ): Future[Either[Result, JourneyRequest[A]]] = {
+  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     loadOrCreateRegistration(request.cacheId)(hc).map {
@@ -48,9 +44,7 @@ class GetRegistrationActionImpl @Inject()(
     }
   }
 
-  private def loadOrCreateRegistration[A](
-    id: String
-  )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, Registration]] =
+  private def loadOrCreateRegistration[A](id: String)(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, Registration]] =
     registrationConnector.find(id).flatMap {
       case Right(Some(reg)) => Future.successful(Right(reg))
       case Right(None) =>

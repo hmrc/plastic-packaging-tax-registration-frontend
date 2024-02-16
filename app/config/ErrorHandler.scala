@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,9 @@ import views.html.error_template
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 @Singleton
-class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)
-    extends FrontendErrorHandler {
+class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi) extends FrontendErrorHandler {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    request: Request[_]
-  ): Html =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     error_template(pageTitle, heading, List(message))
 
   override def badRequestTemplate(implicit request: Request[_]): Html          = pptErrorTemplate()
@@ -37,14 +34,9 @@ class ErrorHandler @Inject() (error_template: error_template, val messagesApi: M
   override def internalServerErrorTemplate(implicit request: Request[_]): Html = pptErrorTemplate()
 
   private def pptErrorTemplate()(implicit request: Request[_]) =
-    customisedErrorTemplate(Messages("error.title"),
-                            Messages("error.title"),
-                            List(Messages("error.detail1"), Messages("error.detail2"))
-    )
+    customisedErrorTemplate(Messages("error.title"), Messages("error.title"), List(Messages("error.detail1"), Messages("error.detail2")))
 
-  private def customisedErrorTemplate(pageTitle: String, heading: String, messages: List[String])(
-    implicit request: Request[_]
-  ): Html =
+  private def customisedErrorTemplate(pageTitle: String, heading: String, messages: List[String])(implicit request: Request[_]): Html =
     error_template(pageTitle, heading, messages)
 
 }

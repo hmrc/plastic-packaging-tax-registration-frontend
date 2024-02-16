@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   "Email Address Passcode Confirmation View" should {
 
-    val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
-      request = registrationJourneyRequest,
-      messages = messages
-    )
+    val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(request = registrationJourneyRequest, messages = messages)
 
     "contain timeout dialog function" in {
 
@@ -42,16 +39,12 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("primaryContactDetails.emailAddress.passcode.confirmation.title")
-      )
+      view.select("title").text() must include(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
     }
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("primaryContactDetails.sectionHeader")
-      )
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
     }
 
     "display 'Continue' button" in {

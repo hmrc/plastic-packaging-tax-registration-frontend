@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,26 +29,17 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
-class AddPartnerContactDetailsCheckAnswersControllerSpec
-    extends ControllerSpec with AmendmentControllerSpec {
+class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc     = stubMessagesControllerComponents()
   private val cyaPage = mock[amend_add_partner_contact_check_answers_page]
 
   when(cyaPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Partner CYA"))
 
-  private val controller = new AddPartnerContactDetailsCheckAnswersController(
-    amendRegistrationService = mockAmendRegService,
-    journeyAction = spyJourneyAction,
-    mcc = mcc,
-    page = cyaPage
-  )
+  private val controller =
+    new AddPartnerContactDetailsCheckAnswersController(amendRegistrationService = mockAmendRegService, journeyAction = spyJourneyAction, mcc = mcc, page = cyaPage)
 
-  private val partnerRegistrationInAmendment = aRegistration(
-    withPartnershipDetails(
-      Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner)))
-    )
-  )
+  private val partnerRegistrationInAmendment = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner)))))
 
   override protected def beforeEach(): Unit = {
     reset(mockAmendRegService, spyJourneyAction)
@@ -96,9 +87,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
-            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
-          )
+          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
         }
         "update fails due to error returned from ETMP" in {
           simulateUpdateSubscriptionWithRegFailureReturnedError()
@@ -106,9 +95,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
-            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
-          )
+          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
         }
       }
     }

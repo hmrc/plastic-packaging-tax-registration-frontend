@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ trait ViewAssertions extends ViewMatchers {
 
   def displaySignOutLink(view: Element) = {
     view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
-    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref(
-      routes.SignOutController.signOut(SignOutReason.UserAction)
-    )
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref(routes.SignOutController.signOut(SignOutReason.UserAction))
   }
 
 }

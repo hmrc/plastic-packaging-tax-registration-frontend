@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,19 +30,14 @@ trait RadiosFluency {
 
   object RadiosViewModel extends ErrorMessageAwareness with FieldsetFluency {
 
-    def apply(field: Field, items: Seq[RadioItem], legend: Legend = Legend.defaultObject)(implicit
-                                                                                          messages: Messages
-    ): Radios =
+    def apply(field: Field, items: Seq[RadioItem], legend: Legend = Legend.defaultObject)(implicit messages: Messages): Radios =
       apply(field = field, items = items, fieldset = FieldsetViewModel(legend))
 
-    def apply(field: Field, items: Seq[RadioItem], fieldset: Fieldset)(implicit
-                                                                       messages: Messages
-    ): Radios =
-      Radios(fieldset = Some(fieldset),
+    def apply(field: Field, items: Seq[RadioItem], fieldset: Fieldset)(implicit messages: Messages): Radios =
+      Radios(
+        fieldset = Some(fieldset),
         name = field.name,
-        items = items map (
-          item => item copy (checked = field.value.isDefined && field.value == item.value)
-          ),
+        items = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
         errorMessage = errorMessage(field)
       )
 
@@ -53,10 +48,7 @@ trait RadiosFluency {
 
       val items = Seq(
         RadioItem(id = Some(field.id), value = Some(YesNoValues.YES), content = Text(messages("general.true"))),
-        RadioItem(id = Some(s"${field.id}-no"),
-          value = Some(YesNoValues.NO),
-          content = Text(messages("general.false"))
-        )
+        RadioItem(id = Some(s"${field.id}-no"), value = Some(YesNoValues.NO), content = Text(messages("general.false")))
       )
 
       apply(field = field, fieldset = fieldset, items = items)
@@ -87,4 +79,3 @@ trait RadiosFluency {
   }
 
 }
-

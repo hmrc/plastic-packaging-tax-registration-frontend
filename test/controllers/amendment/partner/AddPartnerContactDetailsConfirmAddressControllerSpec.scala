@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import scala.concurrent.Future
 
 class AddPartnerContactDetailsConfirmAddressControllerSpec
-    extends ControllerSpec with MockRegistrationAmendmentRepository with AddressCaptureSpec with AmendmentControllerSpec
-    with PptTestData {
+    extends ControllerSpec with MockRegistrationAmendmentRepository with AddressCaptureSpec with AmendmentControllerSpec with PptTestData {
 
   private val mcc       = stubMessagesControllerComponents()
   private val sessionId = "123"
@@ -106,9 +105,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
           registration.get.inflightPartner.get.contactDetails.get.address mustBe validCapturedAddress
         }
 
-        redirectLocation(Future.successful(resp)) mustBe Some(
-          routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url
-        )
+        redirectLocation(Future.successful(resp)) mustBe Some(routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url)
       }
     }
   }

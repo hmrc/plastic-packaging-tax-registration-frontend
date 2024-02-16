@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
     mock[EmailTestOnlyPasscodeConnector]
 
   private val controller =
-    new EmailPasscodeController(authenticate = FakeBasicAuthAction,
-                                mcc = mcc,
-                                emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
-    )
+    new EmailPasscodeController(authenticate = FakeBasicAuthAction, mcc = mcc, emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector)
 
   "EmailPasscode controller" should {
 
@@ -47,9 +44,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
       "passcode is returned successfully" in {
 
-        when(
-          mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
-        ).thenReturn(Future.successful(Right("passcodes")))
+        when(mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])).thenReturn(Future.successful(Right("passcodes")))
         val result = controller.testOnlyGetPasscodes()(FakeRequest())
         status(result) mustBe OK
       }
@@ -59,17 +54,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
       "connector throws an exception" in {
 
-        when(
-          mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
-        ).thenReturn(
-          Future.successful(
-            Left(
-              DownstreamServiceError(
-                "Some exception",
-                FailedToFetchTestOnlyPasscode("Failed to fetch test only passcode")
-              )
-            )
-          )
+        when(mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])).thenReturn(
+          Future.successful(Left(DownstreamServiceError("Some exception", FailedToFetchTestOnlyPasscode("Failed to fetch test only passcode"))))
         )
 
         intercept[DownstreamServiceError](status(controller.testOnlyGetPasscodes()(FakeRequest())))

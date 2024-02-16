@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[MongoUserDataRepository])
 trait UserDataRepository {
 
-  def putData[T: Writes](key: String, data: T)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[T]
+  def putData[T: Writes](key: String, data: T)(implicit request: AuthenticatedRequest[Any]): Future[T]
 
   def putData[T: Writes](id: String, key: String, data: T): Future[T]
 
@@ -43,19 +41,13 @@ trait UserDataRepository {
   def deleteData[T: Writes](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Unit]
   def deleteData[T: Writes](id: String, key: String): Future[Unit]
 
-  def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[Unit]
+  def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit request: AuthenticatedRequest[Any]): Future[Unit]
 
   def reset(): Unit
 }
 
 @Singleton
-class MongoUserDataRepository @Inject() (
-  mongoComponent: MongoComponent,
-  configuration: Configuration,
-  timestampSupport: TimestampSupport
-)(implicit ec: ExecutionContext)
+class MongoUserDataRepository @Inject() (mongoComponent: MongoComponent, configuration: Configuration, timestampSupport: TimestampSupport)(implicit ec: ExecutionContext)
     extends MongoCacheRepository(
       mongoComponent = mongoComponent,
       collectionName = "userDataCache",
@@ -66,17 +58,13 @@ class MongoUserDataRepository @Inject() (
 
   private def id(implicit request: AuthenticatedRequest[Any]): String = request.cacheId
 
-  override def putData[T: Writes](key: String, data: T)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[T] =
+  override def putData[T: Writes](key: String, data: T)(implicit request: AuthenticatedRequest[Any]): Future[T] =
     put[T](id)(DataKey(key), data).map(_ => data)
 
   override def putData[A: Writes](id: String, key: String, data: A): Future[A] =
     put[A](id)(DataKey(key), data).map(_ => data)
 
-  override def getData[A: Reads](key: String)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[Option[A]] = get[A](id)(DataKey(key))
+  override def getData[A: Reads](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Option[A]] = get[A](id)(DataKey(key))
 
   override def getData[A: Reads](id: String, key: String): Future[Option[A]] =
     get[A](id)(DataKey(key))
@@ -84,17 +72,13 @@ class MongoUserDataRepository @Inject() (
   def findBySessionId(id: String): Future[CacheItem] =
     findById(id).map(_.getOrElse(throw SessionRecordNotFound()))
 
-  override def deleteData[A: Writes](
-    key: String
-  )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+  override def deleteData[A: Writes](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     delete[A](id)(DataKey(key))
 
   override def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
 
-  override def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[Unit] =
+  override def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     getData(key).map(data => data.map(data => putData(key, updater(data))))
 
   override def reset(): Unit = {}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ object OrganisationType extends CommonFormValidators {
       case ActionEnum.Org                  => "organisationDetails.type.empty.error"
       case ActionEnum.RepresentativeMember => "organisationDetails.type.empty.member.error"
       case ActionEnum.Group                => "organisationDetails.type.empty.group.error"
-      case other => throw new IllegalStateException(s"Invalid action: $other")
+      case other                           => throw new IllegalStateException(s"Invalid action: $other")
     }
 
     Form(

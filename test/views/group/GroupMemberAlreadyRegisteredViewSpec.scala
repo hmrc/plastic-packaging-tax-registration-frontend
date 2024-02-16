@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,25 +38,17 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
     val view: Html = createView()
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("group.member.already.registered.title", "Plastic Packaging Ltd")
-      )
+      view.select("title").text() must include(messages("group.member.already.registered.title", "Plastic Packaging Ltd"))
     }
 
     "display heading" in {
-      view.select("h1").text() must include(
-        messages("group.member.already.registered.title", "Plastic Packaging Ltd")
-      )
+      view.select("h1").text() must include(messages("group.member.already.registered.title", "Plastic Packaging Ltd"))
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("group.member.already.registered.detail1", "Plastic Packaging Ltd")
-      )
+      view.select("p.govuk-body").text() must include(messages("group.member.already.registered.detail1", "Plastic Packaging Ltd"))
       val details = view.getElementsByClass(gdsPageBodyText)
-      details.get(1) must containMessage("group.member.already.registered.detail2",
-                                         "Plastic Packaging Ltd"
-      )
+      details.get(1) must containMessage("group.member.already.registered.detail2", "Plastic Packaging Ltd")
     }
   }
 

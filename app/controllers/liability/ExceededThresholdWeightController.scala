@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,19 +31,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExceededThresholdWeightController @Inject() (
-                                                    journeyAction: JourneyAction,
-                                                    appConfig: AppConfig,
-                                                    override val registrationConnector: RegistrationConnector,
-                                                    mcc: MessagesControllerComponents,
-                                                    form: ExceededThresholdWeight,
-                                                    page: exceeded_threshold_weight_page
+  journeyAction: JourneyAction,
+  appConfig: AppConfig,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  form: ExceededThresholdWeight,
+  page: exceeded_threshold_weight_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
-
-      val filledForm = request.registration.liabilityDetails.exceededThresholdWeight  match {
+      val filledForm = request.registration.liabilityDetails.exceededThresholdWeight match {
         case Some(yesNo) => form().fill(yesNo)
         case _           => form()
       }
@@ -54,9 +53,8 @@ class ExceededThresholdWeightController @Inject() (
   def submit: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       form().bindFromRequest().fold(
-        errorForm =>
-          Future.successful(BadRequest(page(errorForm)))
-      , alreadyExceeded =>
+        errorForm => Future.successful(BadRequest(page(errorForm))),
+        alreadyExceeded =>
           updateRegistration(alreadyExceeded)
             .map {
               case Right(_) =>
@@ -67,9 +65,7 @@ class ExceededThresholdWeightController @Inject() (
       )
     }
 
-  private def updateRegistration(
-    alreadyExceeded: Boolean
-  )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(alreadyExceeded: Boolean)(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(

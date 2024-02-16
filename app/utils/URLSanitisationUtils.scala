@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,10 @@ object URLSanitisationUtils {
 
   def asRelativeUrl(url: String): Option[String] =
     for {
-      uri <- Try(new URI(url)).toOption
-      path <- Option(uri.getPath)
-      query <- Option(uri.getQuery).map("?" + _).orElse(Some(""))
+      uri      <- Try(new URI(url)).toOption
+      path     <- Option(uri.getPath)
+      query    <- Option(uri.getQuery).map("?" + _).orElse(Some(""))
       fragment <- Option(uri.getRawFragment).map("#" + _).orElse(Some(""))
     } yield s"$path$query$fragment"
+
 }

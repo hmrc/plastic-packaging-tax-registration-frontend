@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,16 +25,17 @@ class PptHelplineDetailsSpec extends UnitViewSpec with Matchers {
   private val pptHelplinePartial = inject[pptHelplineDetails]
 
   private def pageParagraphMessageKeys =
-    List("pptHelpline.intro",
-         "pptHelpline.telephone.title",
-         "pptHelpline.telephone.detail",
-         "pptHelpline.textphone.title",
-         "pptHelpline.textphone.detail",
-         "pptHelpline.telephone.outsideUK.title",
-         "pptHelpline.telephone.outsideUK.detail",
-         "pptHelpline.openingTimes.title",
-         "pptHelpline.openingTimes.detail.1",
-         "pptHelpline.openingTimes.detail.2"
+    List(
+      "pptHelpline.intro",
+      "pptHelpline.telephone.title",
+      "pptHelpline.telephone.detail",
+      "pptHelpline.textphone.title",
+      "pptHelpline.textphone.detail",
+      "pptHelpline.telephone.outsideUK.title",
+      "pptHelpline.telephone.outsideUK.detail",
+      "pptHelpline.openingTimes.title",
+      "pptHelpline.openingTimes.detail.1",
+      "pptHelpline.openingTimes.detail.2"
     )
 
   "PPT Helpline partial" should {

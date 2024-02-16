@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,18 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
-  private[mappings] def yesNoFormatter(msgKey: String): Formatter[Boolean] = new Formatter[Boolean] {
+  private[mappings] def yesNoFormatter(msgKey: String): Formatter[Boolean] =
+    new Formatter[Boolean] {
 
-    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] = {
-      data.get(key) match {
-        case Some(YesNoValues.YES) => Right(true)
-        case Some(YesNoValues.NO) => Right(false)
-        case _ => Left(Seq(FormError(key, msgKey)))
-      }
+      def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
+        data.get(key) match {
+          case Some(YesNoValues.YES) => Right(true)
+          case Some(YesNoValues.NO)  => Right(false)
+          case _                     => Left(Seq(FormError(key, msgKey)))
+        }
+
+      def unbind(key: String, value: Boolean) = Map(key -> { if (value) YesNoValues.YES else YesNoValues.NO })
     }
-
-    def unbind(key: String, value: Boolean) = Map(key -> {if (value) YesNoValues.YES else YesNoValues.NO})
-  }
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] =
     new Formatter[String] {
@@ -51,12 +51,7 @@ trait Formatters {
 
     }
 
-  private[mappings] def intFormatter(
-    requiredKey: String,
-    wholeNumberKey: String,
-    nonNumericKey: String,
-    args: Seq[String] = Seq.empty
-  ): Formatter[Int] =
+  private[mappings] def intFormatter(requiredKey: String, wholeNumberKey: String, nonNumericKey: String, args: Seq[String] = Seq.empty): Formatter[Int] =
     new Formatter[Int] {
 
       val decimalRegexp = """^-?(\d*\.\d*)$"""

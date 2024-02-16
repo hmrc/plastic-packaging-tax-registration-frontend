@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ package views.liability
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import controllers.liability.{
-  routes => liabilityRoutes
-}
+import controllers.liability.{routes => liabilityRoutes}
 import views.html.liability.not_members_under_group_control_page
 
 class NotMembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
@@ -47,9 +45,7 @@ class NotMembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        liabilityRoutes.MembersUnderGroupControlController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(liabilityRoutes.MembersUnderGroupControlController.displayPage())
     }
 
     "display title" in {
@@ -59,9 +55,7 @@ class NotMembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers
 
     "display detail" in {
 
-      view.getElementsByClass(
-        "govuk-body"
-      ).text() mustBe "You can apply as a single organisation or partnership."
+      view.getElementsByClass("govuk-body").text() mustBe "You can apply as a single organisation or partnership."
     }
 
     "display 'Continue' button" in {

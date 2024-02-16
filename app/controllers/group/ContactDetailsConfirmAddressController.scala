@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +26,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-                                                         journeyAction: JourneyAction,
-                                                         addressCaptureService: AddressCaptureService,
-                                                         mcc: MessagesControllerComponents,
-                                                         registrationUpdater: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(
-                                                       journeyAction.register,
-                                                       addressCaptureService,
-                                                       mcc,
-                                                       registrationUpdater
-    ) {
+    extends ContactDetailsConfirmAddressControllerBase(journeyAction.register, addressCaptureService, mcc, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, routes.ContactDetailsTelephoneNumberController.displayPage(memberId))

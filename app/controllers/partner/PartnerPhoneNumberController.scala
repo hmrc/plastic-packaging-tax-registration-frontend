@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,41 +27,37 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerPhoneNumberController @Inject() (
-                                               journeyAction: JourneyAction,
-                                               mcc: MessagesControllerComponents,
-                                               page: partner_phone_number_page,
-                                               registrationUpdateService: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: partner_phone_number_page,
+  registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerPhoneNumberControllerBase(journeyAction = journeyAction.register,
-                                             mcc = mcc,
-                                             page = page,
-                                             registrationUpdater = registrationUpdateService
-    ) {
+    extends PartnerPhoneNumberControllerBase(journeyAction = journeyAction.register, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
 
   def displayNewPartner(): Action[AnyContent] =
-    doDisplay(None,
-              partnerRoutes.PartnerContactNameController.displayNewPartner,
-              partnerRoutes.PartnerPhoneNumberController.submitNewPartner()
-    )
+    doDisplay(None, partnerRoutes.PartnerContactNameController.displayNewPartner, partnerRoutes.PartnerPhoneNumberController.submitNewPartner())
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplay(Some(partnerId),
-              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-              partnerRoutes.PartnerPhoneNumberController.submitExistingPartner(partnerId)
+    doDisplay(
+      Some(partnerId),
+      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      partnerRoutes.PartnerPhoneNumberController.submitExistingPartner(partnerId)
     )
 
   def submitNewPartner(): Action[AnyContent] =
-    doSubmit(None,
-             partnerRoutes.PartnerContactNameController.displayNewPartner,
-             partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
-             partnerRoutes.PartnerContactAddressController.captureNewPartner()
+    doSubmit(
+      None,
+      partnerRoutes.PartnerContactNameController.displayNewPartner,
+      partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
+      partnerRoutes.PartnerContactAddressController.captureNewPartner()
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    doSubmit(Some(partnerId),
-             routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-             routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-             routes.PartnerContactAddressController.captureExistingPartner(partnerId)
+    doSubmit(
+      Some(partnerId),
+      routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
+      routes.PartnerContactAddressController.captureExistingPartner(partnerId)
     )
 
 }

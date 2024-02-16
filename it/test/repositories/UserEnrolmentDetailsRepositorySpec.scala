@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import forms.enrolment._
 import models.registration.UserEnrolmentDetails
@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UserEnrolmentDetailsRepository.repositoryKey
+import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import spec.PptTestData
 
 import scala.concurrent.ExecutionContext.global
@@ -37,10 +38,11 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
   val sut = new UserEnrolmentDetailsRepository(mockUserDataRepository)(global)
 
   override val userEnrolmentDetails =
-    UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
-                         isUkAddress = Some(IsUkAddress(Some(true))),
-                         postcode = Some(Postcode("LS1 1AA")),
-                         registrationDate = Some(RegistrationDate(DateData("1", "2", "2022")))
+    UserEnrolmentDetails(
+      pptReference = Some(PptReference("ppt-ref")),
+      isUkAddress = Some(IsUkAddress(Some(true))),
+      postcode = Some(Postcode("LS1 1AA")),
+      registrationDate = Some(RegistrationDate(DateData("1", "2", "2022")))
     )
 
   override def beforeEach(): Unit = {

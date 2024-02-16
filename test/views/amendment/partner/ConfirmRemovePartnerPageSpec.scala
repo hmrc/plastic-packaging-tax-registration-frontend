@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain title" in {
-      view.select("title").text() must include(
-        messages(key = "amend.partner.remove.title", args = partner.name)
-      )
+      view.select("title").text() must include(messages(key = "amend.partner.remove.title", args = partner.name))
     }
 
     "Display caption" in {
@@ -47,9 +45,7 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
     }
 
     "contain heading" in {
-      view.select("h1").text() mustBe messages(key = "amend.partner.remove.title",
-        args = partner.name
-      )
+      view.select("h1").text() mustBe messages(key = "amend.partner.remove.title", args = partner.name)
     }
 
     "contain radio groups with yes option" in {

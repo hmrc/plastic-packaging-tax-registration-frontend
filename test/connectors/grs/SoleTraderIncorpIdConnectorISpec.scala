@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,7 @@ import play.api.libs.json.Json.toJson
 import play.api.test.Helpers._
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import models.genericregistration.{
-  GrsSoleTraderDetails,
-  SoleTraderDetails,
-  SoleTraderGrsCreateRequest
-}
+import models.genericregistration.{GrsSoleTraderDetails, SoleTraderDetails, SoleTraderGrsCreateRequest}
 
 class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
@@ -43,11 +39,12 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injecting wit
       val testJourneyStartUrl  = "/identify-your-incorporated-business/uuid-id/company-number"
       val testDeskProServiceId = "plastic-packaging-tax"
       val testJourneyRequest =
-        SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                   deskProServiceId = "plastic-packaging-tax",
-                                   signOutUrl = "/feedback/plastic-packaging-tax",
-                                   accessibilityUrl = "accessibilityUrl",
-                                   optServiceName = Some("myService")
+        SoleTraderGrsCreateRequest(
+          continueUrl = "/plastic-packaging-tax/registration",
+          deskProServiceId = "plastic-packaging-tax",
+          signOutUrl = "/feedback/plastic-packaging-tax",
+          accessibilityUrl = "accessibilityUrl",
+          optServiceName = Some("myService")
         )
 
       stubFor(
@@ -55,11 +52,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injecting wit
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
-              .withBody(
-                Json.obj("journeyStartUrl"  -> testJourneyStartUrl,
-                         "deskProServiceId" -> testDeskProServiceId
-                ).toString
-              )
+              .withBody(Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString)
           )
       )
 
@@ -71,11 +64,12 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injecting wit
 
     "throw exception if http status is not 'CREATED'" in {
       val testJourneyConfig =
-        SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                   deskProServiceId = "plastic-packaging-tax",
-                                   signOutUrl = "/feedback/plastic-packaging-tax",
-                                   accessibilityUrl = "accessibilityUrl",
-                                   optServiceName = Some("myService")
+        SoleTraderGrsCreateRequest(
+          continueUrl = "/plastic-packaging-tax/registration",
+          deskProServiceId = "plastic-packaging-tax",
+          signOutUrl = "/feedback/plastic-packaging-tax",
+          accessibilityUrl = "accessibilityUrl",
+          optServiceName = Some("myService")
         )
 
       stubFor(

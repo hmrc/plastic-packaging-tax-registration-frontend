@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,7 @@ import scala.concurrent.Future
 trait Cacheable {
   def registrationConnector: RegistrationConnector
 
-  protected def update(cache: Registration => Registration)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[_]
-  ): Future[Either[ServiceError, Registration]] =
+  protected def update(cache: Registration => Registration)(implicit hc: HeaderCarrier, request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     registrationConnector.update(cache(request.registration))
 
 }

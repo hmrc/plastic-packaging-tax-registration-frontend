@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,8 @@ import views.html.liability.not_members_under_group_control_page
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NotMembersUnderGroupControlController @Inject() (
-                                                        journeyAction: JourneyAction,
-                                                        mcc: MessagesControllerComponents,
-                                                        page: not_members_under_group_control_page
-) extends FrontendController(mcc) with I18nSupport {
+class NotMembersUnderGroupControlController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents, page: not_members_under_group_control_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>

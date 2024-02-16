@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
-class ContactDetailsTooManyAttemptsPasscodeController @Inject() (
-  mcc: MessagesControllerComponents,
-  page: too_many_attempts_passcode_page
-) extends FrontendController(mcc) with I18nSupport {
+class ContactDetailsTooManyAttemptsPasscodeController @Inject() (mcc: MessagesControllerComponents, page: too_many_attempts_passcode_page)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     Action { implicit request =>

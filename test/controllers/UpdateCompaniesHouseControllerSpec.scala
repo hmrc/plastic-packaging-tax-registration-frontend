@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,7 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
   val mockView: UpdateCompaniesHouseView = mock[UpdateCompaniesHouseView]
   when(mockView.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Test View"))
 
-  val sut = new UpdateCompaniesHouseController(
-    journeyAction = spyJourneyAction,
-    mockRegistrationConnector,
-    mockView,
-    stubMessagesControllerComponents().messagesApi
-  )
+  val sut = new UpdateCompaniesHouseController(journeyAction = spyJourneyAction, mockRegistrationConnector, mockView, stubMessagesControllerComponents().messagesApi)
 
   "onPageLoad" should {
     "return the view" in {

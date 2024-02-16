@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,23 +35,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddGroupMemberConfirmBusinessAddressController @Inject() (
-                                                   journeyAction: JourneyAction,
-                                                   override val registrationConnector: RegistrationConnector,
-                                                   addressCaptureService: AddressCaptureService,
-                                                   mcc: MessagesControllerComponents,
-                                                   page: confirm_business_address
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents,
+  page: confirm_business_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(memberId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-
       val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
 
       val orgType = member.organisationDetails
-        .fold(throw new IllegalStateException("Failed to get org type for member"))(
-          dets => OrgType.withName(dets.organisationType)
-        )
+        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
 
       val redirectTo = routes.AddGroupMemberContactDetailsNameController.displayPage(memberId).url
 
@@ -61,7 +58,7 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
         case _ =>
           orgType match {
             case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, forceUKAddress = false)
-            case _ => initialiseAddressLookup(memberId, request, forceUKAddress = true)
+            case _                          => initialiseAddressLookup(memberId, request, forceUKAddress = true)
           }
       }
     }
@@ -75,8 +72,7 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
     else
       false
 
-  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent],
-                                      forceUKAddress: Boolean): Future[Result] =
+  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], forceUKAddress: Boolean): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.AddGroupMemberConfirmBusinessAddressController.displayPage(memberId).url,

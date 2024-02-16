@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,31 +28,23 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
-                                                    journeyAction: JourneyAction,
-                                                    mcc: MessagesControllerComponents,
-                                                    appConfig: AppConfig,
-                                                    page: organisation_type,
-                                                    registrationUpdater: NewRegistrationUpdateService,
-                                                    val soleTraderGrsConnector: SoleTraderGrsConnector,
-                                                    val ukCompanyGrsConnector: UkCompanyGrsConnector,
-                                                    val partnershipGrsConnector: PartnershipGrsConnector,
-                                                    val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig,
+  page: organisation_type,
+  registrationUpdater: NewRegistrationUpdateService,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
 )(implicit ec: ExecutionContext)
-    extends OrganisationDetailsTypeControllerBase(
-                                                  journeyAction.register,
-                                                  appConfig,
-                                                  page,
-                                                  registrationUpdater,
-                                                  mcc
-    ) {
+    extends OrganisationDetailsTypeControllerBase(journeyAction.register, appConfig, page, registrationUpdater, mcc) {
 
   def displayPageNewMember() =
     doDisplayPage(None, routes.OrganisationDetailsTypeController.submitNewMember())
 
   def displayPageAmendMember(memberId: String) =
-    doDisplayPage(Some(memberId),
-                  routes.OrganisationDetailsTypeController.submitAmendMember(memberId)
-    )
+    doDisplayPage(Some(memberId), routes.OrganisationDetailsTypeController.submitAmendMember(memberId))
 
   def submitNewMember() = doSubmit(None, routes.OrganisationDetailsTypeController.submitNewMember())
 

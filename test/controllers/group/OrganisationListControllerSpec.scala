@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,21 +33,13 @@ class OrganisationListControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new OrganisationListController(journeyAction = spyJourneyAction,
-                                   mockRegistrationConnector,
-                                   mcc = mcc,
-                                   page = page
-    )
+    new OrganisationListController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
-    val registration = aRegistration(
-      withGroupDetail(
-        Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))
-      )
-    )
+    val registration = aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))))
     spyJourneyAction.setReg(registration)
   }
 
@@ -61,7 +53,6 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 200 (Ok)" when {
 
       "user is authorised and display page method is invoked" in {
-
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -77,9 +68,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.routes.TaskListController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(controllers.routes.TaskListController.displayPage().url)
       }
 
     }
@@ -88,18 +77,12 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
       "group member list is empty" in {
 
-        val registration = aRegistration(
-          withGroupDetail(
-            Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))
-          )
-        )
+        val registration = aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))))
         spyJourneyAction.setReg(registration)
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
-        )
+        redirectLocation(result) mustBe Some(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url)
       }
 
     }
@@ -111,7 +94,6 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "return 400 (Bad request)" when {
 
       "user does not make a selection" in {
-
 
         val correctForm = Seq("addOrganisation" -> "")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -125,28 +107,22 @@ class OrganisationListControllerSpec extends ControllerSpec {
     "redirects to registration page" when {
       "user does not want to add another" in {
 
-
         val correctForm = Seq("addOrganisation" -> "no")
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.routes.TaskListController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(controllers.routes.TaskListController.displayPage().url)
       }
     }
 
     "redirects to add group organisation page" when {
       "user does want to add another" in {
 
-
         val correctForm = Seq("addOrganisation" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
-        )
+        redirectLocation(result) mustBe Some(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url)
       }
     }
 

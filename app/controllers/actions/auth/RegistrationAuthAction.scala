@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,30 +35,22 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[RegistrationAuthActionImpl])
 trait RegistrationAuthAction extends ActionBuilder[RegistrationRequest, AnyContent]
 
-class RegistrationAuthActionImpl @Inject()(
-   override val authConnector: AuthConnector,
-   override val parser: BodyParsers.Default,
-   appConfig: AppConfig
- )(implicit val executionContext: ExecutionContext) extends RegistrationAuthAction
-  with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
+class RegistrationAuthActionImpl @Inject() (override val authConnector: AuthConnector, override val parser: BodyParsers.Default, appConfig: AppConfig)(implicit
+  val executionContext: ExecutionContext
+) extends RegistrationAuthAction with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = credentials and internalId and allEnrolments
 
-  override def invokeBlock[A](
-                               request: Request[A],
-                               block: RegistrationRequest[A] => Future[Result]
-                             ): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val continueUrl = request.target.path
 
-    authorised(
-      (AffinityGroup.Organisation.or(AffinityGroup.Individual)).and(User).and(CredentialStrength(CredentialStrength.strong))
-    )
+    authorised((AffinityGroup.Organisation.or(AffinityGroup.Individual)).and(User).and(CredentialStrength(CredentialStrength.strong)))
       .retrieve(retrievals) {
         case _ ~ _ ~ allEnrolments if allEnrolments.getEnrolment(PptEnrolment.Key).isDefined =>
           Future.successful(Redirect(appConfig.pptAccountUrl))
-        case credentials ~ internalId  ~ _ =>
+        case credentials ~ internalId ~ _ =>
           val identityData = IdentityData(internalId, credentials)
 
           block(RegistrationRequest(request, identityData))
@@ -78,10 +70,6 @@ class RegistrationAuthActionImpl @Inject()(
   }
 
   private def upliftCredentialStrength(continueUrl: String): Result =
-    Redirect(appConfig.mfaUpliftUrl,
-      Map("origin" -> Seq(appConfig.serviceIdentifier),
-        "continueUrl" -> Seq(continueUrl)
-      )
-    )
+    Redirect(appConfig.mfaUpliftUrl, Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl)))
 
 }

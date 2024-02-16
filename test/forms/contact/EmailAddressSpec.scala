@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,7 @@ import base.unit.CommonTestUtils
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.contact.EmailAddress.{
-  emailAddress,
-  emailAddressEmptyError,
-  emailAddressFormatError
-}
+import forms.contact.EmailAddress.{emailAddress, emailAddressEmptyError, emailAddressFormatError}
 
 class EmailAddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
   "Email address validation rules" should {
@@ -68,9 +64,7 @@ class EmailAddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "exceeds the max length" in {
 
-        val input = Map(
-          emailAddress -> "aasdasdfsdaadsdfsfklgjfdlgjdflgdfjkndflfgjflgjfdlgjdfkgdfkghflkghslkgjhighkdngkngflgdioldlndndkgndfjkgkgdfgkdfgkdhgkdhgkdhgdfkgh@test.com"
-        )
+        val input          = Map(emailAddress -> "aasdasdfsdaadsdfsfklgjfdlgjdflgdfjkndflfgjflgjfdlgjdfkgdfkghflkghslkgjhighkdngkngflgdioldlndndkgndfjkgkgdfgkdfgkdhgkdhgkdhgdfkgh@test.com")
         val expectedErrors = Seq(FormError(emailAddress, emailAddressFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
@@ -78,10 +72,7 @@ class EmailAddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = EmailAddress.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }

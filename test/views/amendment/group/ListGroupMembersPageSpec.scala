@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,7 @@ import play.twirl.api.HtmlFormat
 import config.AppConfig
 import controllers.amendment.group.routes
 import views.html.amendment.group.list_group_members_page
-import views.viewmodels.{
-  ListGroupMembersViewModel,
-  ListMember
-}
+import views.viewmodels.{ListGroupMembersViewModel, ListMember}
 import forms.group.AddOrganisationForm
 import forms.group.AddOrganisationForm._
 

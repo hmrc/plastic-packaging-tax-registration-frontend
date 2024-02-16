@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,20 +33,12 @@ class ManagePartnersControllerSpec extends ControllerSpec with AmendmentControll
   private val mcc                    = stubMessagesControllerComponents()
   private val mockManagePartnersPage = mock[manage_partners_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-  private val managePartnersController = new ManagePartnersController(
-    mcc = mcc,
-    page = mockManagePartnersPage,
-    journeyAction = spyJourneyAction
-  )
+  private val managePartnersController = new ManagePartnersController(mcc = mcc, page = mockManagePartnersPage, journeyAction = spyJourneyAction)
 
   override protected def beforeEach(): Unit =
-    when(
-      mockManagePartnersPage.apply(ArgumentMatchers.eq(partnershipRegistration))(any(), any())
-    ).thenReturn(Html("Manage Partners Page"))
+    when(mockManagePartnersPage.apply(ArgumentMatchers.eq(partnershipRegistration))(any(), any())).thenReturn(Html("Manage Partners Page"))
 
   "Manage Partners Controller" should {
     "display the manage partners page" in {
@@ -58,6 +50,5 @@ class ManagePartnersControllerSpec extends ControllerSpec with AmendmentControll
       contentAsString(resp) mustBe "Manage Partners Page"
     }
   }
-
 
 }

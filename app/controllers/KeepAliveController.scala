@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class KeepAliveController @Inject() (
-  mcc: MessagesControllerComponents,
-  journeyAction: JourneyAction
-) extends FrontendController(mcc) with I18nSupport {
+class KeepAliveController @Inject() (mcc: MessagesControllerComponents, journeyAction: JourneyAction) extends FrontendController(mcc) with I18nSupport {
 
-  def keepAlive(): Action[AnyContent] = journeyAction.amend { Ok }
+  def keepAlive(): Action[AnyContent] = journeyAction.amend(Ok)
 
 }

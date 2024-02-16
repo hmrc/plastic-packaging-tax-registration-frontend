@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,21 @@ class ListGroupMembersViewModel(registration: Registration) {
 
   def listMembers(implicit messages: Messages): Seq[ListMember] =
     ListMember(
-      name = registration.organisationDetails.businessName.getOrElse(
-        throw new IllegalStateException("Missing Business Name")
-      ),
+      name = registration.organisationDetails.businessName.getOrElse(throw new IllegalStateException("Missing Business Name")),
       subHeading = Some(messages("amend.group.manage.representativeMember"))
     ) +:
       registration.groupDetail.toSeq.flatMap(
         o =>
           o.members.map(
             member =>
-              ListMember(name = member.businessName,
-                         change =
-                           Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                         remove =
-                           if (o.members.length > 1)
-                             Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-                           else None
+              ListMember(
+                name = member.businessName,
+                change =
+                  Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                remove =
+                  if (o.members.length > 1)
+                    Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+                  else None
               )
           )
       )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,11 +53,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("contactDetails.member.phoneNumber.title",
-                 contactName.getOrElse(messages("primaryContactDetails.fullName.default"))
-        )
-      )
+      view.select("title").text() must include(messages("contactDetails.member.phoneNumber.title", contactName.getOrElse(messages("primaryContactDetails.fullName.default"))))
     }
 
     "display caption" in {
@@ -67,16 +63,12 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "display hint" in {
 
-      view.getElementById("value-hint").text() must include(
-        messages("contactDetails.member.phoneNumber.hint")
-      )
+      view.getElementById("value-hint").text() must include(messages("contactDetails.member.phoneNumber.hint"))
     }
 
     "output hidden label correctly" in {
       view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
-        messages("contactDetails.member.phoneNumber.title",
-                 contactName.getOrElse(messages("primaryContactDetails.fullName.default"))
-        )
+        messages("contactDetails.member.phoneNumber.title", contactName.getOrElse(messages("primaryContactDetails.fullName.default")))
       )
     }
 

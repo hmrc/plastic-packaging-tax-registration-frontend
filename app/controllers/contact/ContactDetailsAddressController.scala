@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsAddressController @Inject() (
-                                                  journeyAction: JourneyAction,
-                                                  override val registrationConnector: RegistrationConnector,
-                                                  addressCaptureService: AddressCaptureService,
-                                                  mcc: MessagesControllerComponents
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  addressCaptureService: AddressCaptureService,
+  mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -66,17 +66,12 @@ class ContactDetailsAddressController @Inject() (
       }
     }
 
-  private def updateRegistration(
-    formData: Option[Address]
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: Option[Address])(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(primaryContactDetails = updateAddress(formData, registration))
     }
 
-  private def updateAddress(
-    address: Option[Address],
-    registration: Registration
-  ): PrimaryContactDetails =
+  private def updateAddress(address: Option[Address], registration: Registration): PrimaryContactDetails =
     registration.primaryContactDetails.copy(address = address)
 
 }

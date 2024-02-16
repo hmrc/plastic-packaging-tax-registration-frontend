@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import models.request.AuthenticatedRequest
 import models.request.AuthenticatedRequest.RegistrationRequest
@@ -29,6 +29,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import repositories.MongoUserDataRepository
 import spec.PptTestData
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
@@ -39,26 +40,20 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
 class UserDataRepositorySpec
-    extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MongoSupport with PptTestData {
+    extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach with DefaultAwaitTimeout with MongoSupport with PptTestData {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
 
-  private val mockConfig           = mock[Configuration]
+  private val mockConfig = mock[Configuration]
 
-  when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
-    FiniteDuration(1, TimeUnit.MINUTES)
-  )
+  when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(FiniteDuration(1, TimeUnit.MINUTES))
 
   val mockTimeStampSupport = new CurrentTimestampSupport()
 
   val repository = new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
-    RegistrationRequest(
-      FakeRequest().withSession("sessionId" -> sessionId),
-      identityData
-    )
+    RegistrationRequest(FakeRequest().withSession("sessionId" -> sessionId), identityData)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

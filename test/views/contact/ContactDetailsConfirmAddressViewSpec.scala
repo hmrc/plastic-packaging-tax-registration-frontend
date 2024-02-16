@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,8 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
     country = Some("United Kingdom")
   )
 
-  private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form(), isGroup: Boolean = false): Document = {
+  private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form(), isGroup: Boolean = false): Document =
     page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails), isGroup)(registrationJourneyRequest, messages)
-  }
 
   "Confirm Address View" should {
 
@@ -61,26 +60,18 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("primaryContactDetails.confirmAddress.title")
-      )
+      view.select("title").text() must include(messages("primaryContactDetails.confirmAddress.title"))
     }
 
     "display section header" when {
       "Single organisation" in {
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
       }
 
       "Group organisation" in {
         val view = createView(isGroup = true)
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          "Representative member details"
-        )
-        view.getElementsByClass("govuk-caption-l").text() must include(
-          messages("primaryContactDetails.group.sectionHeader")
-        )
+        view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
+        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
 
       }
     }
@@ -116,14 +107,9 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-      page.f(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails), false)(registrationJourneyRequest, messages)
+    page.f(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails), false)(registrationJourneyRequest, messages)
 
-      page.render(ConfirmAddress.form(),
-        addressConversionUtils.toPptAddress(incorporationAddressDetails),
-        false,
-        registrationJourneyRequest,
-        messages
-      )
-    }
+    page.render(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails), false, registrationJourneyRequest, messages)
+  }
 
 }

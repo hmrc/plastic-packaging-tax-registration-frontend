@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ object RegistrationType extends CommonFormValidators {
     Form(
       mapping(
         "value" -> optional(text())
-          .verifying(emptyError,_.isDefined)
-          .transform[String](_.get,Some.apply)
+          .verifying(emptyError, _.isDefined)
+          .transform[String](_.get, Some.apply)
           .verifying(emptyError, contains(RegType.values.toSeq.map(_.toString)))
       )(RegistrationType.apply)(RegistrationType.unapply)
     )

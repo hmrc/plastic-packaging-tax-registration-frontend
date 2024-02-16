@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,7 @@ class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
 
   private val previousPage = Call("GET", "/some-back")
 
-  private def createView(
-    form: Form[RegistrationDate] = RegistrationDate.form(),
-    previousPage: Call = previousPage
-  ): Document =
+  private def createView(form: Form[RegistrationDate] = RegistrationDate.form(), previousPage: Call = previousPage): Document =
     page(form, previousPage)(registrationJourneyRequest, messages)
 
   "The Initial Registration Date View" should {

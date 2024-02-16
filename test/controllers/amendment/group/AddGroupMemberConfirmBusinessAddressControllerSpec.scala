@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,10 @@ import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.organisation.confirm_business_address
 
-class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCaptureSpec
-  with AmendmentControllerSpec with PptTestData {
+class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with PptTestData {
 
   private val page = mock[confirm_business_address]
-  private val mcc = stubMessagesControllerComponents()
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new AddGroupMemberConfirmBusinessAddressController(
@@ -67,9 +66,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
     "display business address for confirmation when it is populated and valid" in {
 
-      val reg = aRegistration(withGroupDetail(
-        Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId)))))
-      )
+      val reg = aRegistration(withGroupDetail(Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId))))))
 
       spyJourneyAction.setReg(reg)
 
@@ -84,16 +81,27 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
       "business address is invalid" in {
 
-        val reg = aRegistration(withGroupDetail(
-          Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId, addressDetails =
-          UKAddress(
-            addressLine1 = "100 Really Long Street Name Which is Well in Excess of 35 characters",
-            addressLine2 = None,
-            addressLine3 = None,
-            townOrCity = "town",
-            postCode = "TF1 1AA"
+        val reg = aRegistration(
+          withGroupDetail(
+            Some(
+              GroupDetail(
+                Some(false),
+                Seq(
+                  aGroupMember().copy(
+                    id = testMemberId,
+                    addressDetails =
+                      UKAddress(
+                        addressLine1 = "100 Really Long Street Name Which is Well in Excess of 35 characters",
+                        addressLine2 = None,
+                        addressLine3 = None,
+                        townOrCity = "town",
+                        postCode = "TF1 1AA"
+                      )
+                  )
+                )
+              )
+            )
           )
-          )))))
         )
 
         spyJourneyAction.setReg(reg)
@@ -109,17 +117,13 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
       "address is retrieved from address capture service, reg is updated" should {
         "redirect to group member contact name" in {
 
-          val reg = aRegistration(withGroupDetail(
-            Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId)))))
-          )
+          val reg = aRegistration(withGroupDetail(Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId))))))
 
           spyJourneyAction.setReg(reg)
 
           val resp = controller.addressCaptureCallback(testMemberId)(FakeRequest())
 
-          redirectLocation(resp) mustBe Some(
-            routes.AddGroupMemberContactDetailsNameController.displayPage(testMemberId).url
-          )
+          redirectLocation(resp) mustBe Some(routes.AddGroupMemberContactDetailsNameController.displayPage(testMemberId).url)
 
           modifiedRegistration.groupDetail.get.findGroupMember(Some(testMemberId), None)
             .get.addressDetails mustBe validCapturedAddress

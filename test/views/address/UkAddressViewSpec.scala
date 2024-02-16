@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
 
   "UK Address View" should {
 
-    def createView(form: Form[Boolean] ): Document = {
+    def createView(form: Form[Boolean]): Document =
       page(form, Some("entity"), "addressCapture.contact.heading.isUK")
-    }
 
     val view: Document = createView(UkAddressForm.form())
 
@@ -50,7 +49,6 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
       view.select("h1").text() must include(messages("ukAddress.title", "entity"))
     }
-
 
     "display radios" in {
       view must containElementWithID("ukAddress")

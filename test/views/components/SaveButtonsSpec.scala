@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import views.html.components.{saveAndContinue, saveButtons}
 
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 
-  private val saveAndContinueButton      = inject[saveAndContinue]
+  private val saveAndContinueButton = inject[saveAndContinue]
 
   protected val component: saveButtons =
     new saveButtons(saveAndContinueButton)

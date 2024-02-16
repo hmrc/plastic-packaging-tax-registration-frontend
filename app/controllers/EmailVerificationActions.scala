@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,14 @@ import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{AnyContent, Call, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
-import forms.contact.{
-  EmailAddress,
-  EmailAddressPasscode
-}
+import forms.contact.{EmailAddress, EmailAddressPasscode}
 import models.emailverification.EmailVerificationJourneyStatus
-import models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  TOO_MANY_ATTEMPTS
-}
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, TOO_MANY_ATTEMPTS}
 import models.genericregistration.Partner
-import models.registration.{
-  Registration,
-  RegistrationUpdater
-}
+import models.registration.{Registration, RegistrationUpdater}
 import models.request.JourneyRequest
 import services.EmailVerificationService
-import views.html.contact.{
-  email_address_passcode_confirmation_page,
-  email_address_passcode_page,
-  too_many_attempts_passcode_page
-}
+import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,32 +51,18 @@ trait EmailVerificationActions {
     else
       Future.successful(false)
 
-  def promptForEmailVerificationCode(
-    request: JourneyRequest[AnyContent],
-    email: EmailAddress,
-    continueUrl: Call,
-    enterVerificationCodeCall: Call
-  )(implicit
+  def promptForEmailVerificationCode(request: JourneyRequest[AnyContent], email: EmailAddress, continueUrl: Call, enterVerificationCodeCall: Call)(implicit
     journeyRequest: JourneyRequest[AnyContent],
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Result] =
-    emailVerificationService.sendVerificationCode(email.value,
-                                                  request.authenticatedRequest.credId,
-                                                  continueUrl.url
-    ).flatMap { emailVerificationJourneyId =>
+    emailVerificationService.sendVerificationCode(email.value, request.authenticatedRequest.credId, continueUrl.url).flatMap { emailVerificationJourneyId =>
       persistProspectiveEmailAddress(email, emailVerificationJourneyId).map { _ =>
         Redirect(enterVerificationCodeCall)
       }
     }
 
-  def handleEmailVerificationCodeSubmission(
-    verificationCode: String,
-    successCall: Call,
-    tooManyAttemptsCall: Call,
-    backCall: Call,
-    submitCall: Call
-  )(implicit
+  def handleEmailVerificationCodeSubmission(verificationCode: String, successCall: Call, tooManyAttemptsCall: Call, backCall: Call, submitCall: Call)(implicit
     journeyRequest: JourneyRequest[AnyContent],
     messages: Messages,
     hc: HeaderCarrier,
@@ -101,21 +73,14 @@ trait EmailVerificationActions {
         Redirect(successCall)
       case INCORRECT_PASSCODE =>
         BadRequest(
-          renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-            getProspectiveEmail(),
-            backCall,
-            submitCall
-          )
+          renderEnterEmailVerificationCodePage(EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"), getProspectiveEmail(), backCall, submitCall)
         )
       case TOO_MANY_ATTEMPTS =>
         Redirect(tooManyAttemptsCall)
       case _ =>
         BadRequest(
           renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("journeyNotFound",
-                                                  "Passcode for email address is not found"
-            ),
+            EmailAddressPasscode.form().withError("journeyNotFound", "Passcode for email address is not found"),
             getProspectiveEmail(),
             backCall,
             submitCall
@@ -123,62 +88,41 @@ trait EmailVerificationActions {
         )
     }
 
-  def showEmailVerifiedPage(backCall: Call, submitCall: Call, sectionHeadingKey: Option[String] = None)
-    (implicit request: JourneyRequest[AnyContent], messages: Messages): Result = {
-      val possibleSectionHeadingText = sectionHeadingKey.map {messages(_)}
-      Ok(emailCorrectPasscodePage(submitCall, possibleSectionHeadingText))
-  }
-
-  def showTooManyAttemptsPage(implicit
+  def showEmailVerifiedPage(backCall: Call, submitCall: Call, sectionHeadingKey: Option[String] = None)(implicit
     request: JourneyRequest[AnyContent],
     messages: Messages
-  ): Result =
+  ): Result = {
+    val possibleSectionHeadingText = sectionHeadingKey.map(messages(_))
+    Ok(emailCorrectPasscodePage(submitCall, possibleSectionHeadingText))
+  }
+
+  def showTooManyAttemptsPage(implicit request: JourneyRequest[AnyContent], messages: Messages): Result =
     Ok(emailIncorrectPasscodeTooManyAttemptsPage())
 
-  private def checkVerificationCode(verificationCode: String)(implicit
-    req: JourneyRequest[AnyContent],
-    hc: HeaderCarrier
-  ): Future[EmailVerificationJourneyStatus.Value] =
-    emailVerificationService.checkVerificationCode(verificationCode,
-                                                   getProspectiveEmail(),
-                                                   getEmailVerificationJourneyId()
-    )
+  private def checkVerificationCode(verificationCode: String)(implicit req: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[EmailVerificationJourneyStatus.Value] =
+    emailVerificationService.checkVerificationCode(verificationCode, getProspectiveEmail(), getEmailVerificationJourneyId())
 
   protected def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]): String =
-    req.registration.primaryContactDetails.prospectiveEmail.getOrElse(
-      throw new IllegalStateException("Prospective email expected in registration")
-    )
+    req.registration.primaryContactDetails.prospectiveEmail.getOrElse(throw new IllegalStateException("Prospective email expected in registration"))
 
-  protected def isEmailVerified(email: String)(implicit
-    request: JourneyRequest[AnyContent],
-    hc: HeaderCarrier
-  ): Future[Boolean] =
+  protected def isEmailVerified(email: String)(implicit request: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Boolean] =
     emailVerificationService.isEmailVerified(email, request.authenticatedRequest.credId)
 
-  private def persistProspectiveEmailAddress(
-    email: EmailAddress,
-    emailVerificationJourneyId: String
-  )(implicit journeyRequest: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Registration] =
-    registrationUpdater.updateRegistration(
-      setProspectiveEmailOnRegistration(email.value, emailVerificationJourneyId)
-    )
+  private def persistProspectiveEmailAddress(email: EmailAddress, emailVerificationJourneyId: String)(implicit
+    journeyRequest: JourneyRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[Registration] =
+    registrationUpdater.updateRegistration(setProspectiveEmailOnRegistration(email.value, emailVerificationJourneyId))
 
-  private def setProspectiveEmailOnRegistration(
-    prospectiveEmail: String,
-    emailVerificationJourneyId: String
-  ) = {
+  private def setProspectiveEmailOnRegistration(prospectiveEmail: String, emailVerificationJourneyId: String) = {
     registration: Registration =>
       registration.copy(primaryContactDetails =
-        registration.primaryContactDetails.copy(journeyId = Some(emailVerificationJourneyId),
-                                                prospectiveEmail = Some(prospectiveEmail)
-        )
+        registration.primaryContactDetails.copy(journeyId = Some(emailVerificationJourneyId), prospectiveEmail = Some(prospectiveEmail))
       )
   }
 
   private def getEmailVerificationJourneyId()(implicit req: JourneyRequest[AnyContent]) =
-    req.registration.primaryContactDetails.journeyId.getOrElse(
-      throw new IllegalStateException("Journey id expected in registration")
-    )
+    req.registration.primaryContactDetails.journeyId.getOrElse(throw new IllegalStateException("Journey id expected in registration"))
 
   protected def renderEnterEmailVerificationCodePage(
     form: Form[EmailAddressPasscode],
@@ -189,12 +133,7 @@ trait EmailVerificationActions {
   )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
     emailPasscodePage(form, Some(prospectiveEmailAddress), submitCall, sectionHeading)
 
-  protected def processVerificationCodeSubmission(
-    backCall: Call,
-    submitCall: Call,
-    confirmVerifiedEmailCall: Call,
-    emailVerificationTooManyAttemptsCall: Call
-  )(implicit
+  protected def processVerificationCodeSubmission(backCall: Call, submitCall: Call, confirmVerifiedEmailCall: Call, emailVerificationTooManyAttemptsCall: Call)(implicit
     req: JourneyRequest[AnyContent],
     messages: Messages,
     formBinding: FormBinding,
@@ -205,26 +144,11 @@ trait EmailVerificationActions {
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[EmailAddressPasscode]) =>
-          Future.successful(
-            BadRequest(
-              renderEnterEmailVerificationCodePage(formWithErrors,
-                                                   getProspectiveEmail(),
-                                                   backCall,
-                                                   submitCall
-              )
-            )
-          ),
-        verificationCode =>
-          handleEmailVerificationCodeSubmission(verificationCode.value,
-                                                confirmVerifiedEmailCall,
-                                                emailVerificationTooManyAttemptsCall,
-                                                backCall,
-                                                submitCall
-          )
+          Future.successful(BadRequest(renderEnterEmailVerificationCodePage(formWithErrors, getProspectiveEmail(), backCall, submitCall))),
+        verificationCode => handleEmailVerificationCodeSubmission(verificationCode.value, confirmVerifiedEmailCall, emailVerificationTooManyAttemptsCall, backCall, submitCall)
       )
 
-  protected def doesPartnerEmailRequireVerification(partner: Partner, emailAddress: EmailAddress)(
-    implicit
+  protected def doesPartnerEmailRequireVerification(partner: Partner, emailAddress: EmailAddress)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent],
     ec: ExecutionContext

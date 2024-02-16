@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,32 +18,33 @@ package forms.group
 
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import forms.CommonFormValidators
 
 case class MemberName(firstName: String, lastName: String)
 
 object MemberName extends CommonFormValidators {
 
-  implicit val format = Json.format[MemberName]
+  implicit val format: OFormat[MemberName] = Json.format[MemberName]
 
   private val firstName = "firstName"
 
   private val lastName = "lastName"
 
   private val mapping =
-    Forms.mapping(firstName ->
-                    text()
-                      .verifying(emptyError(firstName), isProvided)
-                      .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
-                      .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
-                      .verifying(nonAlphabeticError(firstName), isValidName),
-                  lastName ->
-                    text()
-                      .verifying(emptyError(lastName), isProvided)
-                      .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
-                      .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
-                      .verifying(nonAlphabeticError(lastName), isValidName)
+    Forms.mapping(
+      firstName ->
+        text()
+          .verifying(emptyError(firstName), isProvided)
+          .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
+          .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
+          .verifying(nonAlphabeticError(firstName), isValidName),
+      lastName ->
+        text()
+          .verifying(emptyError(lastName), isProvided)
+          .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
+          .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
+          .verifying(nonAlphabeticError(lastName), isValidName)
     )(MemberName.apply)(MemberName.unapply)
 
   def form(): Form[MemberName] = Form(mapping)

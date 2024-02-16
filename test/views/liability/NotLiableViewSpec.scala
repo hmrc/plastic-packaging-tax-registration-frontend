@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import views.html.liability.not_liable
 
 class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
-  val appConfig = mock[AppConfig]
+  val appConfig    = mock[AppConfig]
   private val page = inject[not_liable]
 
   private def createView(): Document =
@@ -63,9 +63,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display guidance text" in {
 
-      view.getElementById("guidance-text").text() must include(
-        messages("notLiable.guidance", messages("notLiable.guidance.link.description"))
-      )
+      view.getElementById("guidance-text").text() must include(messages("notLiable.guidance", messages("notLiable.guidance.link.description")))
     }
 
     "display guidance link" in {
@@ -85,19 +83,13 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
     "display feedback text" in {
 
       view.getElementById("feedback-text1").text must include(messages("notLiable.think.info"))
-      view.getElementById("feedback-text2").text must include(
-        messages("notLiable.think.feedback", messages("notLiable.think.feedback.link.description"))
-      )
+      view.getElementById("feedback-text2").text must include(messages("notLiable.think.feedback", messages("notLiable.think.feedback.link.description")))
     }
 
     "display feedback link for authenticated users" in {
 
-      when(appConfig.feedbackAuthenticatedLink).thenReturn(
-        "http://localhost:9250/contact/beta-feedback"
-      )
-      view.getElementById("feedback-link") must haveHref(
-        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
-      )
+      when(appConfig.feedbackAuthenticatedLink).thenReturn("http://localhost:9250/contact/beta-feedback")
+      view.getElementById("feedback-link") must haveHref("http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/")
     }
 
     "display feedback link for unauthenticated users" in {

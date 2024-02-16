@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,36 +26,26 @@ class InMemoryUserDetailsRepository()(implicit ec: ExecutionContext) extends Use
 
   private var cache = scala.collection.mutable.Map[String, Any]()
 
-  override def putData[T: Writes](key: String, data: T)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[T] =
+  override def putData[T: Writes](key: String, data: T)(implicit request: AuthenticatedRequest[Any]): Future[T] =
     Future.successful(cache.put(key, data)).map(_ => data)
 
   override def putData[T: Writes](id: String, key: String, data: T): Future[T] =
     Future.successful(cache.put(key, data)).map(_ => data)
 
-  override def getData[T: Reads](
-    key: String
-  )(implicit request: AuthenticatedRequest[Any]): Future[Option[T]] =
+  override def getData[T: Reads](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Option[T]] =
     Future.successful(cache.get(key).asInstanceOf[Option[T]])
 
   override def getData[T: Reads](id: String, key: String): Future[Option[T]] =
     Future.successful(cache.get(key).asInstanceOf[Option[T]])
 
-  override def deleteData[T: Writes](
-    key: String
-  )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+  override def deleteData[T: Writes](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     Future.successful(cache.remove(key))
 
   override def deleteData[T: Writes](id: String, key: String): Future[Unit] =
     Future.successful(cache.remove(key))
 
-  override def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit
-    request: AuthenticatedRequest[Any]
-  ): Future[Unit] =
-    Future.successful(
-      cache.put(key, cache.get(key).map(data => data.asInstanceOf[T]).map(data => updater(data)))
-    )
+  override def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+    Future.successful(cache.put(key, cache.get(key).map(data => data.asInstanceOf[T]).map(data => updater(data))))
 
   override def reset(): Unit = cache = scala.collection.mutable.Map[String, Any]()
 

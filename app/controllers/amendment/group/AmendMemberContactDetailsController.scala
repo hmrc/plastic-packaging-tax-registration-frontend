@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package controllers.amendment.group
 
-import play.api.data.Form
-import play.api.mvc._
 import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendRoutes}
 import forms.contact._
@@ -25,7 +23,8 @@ import forms.group.MemberName
 import models.registration.OrganisationName.getMissingOrgMessage
 import models.registration.Registration
 import models.request.JourneyRequest
-import play.api.i18n.Messages
+import play.api.data.Form
+import play.api.mvc._
 import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
 import views.html.group.{member_email_address_page, member_name_page, member_phone_number_page}
 
@@ -34,13 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendMemberContactDetailsController @Inject() (
-                                                      journeyAction: JourneyAction,
-                                                      mcc: MessagesControllerComponents,
-                                                      amendRegistrationService: AmendRegistrationService,
-                                                      addressCaptureService: AddressCaptureService,
-                                                      contactNamePage: member_name_page,
-                                                      phoneNumberPage: member_phone_number_page,
-                                                      emailAddressPage: member_email_address_page
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  amendRegistrationService: AmendRegistrationService,
+  addressCaptureService: AddressCaptureService,
+  contactNamePage: member_name_page,
+  phoneNumberPage: member_phone_number_page,
+  emailAddressPage: member_email_address_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
@@ -48,12 +47,7 @@ class AmendMemberContactDetailsController @Inject() (
     journeyAction.amend { implicit request =>
       request.registration.findMember(memberId).flatMap(_.contactDetails) match {
         case Some(contactDetails) =>
-          Ok(
-            buildContactNamePage(
-              MemberName.form().fill(MemberName(contactDetails.firstName, contactDetails.lastName)),
-              memberId
-            )
-          )
+          Ok(buildContactNamePage(MemberName.form().fill(MemberName(contactDetails.firstName, contactDetails.lastName)), memberId))
         case _ =>
           Ok(buildContactNamePage(MemberName.form(), memberId))
       }
@@ -66,9 +60,7 @@ class AmendMemberContactDetailsController @Inject() (
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
-              registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberName(firstName, lastName)
-              ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+              registration.findMember(memberId).map(_.withUpdatedGroupMemberName(firstName, lastName)).getOrElse(throw new IllegalStateException("Expected group member absent"))
             )
           )
         )
@@ -78,26 +70,18 @@ class AmendMemberContactDetailsController @Inject() (
       MemberName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[MemberName]) =>
-            Future.successful(BadRequest(buildContactNamePage(formWithErrors, memberId))),
-          memberName =>
-            updateGroupMemberRegistration(
-              updateContactName(memberName.firstName, memberName.lastName),
-              memberId
-            )
+          (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(buildContactNamePage(formWithErrors, memberId))),
+          memberName => updateGroupMemberRegistration(updateContactName(memberName.firstName, memberName.lastName), memberId)
         )
     }
   }
 
-  private def buildContactNamePage(form: Form[MemberName], memberId: String)(implicit
-    request: JourneyRequest[AnyContent]
-  ) =
-    contactNamePage(form,
-                    request.registration.findMember(memberId).map(_.businessName).getOrElse(
-                      getMissingOrgMessage
-                    ),
-                    routes.AmendMemberContactDetailsController.updateContactName(memberId),
-                    memberId
+  private def buildContactNamePage(form: Form[MemberName], memberId: String)(implicit request: JourneyRequest[AnyContent]) =
+    contactNamePage(
+      form,
+      request.registration.findMember(memberId).map(_.businessName).getOrElse(getMissingOrgMessage),
+      routes.AmendMemberContactDetailsController.updateContactName(memberId),
+      memberId
     )
 
   def phoneNumber(memberId: String): Action[AnyContent] =
@@ -106,12 +90,7 @@ class AmendMemberContactDetailsController @Inject() (
       val memberName     = contactDetails.map(_.groupMemberName)
       contactDetails.flatMap(_.phoneNumber) match {
         case Some(phoneNumber) =>
-          Ok(
-            buildPhoneNumberPage(PhoneNumber.form().fill(PhoneNumber(phoneNumber)),
-                                 memberName,
-                                 memberId
-            )
-          )
+          Ok(buildPhoneNumberPage(PhoneNumber.form().fill(PhoneNumber(phoneNumber)), memberName, memberId))
         case _ =>
           Ok(buildPhoneNumberPage(PhoneNumber.form(), memberName, memberId))
       }
@@ -124,9 +103,9 @@ class AmendMemberContactDetailsController @Inject() (
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
-              registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberPhoneNumber(updatedPhoneNumber)
-              ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+              registration.findMember(memberId).map(_.withUpdatedGroupMemberPhoneNumber(updatedPhoneNumber)).getOrElse(
+                throw new IllegalStateException("Expected group member absent")
+              )
             )
           )
         )
@@ -138,25 +117,14 @@ class AmendMemberContactDetailsController @Inject() (
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(
-              BadRequest(buildPhoneNumberPage(formWithErrors, memberName, memberId))
-            ),
-          phoneNumber =>
-            updateGroupMemberRegistration(updatePhoneNumber(phoneNumber.value), memberId)
+          (formWithErrors: Form[PhoneNumber]) => Future.successful(BadRequest(buildPhoneNumberPage(formWithErrors, memberName, memberId))),
+          phoneNumber => updateGroupMemberRegistration(updatePhoneNumber(phoneNumber.value), memberId)
         )
     }
   }
 
-  private def buildPhoneNumberPage(
-    form: Form[PhoneNumber],
-    memberName: Option[String],
-    memberId: String
-  )(implicit request: JourneyRequest[AnyContent]) =
-    phoneNumberPage(form,
-                    memberName,
-                    routes.AmendMemberContactDetailsController.updatePhoneNumber(memberId)
-    )
+  private def buildPhoneNumberPage(form: Form[PhoneNumber], memberName: Option[String], memberId: String)(implicit request: JourneyRequest[AnyContent]) =
+    phoneNumberPage(form, memberName, routes.AmendMemberContactDetailsController.updatePhoneNumber(memberId))
 
   def email(memberId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -164,12 +132,7 @@ class AmendMemberContactDetailsController @Inject() (
       val memberName     = contactDetails.map(_.groupMemberName)
       contactDetails.flatMap(_.email) match {
         case Some(emailAddress) =>
-          Ok(
-            buildEmailAddressPage(EmailAddress.form().fill(EmailAddress(emailAddress)),
-                                  memberName,
-                                  memberId
-            )
-          )
+          Ok(buildEmailAddressPage(EmailAddress.form().fill(EmailAddress(emailAddress)), memberName, memberId))
         case _ =>
           Ok(buildEmailAddressPage(EmailAddress.form(), memberName, memberId))
       }
@@ -182,9 +145,7 @@ class AmendMemberContactDetailsController @Inject() (
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
-              registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberEmail(updatedEmailAddress)
-              ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+              registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(updatedEmailAddress)).getOrElse(throw new IllegalStateException("Expected group member absent"))
             )
           )
         )
@@ -196,39 +157,27 @@ class AmendMemberContactDetailsController @Inject() (
       EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(
-              BadRequest(buildEmailAddressPage(formWithErrors, memberName, memberId))
-            ),
-          emailAddress =>
-            updateGroupMemberRegistration(updateEmailAddress(emailAddress.value), memberId)
+          (formWithErrors: Form[EmailAddress]) => Future.successful(BadRequest(buildEmailAddressPage(formWithErrors, memberName, memberId))),
+          emailAddress => updateGroupMemberRegistration(updateEmailAddress(emailAddress.value), memberId)
         )
     }
   }
 
-  private def buildEmailAddressPage(
-    form: Form[EmailAddress],
-    memberName: Option[String],
-    memberId: String
-  )(implicit request: JourneyRequest[AnyContent]) =
-    emailAddressPage(form,
-                     memberName,
-                     routes.AmendMemberContactDetailsController.updateEmail(memberId)
-    )
+  private def buildEmailAddressPage(form: Form[EmailAddress], memberName: Option[String], memberId: String)(implicit request: JourneyRequest[AnyContent]) =
+    emailAddressPage(form, memberName, routes.AmendMemberContactDetailsController.updateEmail(memberId))
 
   def address(memberId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
-        AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
-                             successLink = routes.AmendMemberContactDetailsController.updateAddress(
-                               memberId
-                             ).url,
-                             alfHeadingsPrefix = "addressLookup.contact",
-                             entityName =
-                               request.registration.findMember(memberId).map(_.businessName),
-                             pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None,
-                             forceUkAddress = false
+        AddressCaptureConfig(
+          backLink = amendRoutes.AmendRegistrationController.displayPage().url,
+          successLink = routes.AmendMemberContactDetailsController.updateAddress(memberId).url,
+          alfHeadingsPrefix = "addressLookup.contact",
+          entityName =
+            request.registration.findMember(memberId).map(_.businessName),
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None,
+          forceUkAddress = false
         )
       )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
@@ -240,9 +189,7 @@ class AmendMemberContactDetailsController @Inject() (
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
-              registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberAddress(updatedAddress)
-              ).getOrElse(throw new IllegalStateException("Expected group member absent"))
+              registration.findMember(memberId).map(_.withUpdatedGroupMemberAddress(updatedAddress)).getOrElse(throw new IllegalStateException("Expected group member absent"))
             )
           )
         )

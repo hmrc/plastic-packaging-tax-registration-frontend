@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class DeregisterCheckYourAnswersControllerSpec
-    extends ControllerSpec with AmendmentControllerSpec {
+class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
   private val page                      = mock[deregister_check_your_answers_page]
   private val mcc                       = stubMessagesControllerComponents()
   private val mockCache                 = mock[UserDataRepository]
@@ -43,24 +42,21 @@ class DeregisterCheckYourAnswersControllerSpec
   private val mockDegistrationConnector = mock[DeregistrationConnector]
 
   private val initialDeregistrationDetails =
-    DeregistrationDetails(deregister = Some(true),
-                          reason = Some(DeregistrationReason.RegisteredIncorrectly)
-    )
+    DeregistrationDetails(deregister = Some(true), reason = Some(DeregistrationReason.RegisteredIncorrectly))
 
   private val controller =
-    new DeregisterCheckYourAnswersController(authenticate = FakeAmendAuthAction,
-                                             mcc = mcc,
-                                             deregistrationDetailRepository = repository,
-                                             deregistrationConnector = mockDegistrationConnector,
-                                             page = page
+    new DeregisterCheckYourAnswersController(
+      authenticate = FakeAmendAuthAction,
+      mcc = mcc,
+      deregistrationDetailRepository = repository,
+      deregistrationConnector = mockDegistrationConnector,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[DeregistrationDetails])(any, any)).thenReturn(HtmlFormat.empty)
-    when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
-      Future.successful(Some(initialDeregistrationDetails))
-    )
+    when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(Future.successful(Some(initialDeregistrationDetails)))
   }
 
   override protected def afterEach(): Unit = {
@@ -80,18 +76,14 @@ class DeregisterCheckYourAnswersControllerSpec
       }
 
       "submit the answers" in {
-        when(
-          mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"),
-                                               ArgumentMatchers.eq(initialDeregistrationDetails)
-          )(any)
-        ).thenReturn(Future.successful(Right(())))
+        when(mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"), ArgumentMatchers.eq(initialDeregistrationDetails))(any)).thenReturn(
+          Future.successful(Right(()))
+        )
 
         val result: Future[Result] = controller.continue()(request)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.DeregistrationSubmittedController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.DeregistrationSubmittedController.displayPage().url)
 
         verify(mockCache).deleteData[DeregistrationDetails](any)(any, any)
 
@@ -99,9 +91,7 @@ class DeregisterCheckYourAnswersControllerSpec
 
       "when error in the response status" in {
         when(mockDegistrationConnector.deregister(any, any)(any)).thenReturn(
-          Future.successful(
-            Left(DownstreamServiceError("failed", new FailedToDeregister("failed to de-register")))
-          )
+          Future.successful(Left(DownstreamServiceError("failed", new FailedToDeregister("failed to de-register"))))
         )
 
         intercept[DownstreamServiceError](status(controller.continue()(request)))

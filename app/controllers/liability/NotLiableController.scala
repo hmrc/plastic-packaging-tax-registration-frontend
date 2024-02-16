@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NotLiableController @Inject() (
-                                      authenticate: RegistrationAuthAction,
-                                      mcc: MessagesControllerComponents,
-                                      page: not_liable
-) extends FrontendController(mcc) with I18nSupport {
+class NotLiableController @Inject() (authenticate: RegistrationAuthAction, mcc: MessagesControllerComponents, page: not_liable) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,7 @@ class TitleSpec extends MessagesSpec with Matchers {
   "Title" should {
 
     "format title without section" in {
-      Title("notLiable.pageTitle").toString(messages) must equal(
-        s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK"
-      )
+      Title("notLiable.pageTitle").toString(messages) must equal(s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK")
     }
   }
 }

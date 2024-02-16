@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ package forms.liability
 
 import config.AppConfig
 import forms.liability.ExceededThresholdWeightDate._
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -69,10 +68,7 @@ class ExceededThresholdWeightDateSpec extends PlaySpec {
       }
 
       "only two date fields is present" in {
-        val boundForm = sut.bind(Map(
-          "exceeded-threshold-weight-date.day" -> "15",
-          "exceeded-threshold-weight-date.month" -> "5"
-        ))
+        val boundForm = sut.bind(Map("exceeded-threshold-weight-date.day" -> "15", "exceeded-threshold-weight-date.month" -> "5"))
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) must contain(requiredKey)
@@ -94,7 +90,7 @@ class ExceededThresholdWeightDateSpec extends PlaySpec {
 
       "date is out of Range" in {
         val dateInFuture = LocalDate.now.plusDays(10)
-        val boundForm = sut.bind(toMap(dateInFuture.getDayOfMonth.toString, dateInFuture.getMonthValue.toString, dateInFuture.getYear.toString))
+        val boundForm    = sut.bind(toMap(dateInFuture.getDayOfMonth.toString, dateInFuture.getMonthValue.toString, dateInFuture.getYear.toString))
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) mustBe Seq(dateOutOfRangeError)
@@ -104,19 +100,13 @@ class ExceededThresholdWeightDateSpec extends PlaySpec {
         val boundForm = sut.bind(toMap("15", "3", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(
-          FormError("exceeded-threshold-weight-date.day", Seq(isBeforeLiveDateError), Seq("some message"))
-        )
+        boundForm.errors mustBe Seq(FormError("exceeded-threshold-weight-date.day", Seq(isBeforeLiveDateError), Seq("1 some message 2022")))
       }
 
     }
   }
 
   private def toMap(day: String, month: String, year: String): Map[String, String] =
-    Map(
-      "exceeded-threshold-weight-date.day" -> day,
-      "exceeded-threshold-weight-date.month" -> month,
-      "exceeded-threshold-weight-date.year" -> year
-    )
+    Map("exceeded-threshold-weight-date.day" -> day, "exceeded-threshold-weight-date.month" -> month, "exceeded-threshold-weight-date.year" -> year)
 
 }

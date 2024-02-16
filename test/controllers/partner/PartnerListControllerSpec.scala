@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,9 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerListController(journeyAction = spyJourneyAction,
-                              registrationConnector = mockRegistrationConnector,
-                              mcc = mcc,
-                              page = page
-    )
+    new PartnerListController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

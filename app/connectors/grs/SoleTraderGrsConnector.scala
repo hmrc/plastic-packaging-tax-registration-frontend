@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,16 @@
 
 package connectors.grs
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
-import models.genericregistration.{
-  GrsSoleTraderDetails,
-  SoleTraderDetails,
-  SoleTraderGrsCreateRequest
-}
+import models.genericregistration.{GrsSoleTraderDetails, SoleTraderDetails, SoleTraderGrsCreateRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SoleTraderGrsConnector @Inject() (
-  httpClient: HttpClient,
-  config: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext)
+class SoleTraderGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
     extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
       httpClient,
       metrics,

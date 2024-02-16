@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,16 +49,12 @@ object EisError {
   implicit val format: OFormat[EisError] =
     Json.format[EisError]
 
-  private val DUPLICATE_SUBSCRIPTION_ERROR_CODES = List("ACTIVE_SUBSCRIPTION_EXISTS",
-                                                        "BUSINESS_VALIDATION",
-                                                        "ACTIVE_GROUP_SUBSCRIPTION_EXISTS",
-                                                        "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION"
-  )
+  private val DUPLICATE_SUBSCRIPTION_ERROR_CODES =
+    List("ACTIVE_SUBSCRIPTION_EXISTS", "BUSINESS_VALIDATION", "ACTIVE_GROUP_SUBSCRIPTION_EXISTS", "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION")
 
 }
 
-case class SubscriptionCreateOrUpdateResponseFailure(failures: Seq[EisError])
-    extends SubscriptionCreateOrUpdateResponse
+case class SubscriptionCreateOrUpdateResponseFailure(failures: Seq[EisError]) extends SubscriptionCreateOrUpdateResponse
 
 object SubscriptionCreateOrUpdateResponseFailure {
 

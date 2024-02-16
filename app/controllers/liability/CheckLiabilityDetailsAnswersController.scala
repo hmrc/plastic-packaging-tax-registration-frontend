@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,14 +33,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckLiabilityDetailsAnswersController @Inject() (journeyAction: JourneyAction,
-                                                        mcc: MessagesControllerComponents,
-                                                        override val registrationConnector: RegistrationConnector,
-                                                        taxStarDateService: TaxStartDateService,
-                                                        appConfig: AppConfig,
-                                                        page: check_liability_details_answers_page)
-                                                       (implicit ec: ExecutionContext) extends LiabilityController(mcc)
-  with Cacheable with I18nSupport {
+class CheckLiabilityDetailsAnswersController @Inject() (
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  override val registrationConnector: RegistrationConnector,
+  taxStarDateService: TaxStartDateService,
+  appConfig: AppConfig,
+  page: check_liability_details_answers_page
+)(implicit ec: ExecutionContext)
+    extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -68,22 +69,16 @@ class CheckLiabilityDetailsAnswersController @Inject() (journeyAction: JourneyAc
       )
     }
 
-  private def updateRegistration(startDate: LocalDate)
-                                (implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(startDate: LocalDate)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails = updateLiability(startDate))
     }
 
-  private def updateLiability(startDate: LocalDate)
-                              (implicit request: JourneyRequest[AnyContent]): LiabilityDetails = {
-    request.registration.liabilityDetails.copy(startDate =
-      Some(
-        OldDate(Some(startDate.getDayOfMonth),
-          Some(startDate.getMonth.getValue),
-          Some(startDate.getYear)
-        )
-      ),
+  private def updateLiability(startDate: LocalDate)(implicit request: JourneyRequest[AnyContent]): LiabilityDetails =
+    request.registration.liabilityDetails.copy(
+      startDate =
+        Some(OldDate(Some(startDate.getDayOfMonth), Some(startDate.getMonth.getValue), Some(startDate.getYear))),
       newLiabilityFinished = Some(NewLiability)
     )
-  }
+
 }

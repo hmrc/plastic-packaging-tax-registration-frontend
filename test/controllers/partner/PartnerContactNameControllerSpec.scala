@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,16 +35,15 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   private val page = mock[partner_member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new PartnerContactNameController(journeyAction = spyJourneyAction,
-                                     registrationUpdateService =
-                                       mockNewRegistrationUpdater,
-                                     mcc = mcc,
-                                     page = page
+    new PartnerContactNameController(
+      journeyAction = spyJourneyAction,
+      registrationUpdateService =
+        mockNewRegistrationUpdater,
+      mcc = mcc,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -58,22 +57,16 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
 
   private def registrationWithPartnershipDetailsAndNonNominatedInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(
-      aSoleTraderPartner
-    ).withInflightPartner(Some(aPartnershipPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(aSoleTraderPartner).withInflightPartner(Some(aPartnershipPartner))
 
   private val existingPartner =
     aLimitedCompanyPartner
 
   private def registrationWithExistingPartner =
-    aRegistration(
-      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
-    )
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner)))))
 
   "PartnerContactNameController" should {
 
@@ -103,21 +96,13 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.PartnerEmailAddressController.displayNewPartner().url
-        )
+        redirectLocation(result) mustBe Some(routes.PartnerEmailAddressController.displayNewPartner().url)
 
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.firstName)
-        ) mustBe Some("John")
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.lastName)
-        ) mustBe Some("Smith")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.firstName)) mustBe Some("John")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.lastName)) mustBe Some("Smith")
       }
 
       "nominated partner submits a contact name and is prompted for job title" in {
@@ -125,14 +110,10 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.PartnerJobTitleController.displayNewPartner().url
-        )
+        redirectLocation(result) mustBe Some(routes.PartnerJobTitleController.displayNewPartner().url)
       }
 
       "user submits an amendment to an existing partners contact name" in {
@@ -140,9 +121,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequestEncoded(MemberName("Jane", "Smith"))
-        )
+        val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(MemberName("Jane", "Smith")))
 
         status(result) mustBe SEE_OTHER
 
@@ -159,9 +138,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""))
-          )
+          controller.submitNewPartner()(postRequestEncoded(MemberName("John", "")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -170,9 +147,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"))
-        )
+        val result = controller.submitNewPartner()(postRequestEncoded(MemberName("abced" * 40, "Smith")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -182,9 +157,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"))
-          )
+          controller.submitNewPartner()(postRequestEncoded(MemberName("FirstNam807980234£$", "LastName")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -196,10 +169,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-
-        intercept[RuntimeException](status(
-          controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())
-        ))
+        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -207,12 +177,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-
-        intercept[RuntimeException](status(
-          controller.submitExistingPartner("not-an-existing-partners-id")(
-            postRequestEncoded(MemberName("Jane", "Smith"))
-          )
-        ))
+        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(MemberName("Jane", "Smith")))))
       }
 
       "user submits form and the registration update fails" in {
@@ -220,9 +185,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))))
       }
     }
   }

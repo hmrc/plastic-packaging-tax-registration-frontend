@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,7 @@ import play.api.libs.json._
 import forms.contact.Address
 import utils.AddressConversionUtils
 
-case class CompanyProfile(
-  companyNumber: String,
-  companyName: String,
-  companyAddress: IncorporationAddressDetails
-)
+case class CompanyProfile(companyNumber: String, companyName: String, companyAddress: IncorporationAddressDetails)
 
 object CompanyProfile {
   implicit val format: OFormat[CompanyProfile] = Json.format[CompanyProfile]
@@ -36,7 +32,7 @@ case class GrsPartnershipBusinessDetails(
   companyProfile: Option[GrsCompanyProfile],
   override val identifiersMatch: Boolean,
   override val businessVerification: Option[GrsBusinessVerification],
-  override val registration: GrsRegistration,
+  override val registration: GrsRegistration
 ) extends GrsResponse
 
 object GrsPartnershipBusinessDetails {
@@ -46,18 +42,15 @@ object GrsPartnershipBusinessDetails {
 
 }
 
-case class PartnershipBusinessDetails(
-  sautr: String,
-  postcode: String,
-  companyProfile: Option[CompanyProfile],
-  override val registration: Option[RegistrationDetails]
-) extends HasRegistrationDetails {
+case class PartnershipBusinessDetails(sautr: String, postcode: String, companyProfile: Option[CompanyProfile], override val registration: Option[RegistrationDetails])
+    extends HasRegistrationDetails {
 
   def companyName: Option[String] = companyProfile.map(_.companyName)
 
-  def companyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = companyProfile.map { profile =>
-    addressConversionUtils.toPptAddress(profile.companyAddress)
-  }
+  def companyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] =
+    companyProfile.map { profile =>
+      addressConversionUtils.toPptAddress(profile.companyAddress)
+    }
 
   def isGroupMemberSameAsNominatedPartnership(customerIdentification1: String): Boolean =
     companyProfile.exists(_.companyNumber.equalsIgnoreCase(customerIdentification1))
@@ -69,42 +62,34 @@ object PartnershipBusinessDetails {
   implicit val format: OFormat[PartnershipBusinessDetails] =
     Json.format[PartnershipBusinessDetails]
 
-  def apply(
-    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
-  ): PartnershipBusinessDetails =
-    PartnershipBusinessDetails(sautr = grsPartnershipBusinessDetails.sautr,
-                               postcode = grsPartnershipBusinessDetails.postcode,
-                               companyProfile = toCompanyProfile(grsCompanyProfile =
-                                 grsPartnershipBusinessDetails.companyProfile
-                               ),
-                               registration = Some(
-                                 RegistrationDetails(
-                                   identifiersMatch =
-                                     grsPartnershipBusinessDetails.identifiersMatch,
-                                   verificationStatus =
-                                     grsPartnershipBusinessDetails.businessVerification.map {
-                                       bv =>
-                                         bv.verificationStatus
-                                     },
-                                   registrationStatus =
-                                     grsPartnershipBusinessDetails.registration.registrationStatus,
-                                   registeredBusinessPartnerId =
-                                     grsPartnershipBusinessDetails.registration.registeredBusinessPartnerId
-                                 )
-                               )
+  def apply(grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails): PartnershipBusinessDetails =
+    PartnershipBusinessDetails(
+      sautr = grsPartnershipBusinessDetails.sautr,
+      postcode = grsPartnershipBusinessDetails.postcode,
+      companyProfile = toCompanyProfile(grsCompanyProfile =
+        grsPartnershipBusinessDetails.companyProfile
+      ),
+      registration = Some(
+        RegistrationDetails(
+          identifiersMatch =
+            grsPartnershipBusinessDetails.identifiersMatch,
+          verificationStatus =
+            grsPartnershipBusinessDetails.businessVerification.map {
+              bv =>
+                bv.verificationStatus
+            },
+          registrationStatus =
+            grsPartnershipBusinessDetails.registration.registrationStatus,
+          registeredBusinessPartnerId =
+            grsPartnershipBusinessDetails.registration.registeredBusinessPartnerId
+        )
+      )
     )
 
-  private def toCompanyProfile(
-    grsCompanyProfile: Option[GrsCompanyProfile]
-  ): Option[CompanyProfile] =
+  private def toCompanyProfile(grsCompanyProfile: Option[GrsCompanyProfile]): Option[CompanyProfile] =
     grsCompanyProfile match {
       case Some(profile) =>
-        Some(
-          CompanyProfile(companyNumber = profile.companyNumber,
-                         companyName = profile.companyName,
-                         companyAddress = profile.unsanitisedCHROAddress
-          )
-        )
+        Some(CompanyProfile(companyNumber = profile.companyNumber, companyName = profile.companyName, companyAddress = profile.unsanitisedCHROAddress))
       case None => None
     }
 

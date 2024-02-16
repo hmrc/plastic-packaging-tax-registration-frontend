@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new NotMembersUnderGroupControlController(journeyAction = spyJourneyAction,
-      mcc = mcc,
-      page = page
-    )
+    new NotMembersUnderGroupControlController(journeyAction = spyJourneyAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

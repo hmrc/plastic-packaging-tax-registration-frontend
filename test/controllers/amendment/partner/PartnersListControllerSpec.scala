@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,20 +33,12 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
   private val mcc                  = stubMessagesControllerComponents()
   private val mockListPartnersPage = mock[list_partners_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-  private val listPartnersController = new PartnersListController(
-    mcc = mcc,
-    page = mockListPartnersPage,
-    journeyAction = spyJourneyAction
-  )
+  private val listPartnersController = new PartnersListController(mcc = mcc, page = mockListPartnersPage, journeyAction = spyJourneyAction)
 
   override protected def beforeEach(): Unit =
-    when(
-      mockListPartnersPage.apply(any(), ArgumentMatchers.eq(partnershipRegistration))(any(), any())
-    ).thenReturn(Html("List Partners Page"))
+    when(mockListPartnersPage.apply(any(), ArgumentMatchers.eq(partnershipRegistration))(any(), any())).thenReturn(Html("List Partners Page"))
 
   "Partners List Controller" should {
     "display partners list page" in {
@@ -71,9 +63,7 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
 
         val resp = listPartnersController.submit()(postRequest.withFormUrlEncodedBody("addOrganisation" -> "yes"))
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          routes.AddPartnerOrganisationDetailsTypeController.displayPage().url
-        )
+        redirectLocation(resp) mustBe Some(routes.AddPartnerOrganisationDetailsTypeController.displayPage().url)
       }
     }
 
@@ -87,7 +77,5 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
       }
     }
   }
-
-
 
 }

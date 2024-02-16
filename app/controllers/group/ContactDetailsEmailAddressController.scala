@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +26,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
-                                                       journeyAction: JourneyAction,
-                                                       mcc: MessagesControllerComponents,
-                                                       page: member_email_address_page,
-                                                       registrationUpdater: NewRegistrationUpdateService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: member_email_address_page,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsEmailAddressControllerBase(
-                                                     journeyAction.register,
-                                                     mcc,
-                                                     page,
-                                                     registrationUpdater
-    ) {
+    extends ContactDetailsEmailAddressControllerBase(journeyAction.register, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
 

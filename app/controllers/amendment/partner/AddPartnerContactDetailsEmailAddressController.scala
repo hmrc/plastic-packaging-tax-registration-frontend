@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,43 +30,38 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerContactDetailsEmailAddressController @Inject() (
-                                                                 journeyAction: JourneyAction,
-                                                                 mcc: MessagesControllerComponents,
-                                                                 page: partner_email_address_page,
-                                                                 val emailPasscodePage: email_address_passcode_page,
-                                                                 val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-                                                                 val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-                                                                 registrationUpdateService: AmendRegistrationUpdateService,
-                                                                 val emailVerificationService: EmailVerificationService
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: partner_email_address_page,
+  val emailPasscodePage: email_address_passcode_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  registrationUpdateService: AmendRegistrationUpdateService,
+  val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
-    extends PartnerEmailAddressControllerBase(journeyAction = journeyAction.amend,
-                                              mcc = mcc,
-                                              page = page,
-                                              registrationUpdater = registrationUpdateService
-    ) {
+    extends PartnerEmailAddressControllerBase(journeyAction = journeyAction.amend, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplay(None,
-              routes.AddPartnerContactDetailsNameController.displayPage,
-              routes.AddPartnerContactDetailsEmailAddressController.submit()
-    )
+    doDisplay(None, routes.AddPartnerContactDetailsNameController.displayPage, routes.AddPartnerContactDetailsEmailAddressController.submit())
 
   def submit(): Action[AnyContent] =
-    doSubmit(None,
-             routes.AddPartnerContactDetailsNameController.displayPage,
-             routes.AddPartnerContactDetailsEmailAddressController.submit(),
-             routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
-             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-             routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode()
+    doSubmit(
+      None,
+      routes.AddPartnerContactDetailsNameController.displayPage,
+      routes.AddPartnerContactDetailsEmailAddressController.submit(),
+      routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
+      routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+      routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode()
     )
 
   def confirmEmailCode(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
       Ok(
-        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
-                                             getProspectiveEmail(),
-                                             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-                                             routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
+        renderEnterEmailVerificationCodePage(
+          EmailAddressPasscode.form(),
+          getProspectiveEmail(),
+          routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+          routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
         )
       )
     }
@@ -91,18 +86,13 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
               Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
           }
         else
-          Future.successful(
-            Redirect(routes.AddPartnerContactDetailsEmailAddressController.displayPage())
-          )
+          Future.successful(Redirect(routes.AddPartnerContactDetailsEmailAddressController.displayPage()))
       }
     }
 
   def confirmEmailUpdate(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      showEmailVerifiedPage(
-        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode(),
-        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailUpdate()
-      )
+      showEmailVerifiedPage(routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode(), routes.AddPartnerContactDetailsEmailAddressController.confirmEmailUpdate())
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =

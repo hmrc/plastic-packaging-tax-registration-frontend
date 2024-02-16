@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendOrganisationDetailsController @Inject() (
-                                                     journeyAction: JourneyAction,
-                                                     amendRegistrationService: AmendRegistrationService,
-                                                     mcc: MessagesControllerComponents,
-                                                     addressCaptureService: AddressCaptureService,
+  journeyAction: JourneyAction,
+  amendRegistrationService: AmendRegistrationService,
+  mcc: MessagesControllerComponents,
+  addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendRegistrationService) {
 
@@ -40,18 +40,17 @@ class AmendOrganisationDetailsController @Inject() (
       initialiseAddressLookup(request)
     }
 
-  private def initialiseAddressLookup(
-    request: JourneyRequest[AnyContent]
-  ): Future[Result] =
+  private def initialiseAddressLookup(request: JourneyRequest[AnyContent]): Future[Result] =
     addressCaptureService.initAddressCapture(
-      AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
-                           successLink =
-                             routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
-                           alfHeadingsPrefix = "addressLookup.business",
-                           entityName = request.registration.organisationDetails.businessName,
-                           pptHeadingKey = "addressCapture.business.heading",
-                           pptHintKey = None,
-                           forceUkAddress = false
+      AddressCaptureConfig(
+        backLink = routes.AmendRegistrationController.displayPage().url,
+        successLink =
+          routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+        alfHeadingsPrefix = "addressLookup.business",
+        entityName = request.registration.organisationDetails.businessName,
+        pptHeadingKey = "addressCapture.business.heading",
+        pptHintKey = None,
+        forceUkAddress = false
       )
     )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 

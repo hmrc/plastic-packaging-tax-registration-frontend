@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,10 +134,7 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = LiabilityExpectedWeight.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
     form.errors.size must equal(1)

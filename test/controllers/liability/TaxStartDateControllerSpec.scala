@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,13 @@ import java.time.LocalDate
 
 class TaxStartDateControllerSpec extends ControllerSpec {
 
-  private val page = mock[tax_start_date_page]
+  private val page                    = mock[tax_start_date_page]
   private val mockTaxStartDateService = mock[TaxStartDateService]
-  private val mcc = stubMessagesControllerComponents()
-  private val aDate = LocalDate.of(2022, 4, 1)
-  private val aRegistration = super.aRegistration()
+  private val mcc                     = stubMessagesControllerComponents()
+  private val aDate                   = LocalDate.of(2022, 4, 1)
+  private val aRegistration           = super.aRegistration()
 
-  val sut = new TaxStartDateController(
-    journeyAction = spyJourneyAction,
-    mockTaxStartDateService,
-    mcc,
-    page,
-  )
+  val sut = new TaxStartDateController(journeyAction = spyJourneyAction, mockTaxStartDateService, mcc, page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -53,13 +48,11 @@ class TaxStartDateControllerSpec extends ControllerSpec {
     authoriseAndSetRegistration()
   }
 
-  private def authoriseAndSetRegistration(): Unit = {
-
+  private def authoriseAndSetRegistration(): Unit =
     spyJourneyAction.setReg(aRegistration())
-  }
 
   "display page" should {
-    
+
     "pass the liability answers to the tax start date service" in {
       given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
       await(sut.displayPage()(FakeRequest()))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,12 @@ class AddressLookupFrontendConnectorISpec extends ConnectorISpec with Injecting 
     options =
       JourneyOptions(continueUrl = "/continue", signOutHref = "/signout", serviceHref = "/service"),
     labels = JourneyLabels(en =
-      LanguageLabels(appLevelLabels = AppLevelLabels(navTitle = "Title"),
-                     selectPageLabels = SelectPageLabels("Select address", "Select address"),
-                     lookupPageLabels = LookupPageLabels("Lookup address", "Lookup address"),
-                     confirmPageLabels = ConfirmPageLabels("Confirm address", "Confirm address"),
-                     editPageLabels = EditPageLabels("Edit address", "Edit address")
+      LanguageLabels(
+        appLevelLabels = AppLevelLabels(navTitle = "Title"),
+        selectPageLabels = SelectPageLabels("Select address", "Select address"),
+        lookupPageLabels = LookupPageLabels("Lookup address", "Lookup address"),
+        confirmPageLabels = ConfirmPageLabels("Confirm address", "Confirm address"),
+        editPageLabels = EditPageLabels("Edit address", "Edit address")
       )
     )
   )

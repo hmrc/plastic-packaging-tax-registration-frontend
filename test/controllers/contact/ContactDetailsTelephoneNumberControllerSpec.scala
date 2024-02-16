@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,11 +39,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction,
-                                                registrationConnector = mockRegistrationConnector,
-                                                mcc = mcc,
-                                                page = page
-    )
+    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -87,26 +83,23 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
       captor.getValue mustBe true
     }
 
-      "return 303 (OK)" when {
-        "user submits the phone number" in {
+    "return 303 (OK)" when {
+      "user submits the phone number" in {
 
-          spyJourneyAction.setReg(aRegistration())
-          mockRegistrationUpdate()
+        spyJourneyAction.setReg(aRegistration())
+        mockRegistrationUpdate()
 
-          val result =
-            controller.submit()(postRequestEncoded(PhoneNumber("077123")))
+        val result =
+          controller.submit()(postRequestEncoded(PhoneNumber("077123")))
 
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.primaryContactDetails.phoneNumber mustBe Some("077123")
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.primaryContactDetails.phoneNumber mustBe Some("077123")
 
-          redirectLocation(result) mustBe Some(
-            routes.ContactDetailsConfirmAddressController.displayPage().url
-          )
+        redirectLocation(result) mustBe Some(routes.ContactDetailsConfirmAddressController.displayPage().url)
 
-          reset(mockRegistrationConnector)
-        }
+        reset(mockRegistrationConnector)
       }
-
+    }
 
     "return prepopulated form" when {
 
@@ -118,11 +111,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
       "data exist" in {
 
-        spyJourneyAction.setReg(
-          aRegistration(
-            withPrimaryContactDetails(PrimaryContactDetails(phoneNumber = Some("077123")))
-          )
-        )
+        spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(phoneNumber = Some("077123")))))
 
         await(controller.displayPage()(FakeRequest()))
 
@@ -146,18 +135,14 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(
-          controller.submit()(postRequestEncoded(PhoneNumber("077123")))
-        ))
+        intercept[DownstreamServiceError](status(controller.submit()(postRequestEncoded(PhoneNumber("077123")))))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
 
-        intercept[RuntimeException](status(
-          controller.submit()(postRequestEncoded(PhoneNumber("077123")))
-        ))
+        intercept[RuntimeException](status(controller.submit()(postRequestEncoded(PhoneNumber("077123")))))
       }
     }
   }

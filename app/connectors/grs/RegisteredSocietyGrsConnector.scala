@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,18 @@
 
 package connectors.grs
 
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
-import models.genericregistration.{
-  GrsIncorporationDetails,
-  IncorpEntityGrsCreateRequest,
-  IncorporationDetails
-}
+import models.genericregistration.{GrsIncorporationDetails, IncorpEntityGrsCreateRequest, IncorporationDetails}
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class RegisteredSocietyGrsConnector @Inject() (
-  httpClient: HttpClient,
-  config: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext)
-    extends GrsConnector[
-      IncorpEntityGrsCreateRequest,
-      GrsIncorporationDetails,
-      IncorporationDetails
-    ](httpClient,
+class RegisteredSocietyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
+    extends GrsConnector[IncorpEntityGrsCreateRequest, GrsIncorporationDetails, IncorporationDetails](
+      httpClient,
       metrics,
       Some(config.incorpRegistedSocietyJourneyUrl),
       config.incorpDetailsUrl,
@@ -46,9 +35,7 @@ class RegisteredSocietyGrsConnector @Inject() (
       "ppt.regsoc.get.details.timer"
     ) {
 
-  override def translateDetails(
-    grsIncorporationDetails: GrsIncorporationDetails
-  ): IncorporationDetails =
+  override def translateDetails(grsIncorporationDetails: GrsIncorporationDetails): IncorporationDetails =
     IncorporationDetails(grsIncorporationDetails)
 
 }

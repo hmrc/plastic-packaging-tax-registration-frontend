@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ trait CommonTestUtils {
   val alphabetAndWhitespaceChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ  "
 
   def randomAlphabetString(length: Int): String =
-    LazyList.continually(
-      alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
-    ) take length mkString
+    LazyList.continually(alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))) take length mkString
 
   def randomNumericString(length: Int): String =
     (1 to length).map(_ => Random.nextInt(9)).mkString("")

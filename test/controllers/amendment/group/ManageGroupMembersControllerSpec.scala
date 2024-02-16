@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,7 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with AmendmentCont
 
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(spyJourneyAction,
-                                             Helpers.stubMessagesControllerComponents(),
-                                             view
-  )
+  val sut = new ManageGroupMembersController(spyJourneyAction, Helpers.stubMessagesControllerComponents(), view)
 
   "displayPage" must {
     "return 200 with view" in {

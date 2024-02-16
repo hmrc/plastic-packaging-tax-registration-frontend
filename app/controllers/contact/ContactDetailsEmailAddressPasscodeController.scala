@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,21 +35,17 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
-                                                               journeyAction: JourneyAction,
-                                                               mcc: MessagesControllerComponents,
-                                                               emailVerificationService: EmailVerificationService,
-                                                               override val registrationConnector: RegistrationConnector,
-                                                               page: email_address_passcode_page
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  emailVerificationService: EmailVerificationService,
+  override val registrationConnector: RegistrationConnector,
+  page: email_address_passcode_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
-      Ok(
-        buildEmailPasscodePage(EmailAddressPasscode.form(),
-                               request.registration.primaryContactDetails.email
-        )
-      )
+      Ok(buildEmailPasscodePage(EmailAddressPasscode.form(), request.registration.primaryContactDetails.email))
     }
 
   def submit: Action[AnyContent] =
@@ -57,8 +53,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       EmailAddressPasscode.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[EmailAddressPasscode]) =>
-            Future.successful(BadRequest(buildEmailPasscodePage(formWithErrors, None))),
+          (formWithErrors: Form[EmailAddressPasscode]) => Future.successful(BadRequest(buildEmailPasscodePage(formWithErrors, None))),
           emailAddressPasscode =>
             request.registration.primaryContactDetails.email match {
               case Some(email) => continue(emailAddressPasscode.value, email)
@@ -67,15 +62,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         )
     }
 
-  private def continue(passcode: String, email: String)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[Result] = {
-    val eventualValue = verifyEmailPasscode(
-      passcode,
-      email,
-      request.registration.primaryContactDetails.journeyId.getOrElse("")
-    )
+  private def continue(passcode: String, email: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] = {
+    val eventualValue = verifyEmailPasscode(passcode, email, request.registration.primaryContactDetails.journeyId.getOrElse(""))
 
     eventualValue.flatMap {
       case COMPLETE =>
@@ -86,61 +74,29 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         }
       case INCORRECT_PASSCODE =>
         Future.successful(
-          BadRequest(
-            buildEmailPasscodePage(EmailAddressPasscode.form().withError(
-                                     "incorrectPasscode",
-                                     "primaryContactDetails.emailAddress.passcode.incorrect"
-                                   ),
-                                   None
-            )
-          )
+          BadRequest(buildEmailPasscodePage(EmailAddressPasscode.form().withError("incorrectPasscode", "primaryContactDetails.emailAddress.passcode.incorrect"), None))
         )
       case TOO_MANY_ATTEMPTS =>
-        Future.successful(
-          Redirect(
-            routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
-          ).withNewSession
-        )
+        Future.successful(Redirect(routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()).withNewSession)
       case _ =>
-        Future.successful(
-          BadRequest(
-            buildEmailPasscodePage(
-              EmailAddressPasscode.form().withError("journeyNotFound",
-                                                    "Passcode for email address is not found"
-              ),
-              None
-            )
-          )
-        )
+        Future.successful(BadRequest(buildEmailPasscodePage(EmailAddressPasscode.form().withError("journeyNotFound", "Passcode for email address is not found"), None)))
     }
   }
 
-  private def buildEmailPasscodePage(form: Form[EmailAddressPasscode], email: Option[String])(
-    implicit request: JourneyRequest[AnyContent]
-  ) =
-    page(form,
-         email,
-         routes.ContactDetailsEmailAddressPasscodeController.submit,
-         Some(sectionName)
-    )
+  private def buildEmailPasscodePage(form: Form[EmailAddressPasscode], email: Option[String])(implicit request: JourneyRequest[AnyContent]) =
+    page(form, email, routes.ContactDetailsEmailAddressPasscodeController.submit, Some(sectionName))
 
-  private def addVerifiedEmail(email: String)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
+  private def addVerifiedEmail(email: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(metaData = registration.metaData.add(Seq(EmailStatus(email, true, false))))
     }
 
-  private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit
-    hc: HeaderCarrier
-  ): Future[EmailVerificationJourneyStatus.Value] =
+  private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit hc: HeaderCarrier): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationService.checkVerificationCode(passcode, email, journeyId)
 
-  private def sectionName(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
-    if(request.registration.isGroup)
+  private def sectionName(implicit request: JourneyRequest[AnyContent], messages: Messages): String =
+    if (request.registration.isGroup)
       messages("primaryContactDetails.group.sectionHeader")
     else messages("primaryContactDetails.sectionHeader")
-  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,32 +28,20 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.amendment.partner.amend_partner_contact_check_answers_page
 
-class PartnerContactDetailsCheckAnswersControllerSpec
-    extends ControllerSpec with AmendmentControllerSpec {
+class PartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc                 = stubMessagesControllerComponents()
   private val mockPartnerCYAsPage = mock[amend_partner_contact_check_answers_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-  private val controller = new PartnerContactDetailsCheckAnswersController(
-    mcc = mcc,
-    page = mockPartnerCYAsPage,
-    journeyAction = spyJourneyAction,
-    amendRegistrationService = mockAmendRegService
-  )
+  private val controller =
+    new PartnerContactDetailsCheckAnswersController(mcc = mcc, page = mockPartnerCYAsPage, journeyAction = spyJourneyAction, amendRegistrationService = mockAmendRegService)
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.setReg(partnershipRegistration)
 
-    when(
-      mockPartnerCYAsPage.apply(ArgumentMatchers.eq(partnershipRegistration.nominatedPartner.get))(
-        any(),
-        any()
-      )
-    ).thenReturn(Html("Amend Partner CYAs Page"))
+    when(mockPartnerCYAsPage.apply(ArgumentMatchers.eq(partnershipRegistration.nominatedPartner.get))(any(), any())).thenReturn(Html("Amend Partner CYAs Page"))
   }
 
   "Partner Contact Details Check Answers Controllers" should {

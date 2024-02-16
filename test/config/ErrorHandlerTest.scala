@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import play.api.test.Helpers.stubMessagesApi
 import spec.PptTestData
 import views.html.error_template
 
-class ErrorHandlerTest
-    extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
+class ErrorHandlerTest extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
 
   private val errorPage    = inject[error_template]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())

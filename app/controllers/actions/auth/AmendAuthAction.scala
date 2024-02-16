@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,45 +32,35 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @ImplementedBy(classOf[AmendAuthActionImpl])
 trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
 
-class AmendAuthActionImpl @Inject()(
- override val authConnector: AuthConnector,
- override val parser: BodyParsers.Default,
- appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext) extends AmendAuthAction
-  with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
+class AmendAuthActionImpl @Inject() (override val authConnector: AuthConnector, override val parser: BodyParsers.Default, appConfig: AppConfig)(implicit
+  val executionContext: ExecutionContext
+) extends AmendAuthAction with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = credentials and internalId and allEnrolments and affinityGroup
 
-  override def invokeBlock[A](
-                               request: Request[A],
-                               block: PPTEnrolledRequest[A] => Future[Result]
-                             ): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: PPTEnrolledRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val continueUrl = request.target.path
 
-    authorised(
-      AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))
-    ).retrieve(retrievals) {
-        case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
-          request.session.get("clientPPT") match {
-            case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
-            case None => Future.successful(Redirect(appConfig.pptAccountUrl))
-          }
+    authorised(AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))).retrieve(retrievals) {
+      case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
+        request.session.get("clientPPT") match {
+          case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
+          case None                 => Future.successful(Redirect(appConfig.pptAccountUrl))
+        }
 
-        case credentials ~ internalId ~ allEnrolments ~ _ =>
+      case credentials ~ internalId ~ allEnrolments ~ _ =>
+        val pptIdentifier = allEnrolments
+          .getEnrolment(PptEnrolment.Key).getOrElse(throw new IllegalStateException("No PPT Enrolment found"))
+          .getIdentifier(PptEnrolment.IdentifierName).getOrElse(throw new IllegalStateException("PPT enrolment has no identifier"))
+          .value
 
-          val pptIdentifier = allEnrolments
-            .getEnrolment(PptEnrolment.Key).getOrElse(throw new IllegalStateException("No PPT Enrolment found"))
-            .getIdentifier(PptEnrolment.IdentifierName).getOrElse(throw new IllegalStateException("PPT enrolment has no identifier"))
-            .value
-
-          block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), pptIdentifier))
-      } recover {
+        block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), pptIdentifier))
+    } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
       case _: IncorrectCredentialStrength =>
@@ -87,10 +77,6 @@ class AmendAuthActionImpl @Inject()(
   }
 
   private def upliftCredentialStrength(continueUrl: String): Result =
-    Redirect(appConfig.mfaUpliftUrl,
-      Map("origin" -> Seq(appConfig.serviceIdentifier),
-        "continueUrl" -> Seq(continueUrl)
-      )
-    )
+    Redirect(appConfig.mfaUpliftUrl, Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl)))
 
 }

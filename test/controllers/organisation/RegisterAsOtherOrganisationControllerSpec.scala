@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,7 @@ class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
   private val page = mock[register_as_other_organisation]
 
   val controller =
-    new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(),
-                                              page,
-                                              authenticate = FakeRegistrationAuthAction
-    )
+    new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(), page, authenticate = FakeRegistrationAuthAction)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

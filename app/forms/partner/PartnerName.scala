@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package forms.partner
 import play.api.data.{Form, Forms}
 import play.api.data.Forms.text
 import play.api.libs.json.{Json, OFormat}
-import forms.contact.Address.{
-  isMatchingPattern,
-  isNonEmpty
-}
+import forms.contact.Address.{isMatchingPattern, isNonEmpty}
 
 import java.util.regex.Pattern
 
@@ -44,10 +41,7 @@ object PartnerName {
     partnerName ->
       text()
         .verifying(partnerNameEmptyError, isNonEmpty)
-        .verifying(partnerNameFormatError,
-                   partnerName =>
-                     !isNonEmpty(partnerName) || isMatchingPattern(partnerName, PARTNER_NAME_REGEX)
-        )
+        .verifying(partnerNameFormatError, partnerName => !isNonEmpty(partnerName) || isMatchingPattern(partnerName, PARTNER_NAME_REGEX))
   )(PartnerName.apply)(PartnerName.unapply)
 
   def form(): Form[PartnerName] = Form(mapping)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,27 +34,20 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[BasicAuthActionImpl])
 trait BasicAuthAction extends ActionBuilder[RegistrationRequest, AnyContent]
 
-class BasicAuthActionImpl @Inject()(
- override val authConnector: AuthConnector,
- override val parser: BodyParsers.Default,
- appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext) extends BasicAuthAction
-  with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
+class BasicAuthActionImpl @Inject() (override val authConnector: AuthConnector, override val parser: BodyParsers.Default, appConfig: AppConfig)(implicit
+  val executionContext: ExecutionContext
+) extends BasicAuthAction with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = internalId and credentials
 
-  override def invokeBlock[A](
-                               request: Request[A],
-                               block: RegistrationRequest[A] => Future[Result]
-                             ): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val continueUrl = request.target.path
 
-    authorised(
-      CredentialStrength(CredentialStrength.strong).or(AffinityGroup.Agent))
-      .retrieve(retrievals){
-        case internalId ~ credentials => block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials )))
+    authorised(CredentialStrength(CredentialStrength.strong).or(AffinityGroup.Agent))
+      .retrieve(retrievals) {
+        case internalId ~ credentials => block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials)))
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
@@ -69,10 +62,6 @@ class BasicAuthActionImpl @Inject()(
   }
 
   private def upliftCredentialStrength(continueUrl: String): Result =
-    Redirect(appConfig.mfaUpliftUrl,
-      Map("origin" -> Seq(appConfig.serviceIdentifier),
-        "continueUrl" -> Seq(continueUrl)
-      )
-    )
+    Redirect(appConfig.mfaUpliftUrl, Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl)))
 
 }

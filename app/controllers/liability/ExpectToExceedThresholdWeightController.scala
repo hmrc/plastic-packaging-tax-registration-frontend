@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExpectToExceedThresholdWeightController @Inject() (
-                                                          journeyAction: JourneyAction,
-                                                          override val registrationConnector: RegistrationConnector,
-                                                          mcc: MessagesControllerComponents,
-                                                          page: expect_to_exceed_threshold_weight_page,
-                                                          form: ExpectToExceedThresholdWeight,
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: expect_to_exceed_threshold_weight_page,
+  form: ExpectToExceedThresholdWeight
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -44,7 +44,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     journeyAction.register { implicit request =>
       request.registration.liabilityDetails.expectToExceedThresholdWeight match {
         case Some(yesNo) => Ok(page(form().fill(yesNo)))
-        case _ => Ok(page(form()))
+        case _           => Ok(page(form()))
       }
     }
 
@@ -52,29 +52,25 @@ class ExpectToExceedThresholdWeightController @Inject() (
     journeyAction.register.async { implicit request =>
       form()
         .bindFromRequest()
-        .fold(formWithErrors =>
-          Future.successful(BadRequest(page(formWithErrors))),
-              expectToExceed =>
-                updateRegistration(expectToExceed).map {
-                  case Right(_) => redirect(expectToExceed)
-                  case Left(error) => throw error
-                }
+        .fold(
+          formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
+          expectToExceed =>
+            updateRegistration(expectToExceed).map {
+              case Right(_)    => redirect(expectToExceed)
+              case Left(error) => throw error
+            }
         )
 
     }
 
-  private def redirect(isYes: Boolean): Result = {
-    if(isYes)
+  private def redirect(isYes: Boolean): Result =
+    if (isYes)
       Redirect(controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage)
     else
       Redirect(controllers.liability.routes.ExceededThresholdWeightController.displayPage)
-  }
 
-  private def updateRegistration(
-    expectToExceedThresholdWeight: Boolean
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(expectToExceedThresholdWeight: Boolean)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-
       val updatedLiableDetails =
         registration.liabilityDetails.copy(
           expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight),
@@ -84,13 +80,9 @@ class ExpectToExceedThresholdWeightController @Inject() (
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 
-
-  private def resetDateRealised(
-    expectToExceedThresholdWeight: Boolean,
-    registration: Registration
-  ): Option[Date] = {
+  private def resetDateRealised(expectToExceedThresholdWeight: Boolean, registration: Registration): Option[Date] =
     if (expectToExceedThresholdWeight)
       registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight
     else None
-  }
+
 }

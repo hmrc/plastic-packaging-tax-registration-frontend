@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,7 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
       others.zip(members).map {
         case (other, member) =>
           other.name mustBe member.businessName
-          other.change mustBe Some(
-            routes.ContactDetailsCheckAnswersController.displayPage(member.id)
-          )
+          other.change mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
           other.remove mustBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
           other.subHeading mustBe None
       }

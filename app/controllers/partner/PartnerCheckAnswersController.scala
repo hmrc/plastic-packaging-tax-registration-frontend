@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,28 +27,22 @@ import views.html.partner.partner_check_answers_page
 
 @Singleton
 class PartnerCheckAnswersController @Inject() (
-                                                journeyAction: JourneyAction,
-                                                override val registrationConnector: RegistrationConnector,
-                                                mcc: MessagesControllerComponents,
-                                                page: partner_check_answers_page
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  page: partner_check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      Ok(
-        page(
-          request.registration.newPartner.getOrElse(
-            throw new IllegalStateException("New partner absent")
-          )
-        )
-      )
+      Ok(page(request.registration.newPartner.getOrElse(throw new IllegalStateException("New partner absent"))))
     }
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      val partner = request.registration.organisationDetails.partnershipDetails.flatMap(
-        _.findPartner(partnerId)
-      ).getOrElse(throw new IllegalStateException(s"Partner with id [$partnerId] absent"))
+      val partner = request.registration.organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId)).getOrElse(
+        throw new IllegalStateException(s"Partner with id [$partnerId] absent")
+      )
       Ok(page(partner))
     }
 
@@ -56,9 +50,7 @@ class PartnerCheckAnswersController @Inject() (
     journeyAction.register { implicit request =>
       request.registration.organisationDetails.partnershipDetails.map(_.partners.size) match {
         case Some(1) =>
-          Redirect(
-            routes.PartnerListController.displayPage()
-          )
+          Redirect(routes.PartnerListController.displayPage())
         case _ => Redirect(routes.PartnerListController.displayPage())
       }
     }

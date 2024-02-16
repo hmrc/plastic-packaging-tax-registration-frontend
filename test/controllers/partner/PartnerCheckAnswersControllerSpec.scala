@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,22 +28,15 @@ import spec.PptTestData
 import views.html.partner.partner_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnerCheckAnswersControllerSpec
-    extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
+class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
 
   private val page = mock[partner_check_answers_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerCheckAnswersController(journeyAction = spyJourneyAction,
-                                      registrationConnector = mockRegistrationConnector,
-                                      mcc = mcc,
-                                      page = page
-    )
+    new PartnerCheckAnswersController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,9 +53,7 @@ class PartnerCheckAnswersControllerSpec
   "Partner Check Answers Controller" should {
     "show new partner detail" in {
 
-      spyJourneyAction.setReg(
-        aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
-      )
+      spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))))
       val resp = controller.displayNewPartner()(FakeRequest())
 
       status(resp) mustBe OK
@@ -70,17 +61,14 @@ class PartnerCheckAnswersControllerSpec
     }
 
     "show nominated partner detail" in {
-      val resp = controller.displayExistingPartner(
-        partnershipRegistration.nominatedPartner.map(_.id).get
-      )(FakeRequest())
+      val resp = controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
     }
     "show other partner detail" in {
-      val firstPartnerId = partnershipRegistration.organisationDetails.partnershipDetails.map(
-        _.otherPartners.head.id
-      ).getOrElse(throw new IllegalStateException("Missing partner id"))
+      val firstPartnerId =
+        partnershipRegistration.organisationDetails.partnershipDetails.map(_.otherPartners.head.id).getOrElse(throw new IllegalStateException("Missing partner id"))
       val resp = controller.displayExistingPartner(firstPartnerId)(FakeRequest())
 
       status(resp) mustBe OK
@@ -98,11 +86,7 @@ class PartnerCheckAnswersControllerSpec
         spyJourneyAction.setReg(aRegistration())
 
         intercept[IllegalStateException] {
-          await(
-            controller.displayExistingPartner(
-              partnershipRegistration.nominatedPartner.map(_.id).get
-            )(FakeRequest())
-          )
+          await(controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest()))
         }
       }
       "specific partner not found" in {

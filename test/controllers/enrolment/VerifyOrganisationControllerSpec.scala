@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,14 +51,12 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
 
-
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
       }
 
     }
-
 
     "redirect to IsUkAddress page " when {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,33 +31,28 @@ import java.time.LocalDate
 @Singleton
 class ViewUtils @Inject() (countryService: CountryService) {
 
-  def summaryListRow(key: String, value: Option[String], call: Option[Call] = None)(implicit
-    messages: Messages
-  ): SummaryListRow =
-    SummaryListRow(key = Key(content = Text(messages(key))),
-                   value = Value(content = HtmlContent(value.getOrElse(""))),
-                   actions = call.flatMap(
-                     c =>
-                       Some(
-                         Actions(items =
-                           Seq(
-                             ActionItem(href = c.url,
-                                        content = Text(messages("site.link.change")),
-                                        visuallyHiddenText = Some(messages(key))
-                             )
-                           )
-                         )
-                       )
-                   )
+  def summaryListRow(key: String, value: Option[String], call: Option[Call] = None)(implicit messages: Messages): SummaryListRow =
+    SummaryListRow(
+      key = Key(content = Text(messages(key))),
+      value = Value(content = HtmlContent(value.getOrElse(""))),
+      actions = call.flatMap(
+        c =>
+          Some(
+            Actions(items =
+              Seq(ActionItem(href = c.url, content = Text(messages("site.link.change")), visuallyHiddenText = Some(messages(key))))
+            )
+          )
+      )
     )
 
   def extractAddress(address: Address): String =
-    Seq(address.addressLine1,
-        address.addressLine2.getOrElse(""),
-        address.addressLine3.getOrElse(""),
-        address.townOrCity,
-        address.maybePostcode.getOrElse(""),
-        countryService.tryLookupCountryName(address.countryCode)
+    Seq(
+      address.addressLine1,
+      address.addressLine2.getOrElse(""),
+      address.addressLine3.getOrElse(""),
+      address.townOrCity,
+      address.maybePostcode.getOrElse(""),
+      countryService.tryLookupCountryName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
   def showChangeLink(call: Call): Option[Call] =
@@ -72,10 +67,10 @@ class ViewUtils @Inject() (countryService: CountryService) {
   def displayLocalDate(date: Option[LocalDate])(implicit messages: Messages): Option[String] =
     date.map(displayLocalDate)
 
-
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getDateMonth(date)} ${date.getYear}"
 
   private def getDateMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"date.month.${date.getMonthValue}")
+
 }

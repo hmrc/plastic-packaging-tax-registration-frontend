@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,16 +80,12 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
       val row = getSummaryRow(view, 2)
       row must haveSummaryKey(messages("enrolment.checkAnswers.registrationDate"))
       row must haveSummaryValue("")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "enrolment.checkAnswers.registrationDate"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "enrolment.checkAnswers.registrationDate")
       row must haveSummaryActionsHref(routes.RegistrationDateController.displayPage())
     }
 
     "not display 'postcode' row" in {
-      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages(
-        "enrolment.checkAnswers.postcode"
-      ))
+      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages("enrolment.checkAnswers.postcode"))
     }
 
   }
@@ -125,9 +121,7 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
       val row = getSummaryRow(view, 3)
       row must haveSummaryKey(messages("enrolment.checkAnswers.registrationDate"))
       row must haveSummaryValue("1 February 2021")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "enrolment.checkAnswers.registrationDate"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "enrolment.checkAnswers.registrationDate")
       row must haveSummaryActionsHref(routes.RegistrationDateController.displayPage())
     }
 
@@ -156,16 +150,12 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
       val row = getSummaryRow(view, 2)
       row must haveSummaryKey(messages("enrolment.checkAnswers.registrationDate"))
       row must haveSummaryValue("1 February 2021")
-      row must haveSummaryActionsTexts("site.link.change",
-                                       "enrolment.checkAnswers.registrationDate"
-      )
+      row must haveSummaryActionsTexts("site.link.change", "enrolment.checkAnswers.registrationDate")
       row must haveSummaryActionsHref(routes.RegistrationDateController.displayPage())
     }
 
     "not display 'postcode' row" in {
-      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages(
-        "enrolment.checkAnswers.postcode"
-      ))
+      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages("enrolment.checkAnswers.postcode"))
     }
   }
 

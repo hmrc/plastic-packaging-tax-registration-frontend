@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,19 +32,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ExceededThresholdWeightDateController @Inject()(
-                                                    journeyAction: JourneyAction,
-                                                    appConfig: AppConfig,
-                                                    override val registrationConnector: RegistrationConnector,
-                                                    mcc: MessagesControllerComponents,
-                                                    form: ExceededThresholdWeightDate,
-                                                    page: exceeded_threshold_weight_date_page
+class ExceededThresholdWeightDateController @Inject() (
+  journeyAction: JourneyAction,
+  appConfig: AppConfig,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents,
+  form: ExceededThresholdWeightDate,
+  page: exceeded_threshold_weight_date_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
-
       val filledForm = request.registration.liabilityDetails.dateExceededThresholdWeight match {
         case Some(date) => form().fill(date.date)
         case _          => form()
@@ -56,25 +55,21 @@ class ExceededThresholdWeightDateController @Inject()(
   def submit(): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
       form().bindFromRequest().fold(
-        errorForm =>
-          Future.successful(BadRequest(page(errorForm)))
-        , alreadyExceeded =>
+        errorForm => Future.successful(BadRequest(page(errorForm))),
+        alreadyExceeded =>
           updateRegistration(alreadyExceeded)
             .map {
-              case Right(_) => Redirect(routes.TaxStartDateController.displayPage())
+              case Right(_)    => Redirect(routes.TaxStartDateController.displayPage())
               case Left(error) => throw error
             }
       )
     }
 
-  private def updateRegistration(
-                                  exceededDate: LocalDate
-                                )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(exceededDate: LocalDate)(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails =
-        registration.liabilityDetails.copy(
-          dateExceededThresholdWeight = Some(Date(exceededDate))
-      ))
+        registration.liabilityDetails.copy(dateExceededThresholdWeight = Some(Date(exceededDate)))
+      )
     }
 
 }

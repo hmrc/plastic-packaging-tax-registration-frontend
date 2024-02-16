@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import views.html.deregistration.deregister_page
 class DeregisterViewSpec extends UnitViewSpec with Matchers {
 
   val appConfig: AppConfig = inject[AppConfig]
-  private val page                  = inject[deregister_page]
+  private val page         = inject[deregister_page]
 
   private def createView(form: Form[Boolean] = DeregisterForm.form()): Document =
     page(form)(registrationRequest, messages)

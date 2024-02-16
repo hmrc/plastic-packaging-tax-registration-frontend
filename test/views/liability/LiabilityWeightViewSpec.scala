@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,24 +54,17 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("liability.sectionHeader")
-      )
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
     }
 
     "display liability weight question" in {
-      view.getElementsByClass(Styles.gdsLabelPageHeading).text() must include(
-        messages("liabilityWeightPage.question")
-      )
+      view.getElementsByClass(Styles.gdsLabelPageHeading).text() must include(messages("liabilityWeightPage.question"))
     }
 
     "display hint" in {
-      view.getElementsByClass("govuk-hint").text() must include(
-        "Enter the weight, in kilograms. 1 tonne is 1,000kg.")
+      view.getElementsByClass("govuk-hint").text() must include("Enter the weight, in kilograms. 1 tonne is 1,000kg.")
 
-      view.getElementsByClass("govuk-hint").text() must include(
-        messages("liabilityWeightPage.hint")
-      )
+      view.getElementsByClass("govuk-hint").text() must include(messages("liabilityWeightPage.hint"))
     }
 
     "display total weight input box" in {

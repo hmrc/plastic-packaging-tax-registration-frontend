@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,17 +37,11 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[registration_type_page]
 
-  private val registrationTypeController = new RegistrationTypeController(journeyAction = spyJourneyAction,
-                                                                          mockRegistrationConnector,
-                                                                          mcc,
-                                                                          mockPage
-  )
+  private val registrationTypeController = new RegistrationTypeController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(mockPage.apply(any[Form[RegistrationType]], any())(any(), any())).thenReturn(
-      Html("Registration Type Page")
-    )
+    when(mockPage.apply(any[Form[RegistrationType]], any())(any(), any())).thenReturn(Html("Registration Type Page"))
   }
 
   override protected def afterEach(): Unit = {
@@ -56,8 +50,6 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   }
 
   "Registration Type Controller" should {
-
-
 
     "display page" when {
 
@@ -104,9 +96,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         val groupSelection = Seq("value" -> GROUP.toString)
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(groupSelection: _*))
 
-        redirectLocation(result) mustBe Some(
-          routes.MembersUnderGroupControlController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.MembersUnderGroupControlController.displayPage().url)
 
         val expectedRegistration = initialRegistration.copy(registrationType = Some(GROUP))
         verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())

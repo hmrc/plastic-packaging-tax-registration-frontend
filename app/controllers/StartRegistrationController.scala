@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class StartRegistrationController @Inject() (
-                                              journeyAction: JourneyAction,
-                                              mcc: MessagesControllerComponents
-) extends FrontendController(mcc) {
+class StartRegistrationController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =
     journeyAction.register { implicit request =>
