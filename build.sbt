@@ -69,11 +69,13 @@ lazy val silencerSettings: Seq[Setting[_]] = {
   )
 }
 
-lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
-all := Def.sequential(Test / test, A11yTest / test).value
-
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(DefaultBuildSettings.itSettings())
   .settings(libraryDependencies ++= AppDependencies.test)
+
+/*lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
+all := Def.sequential(Test / test, A11yTest / test).value*/
+
+
