@@ -1,17 +1,17 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-
+import uk.gov.hmrc.DefaultBuildSettings
 val appName = "plastic-packaging-tax-registration-frontend"
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8503")
 
 val silencerVersion = "1.7.14"
 
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.12"
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin, SbtWeb)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    majorVersion := 0,
-    scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
@@ -31,8 +31,6 @@ lazy val microservice = Project(appName, file("."))
     )
     // ***************
   )
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
   .configs(A11yTest)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(headerSettings(A11yTest): _*)
@@ -72,4 +70,10 @@ lazy val silencerSettings: Seq[Setting[_]] = {
 }
 
 lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
-all := Def.sequential(Test / test, IntegrationTest / test, A11yTest / test).value
+all := Def.sequential(Test / test, A11yTest / test).value
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(libraryDependencies ++= AppDependencies.test)

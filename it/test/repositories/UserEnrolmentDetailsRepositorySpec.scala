@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import forms.enrolment._
 import models.registration.UserEnrolmentDetails
@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UserEnrolmentDetailsRepository.repositoryKey
+import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import spec.PptTestData
 
 import scala.concurrent.ExecutionContext.global

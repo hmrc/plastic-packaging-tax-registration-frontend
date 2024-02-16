@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import models.request.AuthenticatedRequest
 import models.request.AuthenticatedRequest.RegistrationRequest
@@ -29,6 +29,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import repositories.MongoUserDataRepository
 import spec.PptTestData
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.CurrentTimestampSupport

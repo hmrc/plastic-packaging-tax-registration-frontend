@@ -18,7 +18,7 @@ package forms
 
 import play.api.data.{Forms, Mapping}
 import play.api.data.Forms.text
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 import scala.util.Try
@@ -35,7 +35,7 @@ object OldDate {
   def of(year: Int, month: Int, day: Int): OldDate =
     OldDate(Some(day), Some(month), Some(year))
 
-  implicit val format = Json.format[OldDate]
+  implicit val format: OFormat[OldDate] = Json.format[OldDate]
 
   val year  = "year"
   val month = "month"

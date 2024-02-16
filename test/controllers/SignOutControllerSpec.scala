@@ -16,12 +16,11 @@
 
 package controllers
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, session, status}
 import play.twirl.api.HtmlFormat
@@ -152,7 +151,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.sessionTimeoutSignedOut()(FakeRequest())
 
-        status(result) mustBe OK.intValue
+        status(result) mustBe OK
       }
     }
 

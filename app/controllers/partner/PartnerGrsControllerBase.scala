@@ -26,7 +26,6 @@ import models.registration.{Registration, RegistrationUpdater}
 import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import org.joda.time.DateTime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,6 +33,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.LocalDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerGrsControllerBase(
@@ -102,7 +102,7 @@ abstract class PartnerGrsControllerBase(
   }
 
   private def registrationFailed =
-    Redirect(commonRoutes.NotableErrorController.registrationFailed(DateTime.now().toString))
+    Redirect(commonRoutes.NotableErrorController.registrationFailed(LocalDateTime.now().toString))
 
   private def checkSubscriptionStatus(businessPartnerId: String)(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)

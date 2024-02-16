@@ -18,7 +18,7 @@ package forms.liability
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.voa.play.form.ConditionalMappings.mandatory
 
 import scala.util.Try
@@ -26,7 +26,7 @@ import scala.util.Try
 case class LiabilityWeight(totalKg: Option[Long]) {}
 
 object LiabilityWeight {
-  implicit val format = Json.format[LiabilityWeight]
+  implicit val format: OFormat[LiabilityWeight] = Json.format[LiabilityWeight]
 
   val maxTotalKg                = 99999999999L
   val minTotalKg                = 1

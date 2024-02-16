@@ -21,7 +21,6 @@ import controllers.actions.JourneyAction
 import forms.contact.Address
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
-import models.addresslookup.CountryCode
 import models.addresslookup.CountryCode.GB
 import models.registration.Cacheable
 import models.request.JourneyRequest

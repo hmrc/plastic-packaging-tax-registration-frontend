@@ -30,7 +30,6 @@ import models.registration.{Cacheable, OrganisationDetails, Registration}
 import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import org.joda.time.DateTime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -39,6 +38,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AddressConversionUtils
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -118,7 +118,7 @@ class GrsController @Inject() (
   }
 
   private def registrationFailed =
-    Redirect(commonRoutes.NotableErrorController.registrationFailed(DateTime.now().toString))
+    Redirect(commonRoutes.NotableErrorController.registrationFailed(LocalDateTime.now().toString))
 
   private def duplicateSubscription(registration: Registration) =
     if (registration.isGroup) Redirect(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered())

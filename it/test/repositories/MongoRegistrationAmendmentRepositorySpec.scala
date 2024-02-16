@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import builders.RegistrationBuilder
 import models.registration.Registration
@@ -27,6 +27,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.await
+import repositories.{RegistrationAmendmentRepositoryImpl, UserDataRepository}
 import spec.PptTestData
 
 import scala.concurrent.{ExecutionContext, Future}

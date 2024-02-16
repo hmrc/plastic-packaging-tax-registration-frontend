@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repositories
+package test.repositories
 
 import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 import models.request.AuthenticatedRequest
@@ -28,6 +28,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.mvc.AnyContent
 import play.api.test.DefaultAwaitTimeout
+import repositories.{DeregistrationDetailRepositoryImpl, MongoUserDataRepository}
 import spec.PptTestData
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
