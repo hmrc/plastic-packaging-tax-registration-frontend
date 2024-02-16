@@ -75,7 +75,7 @@ lazy val it = project
   .settings(DefaultBuildSettings.itSettings())
   .settings(libraryDependencies ++= AppDependencies.test)
 
-/*lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
-all := Def.sequential(Test / test, A11yTest / test).value*/
+lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
+all := Def.sequential(Test / test, A11yTest / test).value
 
 

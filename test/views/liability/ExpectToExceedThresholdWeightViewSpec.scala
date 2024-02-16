@@ -64,7 +64,6 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display paragraph contents" in {
-      println("=================" + view)
       view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.p1")
       view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.p1")
       view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.1")
@@ -91,3 +90,5 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
   }
 
 }
+
+
