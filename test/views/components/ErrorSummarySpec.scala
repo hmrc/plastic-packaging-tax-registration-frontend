@@ -25,9 +25,8 @@ import views.html.components.errorSummary
 
 class ErrorSummarySpec extends UnitViewSpec with Matchers {
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     super.beforeEach()
-  }
 
   val sut: errorSummary = inject[errorSummary]
 
@@ -47,7 +46,7 @@ class ErrorSummarySpec extends UnitViewSpec with Matchers {
 
       "using the form error key" in {
 
-        val html         = sut.apply(errors)(messages)
+        val html                   = sut.apply(errors)(messages)
         val errorSummary: Elements = Jsoup.parse(html.toString).body().children()
 
         errorSummary.text() mustBe "There is a problem Select yes if you have met the threshold in the last 12 months"

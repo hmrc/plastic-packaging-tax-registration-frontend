@@ -25,7 +25,7 @@ import views.html.liability.expect_to_exceed_threshold_weight_page
 
 class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
   private val page: expect_to_exceed_threshold_weight_page = inject[expect_to_exceed_threshold_weight_page]
-  private val form: Form[Boolean] = new ExpectToExceedThresholdWeight().apply()
+  private val form: Form[Boolean]                          = new ExpectToExceedThresholdWeight().apply()
 
   private def createView(form: Form[Boolean] = form): Document =
     page(form)(registrationJourneyRequest, messages)
@@ -64,7 +64,7 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display paragraph contents" in {
-      println("================="+view)
+      println("=================" + view)
       view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.p1")
       view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.p1")
       view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.1")
@@ -89,6 +89,5 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     page.f(form)(registrationJourneyRequest, messages)
     page.render(form, registrationJourneyRequest, messages)
   }
-
 
 }

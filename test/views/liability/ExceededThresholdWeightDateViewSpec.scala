@@ -28,8 +28,8 @@ import java.time.LocalDate
 
 class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
   private val page: exceeded_threshold_weight_date_page = inject[exceeded_threshold_weight_date_page]
-  private val appConfig: AppConfig = inject[AppConfig]
-  private val form: Form[LocalDate] = new ExceededThresholdWeightDate(appConfig).apply()
+  private val appConfig: AppConfig                      = inject[AppConfig]
+  private val form: Form[LocalDate]                     = new ExceededThresholdWeightDate(appConfig).apply()
 
   private def createView(form: Form[LocalDate] = form): Document =
     page(form)(registrationJourneyRequest, messages)
@@ -85,4 +85,5 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
     page.f(form)(registrationJourneyRequest, messages)
     page.render(form, registrationJourneyRequest, messages)
   }
+
 }

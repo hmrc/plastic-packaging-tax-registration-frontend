@@ -23,7 +23,6 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import views.html.liability.exceeded_threshold_weight_page
 
-
 class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[exceeded_threshold_weight_page]

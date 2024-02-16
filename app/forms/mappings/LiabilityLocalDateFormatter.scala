@@ -43,14 +43,13 @@ private[mappings] class LiabilityLocalDateFormatter(
   private def stripWhiteSpaces(data: Map[String, String]) =
     data.map(o => o._1 -> o._2.replace(" ", ""))
 
-  private def validateDate(key: String, date: LocalDate): Either[Seq[FormError], LocalDate] = {
+  private def validateDate(key: String, date: LocalDate): Either[Seq[FormError], LocalDate] =
     if (date.isAfter(LocalDate.now))
       Left(List(FormError(s"$key.day", dateOutOfRangeError, Seq(messages(s"general.day")))))
-    else if (date.isBefore(appConfig.goLiveDate)) {
+    else if (date.isBefore(appConfig.goLiveDate))
       Left(List(FormError(s"$key.day", beforeLiveDateErrorKey, Seq(goLiveDateArgs))))
-    } else
+    else
       Right(date)
-  }
 
   private def goLiveDateArgs = {
     val goLiveDate = appConfig.goLiveDate
