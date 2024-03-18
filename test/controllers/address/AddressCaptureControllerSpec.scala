@@ -50,7 +50,9 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
   private val mockAddressPage                    = mock[address_page]
 
   when(mockInUkPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Is UK Address?"))
-  when(mockAddressPage.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Address Capture"))
+  when(mockAddressPage.apply(any(), any(), any(), any(), any(), any())(any(), any())).thenReturn(
+    HtmlFormat.raw("Address Capture")
+  )
 
   private val addressCaptureController = new AddressCaptureController(
     authenticate = FakeBasicAuthAction,
@@ -79,7 +81,9 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
 
     addressCaptureService.initAddressCapture(addressCaptureConfig)(registrationJourneyRequest.authenticatedRequest)
 
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(Future.successful(AddressLookupOnRamp("/alf-on-ramp")))
+    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
+      Future.successful(AddressLookupOnRamp("/alf-on-ramp"))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -128,7 +132,8 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
       }
 
       "the user indicates that they wish to capture a UK address" in {
-        val resp = await(addressCaptureController.submitAddressInUk()(postRequestTuplesEncoded(Seq(("ukAddress", "yes")))))
+        val resp =
+          await(addressCaptureController.submitAddressInUk()(postRequestTuplesEncoded(Seq(("ukAddress", "yes")))))
 
         redirectLocation(Future.successful(resp)) mustBe Some("/alf-on-ramp")
         verifyAlfInitialisedAsExpected(addressCaptureConfig)
@@ -145,13 +150,12 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
 
         redirectLocation(Future.successful(resp)) mustBe Some("/success-link")
 
-        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map {
-          capturedAddress =>
-            capturedAddress.get.addressLine1 mustBe validAlfAddress.address.lines.head
-            capturedAddress.get.addressLine2 mustBe validAlfAddress.address.lines(1)
-            capturedAddress.get.addressLine3 mustBe validAlfAddress.address.lines(2)
-            capturedAddress.get.maybePostcode mustBe Some(validAlfAddress.address.postcode)
-            capturedAddress.get.countryCode mustBe validAlfAddress.address.country.map(_.code)
+        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map { capturedAddress =>
+          capturedAddress.get.addressLine1 mustBe validAlfAddress.address.lines.head
+          capturedAddress.get.addressLine2 mustBe validAlfAddress.address.lines(1)
+          capturedAddress.get.addressLine3 mustBe validAlfAddress.address.lines(2)
+          capturedAddress.get.maybePostcode mustBe Some(validAlfAddress.address.postcode)
+          capturedAddress.get.countryCode mustBe validAlfAddress.address.country.map(_.code)
         }
       }
     }
@@ -196,21 +200,26 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
 
     "store address and redirect to address capture callback" when {
       "valid address captured in PPT address page" in {
-        val request      = FakeRequest()
-        val validAddress = List(("addressLine1", "99 Edge Road"), ("addressLine2", "Notting Hill"), ("townOrCity", "London"), ("postCode", "NW1 1AA"), ("countryCode", GB))
+        val request = FakeRequest()
+        val validAddress = List(
+          ("addressLine1", "99 Edge Road"),
+          ("addressLine2", "Notting Hill"),
+          ("townOrCity", "London"),
+          ("postCode", "NW1 1AA"),
+          ("countryCode", GB)
+        )
 
         val resp =
           await(addressCaptureController.submitAddress()(postRequestTuplesEncoded(validAddress)))
 
         redirectLocation(Future.successful(resp)) mustBe Some("/success-link")
 
-        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map {
-          capturedAddress =>
-            capturedAddress.get.addressLine1 mustBe validAddress.head._2
-            capturedAddress.get.addressLine2 mustBe validAddress(1)._2
-            capturedAddress.get.townOrCity mustBe validAddress(2)._2
-            capturedAddress.get.maybePostcode mustBe Some(validAddress(3)._2)
-            capturedAddress.get.countryCode mustBe validAddress(4)._2
+        addressCaptureService.getCapturedAddress()(getAuthenticatedRequest(request)).map { capturedAddress =>
+          capturedAddress.get.addressLine1 mustBe validAddress.head._2
+          capturedAddress.get.addressLine2 mustBe validAddress(1)._2
+          capturedAddress.get.townOrCity mustBe validAddress(2)._2
+          capturedAddress.get.maybePostcode mustBe Some(validAddress(3)._2)
+          capturedAddress.get.countryCode mustBe validAddress(4)._2
         }
       }
     }
@@ -235,7 +244,9 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
   }
 
   private def simulateAlfCallback(addressLookupConfirmation: AddressLookupConfirmation) =
-    when(mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("123"))(any(), any())).thenReturn(Future.successful(addressLookupConfirmation))
+    when(mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("123"))(any(), any())).thenReturn(
+      Future.successful(addressLookupConfirmation)
+    )
 
   private def aValidAlfAddress() =
     AddressLookupConfirmation(
@@ -244,8 +255,7 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
       address = AddressLookupAddress(
         lines = List("100 Old Bog Lane", "Shoreditch", "London"),
         postcode = Some("EC1 1AA"),
-        country =
-          Some(AddressLookupCountry(GB, "United Kingdom"))
+        country = Some(AddressLookupCountry(GB, "United Kingdom"))
       )
     )
 
@@ -256,8 +266,7 @@ class AddressCaptureControllerSpec extends ControllerSpec with MockAddressCaptur
       address = AddressLookupAddress(
         lines = List("This is an address line which is greater than 35 characters in length", "Shoreditch", "London"),
         postcode = Some("EC1 1AA"),
-        country =
-          Some(AddressLookupCountry(GB, "United Kingdom"))
+        country = Some(AddressLookupCountry(GB, "United Kingdom"))
       )
     )
 

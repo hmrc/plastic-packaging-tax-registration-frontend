@@ -42,9 +42,12 @@ class RemoveMemberControllerSpec extends ControllerSpec {
   private val groupMember1 = aGroupMember("123")
   private val groupMember2 = aGroupMember("456")
 
-  private val groupRegistration = aRegistration(withGroupDetail(Some(GroupDetail(members = List(groupMember1, groupMember2)))))
+  private val groupRegistration = aRegistration(
+    withGroupDetail(Some(GroupDetail(members = List(groupMember1, groupMember2))))
+  )
 
-  private val removeMemberController = new RemoveMemberController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
+  private val removeMemberController =
+    new RemoveMemberController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -146,8 +149,7 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     GroupMember(
       id = id,
       customerIdentification1 = "ABC",
-      organisationDetails =
-        Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
+      organisationDetails = Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
       addressDetails = Address(
         addressLine1 = "addressLine1",
         addressLine2 = Some("addressLine2"),

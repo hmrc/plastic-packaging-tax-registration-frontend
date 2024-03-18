@@ -30,7 +30,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
 
   private val page: expect_to_exceed_threshold_weight_date_page = inject[expect_to_exceed_threshold_weight_date_page]
   private val appConfig: AppConfig                              = inject[AppConfig]
-  private val form: Form[LocalDate]                             = new ExpectToExceedThresholdWeightDate(appConfig).apply()
+  private val form: Form[LocalDate] = new ExpectToExceedThresholdWeightDate(appConfig).apply()
 
   private def createView(form: Form[LocalDate] = form): Document =
     page(form)(registrationJourneyRequest, messages)
@@ -58,7 +58,9 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
 
     "display header" in {
       view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
-      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.expectToExceedThresholdDate.title"))
+      view.getElementsByClass("govuk-heading-l").text() must include(
+        messages("liability.expectToExceedThresholdDate.title")
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -69,15 +71,27 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
 
     "display paragraph contents" in {
       view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdDate.p1")
-      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdDate.p1.bullet.1")
-      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages("liability.expectToExceedThresholdDate.p1.bullet.2")
-      view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdDate.example.1")
-      view.getElementsByClass("govuk-body").get(2).text() mustBe messages("liability.expectToExceedThresholdDate.example.2")
+      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages(
+        "liability.expectToExceedThresholdDate.p1.bullet.1"
+      )
+      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages(
+        "liability.expectToExceedThresholdDate.p1.bullet.2"
+      )
+      view.getElementsByClass("govuk-body").get(1).text() mustBe messages(
+        "liability.expectToExceedThresholdDate.example.1"
+      )
+      view.getElementsByClass("govuk-body").get(2).text() mustBe messages(
+        "liability.expectToExceedThresholdDate.example.2"
+      )
     }
 
     "display date fields" in {
-      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.expectToExceedThresholdDate.question")
-      view.getElementById("expect-to-exceed-threshold-weight-date-hint").text() mustBe messages("liability.expectToExceedThresholdDate.hint")
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages(
+        "liability.expectToExceedThresholdDate.question"
+      )
+      view.getElementById("expect-to-exceed-threshold-weight-date-hint").text() mustBe messages(
+        "liability.expectToExceedThresholdDate.hint"
+      )
       view.getElementsByClass("govuk-date-input__label").get(0).text() mustBe "Day"
       view.getElementsByClass("govuk-date-input__label").get(1).text() mustBe "Month"
       view.getElementsByClass("govuk-date-input__label").get(2).text() mustBe "Year"

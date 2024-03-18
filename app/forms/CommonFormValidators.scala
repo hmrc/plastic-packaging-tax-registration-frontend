@@ -41,7 +41,8 @@ trait CommonFormValidators {
 
   val isNoneWhiteSpace: String => Boolean = value => value.isEmpty || value.exists(char => !char.isWhitespace)
 
-  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) => value.isEmpty || value.length <= maxLength
+  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
+    value.isEmpty || value.length <= maxLength
 
   val isNotExceedingMaxLengthExcludingWhitespaces: (String, Int) => Boolean = (value, maxLength) => {
     val cleaned = value.filter(c => !Character.isWhitespace(c)).mkString
@@ -50,7 +51,9 @@ trait CommonFormValidators {
 
   val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
     (value, allowedChars) =>
-      value.isEmpty || value.chars().allMatch(char => Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(_.contains(char.toChar)))
+      value.isEmpty || value.chars().allMatch(char =>
+        Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(_.contains(char.toChar))
+      )
 
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) => pattern.matcher(value).matches()
 
@@ -62,11 +65,14 @@ trait CommonFormValidators {
 
   val isValidEmail: String => Boolean = (email: String) => email.isEmpty || isMatchingPattern(email, emailPattern)
 
-  val isValidTelephoneNumber: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
+  val isValidTelephoneNumber: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
 
-  val isValidAddressInput: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
+  val isValidAddressInput: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
 
-  val isValidPostcode: String => Boolean = (value: String) => value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
+  val isValidPostcode: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
 
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
 

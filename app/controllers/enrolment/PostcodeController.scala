@@ -29,9 +29,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PostcodeController @Inject() (authenticate: RegistrationAuthAction, mcc: MessagesControllerComponents, cache: UserEnrolmentDetailsRepository, page: postcode_page)(implicit
+class PostcodeController @Inject() (
+  authenticate: RegistrationAuthAction,
+  mcc: MessagesControllerComponents,
+  cache: UserEnrolmentDetailsRepository,
+  page: postcode_page
+)(implicit
   ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -50,8 +56,8 @@ class PostcodeController @Inject() (authenticate: RegistrationAuthAction, mcc: M
         .fold(
           (formWithErrors: Form[Postcode]) => Future.successful(BadRequest(page(formWithErrors))),
           postcode =>
-            cache.update(data => data.copy(postcode = Some(postcode))).map {
-              _ => Redirect(routes.RegistrationDateController.displayPage())
+            cache.update(data => data.copy(postcode = Some(postcode))).map { _ =>
+              Redirect(routes.RegistrationDateController.displayPage())
             }
         )
     }

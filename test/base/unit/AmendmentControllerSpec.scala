@@ -35,7 +35,8 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
   val mockAmendRegService: AmendRegistrationService = mock[AmendRegistrationService]
   val mockRegistrationUpdater: RegistrationUpdater  = mock[RegistrationUpdater]
 
-  protected def simulateUpdateWithRegSubscriptionSuccess(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateWithRegSubscriptionSuccess()
+    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseSuccess(
@@ -50,15 +51,16 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
       )
     )
 
-  protected def simulateUpdateWithRegSubscriptionFailure(ex: RuntimeException): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateWithRegSubscriptionFailure(
+    ex: RuntimeException
+  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(Future.failed(ex))
 
-  protected def simulateUpdateSubscriptionWithRegFailureReturnedError(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateSubscriptionWithRegFailureReturnedError()
+    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
-        SubscriptionCreateOrUpdateResponseFailure(failures =
-          Seq(EisError("E1", "Big Error Number 1"))
-        )
+        SubscriptionCreateOrUpdateResponseFailure(failures = Seq(EisError("E1", "Big Error Number 1")))
       )
     )
 

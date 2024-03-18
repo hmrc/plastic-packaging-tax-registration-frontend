@@ -23,6 +23,11 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 final case class IdentityData(internalId: Option[String] = None, credentials: Option[Credentials] = None) {
 
   def credId: String =
-    credentials.map(_.providerId).getOrElse(throw DownstreamServiceError("Cannot find user credentials id", RegistrationException("Cannot find user credentials id")))
+    credentials.map(_.providerId).getOrElse(
+      throw DownstreamServiceError(
+        "Cannot find user credentials id",
+        RegistrationException("Cannot find user credentials id")
+      )
+    )
 
 }

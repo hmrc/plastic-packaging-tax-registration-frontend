@@ -39,7 +39,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
     super.beforeEach()
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
-    val registration = aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))))
+    val registration = aRegistration(
+      withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember))))
+    )
     spyJourneyAction.setReg(registration)
   }
 
@@ -77,12 +79,15 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
       "group member list is empty" in {
 
-        val registration = aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))))
+        val registration =
+          aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))))
         spyJourneyAction.setReg(registration)
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url)
+        redirectLocation(result) mustBe Some(
+          controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
+        )
       }
 
     }
@@ -122,7 +127,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url)
+        redirectLocation(result) mustBe Some(
+          controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
+        )
       }
     }
 

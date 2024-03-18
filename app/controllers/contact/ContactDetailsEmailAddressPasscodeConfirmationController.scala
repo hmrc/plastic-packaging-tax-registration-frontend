@@ -29,7 +29,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: email_address_passcode_confirmation_page
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>

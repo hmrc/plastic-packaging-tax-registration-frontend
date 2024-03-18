@@ -41,13 +41,17 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
     "display required information for start page" in {
       val contentParagraphs = view.select("p.govuk-body")
 
-      stripSpaceBeforeFullstop(contentParagraphs.get(0).text()) must include(messages("unauthorised.paragraph.1", messages("unauthorised.paragraph.1.link")))
+      stripSpaceBeforeFullstop(contentParagraphs.get(0).text()) must include(
+        messages("unauthorised.paragraph.1", messages("unauthorised.paragraph.1.link"))
+      )
     }
 
     "display required information for register" in {
       val contentParagraphs = view.select("p.govuk-body")
 
-      stripSpaceBeforeFullstop(contentParagraphs.get(1).text()) must include(messages("unauthorised.paragraph.2", messages("unauthorised.paragraph.2.link")))
+      stripSpaceBeforeFullstop(contentParagraphs.get(1).text()) must include(
+        messages("unauthorised.paragraph.2", messages("unauthorised.paragraph.2.link"))
+      )
     }
   }
 

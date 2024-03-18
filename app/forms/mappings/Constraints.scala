@@ -35,11 +35,22 @@ trait Constraints {
   private def getMonth(appConfig: AppConfig)(implicit messages: Messages) =
     messages(s"date.month.${appConfig.goLiveDate.getMonthValue}")
 
-  def isInDateRange(errorKey: String, beforeLiveDateErrorKey: String)(implicit appConfig: AppConfig, clock: Clock, messages: Messages): Constraint[LocalDate] = {
+  def isInDateRange(errorKey: String, beforeLiveDateErrorKey: String)(implicit
+    appConfig: AppConfig,
+    clock: Clock,
+    messages: Messages
+  ): Constraint[LocalDate] = {
     val goLiveDate = appConfig.goLiveDate
     Constraint {
       case request if isDateBeforeLiveDate(appConfig).apply(request) =>
-        Invalid(ValidationError(messages(beforeLiveDateErrorKey, s"${goLiveDate.getDayOfMonth} ${getMonth(appConfig)} ${goLiveDate.getYear}")))
+        Invalid(
+          ValidationError(
+            messages(
+              beforeLiveDateErrorKey,
+              s"${goLiveDate.getDayOfMonth} ${getMonth(appConfig)} ${goLiveDate.getYear}"
+            )
+          )
+        )
       case request if isDateInFuture(clock).apply(request) =>
         Invalid(ValidationError(errorKey))
       case _ => Valid
@@ -47,12 +58,11 @@ trait Constraints {
   }
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
-    Constraint {
-      input =>
-        constraints
-          .map(_.apply(input))
-          .find(_ != Valid)
-          .getOrElse(Valid)
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
     }
 
   protected def nonEmptyDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
@@ -62,18 +72,20 @@ trait Constraints {
     }
 
   protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
-    Constraint {
-      input: (String, String, String) =>
-        val date = Try {
-          tupleToDate(input)
-        }.toOption
-        date match {
-          case Some(_) => Valid
-          case None    => Invalid(errKey, args: _*)
-        }
+    Constraint { input: (String, String, String) =>
+      val date = Try {
+        tupleToDate(input)
+      }.toOption
+      date match {
+        case Some(_) => Valid
+        case None    => Invalid(errKey, args: _*)
+      }
     }
 
   private def tupleToDate(dateTuple: (String, String, String)) =
-    LocalDate.parse(s"${dateTuple._1}-${dateTuple._2}-${dateTuple._3}", DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT))
+    LocalDate.parse(
+      s"${dateTuple._1}-${dateTuple._2}-${dateTuple._3}",
+      DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT)
+    )
 
 }

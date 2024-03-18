@@ -44,7 +44,9 @@ class InMemoryUserDetailsRepository()(implicit ec: ExecutionContext) extends Use
   override def deleteData[T: Writes](id: String, key: String): Future[Unit] =
     Future.successful(cache.remove(key))
 
-  override def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+  override def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Unit] =
     Future.successful(cache.put(key, cache.get(key).map(data => data.asInstanceOf[T]).map(data => updater(data))))
 
   override def reset(): Unit = cache = scala.collection.mutable.Map[String, Any]()

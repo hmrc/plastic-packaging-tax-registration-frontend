@@ -88,7 +88,14 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubOverseasAddress.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe NonUKAddress("1", Some("testLine1"), Some("test town"), "test city", None, "ES")
+        acu.toPptAddress(incAddress) mustBe NonUKAddress(
+          "1",
+          Some("testLine1"),
+          Some("test town"),
+          "test city",
+          None,
+          "ES"
+        )
 
       }
     }

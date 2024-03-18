@@ -48,7 +48,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[UserEnrolmentDetails])(any(), any())).thenReturn(HtmlFormat.raw("CYA Page"))
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(userEnrolmentDetails)))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(userEnrolmentDetails))
+    )
     when(mockCache.deleteData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(()))
   }
 
@@ -60,7 +62,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
   "Check Answers Controller" should {
     "display the check answers page" when {
       "user is authorised" in {
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(userEnrolmentDetails)))
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(userEnrolmentDetails))
+        )
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -73,7 +77,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
     "redirect to next page " when {
 
       "answers are not complete" in {
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(UserEnrolmentDetails())))
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(UserEnrolmentDetails()))
+        )
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -86,7 +92,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         "verification failed enrolment verification " in {
 
-          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(Future.successful(UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.VerificationFailed)))
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
+            Future.successful(UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.VerificationFailed))
+          )
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
@@ -97,7 +105,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         "successful enrolment verification " in {
 
-          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(Future.successful(UserEnrolmentSuccessResponse("XPPT000123456")))
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
+            Future.successful(UserEnrolmentSuccessResponse("XPPT000123456"))
+          )
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
@@ -108,13 +118,17 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         "ppt reference number is already enroled " in {
 
-          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(Future.successful(UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.GroupEnrolled)))
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
+            Future.successful(UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.GroupEnrolled))
+          )
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
           status(result) mustBe SEE_OTHER
 
-          redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage().url)
+          redirectLocation(result) mustBe Some(
+            routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage().url
+          )
         }
 
       }

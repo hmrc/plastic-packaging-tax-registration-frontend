@@ -26,8 +26,13 @@ import views.html.liability.tax_start_date_page
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class TaxStartDateController @Inject() (journeyAction: JourneyAction, taxStarDateService: TaxStartDateService, mcc: MessagesControllerComponents, page: tax_start_date_page)
-    extends FrontendController(mcc) with I18nSupport {
+class TaxStartDateController @Inject() (
+  journeyAction: JourneyAction,
+  taxStarDateService: TaxStartDateService,
+  mcc: MessagesControllerComponents,
+  page: tax_start_date_page
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>

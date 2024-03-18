@@ -36,7 +36,8 @@ class RegistrationDateController @Inject() (
   cache: UserEnrolmentDetailsRepository,
   page: registration_date_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -55,10 +56,11 @@ class RegistrationDateController @Inject() (
         RegistrationDate.form()
           .bindFromRequest()
           .fold(
-            (formWithErrors: Form[RegistrationDate]) => Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
+            (formWithErrors: Form[RegistrationDate]) =>
+              Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
             registrationDate =>
-              cache.update(data => data.copy(registrationDate = Some(registrationDate))).map {
-                _ => Redirect(routes.CheckAnswersController.displayPage())
+              cache.update(data => data.copy(registrationDate = Some(registrationDate))).map { _ =>
+                Redirect(routes.CheckAnswersController.displayPage())
               }
           )
 

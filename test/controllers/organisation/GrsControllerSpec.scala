@@ -60,20 +60,28 @@ class GrsControllerSpec extends ControllerSpec {
 
   private val unregisteredLimitedCompany = aRegistration(withOrganisationDetails(unregisteredUkCompanyOrgDetails()))
 
-  private val verificationFailedLimitedCompany: Registration = aRegistration(withOrganisationDetails(verificationFailedUkCompanyOrgDetails()))
+  private val verificationFailedLimitedCompany: Registration = aRegistration(
+    withOrganisationDetails(verificationFailedUkCompanyOrgDetails())
+  )
 
   private val verificationFailedSoleTrader: Registration =
     aRegistration(withSoleTraderDetails(Some(verificationFailedSoleTraderDetails)))
 
   private val registeredLimitedCompany = aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()))
 
-  private val registeredRegisteredSociety = aRegistration(withOrganisationDetails(registeredRegisteredSocietyOrgDetails()))
+  private val registeredRegisteredSociety = aRegistration(
+    withOrganisationDetails(registeredRegisteredSocietyOrgDetails())
+  )
 
   private val unregisteredSoleTrader = aRegistration(withOrganisationDetails(unregisteredSoleTraderOrgDetails()))
 
-  private val unregisteredGeneralPartnership = aRegistration(withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership"))))
+  private val unregisteredGeneralPartnership = aRegistration(
+    withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership")))
+  )
 
-  private val unregisteredScottishPartnership = aRegistration(withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership"))))
+  private val unregisteredScottishPartnership = aRegistration(
+    withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership")))
+  )
 
   "GRS Callback" should {
 
@@ -301,7 +309,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = controller.grsCallback(registration.incorpJourneyId.get)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url)
+        redirectLocation(result) mustBe Some(
+          groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url
+        )
       }
     }
 

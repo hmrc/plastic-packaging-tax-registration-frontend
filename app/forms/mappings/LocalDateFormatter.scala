@@ -23,9 +23,16 @@ import play.api.i18n.Messages
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
-private[mappings] class LocalDateFormatter(emptyDateKey: String, singleRequiredKey: String, twoRequiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
+private[mappings] class LocalDateFormatter(
+  emptyDateKey: String,
+  singleRequiredKey: String,
+  twoRequiredKey: String,
+  invalidKey: String,
+  args: Seq[String] = Seq.empty
+)(implicit
   messages: Messages
-) extends Formatter[LocalDate] with Formatters {
+) extends Formatter[LocalDate]
+    with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
@@ -51,9 +58,8 @@ private[mappings] class LocalDateFormatter(emptyDateKey: String, singleRequiredK
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val fields: Map[String, Option[String]] = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
+    val fields: Map[String, Option[String]] = fieldKeys.map { field =>
+      field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
     val missingFields = fields
@@ -65,14 +71,24 @@ private[mappings] class LocalDateFormatter(emptyDateKey: String, singleRequiredK
       case 3 =>
         formatDate(key, data)
       case 2 =>
-        Left(List(FormError(s"$key.${missingFields.head}", singleRequiredKey, Seq(messages(s"general.${missingFields.head}")))))
+        Left(
+          List(
+            FormError(s"$key.${missingFields.head}", singleRequiredKey, Seq(messages(s"general.${missingFields.head}")))
+          )
+        )
       case 1 =>
         Left(
           List(
             FormError(
               s"$key.${missingFields.head}",
               twoRequiredKey,
-              Seq(messages("general.and", messages(s"general.${missingFields.head}"), messages(s"general.${missingFields.last}")))
+              Seq(
+                messages(
+                  "general.and",
+                  messages(s"general.${missingFields.head}"),
+                  messages(s"general.${missingFields.last}")
+                )
+              )
             )
           )
         )
@@ -82,6 +98,10 @@ private[mappings] class LocalDateFormatter(emptyDateKey: String, singleRequiredK
   }
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
-    Map(s"$key.day" -> value.getDayOfMonth.toString, s"$key.month" -> value.getMonthValue.toString, s"$key.year" -> value.getYear.toString)
+    Map(
+      s"$key.day"   -> value.getDayOfMonth.toString,
+      s"$key.month" -> value.getMonthValue.toString,
+      s"$key.year"  -> value.getYear.toString
+    )
 
 }

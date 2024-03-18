@@ -49,7 +49,9 @@ class PptReferenceControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(HtmlFormat.raw("PPT Reference Page"))
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(enrolmentDetails)))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(enrolmentDetails))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -90,14 +92,19 @@ class PptReferenceControllerSpec extends ControllerSpec {
     "redirect to next page and persist ppt reference" when {
       "a valid ppt reference is submitted" in {
 
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(enrolmentDetails))
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
+          Future.successful(enrolmentDetails)
+        )
 
         val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.VerifyOrganisationController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(enrolmentDetails))(any(), any())
+        verify(mockCache).putData(
+          ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
+          ArgumentMatchers.eq(enrolmentDetails)
+        )(any(), any())
       }
     }
   }

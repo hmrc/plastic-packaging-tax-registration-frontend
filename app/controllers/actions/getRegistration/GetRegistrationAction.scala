@@ -32,8 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[GetRegistrationActionImpl])
 trait GetRegistrationAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest]
 
-class GetRegistrationActionImpl @Inject() (registrationConnector: RegistrationConnector, auditor: Auditor)(implicit val executionContext: ExecutionContext)
-    extends GetRegistrationAction with Logging {
+class GetRegistrationActionImpl @Inject() (registrationConnector: RegistrationConnector, auditor: Auditor)(implicit
+  val executionContext: ExecutionContext
+) extends GetRegistrationAction
+    with Logging {
 
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -44,7 +46,9 @@ class GetRegistrationActionImpl @Inject() (registrationConnector: RegistrationCo
     }
   }
 
-  private def loadOrCreateRegistration[A](id: String)(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, Registration]] =
+  private def loadOrCreateRegistration[A](
+    id: String
+  )(implicit headerCarrier: HeaderCarrier): Future[Either[ServiceError, Registration]] =
     registrationConnector.find(id).flatMap {
       case Right(Some(reg)) => Future.successful(Right(reg))
       case Right(None) =>

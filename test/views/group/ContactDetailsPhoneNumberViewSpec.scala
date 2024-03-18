@@ -53,7 +53,12 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("contactDetails.member.phoneNumber.title", contactName.getOrElse(messages("primaryContactDetails.fullName.default"))))
+      view.select("title").text() must include(
+        messages(
+          "contactDetails.member.phoneNumber.title",
+          contactName.getOrElse(messages("primaryContactDetails.fullName.default"))
+        )
+      )
     }
 
     "display caption" in {
@@ -68,7 +73,10 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "output hidden label correctly" in {
       view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
-        messages("contactDetails.member.phoneNumber.title", contactName.getOrElse(messages("primaryContactDetails.fullName.default")))
+        messages(
+          "contactDetails.member.phoneNumber.title",
+          contactName.getOrElse(messages("primaryContactDetails.fullName.default"))
+        )
       )
     }
 

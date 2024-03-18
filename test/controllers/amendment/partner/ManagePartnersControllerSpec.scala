@@ -33,12 +33,17 @@ class ManagePartnersControllerSpec extends ControllerSpec with AmendmentControll
   private val mcc                    = stubMessagesControllerComponents()
   private val mockManagePartnersPage = mock[manage_partners_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
-  private val managePartnersController = new ManagePartnersController(mcc = mcc, page = mockManagePartnersPage, journeyAction = spyJourneyAction)
+  private val managePartnersController =
+    new ManagePartnersController(mcc = mcc, page = mockManagePartnersPage, journeyAction = spyJourneyAction)
 
   override protected def beforeEach(): Unit =
-    when(mockManagePartnersPage.apply(ArgumentMatchers.eq(partnershipRegistration))(any(), any())).thenReturn(Html("Manage Partners Page"))
+    when(mockManagePartnersPage.apply(ArgumentMatchers.eq(partnershipRegistration))(any(), any())).thenReturn(
+      Html("Manage Partners Page")
+    )
 
   "Manage Partners Controller" should {
     "display the manage partners page" in {

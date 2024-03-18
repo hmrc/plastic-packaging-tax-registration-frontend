@@ -26,9 +26,8 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
 
     "update name" when {
       "contact details exist" in {
-        val member = groupMember.copy(contactDetails =
-          Some(GroupMemberContactDetails(firstName = "Test", lastName = "User"))
-        )
+        val member =
+          groupMember.copy(contactDetails = Some(GroupMemberContactDetails(firstName = "Test", lastName = "User")))
         val result = member.withUpdatedGroupMemberName("Test1", "User2")
         result.contactDetails.map(_.firstName).get mustBe "Test1"
         result.contactDetails.map(_.lastName).get mustBe "User2"

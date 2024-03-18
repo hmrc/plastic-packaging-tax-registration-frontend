@@ -60,19 +60,18 @@ object SoleTraderDetails {
       grsSoleTraderDetails.fullName.firstName,
       grsSoleTraderDetails.fullName.lastName,
       Some(grsSoleTraderDetails.dateOfBirth),
-      grsSoleTraderDetails.nino.getOrElse(grsSoleTraderDetails.trn.getOrElse(throw new IllegalStateException("Nino or Trn is required"))),
+      grsSoleTraderDetails.nino.getOrElse(
+        grsSoleTraderDetails.trn.getOrElse(throw new IllegalStateException("Nino or Trn is required"))
+      ),
       grsSoleTraderDetails.sautr,
       Some(
         RegistrationDetails(
           identifiersMatch = grsSoleTraderDetails.identifiersMatch,
-          verificationStatus =
-            grsSoleTraderDetails.businessVerification.map { bv =>
-              bv.verificationStatus
-            },
-          registrationStatus =
-            grsSoleTraderDetails.registration.registrationStatus,
-          registeredBusinessPartnerId =
-            grsSoleTraderDetails.registration.registeredBusinessPartnerId
+          verificationStatus = grsSoleTraderDetails.businessVerification.map { bv =>
+            bv.verificationStatus
+          },
+          registrationStatus = grsSoleTraderDetails.registration.registrationStatus,
+          registeredBusinessPartnerId = grsSoleTraderDetails.registration.registeredBusinessPartnerId
         )
       )
     )

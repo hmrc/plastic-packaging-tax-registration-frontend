@@ -37,7 +37,12 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsFullNameController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc = mcc, page = page)
+    new ContactDetailsFullNameController(
+      journeyAction = spyJourneyAction,
+      mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,7 +59,9 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     "return 200" when {
       "user is authorised, a registration already exists and display page method is invoked" in {
 
-        spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))))
+        spyJourneyAction.setReg(
+          aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))))
+        )
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
@@ -125,7 +132,9 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(controller.submit()(postRequestEncoded(FullName("FirstName LastName")))))
+        intercept[DownstreamServiceError](
+          status(controller.submit()(postRequestEncoded(FullName("FirstName LastName"))))
+        )
       }
 
       "user submits form and a registration update runtime exception occurs" in {
@@ -138,7 +147,12 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
     "display page for a group organisation" in {
 
-      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))), withGroupDetail(Some(groupDetailsWithMembers))))
+      spyJourneyAction.setReg(
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
 
       await(controller.displayPage()(FakeRequest()))
 

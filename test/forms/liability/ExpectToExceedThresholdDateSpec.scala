@@ -76,7 +76,12 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
       }
 
       "only two date fields is present" in {
-        val boundForm = sut.bind(Map("expect-to-exceed-threshold-weight-date.day" -> "15", "expect-to-exceed-threshold-weight-date.month" -> "5"))
+        val boundForm = sut.bind(
+          Map(
+            "expect-to-exceed-threshold-weight-date.day"   -> "15",
+            "expect-to-exceed-threshold-weight-date.month" -> "5"
+          )
+        )
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) must contain(requiredKey)
@@ -98,7 +103,9 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
 
       "date is out of Range" in {
         val dateInFuture = LocalDate.now().plusDays(10)
-        val boundForm    = sut.bind(toMap(dateInFuture.getDayOfMonth.toString, dateInFuture.getMonthValue.toString, dateInFuture.getYear.toString))
+        val boundForm = sut.bind(
+          toMap(dateInFuture.getDayOfMonth.toString, dateInFuture.getMonthValue.toString, dateInFuture.getYear.toString)
+        )
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) mustBe Seq(dateOutOfRangeError)
@@ -108,12 +115,18 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         val boundForm = sut.bind(toMap("15", "3", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("expect-to-exceed-threshold-weight-date.day", beforeLiveDateError, Seq("1 some message 2022")))
+        boundForm.errors mustBe Seq(
+          FormError("expect-to-exceed-threshold-weight-date.day", beforeLiveDateError, Seq("1 some message 2022"))
+        )
       }
     }
   }
 
   private def toMap(day: String, month: String, year: String): Map[String, String] =
-    Map("expect-to-exceed-threshold-weight-date.day" -> day, "expect-to-exceed-threshold-weight-date.month" -> month, "expect-to-exceed-threshold-weight-date.year" -> year)
+    Map(
+      "expect-to-exceed-threshold-weight-date.day"   -> day,
+      "expect-to-exceed-threshold-weight-date.month" -> month,
+      "expect-to-exceed-threshold-weight-date.year"  -> year
+    )
 
 }

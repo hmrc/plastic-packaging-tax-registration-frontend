@@ -50,7 +50,8 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
     "be IN_PROGRESS " when {
       "liability details are partially filled" in {
-        val liabilityDetails = LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
+        val liabilityDetails =
+          LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
         liabilityDetails.status mustBe TaskStatus.InProgress
       }
 

@@ -47,7 +47,14 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
   val form = inject[ExceededThresholdWeight]
 
-  val controller = new ExceededThresholdWeightController(journeyAction = spyJourneyAction, config, mockRegistrationConnector, mcc = mcc, form, page = mockPage)
+  val controller = new ExceededThresholdWeightController(
+    journeyAction = spyJourneyAction,
+    config,
+    mockRegistrationConnector,
+    mcc = mcc,
+    form,
+    page = mockPage
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()

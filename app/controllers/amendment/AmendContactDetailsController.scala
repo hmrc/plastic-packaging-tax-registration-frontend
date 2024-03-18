@@ -52,11 +52,8 @@ class AmendContactDetailsController @Inject() (
 
   def updateContactName(): Action[AnyContent] = {
 
-    def updateContactName(updatedName: String): Registration => Registration = {
-      registration: Registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(name = Some(updatedName))
-        )
+    def updateContactName(updatedName: String): Registration => Registration = { registration: Registration =>
+      registration.copy(primaryContactDetails = registration.primaryContactDetails.copy(name = Some(updatedName)))
     }
 
     journeyAction.amend.async { implicit request =>
@@ -84,17 +81,19 @@ class AmendContactDetailsController @Inject() (
 
   def updateJobTitle(): Action[AnyContent] = {
 
-    def updateJobTitle(updatedJobTitle: String): Registration => Registration = {
-      registration: Registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(jobTitle = Some(updatedJobTitle))
-        )
+    def updateJobTitle(updatedJobTitle: String): Registration => Registration = { registration: Registration =>
+      registration.copy(primaryContactDetails =
+        registration.primaryContactDetails.copy(jobTitle = Some(updatedJobTitle))
+      )
     }
 
     journeyAction.amend.async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(buildJobTitlePage(formWithErrors))), jobTitle => updateRegistration(updateJobTitle(jobTitle.value)))
+        .fold(
+          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(buildJobTitlePage(formWithErrors))),
+          jobTitle => updateRegistration(updateJobTitle(jobTitle.value))
+        )
     }
   }
 
@@ -113,11 +112,10 @@ class AmendContactDetailsController @Inject() (
 
   def updatePhoneNumber(): Action[AnyContent] = {
 
-    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = {
-      registration: Registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(phoneNumber = Some(updatedPhoneNumber))
-        )
+    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = { registration: Registration =>
+      registration.copy(primaryContactDetails =
+        registration.primaryContactDetails.copy(phoneNumber = Some(updatedPhoneNumber))
+      )
     }
 
     journeyAction.amend.async { implicit request =>
@@ -150,13 +148,10 @@ class AmendContactDetailsController @Inject() (
 
   def updateAddress(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          updateRegistration { registration =>
-            registration.copy(primaryContactDetails =
-              registration.primaryContactDetails.copy(address = capturedAddress)
-            )
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        updateRegistration { registration =>
+          registration.copy(primaryContactDetails = registration.primaryContactDetails.copy(address = capturedAddress))
+        }
       }
     }
 

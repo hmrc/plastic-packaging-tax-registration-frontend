@@ -57,7 +57,9 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      viewNom.select("title").text() must include(messages("partnership.otherPartners.contactNamePage.title", organisationName))
+      viewNom.select("title").text() must include(
+        messages("partnership.otherPartners.contactNamePage.title", organisationName)
+      )
     }
 
     "display member name input box" in {
@@ -158,7 +160,10 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       viewNom must haveGovukGlobalErrorSummary
 
-      viewNom must haveGovukFieldError("firstName", "First name must only include letters, hyphens, spaces, apostrophes and full stops")
+      viewNom must haveGovukFieldError(
+        "firstName",
+        "First name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
     }
 
     "first name is > 35" in {
@@ -206,7 +211,10 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       viewNom must haveGovukGlobalErrorSummary
 
-      viewNom must haveGovukFieldError("lastName", "Last name must only include letters, hyphens, spaces, apostrophes and full stops")
+      viewNom must haveGovukFieldError(
+        "lastName",
+        "Last name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
     }
 
     "last name is > 35" in {

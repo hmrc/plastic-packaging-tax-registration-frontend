@@ -40,7 +40,9 @@ class ExceededThresholdWeightDateController @Inject() (
   form: ExceededThresholdWeightDate,
   page: exceeded_threshold_weight_date_page
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -65,7 +67,9 @@ class ExceededThresholdWeightDateController @Inject() (
       )
     }
 
-  private def updateRegistration(exceededDate: LocalDate)(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    exceededDate: LocalDate
+  )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(dateExceededThresholdWeight = Some(Date(exceededDate)))

@@ -36,11 +36,14 @@ class RemovePartnerControllerSpec extends ControllerSpec {
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[remove_partner_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   private val soleTraderPartner = aSoleTraderPartner
 
-  private val removePartnerController = new RemovePartnerController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
+  private val removePartnerController =
+    new RemovePartnerController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

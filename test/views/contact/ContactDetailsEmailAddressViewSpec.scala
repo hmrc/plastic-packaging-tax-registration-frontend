@@ -63,7 +63,9 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       "Group organisation" in {
         val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
-        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.group.sectionHeader")
+        )
 
       }
     }
@@ -75,7 +77,9 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display email address label" in {
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.emailAddress.title", mainContact))
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("primaryContactDetails.emailAddress.title", mainContact)
+      )
     }
 
     "display email address input box" in {

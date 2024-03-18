@@ -24,7 +24,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class StartRegistrationController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents) extends FrontendController(mcc) {
+class StartRegistrationController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents)
+    extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =
     journeyAction.register { implicit request =>

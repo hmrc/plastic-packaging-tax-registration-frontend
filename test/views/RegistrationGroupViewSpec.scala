@@ -86,14 +86,18 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withRegistrationType(Some(GROUP)),
-          withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))),
+          withLiabilityDetails(
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
+          ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
@@ -160,8 +164,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
               dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
-              expectedWeightNext12m =
-                Some(LiabilityWeight(Some(12000))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
               newLiabilityFinished = Some(NewLiability)
@@ -173,7 +176,9 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
@@ -198,7 +203,9 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.group")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember())
+          sectionLink(organisationElement, 0) must haveHref(
+            organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember()
+          )
         }
 
         "Nominated organisation contact details" in {
@@ -235,7 +242,11 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Primary contact email not verified" when {
 
         val registration =
-          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(MetaData()), withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true)))))
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
+            withMetaData(MetaData()),
+            withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
+          )
 
         val view: Html =
           createView(registration)
@@ -267,7 +278,11 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val registrationCompletedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
-          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(registrationCompletedMetaData), withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true)))))
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
+            withMetaData(registrationCompletedMetaData),
+            withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
+          )
 
         val view: Html =
           createView(completeRegistration)

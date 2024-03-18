@@ -40,13 +40,22 @@ class PartnerEmailAddressController @Inject() (
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
-    extends PartnerEmailAddressControllerBase(journeyAction = journeyAction.register, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
+    extends PartnerEmailAddressControllerBase(
+      journeyAction = journeyAction.register,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = registrationUpdateService
+    ) {
 
   private def emailVerificationTooManyAttemptsCall =
     routes.PartnerEmailAddressController.emailVerificationTooManyAttempts()
 
   def displayNewPartner(): Action[AnyContent] =
-    doDisplay(None, partnerRoutes.PartnerContactNameController.displayNewPartner, partnerRoutes.PartnerEmailAddressController.submitNewPartner())
+    doDisplay(
+      None,
+      partnerRoutes.PartnerContactNameController.displayNewPartner,
+      partnerRoutes.PartnerEmailAddressController.submitNewPartner()
+    )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     doDisplay(

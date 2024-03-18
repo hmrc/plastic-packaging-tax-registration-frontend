@@ -35,9 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[AmendAuthActionImpl])
 trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
 
-class AmendAuthActionImpl @Inject() (override val authConnector: AuthConnector, override val parser: BodyParsers.Default, appConfig: AppConfig)(implicit
+class AmendAuthActionImpl @Inject() (
+  override val authConnector: AuthConnector,
+  override val parser: BodyParsers.Default,
+  appConfig: AppConfig
+)(implicit
   val executionContext: ExecutionContext
-) extends AmendAuthAction with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
+) extends AmendAuthAction
+    with ActionFunction[Request, PPTEnrolledRequest]
+    with AuthorisedFunctions
+    with Logging {
 
   private val retrievals = credentials and internalId and allEnrolments and affinityGroup
 
@@ -46,17 +53,22 @@ class AmendAuthActionImpl @Inject() (override val authConnector: AuthConnector, 
 
     val continueUrl = request.target.path
 
-    authorised(AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))).retrieve(retrievals) {
+    authorised(
+      AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))
+    ).retrieve(retrievals) {
       case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
         request.session.get("clientPPT") match {
-          case Some(selectedPPTRef) => block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
-          case None                 => Future.successful(Redirect(appConfig.pptAccountUrl))
+          case Some(selectedPPTRef) =>
+            block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
+          case None => Future.successful(Redirect(appConfig.pptAccountUrl))
         }
 
       case credentials ~ internalId ~ allEnrolments ~ _ =>
         val pptIdentifier = allEnrolments
           .getEnrolment(PptEnrolment.Key).getOrElse(throw new IllegalStateException("No PPT Enrolment found"))
-          .getIdentifier(PptEnrolment.IdentifierName).getOrElse(throw new IllegalStateException("PPT enrolment has no identifier"))
+          .getIdentifier(PptEnrolment.IdentifierName).getOrElse(
+            throw new IllegalStateException("PPT enrolment has no identifier")
+          )
           .value
 
         block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), pptIdentifier))
@@ -77,6 +89,9 @@ class AmendAuthActionImpl @Inject() (override val authConnector: AuthConnector, 
   }
 
   private def upliftCredentialStrength(continueUrl: String): Result =
-    Redirect(appConfig.mfaUpliftUrl, Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl)))
+    Redirect(
+      appConfig.mfaUpliftUrl,
+      Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl))
+    )
 
 }

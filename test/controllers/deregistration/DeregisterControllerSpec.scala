@@ -41,7 +41,8 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
   private val formCaptor: ArgumentCaptor[Form[Boolean]] =
     ArgumentCaptor.forClass(classOf[Form[Boolean]])
 
-  private val deregisterController = new DeregisterController(FakeAmendAuthAction, mcc, inMemoryDeregistrationDetailRepository, config, mockPage)
+  private val deregisterController =
+    new DeregisterController(FakeAmendAuthAction, mcc, inMemoryDeregistrationDetailRepository, config, mockPage)
 
   override protected def beforeEach(): Unit = {
     when(mockPage.apply(formCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("Deregister?"))

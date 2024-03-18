@@ -24,7 +24,11 @@ import spec.PptTestData
 import models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnerContactAddressControllerSpec extends ControllerSpec with AddressCaptureSpec with DefaultAwaitTimeout with PptTestData {
+class PartnerContactAddressControllerSpec
+    extends ControllerSpec
+    with AddressCaptureSpec
+    with DefaultAwaitTimeout
+    with PptTestData {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -44,16 +48,16 @@ class PartnerContactAddressControllerSpec extends ControllerSpec with AddressCap
         generalPartnershipDetailsWithPartners.copy(
           partners = Seq(),
           inflightPartner = Some(
-            aSoleTraderPartner.copy(contactDetails =
-              aSoleTraderPartner.contactDetails.map(_.copy(address = None))
-            )
+            aSoleTraderPartner.copy(contactDetails = aSoleTraderPartner.contactDetails.map(_.copy(address = None)))
           )
         )
       )
     )
   )
 
-  private val partnershipRegistrationWithExistingPartner = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistrationWithExistingPartner = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -78,7 +82,9 @@ class PartnerContactAddressControllerSpec extends ControllerSpec with AddressCap
       "capturing address for existing partner" in {
         spyJourneyAction.setReg(partnershipRegistrationWithExistingPartner)
 
-        val resp = controller.captureExistingPartner(partnershipRegistrationWithExistingPartner.nominatedPartner.get.id)(FakeRequest())
+        val resp = controller.captureExistingPartner(
+          partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
+        )(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
@@ -101,7 +107,9 @@ class PartnerContactAddressControllerSpec extends ControllerSpec with AddressCap
         val resp =
           controller.addressCaptureCallbackExistingPartner(nominatedPartnerId)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(routes.PartnerCheckAnswersController.displayExistingPartner(nominatedPartnerId).url)
+        redirectLocation(resp) mustBe Some(
+          routes.PartnerCheckAnswersController.displayExistingPartner(nominatedPartnerId).url
+        )
 
         modifiedRegistration.nominatedPartner.get.contactDetails.get.address mustBe Some(validCapturedAddress)
       }

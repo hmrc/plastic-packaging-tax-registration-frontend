@@ -35,7 +35,9 @@ class RegistrationTypeController @Inject() (
   mcc: MessagesControllerComponents,
   page: registration_type_page
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -77,8 +79,7 @@ class RegistrationTypeController @Inject() (
         registration =>
           registration.copy(
             registrationType = registrationType.value,
-            groupDetail =
-              registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
+            groupDetail = registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
           )
       case other => throw new IllegalStateException(s"Invalid registration type: $other")
     }

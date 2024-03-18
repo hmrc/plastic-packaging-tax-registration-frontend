@@ -29,7 +29,11 @@ import views.viewmodels.TaskStatus
 
 import javax.inject.Inject
 
-class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extends AnyWordSpec with PptTestData with Matchers with TableDrivenPropertyChecks {
+class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
+    extends AnyWordSpec
+    with PptTestData
+    with Matchers
+    with TableDrivenPropertyChecks {
 
   override val addressConversionUtils: AddressConversionUtils = acUtils
 
@@ -79,7 +83,9 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
     }
 
     "identify that partner business partner id is present for existing partner" in {
-      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerGrsRegistration(Some("123")) mustBe Some(
+      aRegistration(
+        withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+      ).organisationDetails.partnerGrsRegistration(Some("123")) mustBe Some(
         RegistrationDetails(true, Some("Verified"), "REGISTERED", Some("XM654321"))
       )
     }
@@ -91,10 +97,8 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
             Some(
               RegistrationDetails(
                 identifiersMatch = true,
-                verificationStatus =
-                  Some("FAIL"),
-                registrationStatus =
-                  "REGISTRATION_NOT_CALLED",
+                verificationStatus = Some("FAIL"),
+                registrationStatus = "REGISTRATION_NOT_CALLED",
                 registeredBusinessPartnerId = None
               )
             )
@@ -104,16 +108,16 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
       aRegistration(
         withPartnershipDetails(
           Some(
-            generalPartnershipDetailsWithPartners.copy(partners =
-              Seq(partnerWithVerificationFailed)
-            )
+            generalPartnershipDetailsWithPartners.copy(partners = Seq(partnerWithVerificationFailed))
           )
         )
       ).organisationDetails.partnerBusinessVerificationFailed(Some("123")) mustBe true
     }
 
     "identify that partner business partner verification status" in {
-      aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))).organisationDetails.partnerVerificationStatus(Some("123")) mustBe Some("Verified")
+      aRegistration(
+        withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+      ).organisationDetails.partnerVerificationStatus(Some("123")) mustBe Some("Verified")
     }
 
     "identify that business partner id is absent" in {
@@ -124,9 +128,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
 
     "suggest business partner id absent" when {
       "organisation type is unsupported" in {
-        OrganisationDetails(organisationType =
-          Some(CHARITABLE_INCORPORATED_ORGANISATION)
-        ).businessPartnerId mustBe None
+        OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION)).businessPartnerId mustBe None
       }
 
       "partnership type is unsupported" in {
@@ -162,7 +164,9 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
     }
   }
 
-  private def createdRegisteredSoleTradeOrg(subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createdRegisteredSoleTradeOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(SOLE_TRADER),
       soleTraderDetails = Some(
@@ -179,9 +183,16 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
     )
 
   private def createRegistrationDetails(status: Option[String], registrationStatus: String, partnerId: Option[String]) =
-    RegistrationDetails(identifiersMatch = true, verificationStatus = status, registrationStatus = registrationStatus, registeredBusinessPartnerId = partnerId)
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = status,
+      registrationStatus = registrationStatus,
+      registeredBusinessPartnerId = partnerId
+    )
 
-  private def createdFailedSoleTradeOrg(subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createdFailedSoleTradeOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(SOLE_TRADER),
       soleTraderDetails = Some(
@@ -197,7 +208,9 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createRegisteredUkCompanyOrg(subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createRegisteredUkCompanyOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(UK_COMPANY),
       incorporationDetails = Some(
@@ -227,7 +240,10 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createRegisteredPartnership(partnershipType: PartnerTypeEnum, subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createRegisteredPartnership(
+    partnershipType: PartnerTypeEnum,
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
       partnershipDetails = Some(
@@ -247,14 +263,16 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils) extend
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createFailedPartnership(partnershipType: PartnerTypeEnum, subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createFailedPartnership(
+    partnershipType: PartnerTypeEnum,
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
       partnershipDetails = Some(
         PartnershipDetails(
           partnershipType = partnershipType,
-          partnershipName =
-            Some(s"Big Bad ${partnershipType.toString}"),
+          partnershipName = Some(s"Big Bad ${partnershipType.toString}"),
           partnershipBusinessDetails = Some(
             PartnershipBusinessDetails(
               sautr = "12345678",

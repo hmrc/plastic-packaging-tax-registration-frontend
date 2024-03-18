@@ -41,7 +41,11 @@ class MustHaveFieldExtensionSpec extends PlaySpec with BeforeAndAfterEach {
 
   "mightHaveIf should complain about an empty field" in {
     val example = Example(None)
-    the[IllegalStateException] thrownBy example.mightHaveIf(_.x, "x", predicate = true) must have message "Missing field 'x'"
+    the[IllegalStateException] thrownBy example.mightHaveIf(
+      _.x,
+      "x",
+      predicate = true
+    ) must have message "Missing field 'x'"
   }
 
   "mightHaveIf should be happy with a defined field" in {

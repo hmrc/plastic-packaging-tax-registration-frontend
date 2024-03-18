@@ -32,8 +32,7 @@ class DeregistrationConnectorISpec extends ConnectorISpec with Injecting with Sc
 
   val deregistrationDetails = DeregistrationDetails(
     deregister = Some(true),
-    reason =
-      Some(DeregistrationReason.CeasedTrading)
+    reason = Some(DeregistrationReason.CeasedTrading)
   )
 
   val pptReference = "XMPPT123456789"
@@ -80,7 +79,7 @@ class DeregistrationConnectorISpec extends ConnectorISpec with Injecting with Sc
 
   private def givenPutDeregistration(pptReference: String, status: Int, body: String) =
     stubFor(
-      put(s"/subscriptions/deregister/${pptReference}")
+      put(s"/subscriptions/deregister/$pptReference")
         .willReturn(
           aResponse()
             .withStatus(status)

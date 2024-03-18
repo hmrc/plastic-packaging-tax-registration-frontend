@@ -55,9 +55,8 @@ class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
           Redirect(routes.ManageGroupMembersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>
           Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
-      }.recover {
-        case _: Exception =>
-          Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
+      }.recover { case _: Exception =>
+        Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
       }
     }
 

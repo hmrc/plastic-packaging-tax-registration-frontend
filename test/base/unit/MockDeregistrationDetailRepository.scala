@@ -25,6 +25,8 @@ import scala.concurrent.ExecutionContext
 trait MockDeregistrationDetailRepository extends RegistrationBuilder with MockitoSugar {
 
   protected val inMemoryDeregistrationDetailRepository =
-    new DeregistrationDetailRepositoryImpl(new InMemoryUserDetailsRepository()(ExecutionContext.global))(ExecutionContext.global)
+    new DeregistrationDetailRepositoryImpl(new InMemoryUserDetailsRepository()(ExecutionContext.global))(
+      ExecutionContext.global
+    )
 
 }

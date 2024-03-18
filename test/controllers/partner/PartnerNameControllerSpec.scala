@@ -40,8 +40,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val controller =
     new PartnerNameController(
       journeyAction = spyJourneyAction,
-      registrationUpdater =
-        mockNewRegistrationUpdater,
+      registrationUpdater = mockNewRegistrationUpdater,
       config,
       soleTraderGrsConnector = mockSoleTraderGrsConnector,
       ukCompanyGrsConnector = mockUkCompanyGrsConnector,
@@ -62,10 +61,14 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aPartnershipPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aPartnershipPartner)
+    )
 
   private def registrationWithPartnershipDetailsAndInflightIncorporatedPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner)
+    )
 
   private val existingPartner =
     aPartnershipPartner
@@ -106,7 +109,9 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
-        modifiedRegistration.inflightPartner.flatMap(_.partnerPartnershipDetails.flatMap(_.partnershipName)) mustBe Some("Test Partner")
+        modifiedRegistration.inflightPartner.flatMap(
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("Test Partner")
       }
 
       "user submits an amendment to an existing partners name" in {
@@ -115,11 +120,14 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockRegistrationUpdate()
         mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
-        val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PartnerName("Test Partner")))
+        val result =
+          controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PartnerName("Test Partner")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
-        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.partnerPartnershipDetails.flatMap(_.partnershipName)) mustBe Some("Test Partner")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("Test Partner")
       }
     }
 
@@ -150,7 +158,9 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
+        intercept[RuntimeException](
+          status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest()))
+        )
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -158,7 +168,13 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(PartnerName("Amended name")))))
+        intercept[RuntimeException](
+          status(
+            controller.submitExistingPartner("not-an-existing-partners-id")(
+              postRequestEncoded(PartnerName("Amended name"))
+            )
+          )
+        )
       }
 
       "user tries to set a name on a partner with a type which has a GRS provided name" in {
@@ -173,7 +189,9 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
         mockRegistrationUpdate()
 
-        intercept[RuntimeException](status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))))
+        intercept[RuntimeException](
+          status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner"))))
+        )
       }
 
       "user submits form and the registration update fails" in {
@@ -181,7 +199,9 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))))
+        intercept[DownstreamServiceError](
+          status(controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner"))))
+        )
       }
     }
   }

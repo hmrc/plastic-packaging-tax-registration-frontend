@@ -25,9 +25,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailPasscodeController @Inject() (authenticate: BasicAuthAction, mcc: MessagesControllerComponents, emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector)(implicit
+class EmailPasscodeController @Inject() (
+  authenticate: BasicAuthAction,
+  mcc: MessagesControllerComponents,
+  emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
+)(implicit
   ec: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def testOnlyGetPasscodes(): Action[AnyContent] =
     authenticate.async { implicit request =>

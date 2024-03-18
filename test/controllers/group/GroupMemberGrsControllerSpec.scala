@@ -54,7 +54,17 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
     )(ec)
 
   private def registrationWithSelectedGroupMember(orgType: OrgType, existingMembers: Seq[GroupMember] = Seq.empty) =
-    aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = existingMembers, currentMemberOrganisationType = Some(orgType)))))
+    aRegistration(
+      withGroupDetail(
+        Some(
+          GroupDetail(
+            membersUnderGroupControl = Some(true),
+            members = existingMembers,
+            currentMemberOrganisationType = Some(orgType)
+          )
+        )
+      )
+    )
 
   private val supportedOrgTypes =
     Seq(OrgType.UK_COMPANY, OrgType.OVERSEAS_COMPANY_UK_BRANCH, OrgType.PARTNERSHIP)
@@ -90,9 +100,15 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
         s"registering an existing $orgType member" in {
           val result = orgType match {
             case PARTNERSHIP =>
-              simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType, Seq(groupMember)), Some(groupMember.id))
+              simulatePartnershipCallback(
+                registrationWithSelectedGroupMember(orgType, Seq(groupMember)),
+                Some(groupMember.id)
+              )
             case _ =>
-              simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType, Seq(groupMember)), Some(groupMember.id))
+              simulateLimitedCompanyCallback(
+                registrationWithSelectedGroupMember(orgType, Seq(groupMember)),
+                Some(groupMember.id)
+              )
           }
           status(result) mustBe SEE_OTHER
           redirectLocation(result).get should include("confirm-address")
@@ -111,7 +127,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
                 partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
-              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress)
+              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
+                partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress
+              )
             case _ =>
               await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
@@ -121,7 +139,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(incorporationDetails.companyAddress)
+              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
+                incorporationDetails.companyAddress
+              )
           }
 
         }
@@ -135,13 +155,18 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
             case PARTNERSHIP =>
               val detailsFromGrs =
                 partnershipBusinessDetails.copy(companyProfile =
-                  Some(CompanyProfile(companyNumber = "22222", companyName = "Existing Company", companyAddress = testCompanyAddress))
+                  Some(
+                    CompanyProfile(
+                      companyNumber = "22222",
+                      companyName = "Existing Company",
+                      companyAddress = testCompanyAddress
+                    )
+                  )
                 )
               mockGetPartnershipBusinessDetails(detailsFromGrs)
               groupMember.copy(
                 customerIdentification1 = "22222",
-                organisationDetails =
-                  Some(GroupOrgDetails("UkCompany", "Existing Company", Some(safeNumber)))
+                organisationDetails = Some(GroupOrgDetails("UkCompany", "Existing Company", Some(safeNumber)))
               )
             case _ =>
               val detailsFromGrs =
@@ -149,8 +174,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
               mockGetUkCompanyDetails(detailsFromGrs)
               groupMember.copy(
                 customerIdentification1 = "22222",
-                organisationDetails =
-                  Some(GroupOrgDetails("UkCompany", "Existing Company", Some(safeNumber)))
+                organisationDetails = Some(GroupOrgDetails("UkCompany", "Existing Company", Some(safeNumber)))
               )
 
           }
@@ -169,7 +193,10 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
             redirectLocation(result).get should include("/register-for-plastic-packaging-tax/confirm-address")
           else
             redirectLocation(result) mustBe Some(
-              routes.ConfirmBusinessAddressController.displayPage("123456ABC", "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC").url
+              routes.ConfirmBusinessAddressController.displayPage(
+                "123456ABC",
+                "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC"
+              ).url
             )
 
           groupMemberSize(getLastSavedRegistration) mustBe 1
@@ -215,7 +242,15 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
             case PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
             case _ =>
-              mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
+              mockGetUkCompanyDetails(
+                IncorporationDetails(
+                  "123467890",
+                  testCompanyName,
+                  Some(testUtr),
+                  testCompanyAddress,
+                  Some(registrationDetails)
+                )
+              )
           }
           val registration = registrationWithSelectedGroupMember(orgType)
           spyJourneyAction.setReg(registration)
@@ -262,7 +297,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
   private def simulateLimitedCompanyCallback(registration: Registration, memberId: Option[String] = None) = {
 
-    mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
+    mockGetUkCompanyDetails(
+      IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails))
+    )
     spyJourneyAction.setReg(registration)
     mockRegistrationUpdate()
 
@@ -276,9 +313,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
   private def simulatePartnershipCallback(registration: Registration, memberId: Option[String] = None) = {
 
     mockGetPartnershipBusinessDetails(
-      partnershipBusinessDetails.copy(companyProfile =
-        Some(companyProfile.copy(companyNumber = "234234234"))
-      )
+      partnershipBusinessDetails.copy(companyProfile = Some(companyProfile.copy(companyNumber = "234234234")))
     )
     spyJourneyAction.setReg(registration)
     mockRegistrationUpdate()

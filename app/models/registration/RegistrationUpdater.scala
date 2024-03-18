@@ -26,22 +26,32 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait RegistrationUpdater {
 
-  def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration]
+  def updateRegistration(
+    registrationUpdater: Registration => Registration
+  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration]
 
 }
 
 @Singleton
-class AmendRegistrationUpdateService @Inject() (registrationAmendmentRepository: RegistrationAmendmentRepository) extends RegistrationUpdater {
+class AmendRegistrationUpdateService @Inject() (registrationAmendmentRepository: RegistrationAmendmentRepository)
+    extends RegistrationUpdater {
 
-  override def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
+  override def updateRegistration(
+    registrationUpdater: Registration => Registration
+  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
     registrationAmendmentRepository.update(registrationUpdater(_))(request.authenticatedRequest)
 
 }
 
 @Singleton
-class NewRegistrationUpdateService @Inject() (override val registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) extends RegistrationUpdater with Cacheable {
+class NewRegistrationUpdateService @Inject() (override val registrationConnector: RegistrationConnector)(implicit
+  ec: ExecutionContext
+) extends RegistrationUpdater
+    with Cacheable {
 
-  override def updateRegistration(registrationUpdater: Registration => Registration)(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
+  override def updateRegistration(
+    registrationUpdater: Registration => Registration
+  )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
     update(registrationUpdater(_)).map {
       case Right(registration) => registration
       case Left(ex)            => throw ex

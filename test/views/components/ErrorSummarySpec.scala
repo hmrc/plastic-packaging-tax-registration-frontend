@@ -30,7 +30,12 @@ class ErrorSummarySpec extends UnitViewSpec with Matchers {
 
   val sut: errorSummary = inject[errorSummary]
 
-  val errors = Seq(FormError("liability.exceededThresholdWeight.question.empty.error ", "liability.exceededThresholdWeight.question.empty.error"))
+  val errors = Seq(
+    FormError(
+      "liability.exceededThresholdWeight.question.empty.error ",
+      "liability.exceededThresholdWeight.question.empty.error"
+    )
+  )
 
   "apply" must {
     "display nothing" when {

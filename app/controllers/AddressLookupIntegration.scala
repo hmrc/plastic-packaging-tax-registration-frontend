@@ -34,6 +34,8 @@ trait AddressLookupIntegration {
     messagesPrefix: String,
     entityName: Option[String]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext, messagesApi: MessagesApi): Future[AddressLookupOnRamp] =
-    addressLookupFrontendConnector.initialiseJourney(AddressLookupConfigV2(continue, appConfig, messagesPrefix, entityName))
+    addressLookupFrontendConnector.initialiseJourney(
+      AddressLookupConfigV2(continue, appConfig, messagesPrefix, entityName)
+    )
 
 }

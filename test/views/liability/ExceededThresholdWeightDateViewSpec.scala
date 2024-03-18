@@ -57,7 +57,9 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
       view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
-      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.exceededThresholdWeightDate.title"))
+      view.getElementsByClass("govuk-heading-l").text() must include(
+        messages("liability.exceededThresholdWeightDate.title")
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -72,8 +74,12 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display date fields" in {
-      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.exceededThresholdWeightDate.question")
-      view.getElementById("exceeded-threshold-weight-date-hint").text() mustBe messages("liability.exceededThresholdWeightDate.hint")
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages(
+        "liability.exceededThresholdWeightDate.question"
+      )
+      view.getElementById("exceeded-threshold-weight-date-hint").text() mustBe messages(
+        "liability.exceededThresholdWeightDate.hint"
+      )
       view.getElementsByClass("govuk-date-input__label").get(0).text() mustBe "Day"
       view.getElementsByClass("govuk-date-input__label").get(1).text() mustBe "Month"
       view.getElementsByClass("govuk-date-input__label").get(2).text() mustBe "Year"

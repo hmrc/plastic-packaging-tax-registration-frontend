@@ -24,7 +24,13 @@ class IncorpEntityGrsCreateRequestSpec extends AnyWordSpec with Matchers {
 
   "IncorpEntityGrsCreateRequestSpec" should {
     "Convert to and from json as expected" in {
-      val grsCreateJourneyRequest = IncorpEntityGrsCreateRequest(continueUrl = "a", optServiceName = Some("b"), deskProServiceId = "c", signOutUrl = "d", accessibilityUrl = "e")
+      val grsCreateJourneyRequest = IncorpEntityGrsCreateRequest(
+        continueUrl = "a",
+        optServiceName = Some("b"),
+        deskProServiceId = "c",
+        signOutUrl = "d",
+        accessibilityUrl = "e"
+      )
 
       val json = Json.toJson(grsCreateJourneyRequest)
 

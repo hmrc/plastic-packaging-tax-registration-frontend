@@ -48,7 +48,9 @@ class ReviewRegistrationController @Inject() (
   reviewRegistrationPage: review_registration_page,
   registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   private val successSubmissionCounter =
     metrics.defaultRegistry.counter("ppt.registration.success.submission.counter")
@@ -86,28 +88,45 @@ class ReviewRegistrationController @Inject() (
         case SubscriptionCreateOrUpdateResponseFailure(failures) =>
           handleFailedSubscription(completedRegistration, failures, internalId)
       }
-      .recoverWith {
-        case _ => Future.successful(handleFailedSubscription(completedRegistration, internalId))
+      .recoverWith { case _ =>
+        Future.successful(handleFailedSubscription(completedRegistration, internalId))
       }
   }
 
-  private def handleSuccessfulSubscription(registration: Registration, response: SubscriptionCreateOrUpdateResponseSuccess, internalId: Option[String])(implicit
+  private def handleSuccessfulSubscription(
+    registration: Registration,
+    response: SubscriptionCreateOrUpdateResponseSuccess,
+    internalId: Option[String]
+  )(implicit
     hc: HeaderCarrier
   ): Result = {
     successSubmissionCounter.inc()
-    val updatedMetadata = registration.metaData.copy(nrsDetails =
-      Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason))
+    val updatedMetadata =
+      registration.metaData.copy(nrsDetails = Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason)))
+    auditor.registrationSubmitted(
+      registration = registration.copy(metaData = updatedMetadata),
+      pptReference = Some(response.pptReference),
+      internalId = internalId
     )
-    auditor.registrationSubmitted(registration = registration.copy(metaData = updatedMetadata), pptReference = Some(response.pptReference), internalId = internalId)
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
-        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)))
+        .flashing(
+          Flash(
+            Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)
+          )
+        )
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
-        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)))
+        .flashing(
+          Flash(
+            Map(FlashKeys.referenceId -> response.pptReference, FlashKeys.groupReg -> registration.isGroup.toString)
+          )
+        )
   }
 
-  private def handleFailedSubscription(registration: Registration, failures: Seq[EisError], internalId: Option[String])(implicit hc: HeaderCarrier): Result = {
+  private def handleFailedSubscription(registration: Registration, failures: Seq[EisError], internalId: Option[String])(
+    implicit hc: HeaderCarrier
+  ): Result = {
     performFailedSubscriptionCommonTasks(registration, internalId)
     if (failures.head.isDuplicateSubscription)
       Redirect(routes.NotableErrorController.duplicateRegistration())
@@ -115,18 +134,24 @@ class ReviewRegistrationController @Inject() (
       Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def handleFailedSubscription(registration: Registration, internalId: Option[String])(implicit hc: HeaderCarrier): Result = {
+  private def handleFailedSubscription(registration: Registration, internalId: Option[String])(implicit
+    hc: HeaderCarrier
+  ): Result = {
     performFailedSubscriptionCommonTasks(registration, internalId)
     Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def performFailedSubscriptionCommonTasks(registration: Registration, internalId: Option[String])(implicit hc: HeaderCarrier): Unit = {
+  private def performFailedSubscriptionCommonTasks(registration: Registration, internalId: Option[String])(implicit
+    hc: HeaderCarrier
+  ): Unit = {
     failedSubmissionCounter.inc()
     auditor.registrationSubmitted(registration, internalId = internalId)
   }
 
   private def getSafeId(registration: Registration): String =
-    registration.organisationDetails.businessPartnerId.getOrElse(throw new IllegalStateException("Safe Id is required for a Subscription create"))
+    registration.organisationDetails.businessPartnerId.getOrElse(
+      throw new IllegalStateException("Safe Id is required for a Subscription create")
+    )
 
   private def displayReviewRegistrationPage()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
 
@@ -142,14 +167,18 @@ class ReviewRegistrationController @Inject() (
       markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(reg)))
   }
 
-  private def markRegistrationAsReviewed(registration: Registration)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def markRegistrationAsReviewed(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { _ =>
       val updatedMetaData =
         registration.metaData.copy(registrationReviewed = true)
       registration.copy(metaData = updatedMetaData)
     }
 
-  private def markAsCannotYetStarted(registration: Registration)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def markAsCannotYetStarted(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { _ =>
       val updatedMetaData =
         registration.metaData.copy(registrationReviewed = false, registrationCompleted = false)

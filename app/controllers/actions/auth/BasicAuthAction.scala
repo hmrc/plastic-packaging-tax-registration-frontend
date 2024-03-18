@@ -34,9 +34,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[BasicAuthActionImpl])
 trait BasicAuthAction extends ActionBuilder[RegistrationRequest, AnyContent]
 
-class BasicAuthActionImpl @Inject() (override val authConnector: AuthConnector, override val parser: BodyParsers.Default, appConfig: AppConfig)(implicit
+class BasicAuthActionImpl @Inject() (
+  override val authConnector: AuthConnector,
+  override val parser: BodyParsers.Default,
+  appConfig: AppConfig
+)(implicit
   val executionContext: ExecutionContext
-) extends BasicAuthAction with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
+) extends BasicAuthAction
+    with ActionFunction[Request, RegistrationRequest]
+    with AuthorisedFunctions
+    with Logging {
 
   private val retrievals = internalId and credentials
 
@@ -46,8 +53,8 @@ class BasicAuthActionImpl @Inject() (override val authConnector: AuthConnector, 
     val continueUrl = request.target.path
 
     authorised(CredentialStrength(CredentialStrength.strong).or(AffinityGroup.Agent))
-      .retrieve(retrievals) {
-        case internalId ~ credentials => block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials)))
+      .retrieve(retrievals) { case internalId ~ credentials =>
+        block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials)))
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
@@ -62,6 +69,9 @@ class BasicAuthActionImpl @Inject() (override val authConnector: AuthConnector, 
   }
 
   private def upliftCredentialStrength(continueUrl: String): Result =
-    Redirect(appConfig.mfaUpliftUrl, Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl)))
+    Redirect(
+      appConfig.mfaUpliftUrl,
+      Map("origin" -> Seq(appConfig.serviceIdentifier), "continueUrl" -> Seq(continueUrl))
+    )
 
 }

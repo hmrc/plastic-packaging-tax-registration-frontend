@@ -60,10 +60,9 @@ class CountryService {
   }
 
   def getKeyForSynonym(synonym: String): Option[String] =
-    getAllSynonyms().find(
-      tup =>
-        tup._2.map(_.toUpperCase)
-          .contains(synonym.toUpperCase)
+    getAllSynonyms().find(tup =>
+      tup._2.map(_.toUpperCase)
+        .contains(synonym.toUpperCase)
     ).map(_._1)
 
   private def parseCountriesResource(): Map[String, String] = {

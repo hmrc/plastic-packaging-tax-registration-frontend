@@ -70,9 +70,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
           spyJourneyAction.setReg(
             aRegistration(
-              withOrganisationDetails(organisationDetails =
-                registeredUkCompanyOrgDetails()
-              )
+              withOrganisationDetails(organisationDetails = registeredUkCompanyOrgDetails())
             )
           )
 

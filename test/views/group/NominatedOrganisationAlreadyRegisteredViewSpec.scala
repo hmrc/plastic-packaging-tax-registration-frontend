@@ -42,11 +42,16 @@ class NominatedOrganisationAlreadyRegisteredViewSpec extends UnitViewSpec with M
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(messages("nominated.organisation.already.registered.detail1", "Plastic Packaging Ltd"))
+      view.select("p.govuk-body").text() must include(
+        messages("nominated.organisation.already.registered.detail1", "Plastic Packaging Ltd")
+      )
 
       val details = view.getElementsByClass(gdsPageBodyText)
       details.get(1) must containMessage("nominated.organisation.already.registered.detail2")
-      details.get(2) must containMessage("nominated.organisation.already.registered.detail3", messages("nominated.organisation.already.registered.detail3.link.text"))
+      details.get(2) must containMessage(
+        "nominated.organisation.already.registered.detail3",
+        messages("nominated.organisation.already.registered.detail3.link.text")
+      )
     }
   }
 

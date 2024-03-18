@@ -43,15 +43,13 @@ class AddressCaptureServiceSpec extends AnyWordSpecLike with MockAddressCaptureD
   "Address Capture Service" should {
     "store address capture config (and permit subsequent retrieval) and return suitable redirect URL" when {
       "initiating address capture" in {
-        addressCaptureService.initAddressCapture(addressCaptureConfig)(getRequest()).map {
-          redirectUrl =>
-            addressCaptureService.getAddressCaptureDetails()(getRequest()).map {
-              addressCaptureDetail =>
-                addressCaptureDetail.get.config mustBe addressCaptureConfig
-                addressCaptureDetail.get.capturedAddress mustBe None
+        addressCaptureService.initAddressCapture(addressCaptureConfig)(getRequest()).map { redirectUrl =>
+          addressCaptureService.getAddressCaptureDetails()(getRequest()).map { addressCaptureDetail =>
+            addressCaptureDetail.get.config mustBe addressCaptureConfig
+            addressCaptureDetail.get.capturedAddress mustBe None
 
-                redirectUrl mustBe routes.AddressCaptureController.initialiseAddressCapture().url
-            }
+            redirectUrl mustBe routes.AddressCaptureController.initialiseAddressCapture().url
+          }
         }
       }
     }

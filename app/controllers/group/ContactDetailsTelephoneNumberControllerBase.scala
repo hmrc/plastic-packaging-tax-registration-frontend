@@ -33,7 +33,9 @@ abstract class ContactDetailsTelephoneNumberControllerBase(
   page: member_phone_number_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
+    extends FrontendController(mcc)
+    with ContactDetailsControllerBase
+    with I18nSupport {
 
   protected def doDisplayPage(memberId: String): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -55,7 +57,13 @@ abstract class ContactDetailsTelephoneNumberControllerBase(
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
             Future.successful(
-              BadRequest(page(formWithErrors, request.registration.findMember(memberId).flatMap(_.contactDetails.map(_.groupMemberName)), getSubmitCall(memberId)))
+              BadRequest(
+                page(
+                  formWithErrors,
+                  request.registration.findMember(memberId).flatMap(_.contactDetails.map(_.groupMemberName)),
+                  getSubmitCall(memberId)
+                )
+              )
             ),
           phoneNumber =>
             updateRegistration(phoneNumber, memberId).map { _ =>
@@ -64,12 +72,16 @@ abstract class ContactDetailsTelephoneNumberControllerBase(
         )
     }
 
-  private def updateRegistration(phoneNumber: PhoneNumber, memberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateRegistration(phoneNumber: PhoneNumber, memberId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(
-            registration.findMember(memberId).map(_.withUpdatedGroupMemberPhoneNumber(phoneNumber.value)).getOrElse(throw new IllegalStateException("Expected group member absent"))
+            registration.findMember(memberId).map(_.withUpdatedGroupMemberPhoneNumber(phoneNumber.value)).getOrElse(
+              throw new IllegalStateException("Expected group member absent")
+            )
           )
         )
       )

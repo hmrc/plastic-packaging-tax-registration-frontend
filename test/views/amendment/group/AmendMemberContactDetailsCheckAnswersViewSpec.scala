@@ -33,7 +33,11 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
   private val countryService = inject[CountryService]
 
   private def createView(form: Form[MemberName] = MemberName.form()): Document =
-    page(groupMember, routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id), routes.ManageGroupMembersController.displayPage())(
+    page(
+      groupMember,
+      routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id),
+      routes.ManageGroupMembersController.displayPage()
+    )(
       registrationJourneyRequest,
       messages
     )
@@ -68,7 +72,11 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(
-        (messages("contactDetails.member.check.orgType"), messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"), None),
+        (
+          messages("contactDetails.member.check.orgType"),
+          messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"),
+          None
+        ),
         (messages("contactDetails.member.check.companyNumber"), groupMember.customerIdentification1, None),
         (messages("contactDetails.member.check.orgName"), groupMember.businessName, None),
         (messages("contactDetails.member.check.utr"), groupMember.customerIdentification2.get, None),
@@ -94,12 +102,11 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
         )
       )
 
-      expectedContent.zipWithIndex.foreach {
-        case (expectedContent, idx) =>
-          rowDetails.get(idx).text() must include(expectedContent._1)
-          rowDetails.get(idx).text() must include(expectedContent._2)
-          if (expectedContent._3.isDefined)
-            rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
+      expectedContent.zipWithIndex.foreach { case (expectedContent, idx) =>
+        rowDetails.get(idx).text() must include(expectedContent._1)
+        rowDetails.get(idx).text() must include(expectedContent._2)
+        if (expectedContent._3.isDefined)
+          rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
       }
     }
 
@@ -111,7 +118,11 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(groupMember, routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id), routes.ManageGroupMembersController.displayPage())(
+    page.f(
+      groupMember,
+      routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id),
+      routes.ManageGroupMembersController.displayPage()
+    )(
       registrationJourneyRequest,
       messages
     )

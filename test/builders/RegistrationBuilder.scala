@@ -49,12 +49,9 @@ trait RegistrationBuilder {
       liabilityDetails = LiabilityDetails(
         exceededThresholdWeight = Some(false),
         expectToExceedThresholdWeight = Some(true),
-        dateRealisedExpectedToExceedThresholdWeight =
-          Some(Date(LocalDate.parse("2022-03-05"))),
-        expectedWeightNext12m =
-          Some(LiabilityWeight(Some(12000))),
-        startDate =
-          Some(OldDate(Some(1), Some(4), Some(2022))),
+        dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+        expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+        startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
         isLiable = Some(true),
         newLiabilityFinished = Some(NewLiability),
         newLiabilityStarted = Some(NewLiability)
@@ -66,10 +63,8 @@ trait RegistrationBuilder {
         phoneNumber = Some("0203 4567 890"),
         address = Some(
           Address(
-            addressLine1 =
-              "2 Scala Street",
-            addressLine2 =
-              Some("Soho"),
+            addressLine1 = "2 Scala Street",
+            addressLine2 = Some("Soho"),
             addressLine3 = None,
             townOrCity = "London",
             maybePostcode = Some("W1T 2HN"),
@@ -80,47 +75,36 @@ trait RegistrationBuilder {
       ),
       organisationDetails = OrganisationDetails(
         organisationType = Some(UK_COMPANY),
-        businessRegisteredAddress =
-          Some(
-            Address(
-              addressLine1 =
-                "2 Scala Street",
-              addressLine2 = Some("Soho"),
-              addressLine3 = None,
-              townOrCity = "London",
-              maybePostcode = Some("W1T 2HN"),
-              countryCode = GB
+        businessRegisteredAddress = Some(
+          Address(
+            addressLine1 = "2 Scala Street",
+            addressLine2 = Some("Soho"),
+            addressLine3 = None,
+            townOrCity = "London",
+            maybePostcode = Some("W1T 2HN"),
+            countryCode = GB
+          )
+        ),
+        incorporationDetails = Some(
+          IncorporationDetails(
+            companyNumber = "12345678",
+            companyName = "Plastic Packaging Ltd",
+            ctutr = Some("1234567890"),
+            companyAddress = IncorporationAddressDetails(),
+            registration = Some(
+              RegistrationDetails(
+                identifiersMatch = true,
+                verificationStatus = Some("PASS"),
+                registrationStatus = "REGISTERED",
+                registeredBusinessPartnerId = Some("X00000123456789")
+              )
             )
-          ),
-        incorporationDetails =
-          Some(
-            IncorporationDetails(
-              companyNumber = "12345678",
-              companyName =
-                "Plastic Packaging Ltd",
-              ctutr = Some("1234567890"),
-              companyAddress =
-                IncorporationAddressDetails(),
-              registration =
-                Some(
-                  RegistrationDetails(
-                    identifiersMatch = true,
-                    verificationStatus =
-                      Some("PASS"),
-                    registrationStatus =
-                      "REGISTERED",
-                    registeredBusinessPartnerId =
-                      Some("X00000123456789")
-                  )
-                )
-            )
-          ),
+          )
+        ),
         subscriptionStatus = Some(NOT_SUBSCRIBED)
       ),
       metaData =
-        MetaData(verifiedEmails =
-          Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false))
-        )
+        MetaData(verifiedEmails = Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false)))
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
@@ -152,26 +136,22 @@ trait RegistrationBuilder {
   def withUserHeaders(headers: Map[String, String]): RegistrationModifier =
     _.copy(userHeaders = Some(headers))
 
-  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier = {
-    reg =>
-      val updatedRegistration = reg.copy(organisationDetails = organisationDetails)
-      if (updatedRegistration.organisationDetails.businessRegisteredAddress.isEmpty)
-        updatedRegistration.populateBusinessRegisteredAddress(addressConversionUtils)
-      else
-        updatedRegistration
+  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier = { reg =>
+    val updatedRegistration = reg.copy(organisationDetails = organisationDetails)
+    if (updatedRegistration.organisationDetails.businessRegisteredAddress.isEmpty)
+      updatedRegistration.populateBusinessRegisteredAddress(addressConversionUtils)
+    else
+      updatedRegistration
   }
 
   def withRegisteredBusinessAddress(businessAddress: Address): RegistrationModifier =
     reg =>
-      reg.copy(organisationDetails =
-        reg.organisationDetails.copy(businessRegisteredAddress = Some(businessAddress))
-      )
+      reg.copy(organisationDetails = reg.organisationDetails.copy(businessRegisteredAddress = Some(businessAddress)))
 
-  def withSoleTraderDetails(soleTraderDetails: Option[SoleTraderDetails]): RegistrationModifier = {
-    registration =>
-      registration.copy(organisationDetails =
-        registration.organisationDetails.copy(organisationType = Some(SOLE_TRADER), soleTraderDetails = soleTraderDetails)
-      )
+  def withSoleTraderDetails(soleTraderDetails: Option[SoleTraderDetails]): RegistrationModifier = { registration =>
+    registration.copy(organisationDetails =
+      registration.organisationDetails.copy(organisationType = Some(SOLE_TRADER), soleTraderDetails = soleTraderDetails)
+    )
   }
 
   def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =

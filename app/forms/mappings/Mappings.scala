@@ -25,7 +25,13 @@ import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
 
-  protected def localDate(emptyDateKey: String, singleRequiredKey: String, twoRequiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
+  protected def localDate(
+    emptyDateKey: String,
+    singleRequiredKey: String,
+    twoRequiredKey: String,
+    invalidKey: String,
+    args: Seq[String] = Seq.empty
+  )(implicit
     messages: Messages
   ): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
@@ -42,6 +48,17 @@ trait Mappings extends Formatters with Constraints {
     appConfig: AppConfig,
     args: Seq[String] = Seq.empty
   )(implicit messages: Messages): FieldMapping[LocalDate] =
-    of(new LiabilityLocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, dateOutOfRangeError, beforeLiveDateErrorKey, appConfig, args))
+    of(
+      new LiabilityLocalDateFormatter(
+        emptyDateKey,
+        singleRequiredKey,
+        twoRequiredKey,
+        invalidKey,
+        dateOutOfRangeError,
+        beforeLiveDateErrorKey,
+        appConfig,
+        args
+      )
+    )
 
 }

@@ -40,8 +40,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   private val controller =
     new PartnerPhoneNumberController(
       journeyAction = spyJourneyAction,
-      registrationUpdateService =
-        mockNewRegistrationUpdater,
+      registrationUpdateService = mockNewRegistrationUpdater,
       mcc = mcc,
       page = page
     )
@@ -57,18 +56,24 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner)
+    )
 
   private def registrationWithInflightPartnerWithMissingContactName = {
     val contactDetailsWithNoName =
       aLimitedCompanyPartner.contactDetails.map(_.copy(firstName = None, lastName = None))
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithNoName)))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithNoName))
+    )
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
     val contactDetailsWithPhoneNumber =
       aLimitedCompanyPartner.contactDetails.map(_.copy(phoneNumber = Some("12345678")))
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber)))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber))
+    )
   }
 
   private val existingPartner = {
@@ -146,7 +151,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails.flatMap(_.phoneNumber)) mustBe Some("987654321")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(
+          _.contactDetails.flatMap(_.phoneNumber)
+        ) mustBe Some("987654321")
       }
     }
 
@@ -161,7 +168,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
+        intercept[RuntimeException](
+          status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest()))
+        )
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -169,7 +178,13 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(PhoneNumber("987654321")))))
+        intercept[RuntimeException](
+          status(
+            controller.submitExistingPartner("not-an-existing-partners-id")(
+              postRequestEncoded(PhoneNumber("987654321"))
+            )
+          )
+        )
       }
 
       "user tries to submit before contact name for partner has been provided" in {
@@ -184,7 +199,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))))
+        intercept[DownstreamServiceError](
+          status(controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321"))))
+        )
       }
     }
   }

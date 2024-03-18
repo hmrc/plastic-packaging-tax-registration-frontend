@@ -56,7 +56,9 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[DeregistrationDetails])(any, any)).thenReturn(HtmlFormat.empty)
-    when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(Future.successful(Some(initialDeregistrationDetails)))
+    when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
+      Future.successful(Some(initialDeregistrationDetails))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -76,7 +78,12 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
       }
 
       "submit the answers" in {
-        when(mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"), ArgumentMatchers.eq(initialDeregistrationDetails))(any)).thenReturn(
+        when(
+          mockDegistrationConnector.deregister(
+            ArgumentMatchers.eq("XMPPT0000000123"),
+            ArgumentMatchers.eq(initialDeregistrationDetails)
+          )(any)
+        ).thenReturn(
           Future.successful(Right(()))
         )
 

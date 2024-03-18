@@ -28,10 +28,15 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[partner_list_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   private def createView(otherPartner: Seq[Partner] = getOtherPartners(partnershipRegistration)): Document =
-    page(AddPartner.form(), getNominatedPartner(partnershipRegistration), otherPartner)(registrationJourneyRequest, messages)
+    page(AddPartner.form(), getNominatedPartner(partnershipRegistration), otherPartner)(
+      registrationJourneyRequest,
+      messages
+    )
 
   "Partner List View" should {
 
@@ -46,25 +51,33 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title" in {
-      view.select("title").text() must include(messages("partnership.partnerList.title", partnerCount(partnershipRegistration)))
+      view.select("title").text() must include(
+        messages("partnership.partnerList.title", partnerCount(partnershipRegistration))
+      )
     }
 
     "display page heading" in {
-      view.select("h1").text() must include(messages("partnership.partnerList.title", partnerCount(partnershipRegistration)))
+      view.select("h1").text() must include(
+        messages("partnership.partnerList.title", partnerCount(partnershipRegistration))
+      )
     }
 
     "display nominated partner label" in {
-      view.getElementById("list-members-ul").children().get(0).text() must include(messages("partnership.partnerList.nominatedPartner"))
+      view.getElementById("list-members-ul").children().get(0).text() must include(
+        messages("partnership.partnerList.nominatedPartner")
+      )
     }
 
     "display nominated partner name" in {
-      view.getElementById("list-members-ul").children().get(0).text() must include(getNominatedPartner(partnershipRegistration).name)
+      view.getElementById("list-members-ul").children().get(0).text() must include(
+        getNominatedPartner(partnershipRegistration).name
+      )
     }
 
     "display other partners names" in {
       val otherPartnerItems = view.getElementById("list-members-ul").children()
-      getOtherPartners(partnershipRegistration).zipWithIndex.foreach {
-        case (partner, idx) => otherPartnerItems.get(idx + 1).text() must include(partner.name)
+      getOtherPartners(partnershipRegistration).zipWithIndex.foreach { case (partner, idx) =>
+        otherPartnerItems.get(idx + 1).text() must include(partner.name)
       }
     }
 
@@ -95,15 +108,28 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(AddPartner.form(), getNominatedPartner(partnershipRegistration), getOtherPartners(partnershipRegistration))(registrationJourneyRequest, messages)
-    page.render(AddPartner.form(), getNominatedPartner(partnershipRegistration), getOtherPartners(partnershipRegistration), registrationJourneyRequest, messages)
+    page.f(AddPartner.form(), getNominatedPartner(partnershipRegistration), getOtherPartners(partnershipRegistration))(
+      registrationJourneyRequest,
+      messages
+    )
+    page.render(
+      AddPartner.form(),
+      getNominatedPartner(partnershipRegistration),
+      getOtherPartners(partnershipRegistration),
+      registrationJourneyRequest,
+      messages
+    )
   }
 
   private def getOtherPartners(registration: Registration) =
-    registration.organisationDetails.partnershipDetails.map(_.otherPartners).getOrElse(throw new IllegalStateException("Other partners absent"))
+    registration.organisationDetails.partnershipDetails.map(_.otherPartners).getOrElse(
+      throw new IllegalStateException("Other partners absent")
+    )
 
   private def getNominatedPartner(registration: Registration) =
-    registration.organisationDetails.partnershipDetails.flatMap(_.nominatedPartner).getOrElse(throw new IllegalStateException("Nominated partner absent"))
+    registration.organisationDetails.partnershipDetails.flatMap(_.nominatedPartner).getOrElse(
+      throw new IllegalStateException("Nominated partner absent")
+    )
 
   private def partnerCount(registration: Registration) = 1 + getOtherPartners(registration).size
 }

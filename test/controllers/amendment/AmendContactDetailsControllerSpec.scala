@@ -35,7 +35,11 @@ import views.html.contact._
 
 import scala.concurrent.Future
 
-class AmendContactDetailsControllerSpec extends ControllerSpec with AmendmentControllerSpec with AddressCaptureSpec with TableDrivenPropertyChecks {
+class AmendContactDetailsControllerSpec
+    extends ControllerSpec
+    with AmendmentControllerSpec
+    with AddressCaptureSpec
+    with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -47,10 +51,20 @@ class AmendContactDetailsControllerSpec extends ControllerSpec with AmendmentCon
 
   when(amendJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("job title amendment"))
 
-  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("phone number amendment"))
+  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
+    HtmlFormat.raw("phone number amendment")
+  )
 
   private val controller =
-    new AmendContactDetailsController(spyJourneyAction, mockAmendRegService, mcc, amendNamePage, amendJobTitlePage, amendPhoneNumberPage, mockAddressCaptureService)
+    new AmendContactDetailsController(
+      spyJourneyAction,
+      mockAmendRegService,
+      mcc,
+      amendNamePage,
+      amendJobTitlePage,
+      amendPhoneNumberPage,
+      mockAddressCaptureService
+    )
 
   private val populatedRegistration = aRegistration()
 
@@ -123,7 +137,14 @@ class AmendContactDetailsControllerSpec extends ControllerSpec with AmendmentCon
 
     "redisplay page" when {
       forAll(updateTestData) {
-        (testName: String, createInvalidForm: () => AnyRef, _, call: Request[AnyContent] => Future[Result], _, expectedPageContent) =>
+        (
+          testName: String,
+          createInvalidForm: () => AnyRef,
+          _,
+          call: Request[AnyContent] => Future[Result],
+          _,
+          expectedPageContent
+        ) =>
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
 
@@ -139,7 +160,14 @@ class AmendContactDetailsControllerSpec extends ControllerSpec with AmendmentCon
 
     "update registration and redirect to registration amendment page" when {
       forAll(updateTestData) {
-        (testName: String, _, createValidForm: () => AnyRef, call: Request[AnyContent] => Future[Result], test: Registration => scalatest.Assertion, _) =>
+        (
+          testName: String,
+          _,
+          createValidForm: () => AnyRef,
+          call: Request[AnyContent] => Future[Result],
+          test: Registration => scalatest.Assertion,
+          _
+        ) =>
           s"$testName updated" in {
             val registration = aRegistration()
 

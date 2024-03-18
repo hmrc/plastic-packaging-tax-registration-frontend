@@ -48,16 +48,17 @@ class AddressCaptureController @Inject() (
   countryService: CountryService,
   addressConversionUtils: AddressConversionUtils
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
+    extends FrontendController(mcc)
+    with I18nSupport
+    with AddressLookupIntegration {
 
   def initialiseAddressCapture(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      getAddressCaptureConfig().flatMap(
-        addressCaptureConfig =>
-          if (addressCaptureConfig.forceUkAddress)
-            initialiseAddressLookup(addressCaptureConfig).map(onRamp => Redirect(onRamp.redirectUrl))
-          else
-            Future.successful(Redirect(routes.AddressCaptureController.addressInUk()))
+      getAddressCaptureConfig().flatMap(addressCaptureConfig =>
+        if (addressCaptureConfig.forceUkAddress)
+          initialiseAddressLookup(addressCaptureConfig).map(onRamp => Redirect(onRamp.redirectUrl))
+        else
+          Future.successful(Redirect(routes.AddressCaptureController.addressInUk()))
       )
     }
 
@@ -75,7 +76,8 @@ class AddressCaptureController @Inject() (
           .form()
           .bindFromRequest()
           .fold(
-            error => Future.successful(BadRequest(addressInUkPage(error, config.entityName, config.pptHeadingKey + ".isUK"))),
+            error =>
+              Future.successful(BadRequest(addressInUkPage(error, config.entityName, config.pptHeadingKey + ".isUK"))),
             ukAddress =>
               if (ukAddress)
                 initialiseAddressLookup(config).map(onRamp => Redirect(onRamp.redirectUrl))
@@ -107,7 +109,9 @@ class AddressCaptureController @Inject() (
       }
     }
 
-  private def initialiseAddressLookup(addressCaptureConfig: AddressCaptureConfig)(implicit hc: HeaderCarrier): Future[AddressLookupOnRamp] =
+  private def initialiseAddressLookup(addressCaptureConfig: AddressCaptureConfig)(implicit
+    hc: HeaderCarrier
+  ): Future[AddressLookupOnRamp] =
     initialiseAddressLookup(
       addressLookupFrontendConnector,
       appConfig,
@@ -117,7 +121,14 @@ class AddressCaptureController @Inject() (
     )
 
   private def buildAddressPage(form: Form[Address], config: AddressCaptureConfig)(implicit request: Request[_]) =
-    addressPage(form, countryService.getAll(), routes.AddressCaptureController.submitAddress(), config.pptHeadingKey, config.entityName, config.pptHintKey)
+    addressPage(
+      form,
+      countryService.getAll(),
+      routes.AddressCaptureController.submitAddress(),
+      config.pptHeadingKey,
+      config.entityName,
+      config.pptHintKey
+    )
 
   def alfCallback(id: Option[String]): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -130,14 +141,16 @@ class AddressCaptureController @Inject() (
             if (addressForm.errors.nonEmpty)
               Future.successful(BadRequest(buildAddressPage(addressForm, config)))
             else
-              addressCaptureService.setCapturedAddress(pptAddress).map {
-                _ => Redirect(config.successLink)
+              addressCaptureService.setCapturedAddress(pptAddress).map { _ =>
+                Redirect(config.successLink)
               }
         }
       }
     }
 
   private def getAddressCaptureConfig()(implicit request: AuthenticatedRequest[Any]): Future[AddressCaptureConfig] =
-    addressCaptureService.getAddressCaptureDetails().map(acd => acd.map(_.config).getOrElse(throw new IllegalStateException("Address capture config absent")))
+    addressCaptureService.getAddressCaptureDetails().map(acd =>
+      acd.map(_.config).getOrElse(throw new IllegalStateException("Address capture config absent"))
+    )
 
 }

@@ -34,15 +34,15 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
           backLink = routes.AddPartnerContactDetailsTelephoneNumberController.displayPage().url,
-          successLink =
-            routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
+          successLink = routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
           alfHeadingsPrefix = "addressLookup.partner",
           entityName = request.registration.inflightPartner.map(_.name),
           pptHeadingKey = "addressCapture.contact.heading",
@@ -54,14 +54,12 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
 
   def addressCaptureCallback(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          registrationUpdater.updateRegistration { registration =>
-            update(capturedAddress)(registration)
-          }.map {
-            _ =>
-              Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        registrationUpdater.updateRegistration { registration =>
+          update(capturedAddress)(registration)
+        }.map { _ =>
+          Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
+        }
       }
     }
 

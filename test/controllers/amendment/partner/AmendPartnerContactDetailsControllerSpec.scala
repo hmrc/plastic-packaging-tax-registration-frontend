@@ -41,7 +41,12 @@ import views.html.partner.{partner_email_address_page, partner_job_title_page, p
 
 import scala.concurrent.Future
 
-class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with TableDrivenPropertyChecks with Injecting {
+class AmendPartnerContactDetailsControllerSpec
+    extends ControllerSpec
+    with AddressCaptureSpec
+    with AmendmentControllerSpec
+    with TableDrivenPropertyChecks
+    with Injecting {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -55,7 +60,9 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
   private val mockContactPhoneNumberPage      = mock[partner_phone_number_page]
   private val mockJobTitlePage                = mock[partner_job_title_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   private val nominatedPartner             = partnershipRegistration.nominatedPartner.get
   private val nominatedPartnerFirstName    = nominatedPartner.contactDetails.get.firstName.get
@@ -80,8 +87,7 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
     contactEmailPage = mockContactEmailPage,
     emailPasscodePage = email_address_passcode_page,
     emailCorrectPasscodePage = emailCorrectPasscodePage,
-    emailIncorrectPasscodeTooManyAttemptsPage =
-      too_many_attempts_passcode_page,
+    emailIncorrectPasscodeTooManyAttemptsPage = too_many_attempts_passcode_page,
     registrationUpdater = inMemoryRegistrationUpdater,
     emailVerificationService = mockEmailVerificationService,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
@@ -94,12 +100,20 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
     spyJourneyAction.setReg(partnershipRegistration)
     simulateUpdateWithRegSubscriptionSuccess()
 
-    when(mockContactNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
+    when(mockContactNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Amend Partner Contact Name")
+    )
 
-    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
-    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
+    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Amend Partner Contact Email Address")
+    )
+    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Amend Partner Contact Phone Number")
+    )
 
-    when(mockJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
+    when(mockJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Amend Partner Job Title")
+    )
     when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
@@ -231,10 +245,8 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
     "redirect to address capture with correct callback" in {
       val expectedAddressCaptureConfig = AddressCaptureConfig(
-        backLink =
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(nominatedPartner.id).url,
-        successLink =
-          routes.AmendPartnerContactDetailsController.updateAddress(nominatedPartner.id).url,
+        backLink = routes.PartnerContactDetailsCheckAnswersController.displayPage(nominatedPartner.id).url,
+        successLink = routes.AmendPartnerContactDetailsController.updateAddress(nominatedPartner.id).url,
         alfHeadingsPrefix = "addressLookup.partner",
         pptHeadingKey = "addressCapture.contact.heading",
         entityName = Some(nominatedPartner.name),
@@ -250,7 +262,15 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
     val updateSubscriptionTestData =
       Table(
-        ("TestName", "Invalid Form", "Valid Form", "Update Call", "Update Test", "Redirect Location", "Invalid Expected Page Content"),
+        (
+          "TestName",
+          "Invalid Form",
+          "Valid Form",
+          "Update Call",
+          "Update Test",
+          "Redirect Location",
+          "Invalid Expected Page Content"
+        ),
         (
           "nominated partner contact name",
           () => MemberName("", ""),
@@ -280,9 +300,8 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
           () => EmailAddress("xxx"),
           () => EmailAddress("updated-email@ppt.com"),
           (req: Request[AnyContent]) => controller.updateEmailAddress(otherPartner.id)(req),
-          (reg: Registration) => {
-            reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
-          },
+          (reg: Registration) =>
+            reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com",
           () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
           "Amend Partner Contact Email Address"
         ),
@@ -291,9 +310,7 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
           () => PhoneNumber("xxx"),
           () => PhoneNumber("075792743"),
           (req: Request[AnyContent]) => controller.updatePhoneNumber(nominatedPartner.id)(req),
-          (reg: Registration) => {
-            reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743"
-          },
+          (reg: Registration) => reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743",
           () => amendmentRoutes.AmendRegistrationController.displayPage(),
           "Amend Partner Contact Phone Number"
         ),
@@ -302,9 +319,7 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
           () => PhoneNumber("xxx"),
           () => PhoneNumber("075792743"),
           (req: Request[AnyContent]) => controller.updatePhoneNumber(otherPartner.id)(req),
-          (reg: Registration) => {
-            reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743"
-          },
+          (reg: Registration) => reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743",
           () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
           "Amend Partner Contact Phone Number"
         )
@@ -312,7 +327,15 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
     "redisplay page" when {
       forAll(updateSubscriptionTestData) {
-        (testName: String, createInvalidForm: () => AnyRef, _, call: Request[AnyContent] => Future[Result], _, _, expectedPageContent) =>
+        (
+          testName: String,
+          createInvalidForm: () => AnyRef,
+          _,
+          call: Request[AnyContent] => Future[Result],
+          _,
+          _,
+          expectedPageContent
+        ) =>
           s"supplied $testName fails validation" in {
             val resp = call(postRequestEncoded(form = createInvalidForm(), sessionId = "123"))
 
@@ -324,7 +347,15 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
     "update subscription and redirect to registration amendment page" when {
       forAll(updateSubscriptionTestData) {
-        (testName: String, _, createValidForm: () => AnyRef, call: Request[AnyContent] => Future[Result], test: Registration => scalatest.Assertion, redirect: () => Call, _) =>
+        (
+          testName: String,
+          _,
+          createValidForm: () => AnyRef,
+          call: Request[AnyContent] => Future[Result],
+          test: Registration => scalatest.Assertion,
+          redirect: () => Call,
+          _
+        ) =>
           s"$testName updated" in {
             val resp = call(postRequestEncoded(form = createValidForm(), sessionId = "123"))
 
@@ -376,7 +407,9 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
         inMemoryRegistrationAmendmentRepository.put(partnershipRegistration)
         // Email verification will check if this address is already verified; trying to let the user through with no
         // friction if we already know this address
-        when(mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())).thenReturn(Future.successful(false))
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())
+        ).thenReturn(Future.successful(false))
         // Email verification will be called to setup an email verification journey for the new email address
         when(
           mockEmailVerificationService.sendVerificationCode(
@@ -386,10 +419,13 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
           )(any())
         ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
-        val resp = controller.updateEmailAddress(nominatedPartner.id)(postRequestEncoded(EmailAddress("new-email@ppt.com")))
+        val resp =
+          controller.updateEmailAddress(nominatedPartner.id)(postRequestEncoded(EmailAddress("new-email@ppt.com")))
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url)
+        redirectLocation(resp) mustBe Some(
+          routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url
+        )
 
         inMemoryRegistrationAmendmentRepository.get().map { updatedRegistration =>
           updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some("new-email@ppt.com")
@@ -399,12 +435,13 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
       "user is prompted to enter verification code for nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
 
         spyJourneyAction.setReg(
-          partnershipRegistration.copy(primaryContactDetails =
-            primaryContactDetailsWithEmailVerificationJourney
-          )
+          partnershipRegistration.copy(primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney)
         )
         simulateUpdateWithRegSubscriptionSuccess()
 
@@ -415,11 +452,12 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
       "user submits correct email verification code for nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
-        spyJourneyAction.setReg(
-          partnershipRegistration.copy(primaryContactDetails =
-            primaryContactDetailsWithEmailVerificationJourney
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
           )
+        spyJourneyAction.setReg(
+          partnershipRegistration.copy(primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney)
         )
         simulateUpdateWithRegSubscriptionSuccess()
 
@@ -432,19 +470,23 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
           )(any())
         ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
 
-        val resp = controller.checkEmailVerificationCode(nominatedPartner.id)(postRequestEncoded(EmailAddressPasscode("ABCDE")))
+        val resp =
+          controller.checkEmailVerificationCode(nominatedPartner.id)(postRequestEncoded(EmailAddressPasscode("ABCDE")))
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url)
+        redirectLocation(resp) mustBe Some(
+          routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url
+        )
       }
 
       "user is prompted for confirm verified nominated partner email address" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
-        spyJourneyAction.setReg(
-          partnershipRegistration.copy(primaryContactDetails =
-            primaryContactDetailsWithEmailVerificationJourney
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
           )
+        spyJourneyAction.setReg(
+          partnershipRegistration.copy(primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney)
         )
         simulateUpdateWithRegSubscriptionSuccess()
 
@@ -455,10 +497,12 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
 
       "nominated partner verified and confirmed email address is updated" in {
         val primaryContactDetailsWithEmailVerificationJourney =
-          partnershipRegistration.primaryContactDetails.copy(journeyId = Some("email-verification-journey-id"), prospectiveEmail = Some("verified-amended-email@localhost"))
-        val reg = partnershipRegistration.copy(primaryContactDetails =
-          primaryContactDetailsWithEmailVerificationJourney
-        )
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        val reg =
+          partnershipRegistration.copy(primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney)
         spyJourneyAction.setReg(reg)
         simulateUpdateWithRegSubscriptionSuccess()
 
@@ -470,7 +514,9 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
         status(resp) mustBe SEE_OTHER
 
         val updatedRegistration = getUpdatedRegistrationMethod().apply(reg)
-        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some("verified-amended-email@localhost")
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("verified-amended-email@localhost")
       }
 
       "nominated partner job title is updated" in {
@@ -482,7 +528,9 @@ class AmendPartnerContactDetailsControllerSpec extends ControllerSpec with Addre
         status(resp) mustBe SEE_OTHER
 
         val updatedRegistration = getUpdatedRegistrationMethod().apply(partnershipRegistration)
-        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.jobTitle)) mustBe Some("New job title")
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.jobTitle)) mustBe Some(
+          "New job title"
+        )
       }
     }
   }

@@ -31,7 +31,12 @@ class ContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(journeyAction.register, addressCaptureService, mcc, registrationUpdater) {
+    extends ContactDetailsConfirmAddressControllerBase(
+      journeyAction.register,
+      addressCaptureService,
+      mcc,
+      registrationUpdater
+    ) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, routes.ContactDetailsTelephoneNumberController.displayPage(memberId))

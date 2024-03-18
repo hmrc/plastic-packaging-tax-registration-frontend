@@ -41,14 +41,20 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_business_address
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(memberId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
+      val member = request.registration.findMember(memberId).getOrElse(
+        throw new IllegalStateException("Provided group memberId not found")
+      )
 
       val orgType = member.organisationDetails
-        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
+        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets =>
+          OrgType.withName(dets.organisationType)
+        )
 
       val redirectTo = routes.AddGroupMemberContactDetailsNameController.displayPage(memberId).url
 
@@ -72,7 +78,11 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
     else
       false
 
-  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], forceUKAddress: Boolean): Future[Result] =
+  private def initialiseAddressLookup(
+    memberId: String,
+    request: JourneyRequest[AnyContent],
+    forceUKAddress: Boolean
+  ): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.AddGroupMemberConfirmBusinessAddressController.displayPage(memberId).url,
@@ -87,11 +97,13 @@ class AddGroupMemberConfirmBusinessAddressController @Inject() (
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          update { reg =>
-            reg.withUpdatedMemberAddress(memberId, capturedAddress.getOrElse(throw new IllegalStateException("No captured address")))
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        update { reg =>
+          reg.withUpdatedMemberAddress(
+            memberId,
+            capturedAddress.getOrElse(throw new IllegalStateException("No captured address"))
+          )
+        }
       }.map { _ =>
         Redirect(routes.AddGroupMemberContactDetailsNameController.displayPage(memberId))
       }

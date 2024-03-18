@@ -47,10 +47,14 @@ object AddressCaptureConfig {
 }
 
 @Singleton
-class AddressCaptureService @Inject() (addressCaptureDetailRepository: AddressCaptureDetailRepository)(implicit ec: ExecutionContext) {
+class AddressCaptureService @Inject() (addressCaptureDetailRepository: AddressCaptureDetailRepository)(implicit
+  ec: ExecutionContext
+) {
 
   def initAddressCapture(config: AddressCaptureConfig)(implicit request: AuthenticatedRequest[Any]): Future[Call] =
-    addressCaptureDetailRepository.put(AddressCaptureDetail(config)).map(_ => routes.AddressCaptureController.initialiseAddressCapture())
+    addressCaptureDetailRepository.put(AddressCaptureDetail(config)).map(_ =>
+      routes.AddressCaptureController.initialiseAddressCapture()
+    )
 
   def getAddressCaptureDetails()(implicit request: AuthenticatedRequest[Any]): Future[Option[AddressCaptureDetail]] =
     addressCaptureDetailRepository.get()
@@ -61,6 +65,8 @@ class AddressCaptureService @Inject() (addressCaptureDetailRepository: AddressCa
     }
 
   def setCapturedAddress(capturedAddress: Address)(implicit request: AuthenticatedRequest[Any]) =
-    addressCaptureDetailRepository.update(addressCaptureDetails => addressCaptureDetails.copy(capturedAddress = Some(capturedAddress)))
+    addressCaptureDetailRepository.update(addressCaptureDetails =>
+      addressCaptureDetails.copy(capturedAddress = Some(capturedAddress))
+    )
 
 }

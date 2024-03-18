@@ -69,62 +69,124 @@ class AmendAddPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Match
         "Limited Company Partner",
         limitedCompanyPartner,
         Seq(
-          (messages("partner.check.orgType"), PartnerTypeEnum.displayName(limitedCompanyPartner.partnerType), None: Option[Call]),
-          (messages("partner.check.companyNumber"), limitedCompanyPartner.incorporationDetails.get.companyNumber, None: Option[Call]),
-          (messages("partner.check.orgName"), limitedCompanyPartner.incorporationDetails.get.companyName, None: Option[Call]),
+          (
+            messages("partner.check.orgType"),
+            PartnerTypeEnum.displayName(limitedCompanyPartner.partnerType),
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.companyNumber"),
+            limitedCompanyPartner.incorporationDetails.get.companyNumber,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.orgName"),
+            limitedCompanyPartner.incorporationDetails.get.companyName,
+            None: Option[Call]
+          ),
           (messages("partner.check.utr"), limitedCompanyPartner.incorporationDetails.get.ctutr.get, None: Option[Call]),
-          (messages("partner.check.contact.name"), limitedCompanyPartner.contactDetails.get.name.get, None: Option[Call]),
-          (messages("partner.check.contact.email"), limitedCompanyPartner.contactDetails.get.emailAddress.get, None: Option[Call]),
-          (messages("partner.check.contact.phone"), limitedCompanyPartner.contactDetails.get.phoneNumber.get, None: Option[Call]),
-          (messages("partner.check.contact.address"), extractAddress(limitedCompanyPartner.contactDetails.get.address.get), None: Option[Call])
+          (
+            messages("partner.check.contact.name"),
+            limitedCompanyPartner.contactDetails.get.name.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.email"),
+            limitedCompanyPartner.contactDetails.get.emailAddress.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.phone"),
+            limitedCompanyPartner.contactDetails.get.phoneNumber.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.address"),
+            extractAddress(limitedCompanyPartner.contactDetails.get.address.get),
+            None: Option[Call]
+          )
         )
       ),
       (
         "Sole Trader Partner",
         soleTraderPartner,
         Seq(
-          (messages("partner.check.orgType"), PartnerTypeEnum.displayName(soleTraderPartner.partnerType), None: Option[Call]),
+          (
+            messages("partner.check.orgType"),
+            PartnerTypeEnum.displayName(soleTraderPartner.partnerType),
+            None: Option[Call]
+          ),
           (messages("partner.check.name"), soleTraderPartner.soleTraderDetails.get.name, None: Option[Call]),
           (messages("partner.check.dob"), soleTraderPartner.soleTraderDetails.get.dateOfBirth.get, None: Option[Call]),
           (messages("partner.check.nino"), soleTraderPartner.soleTraderDetails.get.ninoOrTrn, None: Option[Call]),
           (messages("partner.check.utr"), soleTraderPartner.soleTraderDetails.get.sautr.get, None: Option[Call]),
           (messages("partner.check.contact.name"), soleTraderPartner.contactDetails.get.name.get, None: Option[Call]),
-          (messages("partner.check.contact.email"), soleTraderPartner.contactDetails.get.emailAddress.get, None: Option[Call]),
-          (messages("partner.check.contact.phone"), soleTraderPartner.contactDetails.get.phoneNumber.get, None: Option[Call]),
-          (messages("partner.check.contact.address"), extractAddress(soleTraderPartner.contactDetails.get.address.get), None: Option[Call])
+          (
+            messages("partner.check.contact.email"),
+            soleTraderPartner.contactDetails.get.emailAddress.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.phone"),
+            soleTraderPartner.contactDetails.get.phoneNumber.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.address"),
+            extractAddress(soleTraderPartner.contactDetails.get.address.get),
+            None: Option[Call]
+          )
         )
       ),
       (
         "Partnership Partner",
         partnershipPartner,
         Seq(
-          (messages("partner.check.orgType"), PartnerTypeEnum.displayName(partnershipPartner.partnerType), None: Option[Call]),
+          (
+            messages("partner.check.orgType"),
+            PartnerTypeEnum.displayName(partnershipPartner.partnerType),
+            None: Option[Call]
+          ),
           (messages("partner.check.orgName"), partnershipPartner.name, None: Option[Call]),
-          (messages("partner.check.sautr"), partnershipPartner.partnerPartnershipDetails.get.partnershipBusinessDetails.get.sautr, None: Option[Call]),
+          (
+            messages("partner.check.sautr"),
+            partnershipPartner.partnerPartnershipDetails.get.partnershipBusinessDetails.get.sautr,
+            None: Option[Call]
+          ),
           (messages("partner.check.contact.name"), partnershipPartner.contactDetails.get.name.get, None: Option[Call]),
-          (messages("partner.check.contact.email"), partnershipPartner.contactDetails.get.emailAddress.get, None: Option[Call]),
-          (messages("partner.check.contact.phone"), partnershipPartner.contactDetails.get.phoneNumber.get, None: Option[Call]),
-          (messages("partner.check.contact.address"), extractAddress(partnershipPartner.contactDetails.get.address.get), None: Option[Call])
+          (
+            messages("partner.check.contact.email"),
+            partnershipPartner.contactDetails.get.emailAddress.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.phone"),
+            partnershipPartner.contactDetails.get.phoneNumber.get,
+            None: Option[Call]
+          ),
+          (
+            messages("partner.check.contact.address"),
+            extractAddress(partnershipPartner.contactDetails.get.address.get),
+            None: Option[Call]
+          )
         )
       )
     )
 
-    testData.foreach(
-      testData =>
-        "display expected partner information" when {
-          s"rendering ${testData._1}" in {
-            val view       = createView(testData._2)
-            val rowDetails = view.select("dl div")
+    testData.foreach(testData =>
+      "display expected partner information" when {
+        s"rendering ${testData._1}" in {
+          val view       = createView(testData._2)
+          val rowDetails = view.select("dl div")
 
-            testData._3.zipWithIndex.foreach {
-              case (expectedContent, idx) =>
-                rowDetails.get(idx).text() must include(expectedContent._1)
-                rowDetails.get(idx).text() must include(expectedContent._2)
-                if (expectedContent._3.isDefined)
-                  rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
-            }
+          testData._3.zipWithIndex.foreach { case (expectedContent, idx) =>
+            rowDetails.get(idx).text() must include(expectedContent._1)
+            rowDetails.get(idx).text() must include(expectedContent._2)
+            if (expectedContent._3.isDefined)
+              rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
           }
         }
+      }
     )
 
     "display 'Confirm and continue' button" in {

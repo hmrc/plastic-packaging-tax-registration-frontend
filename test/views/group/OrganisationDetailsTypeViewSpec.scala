@@ -29,8 +29,16 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[organisation_type]
 
-  private def createView(form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Group), isFirstMember: Boolean = true): Document =
-    page(form = form, isFirstMember = isFirstMember, memberId = Some(groupMember.id), routes.OrganisationDetailsTypeController.submitNewMember())(
+  private def createView(
+    form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Group),
+    isFirstMember: Boolean = true
+  ): Document =
+    page(
+      form = form,
+      isFirstMember = isFirstMember,
+      memberId = Some(groupMember.id),
+      routes.OrganisationDetailsTypeController.submitNewMember()
+    )(
       registrationJourneyRequest,
       messages
     )
@@ -62,7 +70,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(messages("organisationDetails.other.organisation.sectionHeader"))
+      view.getElementsByClass("govuk-caption-l").text() must include(
+        messages("organisationDetails.other.organisation.sectionHeader")
+      )
     }
 
     "display hint link" in {
@@ -108,7 +118,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(messages("organisationDetails.other.organisation.sectionHeader"))
+      view.getElementsByClass("govuk-caption-l").text() must include(
+        messages("organisationDetails.other.organisation.sectionHeader")
+      )
     }
 
     "display radio inputs" in {
@@ -162,13 +174,27 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(ActionEnum.Group), true, Some(groupMember.id), routes.OrganisationDetailsTypeController.submitNewMember())(request, messages)
-    page.render(OrganisationType.form(ActionEnum.Group), isFirstMember = true, Some(groupMember.id), routes.OrganisationDetailsTypeController.submitNewMember(), request, messages)
+    page.f(
+      OrganisationType.form(ActionEnum.Group),
+      true,
+      Some(groupMember.id),
+      routes.OrganisationDetailsTypeController.submitNewMember()
+    )(request, messages)
+    page.render(
+      OrganisationType.form(ActionEnum.Group),
+      isFirstMember = true,
+      Some(groupMember.id),
+      routes.OrganisationDetailsTypeController.submitNewMember(),
+      request,
+      messages
+    )
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
     view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
-    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(labelKey.getOrElse(s"organisationDetails.type.$orgType"))
+    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
+      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+    )
   }
 
 }

@@ -32,7 +32,12 @@ class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(journeyAction.amend, addressCaptureService, mcc, registrationUpdater) {
+    extends ContactDetailsConfirmAddressControllerBase(
+      journeyAction.amend,
+      addressCaptureService,
+      mcc,
+      registrationUpdater
+    ) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId))

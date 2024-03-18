@@ -40,7 +40,13 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   val mcc: MessagesControllerComponents                = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
-    new ExpectToExceedThresholdWeightController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc = mcc, page = mockPage, form = mockFormProvider)
+    new ExpectToExceedThresholdWeightController(
+      journeyAction = spyJourneyAction,
+      mockRegistrationConnector,
+      mcc = mcc,
+      page = mockPage,
+      form = mockFormProvider
+    )
 
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
 
@@ -91,7 +97,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
-        redirectLocation(result).get mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage.url
+        redirectLocation(
+          result
+        ).get mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage.url
       }
 
       "user submits 'No' answer" in {
@@ -105,7 +113,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
         modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
-        redirectLocation(result).get mustBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
+        redirectLocation(
+          result
+        ).get mustBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
       }
 
       "return 400 (BAD_REQUEST)" when {

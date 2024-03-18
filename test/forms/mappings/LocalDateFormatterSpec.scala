@@ -29,8 +29,10 @@ import java.time.LocalDate
 
 class LocalDateFormatterSpec extends PlaySpec with TableDrivenPropertyChecks {
 
-  private val message   = mock[Messages]
-  private val formatter = new LocalDateFormatter("emptyDateKey", "singleRequiredKey", "twoRequiredKey", "invalidKey")(message)
+  private val message = mock[Messages]
+  private val formatter = new LocalDateFormatter("emptyDateKey", "singleRequiredKey", "twoRequiredKey", "invalidKey")(
+    message
+  )
 
   "bind" should {
     "return a local date" in {
@@ -52,7 +54,14 @@ class LocalDateFormatterSpec extends PlaySpec with TableDrivenPropertyChecks {
       )
 
       forAll(table1) {
-        (description: String, partKey: String, day: Option[Int], month: Option[Int], year: Option[Int], keyMessage: String) =>
+        (
+          description: String,
+          partKey: String,
+          day: Option[Int],
+          month: Option[Int],
+          year: Option[Int],
+          keyMessage: String
+        ) =>
           s"$description is missing" in {
 
             val data = Map("input.day" -> day, "input.month" -> month, "input.year" -> year)

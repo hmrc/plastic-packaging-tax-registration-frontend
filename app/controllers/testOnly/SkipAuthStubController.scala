@@ -26,8 +26,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 import java.util.UUID
 import javax.inject.Inject
 
-class SkipAuthStubController @Inject() (val controllerComponents: ControllerComponents, appConfig: AppConfig, skipAuthView: SkipAuthView)
-    extends BaseController with FrontendHeaderCarrierProvider with Logging with I18nSupport {
+class SkipAuthStubController @Inject() (
+  val controllerComponents: ControllerComponents,
+  appConfig: AppConfig,
+  skipAuthView: SkipAuthView
+) extends BaseController
+    with FrontendHeaderCarrierProvider
+    with Logging
+    with I18nSupport {
 
   def returns(): Action[AnyContent] =
     Action { implicit request =>

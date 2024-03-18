@@ -19,4 +19,10 @@ package views.viewmodels
 import play.api.mvc.Call
 import play.twirl.api.Html
 
-case class TaskSection(title: String = "", link: Call, showLink: Boolean = true, status: TaskStatus = TaskStatus.NotStarted, footnote: Option[Html] = None)
+case class TaskSection(
+  title: String = "",
+  link: Call,
+  showLink: Boolean = true,
+  status: TaskStatus = TaskStatus.NotStarted,
+  footnote: Option[Html] = None
+)

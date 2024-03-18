@@ -38,7 +38,11 @@ import views.html.group.{member_email_address_page, member_name_page, member_pho
 
 import scala.concurrent.Future
 
-class AmendMemberContactDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
+class AmendMemberContactDetailsControllerSpec
+    extends ControllerSpec
+    with AddressCaptureSpec
+    with AmendmentControllerSpec
+    with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -48,14 +52,28 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
 
   when(amendNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("name amendment"))
 
-  when(amendEmailAddressPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("email address amendment"))
+  when(amendEmailAddressPage.apply(any(), any(), any())(any(), any())).thenReturn(
+    HtmlFormat.raw("email address amendment")
+  )
 
-  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("phone number amendment"))
+  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
+    HtmlFormat.raw("phone number amendment")
+  )
 
   private val controller =
-    new AmendMemberContactDetailsController(spyJourneyAction, mcc, mockAmendRegService, mockAddressCaptureService, amendNamePage, amendPhoneNumberPage, amendEmailAddressPage)
+    new AmendMemberContactDetailsController(
+      spyJourneyAction,
+      mcc,
+      mockAmendRegService,
+      mockAddressCaptureService,
+      amendNamePage,
+      amendPhoneNumberPage,
+      amendEmailAddressPage
+    )
 
-  private val populatedRegistration = aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
+  private val populatedRegistration = aRegistration(
+    withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
+  )
 
   private val memberId = groupMember.id
 
@@ -72,8 +90,16 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
         Table(
           ("Test Name", "Display Call", "Expected Page Content"),
           ("main contact name", (req: Request[AnyContent]) => controller.contactName(memberId)(req), "name amendment"),
-          ("member phone number", (req: Request[AnyContent]) => controller.phoneNumber(memberId)(req), "phone number amendment"),
-          ("member email address", (req: Request[AnyContent]) => controller.email(memberId)(req), "email address amendment")
+          (
+            "member phone number",
+            (req: Request[AnyContent]) => controller.phoneNumber(memberId)(req),
+            "phone number amendment"
+          ),
+          (
+            "member email address",
+            (req: Request[AnyContent]) => controller.email(memberId)(req),
+            "email address amendment"
+          )
         )
 
       forAll(showPageTestData) {
@@ -116,7 +142,8 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
           () => PhoneNumber("xxx"),
           () => PhoneNumber("07123 123456"),
           (req: Request[AnyContent]) => controller.updatePhoneNumber(memberId)(req),
-          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some("07123 123456"),
+          (reg: Registration) =>
+            reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some("07123 123456"),
           "phone number amendment"
         ),
         (
@@ -131,7 +158,14 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
 
     "redisplay page" when {
       forAll(updateTestData) {
-        (testName: String, createInvalidForm: () => AnyRef, _, call: Request[AnyContent] => Future[Result], _, expectedPageContent) =>
+        (
+          testName: String,
+          createInvalidForm: () => AnyRef,
+          _,
+          call: Request[AnyContent] => Future[Result],
+          _,
+          expectedPageContent
+        ) =>
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
             inMemoryRegistrationAmendmentRepository.put("123", registration)
@@ -147,9 +181,17 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
 
     "update registration and redirect to registration amendment page" when {
       forAll(updateTestData) {
-        (testName: String, _, createValidForm: () => AnyRef, call: Request[AnyContent] => Future[Result], test: Registration => scalatest.Assertion, _) =>
+        (
+          testName: String,
+          _,
+          createValidForm: () => AnyRef,
+          call: Request[AnyContent] => Future[Result],
+          test: Registration => scalatest.Assertion,
+          _
+        ) =>
           s"$testName updated" in {
-            val registration = aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
+            val registration =
+              aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
             inMemoryRegistrationAmendmentRepository.put("123", registration)
             spyJourneyAction.setReg(registration)
             simulateUpdateWithRegSubscriptionSuccess()
@@ -170,12 +212,10 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
       val expectedAddressCaptureConfig =
         AddressCaptureConfig(
           backLink = amendRoutes.AmendRegistrationController.displayPage().url,
-          successLink =
-            routes.AmendMemberContactDetailsController.updateAddress(memberId).url,
+          successLink = routes.AmendMemberContactDetailsController.updateAddress(memberId).url,
           alfHeadingsPrefix = "addressLookup.contact",
           pptHeadingKey = "addressCapture.contact.heading",
-          entityName =
-            populatedRegistration.findMember(memberId).map(_.businessName),
+          entityName = populatedRegistration.findMember(memberId).map(_.businessName),
           pptHintKey = None,
           forceUkAddress = false
         )
@@ -191,11 +231,15 @@ class AmendMemberContactDetailsControllerSpec extends ControllerSpec with Addres
       simulateValidAddressCapture()
       simulateUpdateWithRegSubscriptionSuccess()
 
-      populatedRegistration.findMember(memberId).flatMap(_.contactDetails.flatMap(_.address)) mustNot equal(validCapturedAddress)
+      populatedRegistration.findMember(memberId).flatMap(_.contactDetails.flatMap(_.address)) mustNot equal(
+        validCapturedAddress
+      )
 
       await(controller.updateAddress(memberId)(FakeRequest()))
 
-      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(_.contactDetails).flatMap(_.address) mustBe Some(validCapturedAddress)
+      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(
+        _.contactDetails
+      ).flatMap(_.address) mustBe Some(validCapturedAddress)
     }
 
   }

@@ -25,7 +25,9 @@ import scala.concurrent.Future
 trait Cacheable {
   def registrationConnector: RegistrationConnector
 
-  protected def update(cache: Registration => Registration)(implicit hc: HeaderCarrier, request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
+  protected def update(
+    cache: Registration => Registration
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     registrationConnector.update(cache(request.registration))
 
 }

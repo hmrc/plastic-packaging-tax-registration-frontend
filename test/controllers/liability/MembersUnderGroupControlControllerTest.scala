@@ -37,7 +37,12 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new MembersUnderGroupControlController(journeyAction = spyJourneyAction, mcc = mcc, page = page, mockRegistrationConnector)
+    new MembersUnderGroupControlController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page,
+      mockRegistrationConnector
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

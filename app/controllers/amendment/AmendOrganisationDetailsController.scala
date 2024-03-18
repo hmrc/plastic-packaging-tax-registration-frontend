@@ -44,8 +44,7 @@ class AmendOrganisationDetailsController @Inject() (
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.AmendRegistrationController.displayPage().url,
-        successLink =
-          routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+        successLink = routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
         alfHeadingsPrefix = "addressLookup.business",
         entityName = request.registration.organisationDetails.businessName,
         pptHeadingKey = "addressCapture.business.heading",
@@ -59,17 +58,14 @@ class AmendOrganisationDetailsController @Inject() (
       def updateBusinessAddress(address: Option[Address]): Registration => Registration = {
         registration: Registration =>
           val updatedOrganisationDetails =
-            registration.organisationDetails.copy(businessRegisteredAddress =
-              address
-            )
+            registration.organisationDetails.copy(businessRegisteredAddress = address)
           registration.copy(organisationDetails = updatedOrganisationDetails)
       }
 
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          updateRegistration(updateBusinessAddress(capturedAddress)).map { _ =>
-            Redirect(routes.AmendRegistrationController.displayPage())
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        updateRegistration(updateBusinessAddress(capturedAddress)).map { _ =>
+          Redirect(routes.AmendRegistrationController.displayPage())
+        }
       }
     }
 

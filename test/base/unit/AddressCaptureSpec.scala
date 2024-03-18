@@ -34,26 +34,43 @@ trait AddressCaptureSpec extends MockitoSugar {
   protected val addressCaptureRedirect = Call("GET", "/address-capture")
 
   protected val invalidCapturedAddress =
-    Address(addressLine1 = "", addressLine2 = None, addressLine3 = Some(""), townOrCity = "", maybePostcode = Some("XXX"), countryCode = "")
+    Address(
+      addressLine1 = "",
+      addressLine2 = None,
+      addressLine3 = Some(""),
+      townOrCity = "",
+      maybePostcode = Some("XXX"),
+      countryCode = ""
+    )
 
   protected val validCapturedAddress =
-    Address(addressLine1 = "2-3 Scala Street", addressLine2 = Some("Soho"), addressLine3 = None, townOrCity = "London", maybePostcode = Some("E17 3RE"), countryCode = GB)
+    Address(
+      addressLine1 = "2-3 Scala Street",
+      addressLine2 = Some("Soho"),
+      addressLine3 = None,
+      townOrCity = "London",
+      maybePostcode = Some("E17 3RE"),
+      countryCode = GB
+    )
 
   protected def simulateSuccessfulAddressCaptureInit(config: Option[AddressCaptureConfig]) =
     config match {
       case Some(config) =>
-        when(mockAddressCaptureService.initAddressCapture(any())(any())).thenAnswer(
-          (inv: InvocationOnMock) =>
-            if (inv.getArgument[AddressCaptureConfig](0) == config)
-              Future.successful(addressCaptureRedirect)
-            else
-              throw new IllegalArgumentException(s"Unexpected arguments - expecting $config, got ${inv.getArgument(0)}")
+        when(mockAddressCaptureService.initAddressCapture(any())(any())).thenAnswer((inv: InvocationOnMock) =>
+          if (inv.getArgument[AddressCaptureConfig](0) == config)
+            Future.successful(addressCaptureRedirect)
+          else
+            throw new IllegalArgumentException(s"Unexpected arguments - expecting $config, got ${inv.getArgument(0)}")
         )
       case _ =>
-        when(mockAddressCaptureService.initAddressCapture(any())(any())).thenReturn(Future.successful(addressCaptureRedirect))
+        when(mockAddressCaptureService.initAddressCapture(any())(any())).thenReturn(
+          Future.successful(addressCaptureRedirect)
+        )
     }
 
   protected def simulateValidAddressCapture() =
-    when(mockAddressCaptureService.getCapturedAddress()(any())).thenReturn(Future.successful(Some(validCapturedAddress)))
+    when(mockAddressCaptureService.getCapturedAddress()(any())).thenReturn(
+      Future.successful(Some(validCapturedAddress))
+    )
 
 }

@@ -37,7 +37,8 @@ class DeregisterController @Inject() (
   appConfig: AppConfig,
   page: deregister_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -54,7 +55,9 @@ class DeregisterController @Inject() (
         .fold(
           (formWithErrors: Form[Boolean]) => Future.successful(BadRequest(page(formWithErrors))),
           deregister =>
-            deregistrationDetailRepository.update(deregistrationDetails => deregistrationDetails.copy(deregister = Some(deregister))).map { deregistrationDetails =>
+            deregistrationDetailRepository.update(deregistrationDetails =>
+              deregistrationDetails.copy(deregister = Some(deregister))
+            ).map { deregistrationDetails =>
               if (deregistrationDetails.deregister.contains(true))
                 Redirect(routes.DeregisterReasonController.displayPage())
               else

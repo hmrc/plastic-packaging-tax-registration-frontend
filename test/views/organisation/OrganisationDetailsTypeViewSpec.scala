@@ -20,17 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY_NO_UK_BRANCH,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  TRUST,
-  UK_COMPANY
-}
+import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import forms.organisation.{ActionEnum, OrganisationType}
 import views.html.organisation.organisation_type
 
@@ -38,7 +28,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[organisation_type]
 
-  private def createView(form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Org), isGroup: Boolean = false): Document =
+  private def createView(
+    form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Org),
+    isGroup: Boolean = false
+  ): Document =
     page(form, isGroup)(registrationJourneyRequest, messages)
 
   "Confirm Organisation Type View" should {
@@ -113,7 +106,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(messages("organisationDetails.nominated.organisation.sectionHeader"))
+      view.getElementsByClass("govuk-caption-l").text() must include(
+        messages("organisationDetails.nominated.organisation.sectionHeader")
+      )
     }
 
     "display radio inputs" in {
@@ -184,7 +179,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
     view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
-    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(labelKey.getOrElse(s"organisationDetails.type.$orgType"))
+    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
+      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+    )
   }
 
 }

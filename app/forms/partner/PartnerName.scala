@@ -41,7 +41,10 @@ object PartnerName {
     partnerName ->
       text()
         .verifying(partnerNameEmptyError, isNonEmpty)
-        .verifying(partnerNameFormatError, partnerName => !isNonEmpty(partnerName) || isMatchingPattern(partnerName, PARTNER_NAME_REGEX))
+        .verifying(
+          partnerNameFormatError,
+          partnerName => !isNonEmpty(partnerName) || isMatchingPattern(partnerName, PARTNER_NAME_REGEX)
+        )
   )(PartnerName.apply)(PartnerName.unapply)
 
   def form(): Form[PartnerName] = Form(mapping)

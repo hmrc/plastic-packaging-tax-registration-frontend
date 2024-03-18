@@ -38,18 +38,28 @@ class ContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_address
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
       val businessRegisteredAddress =
-        request.registration.organisationDetails.businessRegisteredAddress.getOrElse(throw new IllegalStateException("Registered business address must be present"))
+        request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
+          throw new IllegalStateException("Registered business address must be present")
+        )
 
-      if (request.registration.organisationDetails.incorporationDetails.isDefined && businessRegisteredAddress.isMissingCountryCode)
+      if (
+        request.registration.organisationDetails.incorporationDetails.isDefined && businessRegisteredAddress.isMissingCountryCode
+      )
         Redirect(commonRoutes.UpdateCompaniesHouseController.onPageLoad())
       else
         Ok(
-          page(ConfirmAddress.form().fill(ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)), businessRegisteredAddress, request.registration.isGroup)
+          page(
+            ConfirmAddress.form().fill(ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)),
+            businessRegisteredAddress,
+            request.registration.isGroup
+          )
         )
     }
 
@@ -61,9 +71,20 @@ class ContactDetailsConfirmAddressController @Inject() (
             .bindFromRequest()
             .fold(
               (formWithErrors: Form[ConfirmAddress]) =>
-                Future(BadRequest(page(formWithErrors, request.registration.organisationDetails.businessRegisteredAddress.get, request.registration.isGroup))),
+                Future(
+                  BadRequest(
+                    page(
+                      formWithErrors,
+                      request.registration.organisationDetails.businessRegisteredAddress.get,
+                      request.registration.isGroup
+                    )
+                  )
+                ),
               confirmAddress =>
-                updateRegistration(confirmAddress, request.registration.organisationDetails.businessRegisteredAddress).map {
+                updateRegistration(
+                  confirmAddress,
+                  request.registration.organisationDetails.businessRegisteredAddress
+                ).map {
                   case Right(_) =>
                     if (confirmAddress.useRegisteredAddress.getOrElse(false))
                       Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
@@ -76,21 +97,20 @@ class ContactDetailsConfirmAddressController @Inject() (
       }
     }
 
-  private def updateRegistration(formData: ConfirmAddress, businessAddress: Option[Address])(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: ConfirmAddress, businessAddress: Option[Address])(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedPrimaryContactDetails = {
         if (formData.useRegisteredAddress.getOrElse(false))
           registration.primaryContactDetails.copy(
-            useRegisteredAddress =
-              formData.useRegisteredAddress,
+            useRegisteredAddress = formData.useRegisteredAddress,
             address = businessAddress
           )
         else
           registration.primaryContactDetails.copy(
-            useRegisteredAddress =
-              formData.useRegisteredAddress,
-            address =
-              registration.primaryContactDetails.address
+            useRegisteredAddress = formData.useRegisteredAddress,
+            address = registration.primaryContactDetails.address
           )
       }
       val updatedOrgDetails =

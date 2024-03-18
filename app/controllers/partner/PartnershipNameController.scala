@@ -44,7 +44,9 @@ class PartnershipNameController @Inject() (
   mcc: MessagesControllerComponents,
   page: partnership_name
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -77,18 +79,21 @@ class PartnershipNameController @Inject() (
     }
 
   private def getPartnershipType(registration: Registration) =
-    registration.organisationDetails.partnershipDetails.map(pd => pd.partnershipType).getOrElse(throw new IllegalStateException("Assumed partnership details missing"))
+    registration.organisationDetails.partnershipDetails.map(pd => pd.partnershipType).getOrElse(
+      throw new IllegalStateException("Assumed partnership details missing")
+    )
 
-  private def updatePartnershipName(partnershipName: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
-    update {
-      registration =>
-        registration.copy(organisationDetails =
-          registration.organisationDetails.copy(partnershipDetails =
-            registration.organisationDetails.partnershipDetails.map {
-              pd => pd.copy(partnershipName = Some(partnershipName))
-            }
-          )
+  private def updatePartnershipName(
+    partnershipName: String
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
+    update { registration =>
+      registration.copy(organisationDetails =
+        registration.organisationDetails.copy(partnershipDetails =
+          registration.organisationDetails.partnershipDetails.map { pd =>
+            pd.copy(partnershipName = Some(partnershipName))
+          }
         )
+      )
     }.map {
       case Right(registration) => registration
       case Left(ex)            => throw ex

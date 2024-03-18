@@ -39,13 +39,25 @@ sealed trait Address {
 
 object Address extends CommonFormValidators {
 
-  case class UKAddress(addressLine1: String, addressLine2: Option[String], addressLine3: Option[String], townOrCity: String, postCode: String, countryCode: String = GB)
-      extends Address {
+  case class UKAddress(
+    addressLine1: String,
+    addressLine2: Option[String],
+    addressLine3: Option[String],
+    townOrCity: String,
+    postCode: String,
+    countryCode: String = GB
+  ) extends Address {
     val maybePostcode: Option[String] = Some(postCode)
   }
 
-  case class NonUKAddress(addressLine1: String, addressLine2: Option[String], addressLine3: Option[String], townOrCity: String, postCode: Option[String], countryCode: String)
-      extends Address {
+  case class NonUKAddress(
+    addressLine1: String,
+    addressLine2: Option[String],
+    addressLine3: Option[String],
+    townOrCity: String,
+    postCode: Option[String],
+    countryCode: String
+  ) extends Address {
     val maybePostcode: Option[String] = postCode
   }
 
@@ -72,9 +84,22 @@ object Address extends CommonFormValidators {
     case nonUKAddress: NonUKAddress => nonUKFormat.writes(nonUKAddress)
   }
 
-  def apply(addressLine1: String, addressLine2: Option[String], addressLine3: Option[String], townOrCity: String, maybePostcode: Option[String], countryCode: String): Address =
+  def apply(
+    addressLine1: String,
+    addressLine2: Option[String],
+    addressLine3: Option[String],
+    townOrCity: String,
+    maybePostcode: Option[String],
+    countryCode: String
+  ): Address =
     if (countryCode == GB)
-      UKAddress(addressLine1 = addressLine1, addressLine2 = addressLine2, addressLine3 = addressLine3, townOrCity = townOrCity, postCode = maybePostcode.getOrElse(""))
+      UKAddress(
+        addressLine1 = addressLine1,
+        addressLine2 = addressLine2,
+        addressLine3 = addressLine3,
+        townOrCity = townOrCity,
+        postCode = maybePostcode.getOrElse("")
+      )
     else
       NonUKAddress(
         addressLine1 = addressLine1,

@@ -42,7 +42,12 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsEmailAddressController(journeyAction = spyJourneyAction, mcc = mcc, page = page, registrationUpdater = mockNewRegistrationUpdater)
+    new ContactDetailsEmailAddressController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = mockNewRegistrationUpdater
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -85,8 +90,12 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
 
         status(result) mustBe SEE_OTHER
-        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some("test@test.com")
-        redirectLocation(result) mustBe Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url)
+        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some(
+          "test@test.com"
+        )
+        redirectLocation(result) mustBe Some(
+          groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
+        )
         reset(mockRegistrationConnector)
       }
     }
@@ -127,14 +136,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       mockRegistrationUpdateFailure()
 
-      intercept[DownstreamServiceError](status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))))
+      intercept[DownstreamServiceError](
+        status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com"))))
+      )
     }
 
     "user submits form and a registration update runtime exception occurs" in {
 
       mockRegistrationException()
 
-      intercept[RuntimeException](status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))))
+      intercept[RuntimeException](
+        status(controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com"))))
+      )
     }
 
   }

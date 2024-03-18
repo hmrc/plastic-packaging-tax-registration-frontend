@@ -45,7 +45,10 @@ class TaxStartDateViewSpec extends UnitViewSpec {
     }
 
     "have show the start date" in {
-      view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.taxStartDate.hint", "14 April 2022")
+      view.getElementsByClass("govuk-body").get(0).text() mustBe messages(
+        "liability.taxStartDate.hint",
+        "14 April 2022"
+      )
     }
 
     "explain how the date was arrived at" when {

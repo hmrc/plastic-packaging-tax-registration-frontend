@@ -42,7 +42,12 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsNameController(journeyAction = spyJourneyAction, mcc = mcc, page = page, registrationUpdater = mockNewRegistrationUpdater)
+    new ContactDetailsNameController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = mockNewRegistrationUpdater
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -83,14 +88,18 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result =
-          controller.submit(groupMember.id)(postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'.")))
+          controller.submit(groupMember.id)(
+            postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'."))
+          )
 
         status(result) mustBe SEE_OTHER
         val contactDetails =
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get
         contactDetails.firstName mustBe "Test -'."
         contactDetails.lastName mustBe "User -'."
-        redirectLocation(result) mustBe Some(groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url)
+        redirectLocation(result) mustBe Some(
+          groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url
+        )
         reset(mockRegistrationConnector)
       }
     }
@@ -155,14 +164,18 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       mockRegistrationUpdateFailure()
 
-      intercept[DownstreamServiceError](status(controller.submit(groupMember.id)(postRequestEncoded(MemberName(firstName = "Test", lastName = "User")))))
+      intercept[DownstreamServiceError](
+        status(controller.submit(groupMember.id)(postRequestEncoded(MemberName(firstName = "Test", lastName = "User"))))
+      )
     }
 
     "user submits form and a registration update runtime exception occurs" in {
 
       mockRegistrationException()
 
-      intercept[RuntimeException](status(controller.submit(groupMember.id)(postRequestEncoded(MemberName(firstName = "Test", lastName = "User")))))
+      intercept[RuntimeException](
+        status(controller.submit(groupMember.id)(postRequestEncoded(MemberName(firstName = "Test", lastName = "User"))))
+      )
     }
 
   }

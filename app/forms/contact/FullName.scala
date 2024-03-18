@@ -39,15 +39,15 @@ object FullName extends CommonFormValidators {
 
   def form(): Form[FullName] = Form(mapping)
 
-  private def emptyError(field: String) = s"primaryContactDetails.fullNamePage.${field}.error.empty"
+  private def emptyError(field: String) = s"primaryContactDetails.fullNamePage.$field.error.empty"
 
   private def lengthError(field: String) =
-    s"primaryContactDetails.fullNamePage.${field}.error.length"
+    s"primaryContactDetails.fullNamePage.$field.error.length"
 
   private def nonAlphabeticError(field: String) =
-    s"primaryContactDetails.fullNamePage.${field}.error.specialCharacters"
+    s"primaryContactDetails.fullNamePage.$field.error.specialCharacters"
 
   private def whiteSpaceError(field: String) =
-    s"primaryContactDetails.fullNamePage.${field}.error.spaces"
+    s"primaryContactDetails.fullNamePage.$field.error.spaces"
 
 }

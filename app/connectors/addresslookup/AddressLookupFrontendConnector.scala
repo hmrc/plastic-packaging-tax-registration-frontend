@@ -30,16 +30,21 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddressLookupFrontendConnector @Inject() (http: HttpClient, appConfig: AppConfig, metrics: Metrics) {
 
-  def initialiseJourney(addressLookupRequest: AddressLookupConfigV2)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
+  def initialiseJourney(
+    addressLookupRequest: AddressLookupConfigV2
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.initialise.timer").time()
-    http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl, addressLookupRequest).andThen { case _ => timer.stop() }
+    http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl, addressLookupRequest).andThen {
+      case _ => timer.stop()
+    }
       .map {
         case response @ HttpResponse(ACCEPTED, _, _) =>
           response.header(LOCATION) match {
             case Some(redirectUrl) => AddressLookupOnRamp(redirectUrl)
             case _                 => throw new IllegalStateException("Missing re-direct url")
           }
-        case error => throw new IllegalStateException(s"Error. Address look up frontend error with status: ${error.status}")
+        case error =>
+          throw new IllegalStateException(s"Error. Address look up frontend error with status: ${error.status}")
       }
   }
 

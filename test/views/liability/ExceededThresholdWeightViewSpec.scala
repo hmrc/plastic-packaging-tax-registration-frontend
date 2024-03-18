@@ -55,7 +55,9 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
 
       view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
-      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.exceededThresholdWeight.title"))
+      view.getElementsByClass("govuk-heading-l").text() must include(
+        messages("liability.exceededThresholdWeight.title")
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -70,11 +72,16 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-body").get(2).text() mustBe messages("liability.exceededThresholdWeight.line2")
       val text = messages("liability.exceededThresholdWeight.line4.link-text")
 
-      view.getElementsByClass("govuk-body").get(3).text() mustBe messages("liability.exceededThresholdWeight.line4", text)
+      view.getElementsByClass("govuk-body").get(3).text() mustBe messages(
+        "liability.exceededThresholdWeight.line4",
+        text
+      )
     }
 
     "display radio buttons" in {
-      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.exceededThresholdWeight.question")
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages(
+        "liability.exceededThresholdWeight.question"
+      )
       view.getElementById("value-hint").text() mustBe messages("liability.exceededThresholdWeight.hint")
       view.getElementsByClass("govuk-radios__item").get(0).text() mustBe "Yes"
       view.getElementsByClass("govuk-radios__item").get(1).text() mustBe "No"

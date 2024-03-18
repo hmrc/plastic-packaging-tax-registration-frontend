@@ -53,13 +53,26 @@ class PartnerNameController @Inject() (
     ) {
 
   def displayNewPartner(): Action[AnyContent] =
-    doDisplay(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerNameController.submitNewPartner())
+    doDisplay(
+      None,
+      partnerRoutes.PartnerTypeController.displayNewPartner(),
+      partnerRoutes.PartnerNameController.submitNewPartner()
+    )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplay(Some(partnerId), partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId), partnerRoutes.PartnerNameController.submitExistingPartner(partnerId))
+    doDisplay(
+      Some(partnerId),
+      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+      partnerRoutes.PartnerNameController.submitExistingPartner(partnerId)
+    )
 
   def submitNewPartner(): Action[AnyContent] =
-    doSubmit(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerNameController.submitNewPartner(), commonRoutes.TaskListController.displayPage())
+    doSubmit(
+      None,
+      partnerRoutes.PartnerTypeController.displayNewPartner(),
+      partnerRoutes.PartnerNameController.submitNewPartner(),
+      commonRoutes.TaskListController.displayPage()
+    )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     doSubmit(

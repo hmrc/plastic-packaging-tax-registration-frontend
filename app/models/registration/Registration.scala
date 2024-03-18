@@ -85,10 +85,18 @@ case class Registration(
   def isPartnershipWithPartnerCollection: Boolean =
     organisationDetails.organisationType.contains(OrgType.PARTNERSHIP) &&
       (
-        organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.GENERAL_PARTNERSHIP)) ||
-          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)) ||
-          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)) ||
-          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP))
+        organisationDetails.partnershipDetails.exists(
+          _.partnershipType.contains(PartnerTypeEnum.GENERAL_PARTNERSHIP)
+        ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
+          ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)
+          ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
+          )
       )
 
   def numberOfSections: Int = if (isGroup) 5 else 4
@@ -179,9 +187,7 @@ case class Registration(
   val isFirstGroupMember: Boolean = groupDetail.exists(_.members.isEmpty)
 
   def populateBusinessRegisteredAddress(addressConversionUtils: AddressConversionUtils): Registration =
-    this.copy(organisationDetails =
-      this.organisationDetails.withBusinessRegisteredAddress(addressConversionUtils)
-    )
+    this.copy(organisationDetails = this.organisationDetails.withBusinessRegisteredAddress(addressConversionUtils))
 
   val lastMember: Option[GroupMember] = groupDetail.flatMap(_.members.lastOption)
 
@@ -195,9 +201,7 @@ case class Registration(
     organisationDetails.partnershipDetails.map { partnershipDetails =>
       val updatedPartnershipDetails =
         partnershipDetails.copy(inflightPartner = updatedPartner)
-      this.copy(organisationDetails =
-        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
-      )
+      this.copy(organisationDetails = organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails)))
     }.getOrElse(this)
 
   def addOtherPartner(otherPartner: Partner): Registration =
@@ -206,9 +210,7 @@ case class Registration(
         partnershipDetails.otherPartners :+ otherPartner
       val updatedPartnershipDetails =
         partnershipDetails.copy(partners = updatedOtherPartners)
-      this.copy(organisationDetails =
-        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
-      )
+      this.copy(organisationDetails = organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails)))
     }.getOrElse(this)
 
   def withPromotedInflightPartner(): Registration =
@@ -221,27 +223,25 @@ case class Registration(
   def withUpdatedPartner(partnerId: String, partnerUpdate: Partner => Partner): Registration =
     this.copy(organisationDetails =
       this.organisationDetails.copy(partnershipDetails =
-        this.organisationDetails.partnershipDetails.map(_.copy(partners = this.organisationDetails.partnershipDetails.map(_.partners.map {
-          partner =>
+        this.organisationDetails.partnershipDetails.map(
+          _.copy(partners = this.organisationDetails.partnershipDetails.map(_.partners.map { partner =>
             if (partner.id == partnerId)
               partnerUpdate(partner)
             else
               partner
-        }).getOrElse(Seq())))
+          }).getOrElse(Seq()))
+        )
       )
     )
 
   def withUpdatedMemberAddress(memberId: String, address: Address): Registration =
-    this.copy(groupDetail = this.groupDetail flatMap {
-      group =>
-        Some(group.copy(members = group.members map { mem =>
-          if (mem.id == memberId)
-            mem.copy(addressDetails =
-              address
-            )
-          else
-            mem
-        }))
+    this.copy(groupDetail = this.groupDetail flatMap { group =>
+      Some(group.copy(members = group.members map { mem =>
+        if (mem.id == memberId)
+          mem.copy(addressDetails = address)
+        else
+          mem
+      }))
     })
 
   val nominatedPartner: Option[Partner] =

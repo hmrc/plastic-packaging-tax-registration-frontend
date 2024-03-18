@@ -88,29 +88,66 @@ trait PptTestData extends RegistrationBuilder {
   )
 
   protected val testBusinessAddress =
-    UKAddress(addressLine1 = "2 Scala Street", addressLine2 = Some("Soho"), addressLine3 = None, townOrCity = "London", postCode = "W1T 2HN")
+    UKAddress(
+      addressLine1 = "2 Scala Street",
+      addressLine2 = Some("Soho"),
+      addressLine3 = None,
+      townOrCity = "London",
+      postCode = "W1T 2HN"
+    )
 
   protected val testUtr = "0123456789"
 
   protected val testBusinessVerificationPassStatus = "PASS"
 
   protected val registrationDetails: RegistrationDetails =
-    RegistrationDetails(identifiersMatch = true, verificationStatus = Some("PASS"), registrationStatus = "REGISTERED", registeredBusinessPartnerId = Some(safeNumber))
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = Some("PASS"),
+      registrationStatus = "REGISTERED",
+      registeredBusinessPartnerId = Some(safeNumber)
+    )
 
   protected val failedRegistrationDetails: RegistrationDetails =
-    RegistrationDetails(identifiersMatch = true, verificationStatus = None, registrationStatus = "REGISTRATION_FAILED", registeredBusinessPartnerId = None)
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = None,
+      registrationStatus = "REGISTRATION_FAILED",
+      registeredBusinessPartnerId = None
+    )
 
   protected val unregisteredRegistrationDetails: RegistrationDetails =
-    RegistrationDetails(identifiersMatch = true, verificationStatus = Some("UNCHALLENGED"), registrationStatus = "REGISTRATION_NOT_CALLED", registeredBusinessPartnerId = None)
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = Some("UNCHALLENGED"),
+      registrationStatus = "REGISTRATION_NOT_CALLED",
+      registeredBusinessPartnerId = None
+    )
 
   protected val verificationFailedRegistrationDetails: RegistrationDetails =
-    RegistrationDetails(identifiersMatch = true, verificationStatus = Some("FAIL"), registrationStatus = "REGISTRATION_NOT_CALLED", registeredBusinessPartnerId = None)
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = Some("FAIL"),
+      registrationStatus = "REGISTRATION_NOT_CALLED",
+      registeredBusinessPartnerId = None
+    )
 
   protected val identifiersUnmatchedRegistrationDetails: RegistrationDetails =
-    RegistrationDetails(identifiersMatch = false, verificationStatus = Some("UNCHALLENGED"), registrationStatus = "REGISTRATION_NOT_CALLED", registeredBusinessPartnerId = None)
+    RegistrationDetails(
+      identifiersMatch = false,
+      verificationStatus = Some("UNCHALLENGED"),
+      registrationStatus = "REGISTRATION_NOT_CALLED",
+      registeredBusinessPartnerId = None
+    )
 
   protected val incorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails))
+    IncorporationDetails(
+      testCompanyNumber,
+      testCompanyName,
+      Some(testUtr),
+      testCompanyAddress,
+      Some(registrationDetails)
+    )
 
   protected val grsRegistrationDetails: GrsRegistration =
     GrsRegistration(registrationStatus = "REGISTERED", registeredBusinessPartnerId = Some(safeNumber))
@@ -125,10 +162,22 @@ trait PptTestData extends RegistrationBuilder {
     )
 
   protected val unregisteredIncorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(unregisteredRegistrationDetails))
+    IncorporationDetails(
+      testCompanyNumber,
+      testCompanyName,
+      Some(testUtr),
+      testCompanyAddress,
+      Some(unregisteredRegistrationDetails)
+    )
 
   protected val verificationFailedIncorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(verificationFailedRegistrationDetails))
+    IncorporationDetails(
+      testCompanyNumber,
+      testCompanyName,
+      Some(testUtr),
+      testCompanyAddress,
+      Some(verificationFailedRegistrationDetails)
+    )
 
   protected val verificationFailedSoleTraderDetails: SoleTraderDetails =
     SoleTraderDetails(
@@ -161,8 +210,7 @@ trait PptTestData extends RegistrationBuilder {
       Some(testSatur),
       None,
       identifiersMatch = true,
-      businessVerification =
-        Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
+      businessVerification = Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
       registration = grsRegistrationDetails
     )
 
@@ -173,7 +221,11 @@ trait PptTestData extends RegistrationBuilder {
     PartnershipBusinessDetails(testSatur, testPostcode, None, Some(unregisteredRegistrationDetails))
 
   protected val companyProfile: CompanyProfile =
-    CompanyProfile(companyName = testCompanyName, companyNumber = testCompanyNumber, companyAddress = testCompanyAddress)
+    CompanyProfile(
+      companyName = testCompanyName,
+      companyNumber = testCompanyNumber,
+      companyAddress = testCompanyAddress
+    )
 
   protected val generalPartnershipDetails: PartnershipDetails =
     PartnershipDetails(
@@ -232,8 +284,14 @@ trait PptTestData extends RegistrationBuilder {
   protected def partnershipDetailsWithBusinessAddress(partnerTypeEnum: PartnerTypeEnum): PartnershipDetails =
     PartnershipDetails(
       partnershipType = partnerTypeEnum,
-      partnershipBusinessDetails =
-        Some(PartnershipBusinessDetails(testSatur, testPostcode, companyProfile = Some(companyProfile), Some(registrationDetails)))
+      partnershipBusinessDetails = Some(
+        PartnershipBusinessDetails(
+          testSatur,
+          testPostcode,
+          companyProfile = Some(companyProfile),
+          Some(registrationDetails)
+        )
+      )
     )
 
   protected val subscriptionStatus: SubscriptionStatusResponse =
@@ -244,8 +302,7 @@ trait PptTestData extends RegistrationBuilder {
   protected val subscriptionCreateOrUpdate: SubscriptionCreateOrUpdateResponseSuccess =
     SubscriptionCreateOrUpdateResponseSuccess(
       pptReference = "XXPPTP123456789",
-      processingDate =
-        ZonedDateTime.now(ZoneOffset.UTC),
+      processingDate = ZonedDateTime.now(ZoneOffset.UTC),
       formBundleNumber = "123456789",
       nrsNotifiedSuccessfully = true,
       nrsSubmissionId = Some(nrsSubmissionId),
@@ -256,8 +313,7 @@ trait PptTestData extends RegistrationBuilder {
   protected val subscriptionCreateWithEnrolmentFailure: SubscriptionCreateOrUpdateResponseSuccess =
     SubscriptionCreateOrUpdateResponseSuccess(
       pptReference = "XXPPTP123456789",
-      processingDate =
-        ZonedDateTime.now(ZoneOffset.UTC),
+      processingDate = ZonedDateTime.now(ZoneOffset.UTC),
       formBundleNumber = "123456789",
       nrsNotifiedSuccessfully = true,
       nrsSubmissionId = Some(nrsSubmissionId),
@@ -265,10 +321,16 @@ trait PptTestData extends RegistrationBuilder {
       enrolmentInitiatedSuccessfully = Some(false)
     )
 
-  protected val emailVerification: VerificationStatus = VerificationStatus(Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false)))
+  protected val emailVerification: VerificationStatus = VerificationStatus(
+    Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
+  )
 
   protected def registeredUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY), businessRegisteredAddress = Some(testBusinessAddress), incorporationDetails = Some(incorporationDetails))
+    OrganisationDetails(
+      organisationType = Some(OrgType.UK_COMPANY),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      incorporationDetails = Some(incorporationDetails)
+    )
 
   protected def registeredRegisteredSocietyOrgDetails(): OrganisationDetails =
     OrganisationDetails(
@@ -278,33 +340,60 @@ trait PptTestData extends RegistrationBuilder {
     )
 
   protected def registeredSoleTraderOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(OrgType.SOLE_TRADER), businessRegisteredAddress = Some(testBusinessAddress), soleTraderDetails = Some(soleTraderDetails))
+    OrganisationDetails(
+      organisationType = Some(OrgType.SOLE_TRADER),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      soleTraderDetails = Some(soleTraderDetails)
+    )
 
   protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP), businessRegisteredAddress = Some(testBusinessAddress), partnershipDetails = Some(generalPartnershipDetails))
+    OrganisationDetails(
+      organisationType = Some(OrgType.PARTNERSHIP),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      partnershipDetails = Some(generalPartnershipDetails)
+    )
 
   protected def registeredScottishPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP), businessRegisteredAddress = Some(testBusinessAddress), partnershipDetails = Some(scottishPartnershipDetails))
+    OrganisationDetails(
+      organisationType = Some(OrgType.PARTNERSHIP),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      partnershipDetails = Some(scottishPartnershipDetails)
+    )
 
   protected def registeredLimitedLiabilityhPartnershipOrgDetails(): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(OrgType.PARTNERSHIP),
       businessRegisteredAddress = Some(testBusinessAddress),
-      partnershipDetails =
-        Some(partnershipDetailsWithBusinessAddress(LIMITED_LIABILITY_PARTNERSHIP))
+      partnershipDetails = Some(partnershipDetailsWithBusinessAddress(LIMITED_LIABILITY_PARTNERSHIP))
     )
 
   protected def unregisteredUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(UK_COMPANY), businessRegisteredAddress = Some(testBusinessAddress), incorporationDetails = Some(unregisteredIncorporationDetails))
+    OrganisationDetails(
+      organisationType = Some(UK_COMPANY),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      incorporationDetails = Some(unregisteredIncorporationDetails)
+    )
 
   protected def unregisteredSoleTraderOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(SOLE_TRADER), businessRegisteredAddress = Some(testBusinessAddress), soleTraderDetails = Some(unregisteredSoleTraderDetails))
+    OrganisationDetails(
+      organisationType = Some(SOLE_TRADER),
+      businessRegisteredAddress = Some(testBusinessAddress),
+      soleTraderDetails = Some(unregisteredSoleTraderDetails)
+    )
 
-  protected def unregisteredPartnershipDetails(partnershipType: PartnerTypeEnum, partnershipName: Option[String] = None): OrganisationDetails =
+  protected def unregisteredPartnershipDetails(
+    partnershipType: PartnerTypeEnum,
+    partnershipName: Option[String] = None
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
-      partnershipDetails =
-        Some(PartnershipDetails(partnershipType = partnershipType, partnershipName = partnershipName, partnershipBusinessDetails = None))
+      partnershipDetails = Some(
+        PartnershipDetails(
+          partnershipType = partnershipType,
+          partnershipName = partnershipName,
+          partnershipBusinessDetails = None
+        )
+      )
     )
 
   protected def verificationFailedUkCompanyOrgDetails(): OrganisationDetails =
@@ -318,8 +407,7 @@ trait PptTestData extends RegistrationBuilder {
     pptReference = Some(PptReference("XAPPT000123456")),
     isUkAddress = Some(IsUkAddress(Some(true))),
     postcode = Some(Postcode("AB1 2BC")),
-    registrationDate =
-      Some(RegistrationDate(DateData("1", "2", "2021")))
+    registrationDate = Some(RegistrationDate(DateData("1", "2", "2021")))
   )
 
   protected val groupMember = aGroupMember()
@@ -329,8 +417,7 @@ trait PptTestData extends RegistrationBuilder {
       id = "123456ABC",
       customerIdentification1 = testCompanyNumber,
       customerIdentification2 = Some("id2"),
-      organisationDetails =
-        Some(GroupOrgDetails(OrgType.UK_COMPANY.toString, "Company Name", Some(safeNumber))),
+      organisationDetails = Some(GroupOrgDetails(OrgType.UK_COMPANY.toString, "Company Name", Some(safeNumber))),
       contactDetails = Some(
         GroupMemberContactDetails(
           phoneNumber = Some("077123"),
@@ -348,14 +435,13 @@ trait PptTestData extends RegistrationBuilder {
           )
         )
       ),
-      addressDetails =
-        UKAddress(
-          addressLine1 = "BusinessAddressLine1",
-          addressLine2 = Some("BusinessAddressLine2"),
-          addressLine3 = Some("BusinessAddressLine3"),
-          townOrCity = "BusinessAddressLine4",
-          postCode = "AB12CD"
-        )
+      addressDetails = UKAddress(
+        addressLine1 = "BusinessAddressLine1",
+        addressLine2 = Some("BusinessAddressLine2"),
+        addressLine3 = Some("BusinessAddressLine3"),
+        townOrCity = "BusinessAddressLine4",
+        postCode = "AB12CD"
+      )
     )
 
   protected val groupDetails =
@@ -365,7 +451,13 @@ trait PptTestData extends RegistrationBuilder {
     GroupDetail(membersUnderGroupControl = Some(true), members = Seq(aGroupMember(), aGroupMember()))
 
   protected val addressDetails =
-    UKAddress(addressLine1 = "Street1", addressLine2 = Some("Street2"), addressLine3 = Some("Street3"), townOrCity = "Street4", postCode = "T5 6TA")
+    UKAddress(
+      addressLine1 = "Street1",
+      addressLine2 = Some("Street2"),
+      addressLine3 = Some("Street3"),
+      townOrCity = "Street4",
+      postCode = "T5 6TA"
+    )
 
   protected def groupMemberForOrganisationType(organisationType: OrgType) =
     groupMember.copy(organisationDetails =
@@ -386,14 +478,12 @@ trait PptTestData extends RegistrationBuilder {
               identifiersMatch = true,
               verificationStatus = Some("Verified"),
               registrationStatus = "REGISTERED",
-              registeredBusinessPartnerId =
-                Some("XM123456")
+              registeredBusinessPartnerId = Some("XM123456")
             )
           )
         )
       ),
-      partners =
-        Seq(aSoleTraderPartner, aLimitedCompanyPartner, aPartnershipPartner),
+      partners = Seq(aSoleTraderPartner, aLimitedCompanyPartner, aPartnershipPartner),
       inflightPartner = None
     )
 
@@ -409,7 +499,12 @@ trait PptTestData extends RegistrationBuilder {
           ninoOrTrn = "12345678ABC",
           sautr = Some("654321"),
           registration = Some(
-            RegistrationDetails(identifiersMatch = true, verificationStatus = Some("Verified"), registrationStatus = "REGISTERED", registeredBusinessPartnerId = Some("XM654321"))
+            RegistrationDetails(
+              identifiersMatch = true,
+              verificationStatus = Some("Verified"),
+              registrationStatus = "REGISTERED",
+              registeredBusinessPartnerId = Some("XM654321")
+            )
           )
         )
       ),
@@ -449,8 +544,7 @@ trait PptTestData extends RegistrationBuilder {
               identifiersMatch = true,
               verificationStatus = Some("Verified"),
               registrationStatus = "REGISTERED",
-              registeredBusinessPartnerId =
-                Some("XM5334545")
+              registeredBusinessPartnerId = Some("XM5334545")
             )
           )
         )
@@ -462,7 +556,14 @@ trait PptTestData extends RegistrationBuilder {
           emailAddress = Some("jon@pp.com"),
           phoneNumber = Some("07876235834"),
           address = Some(
-            Address(addressLine1 = "3 Old Street", addressLine2 = Some("Cloverfield"), addressLine3 = None, townOrCity = "Leeds", maybePostcode = Some("LS1 1BB"), countryCode = GB)
+            Address(
+              addressLine1 = "3 Old Street",
+              addressLine2 = Some("Cloverfield"),
+              addressLine3 = None,
+              townOrCity = "Leeds",
+              maybePostcode = Some("LS1 1BB"),
+              countryCode = GB
+            )
           )
         )
       )
@@ -482,12 +583,9 @@ trait PptTestData extends RegistrationBuilder {
               registration = Some(
                 RegistrationDetails(
                   identifiersMatch = true,
-                  verificationStatus =
-                    Some("Verified"),
-                  registrationStatus =
-                    "REGISTERED",
-                  registeredBusinessPartnerId =
-                    Some("XM234976234")
+                  verificationStatus = Some("Verified"),
+                  registrationStatus = "REGISTERED",
+                  registeredBusinessPartnerId = Some("XM234976234")
                 )
               )
             )
@@ -501,7 +599,14 @@ trait PptTestData extends RegistrationBuilder {
           emailAddress = Some("clive@tpp.com"),
           phoneNumber = Some("07876235342"),
           address = Some(
-            Address(addressLine1 = "15 Big Road", addressLine2 = Some("Cloverfield"), addressLine3 = None, townOrCity = "Leeds", maybePostcode = Some("LS1 1CC"), countryCode = GB)
+            Address(
+              addressLine1 = "15 Big Road",
+              addressLine2 = Some("Cloverfield"),
+              addressLine3 = None,
+              townOrCity = "Leeds",
+              maybePostcode = Some("LS1 1CC"),
+              countryCode = GB
+            )
           )
         )
       )

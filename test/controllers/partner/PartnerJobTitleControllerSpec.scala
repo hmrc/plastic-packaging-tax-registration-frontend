@@ -37,8 +37,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
   private val controller =
     new PartnerJobTitleController(
       journeyAction = spyJourneyAction,
-      registrationConnector =
-        mockRegistrationConnector,
+      registrationConnector = mockRegistrationConnector,
       mcc = mcc,
       page = page
     )
@@ -54,10 +53,14 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
   }
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(Some(aLimitedCompanyPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner)
+    )
 
   private def registrationWithPartnershipDetailsAndNonNominatedInflightPartner =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(aSoleTraderPartner).withInflightPartner(Some(aLimitedCompanyPartner))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(
+      aSoleTraderPartner
+    ).withInflightPartner(Some(aLimitedCompanyPartner))
 
   private val existingPartner =
     aLimitedCompanyPartner
@@ -106,7 +109,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(JobTitle("Company secretary")))
+        val result =
+          controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(JobTitle("Company secretary")))
 
         status(result) mustBe SEE_OTHER
 
@@ -153,7 +157,9 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        intercept[RuntimeException](status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest())))
+        intercept[RuntimeException](
+          status(controller.displayExistingPartner("not-an-existing-partner-id")(FakeRequest()))
+        )
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -161,7 +167,11 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        intercept[RuntimeException](status(controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(JobTitle("Director")))))
+        intercept[RuntimeException](
+          status(
+            controller.submitExistingPartner("not-an-existing-partners-id")(postRequestEncoded(JobTitle("Director")))
+          )
+        )
       }
 
       "user submits form and the registration update fails" in {
@@ -169,7 +179,9 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(controller.submitNewPartner()(postRequestEncoded(JobTitle("Director")))))
+        intercept[DownstreamServiceError](
+          status(controller.submitNewPartner()(postRequestEncoded(JobTitle("Director"))))
+        )
       }
     }
   }

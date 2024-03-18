@@ -21,9 +21,7 @@ import models.registration.Registration
 class RegistrationGroupFilterService {
 
   def removePartialGroupMembers(registration: Registration): Registration =
-    registration.copy(groupDetail =
-      registration.groupDetail.map(gd => gd.copy(members = gd.members.filter(_.isValid)))
-    )
+    registration.copy(groupDetail = registration.groupDetail.map(gd => gd.copy(members = gd.members.filter(_.isValid))))
 
   def removeGroupDetails(registration: Registration): Registration =
     registration.copy(groupDetail = None)

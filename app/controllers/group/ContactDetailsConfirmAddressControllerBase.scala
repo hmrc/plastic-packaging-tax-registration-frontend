@@ -31,7 +31,8 @@ abstract class ContactDetailsConfirmAddressControllerBase(
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   protected def doDisplayPage(memberId: String, backLink: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
@@ -52,19 +53,26 @@ abstract class ContactDetailsConfirmAddressControllerBase(
 
   protected def onAddressCaptureCallback(memberId: String): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          registrationUpdater.updateRegistration { registration =>
-            registration.copy(groupDetail =
-              registration.groupDetail.map(
-                _.withUpdatedOrNewMember(
-                  registration.findMember(memberId).map(_.withUpdatedGroupMemberAddress(capturedAddress)).getOrElse(throw new IllegalStateException("Expected group member absent"))
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        registrationUpdater.updateRegistration { registration =>
+          registration.copy(groupDetail =
+            registration.groupDetail.map(
+              _.withUpdatedOrNewMember(
+                registration.findMember(memberId).map(_.withUpdatedGroupMemberAddress(capturedAddress)).getOrElse(
+                  throw new IllegalStateException("Expected group member absent")
                 )
               )
             )
-          }.map { registration =>
-            Redirect(getSuccessfulRedirect(registration.findMember(memberId).map(_.id).getOrElse(throw new IllegalStateException("Expected group member missing"))))
-          }
+          )
+        }.map { registration =>
+          Redirect(
+            getSuccessfulRedirect(
+              registration.findMember(memberId).map(_.id).getOrElse(
+                throw new IllegalStateException("Expected group member missing")
+              )
+            )
+          )
+        }
       }
     }
 

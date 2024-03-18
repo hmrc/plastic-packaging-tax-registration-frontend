@@ -60,7 +60,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       "Group organisation" in {
         val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
-        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.group.sectionHeader")
+        )
 
       }
     }
@@ -68,7 +70,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     "display contact name question" in {
       val view = createView(isGroup = true)
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.fullNamePage.title"))
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("primaryContactDetails.fullNamePage.title")
+      )
     }
 
     "display question hint" in {
@@ -142,7 +146,10 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Name must only include letters, hyphens, spaces, apostrophes and full stops")
+      view must haveGovukFieldError(
+        "value",
+        "Name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
     }
 
     "user entered more than 160 characters" in {

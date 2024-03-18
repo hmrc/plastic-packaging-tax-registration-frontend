@@ -33,11 +33,10 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
 
   val registration: Registration = Registration(
     "someID",
-    organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
+    organisationDetails =
+      OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
     groupDetail = Some(
-      groupDetails.copy(members =
-        Seq(groupMember, groupMember)
-      )
+      groupDetails.copy(members = Seq(groupMember, groupMember))
     )
   )
 

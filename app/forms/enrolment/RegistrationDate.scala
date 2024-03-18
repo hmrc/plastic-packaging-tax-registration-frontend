@@ -49,7 +49,10 @@ object RegistrationDate extends Mappings {
           "enrolment.registrationDate.value.error.missing.values",
           "enrolment.registrationDate.value.error.missing.values",
           "enrolment.registrationDate.value.error.format"
-        ).verifying(isTodayOrPast("enrolment.registrationDate.value.error.maxDate"), isOnOrAfterMinimumRegDate("enrolment.registrationDate.value.error.minDate"))
+        ).verifying(
+          isTodayOrPast("enrolment.registrationDate.value.error.maxDate"),
+          isOnOrAfterMinimumRegDate("enrolment.registrationDate.value.error.minDate")
+        )
       )(pack)(unpack)
     )
 
@@ -68,7 +71,9 @@ object RegistrationDate extends Mappings {
     }
 
   private def pack(localDate: LocalDate) =
-    new RegistrationDate(DateData(localDate.getDayOfMonth.toString, localDate.getMonthValue.toString, localDate.getYear.toString))
+    new RegistrationDate(
+      DateData(localDate.getDayOfMonth.toString, localDate.getMonthValue.toString, localDate.getYear.toString)
+    )
 
   private def unpack(r: RegistrationDate): Option[LocalDate] =
     Try(r.value.asLocalDate).toOption

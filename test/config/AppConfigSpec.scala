@@ -59,11 +59,15 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
 
     "have 'soleTraderJourneyUrl' defined" in {
-      validAppConfig.soleTraderJourneyInitUrl must be("http://localhost:9717/sole-trader-identification/api/sole-trader-journey")
+      validAppConfig.soleTraderJourneyInitUrl must be(
+        "http://localhost:9717/sole-trader-identification/api/sole-trader-journey"
+      )
     }
 
     "have 'generalPartnershipJourneyUrl' defined" in {
-      validAppConfig.generalPartnershipJourneyUrl must be("http://localhost:9722/partnership-identification/api/general-partnership-journey")
+      validAppConfig.generalPartnershipJourneyUrl must be(
+        "http://localhost:9722/partnership-identification/api/general-partnership-journey"
+      )
     }
 
     "have 'pptRegistrationUrl' defined" in {
@@ -83,11 +87,15 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
 
     "have 'authenticatedFeedbackUrl' defined" in {
-      validAppConfig.authenticatedFeedbackUrl() must be("http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax")
+      validAppConfig.authenticatedFeedbackUrl() must be(
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax"
+      )
     }
 
     "have 'unauthenticatedFeedbackUrl' defined" in {
-      validAppConfig.unauthenticatedFeedbackUrl() must be("http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax")
+      validAppConfig.unauthenticatedFeedbackUrl() must be(
+        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax"
+      )
     }
 
     "have 'pptAccountUrl' defined" in {

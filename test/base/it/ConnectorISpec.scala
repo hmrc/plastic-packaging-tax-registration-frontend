@@ -29,7 +29,12 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData with RegistrationBuilder {
+class ConnectorISpec
+    extends WiremockTestServer
+    with GuiceOneAppPerSuite
+    with DefaultAwaitTimeout
+    with PptTestData
+    with RegistrationBuilder {
 
   def overrideConfig: Map[String, Any] =
     Map(

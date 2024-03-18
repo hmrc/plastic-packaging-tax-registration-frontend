@@ -37,7 +37,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
   private val mcc      = stubMessagesControllerComponents()
   private val mockPage = mock[registration_type_page]
 
-  private val registrationTypeController = new RegistrationTypeController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
+  private val registrationTypeController =
+    new RegistrationTypeController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, mockPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

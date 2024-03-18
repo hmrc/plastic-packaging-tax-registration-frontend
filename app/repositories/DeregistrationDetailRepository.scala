@@ -27,19 +27,27 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[DeregistrationDetailRepositoryImpl])
 trait DeregistrationDetailRepository {
 
-  def put(deregistrationDetails: DeregistrationDetails)(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails]
+  def put(deregistrationDetails: DeregistrationDetails)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[DeregistrationDetails]
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails]
 
-  def update(update: DeregistrationDetails => DeregistrationDetails)(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails]
+  def update(update: DeregistrationDetails => DeregistrationDetails)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[DeregistrationDetails]
 
   def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit]
 }
 
 @Singleton
-class DeregistrationDetailRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit executionContext: ExecutionContext) extends DeregistrationDetailRepository {
+class DeregistrationDetailRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit
+  executionContext: ExecutionContext
+) extends DeregistrationDetailRepository {
 
-  override def put(deregistrationDetails: DeregistrationDetails)(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
+  override def put(deregistrationDetails: DeregistrationDetails)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[DeregistrationDetails] =
     userDataRepository.putData[DeregistrationDetails](repositoryKey, deregistrationDetails)
 
   override def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
@@ -48,7 +56,9 @@ class DeregistrationDetailRepositoryImpl @Inject() (userDataRepository: UserData
       case None                        => DeregistrationDetails(None, None)
     }
 
-  override def update(update: DeregistrationDetails => DeregistrationDetails)(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
+  override def update(update: DeregistrationDetails => DeregistrationDetails)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[DeregistrationDetails] =
     get().flatMap(deregistrationDetails => put(update(deregistrationDetails)))
 
   override def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =

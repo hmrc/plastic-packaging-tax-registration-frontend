@@ -40,12 +40,16 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
   def appConfig: AppConfig
   def registrationUpdater: RegistrationUpdater
 
-  protected def handleOrganisationType(organisationType: OrganisationType, businessVerificationCheck: Boolean = true, memberId: Option[String])(implicit
+  protected def handleOrganisationType(
+    organisationType: OrganisationType,
+    businessVerificationCheck: Boolean = true,
+    memberId: Option[String]
+  )(implicit
     request: JourneyRequest[AnyContent],
     executionContext: ExecutionContext,
     headerCarrier: HeaderCarrier
   ): Future[Result] =
-    (organisationType.answer) match {
+    organisationType.answer match {
       case Some(OrgType.UK_COMPANY) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl))
@@ -72,11 +76,15 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     executionContext: ExecutionContext
   ): Future[Result] =
     if (request.registration.isGroup)
-      getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, businessVerificationCheck, memberId).map(journeyStartUrl => SeeOther(journeyStartUrl))
+      getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, businessVerificationCheck, memberId).map(
+        journeyStartUrl => SeeOther(journeyStartUrl)
+      )
     else
       Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
 
-  private def getSoleTraderRedirectUrl(memberId: Option[String])(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
+  private def getSoleTraderRedirectUrl(
+    memberId: Option[String]
+  )(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
     soleTraderGrsConnector.createJourney(
       SoleTraderGrsCreateRequest(
         grsCallbackUrl(memberId),
@@ -87,7 +95,9 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       )
     )
 
-  private def incorpEntityGrsCreateRequest(businessVerificationCheck: Boolean, memberId: Option[String])(implicit request: Request[_]) =
+  private def incorpEntityGrsCreateRequest(businessVerificationCheck: Boolean, memberId: Option[String])(implicit
+    request: Request[_]
+  ) =
     IncorpEntityGrsCreateRequest(
       grsCallbackUrl(memberId),
       Some(request2Messages(request)("service.name")),
@@ -97,10 +107,15 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       businessVerificationCheck = businessVerificationCheck
     )
 
-  private def getUkCompanyRedirectUrl(businessVerificationCheck: Boolean, memberId: Option[String])(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+  private def getUkCompanyRedirectUrl(businessVerificationCheck: Boolean, memberId: Option[String])(implicit
+    request: Request[_],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
     ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(businessVerificationCheck, memberId))
 
-  private def getRegisteredSocietyRedirectUrl(memberId: Option[String])(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+  private def getRegisteredSocietyRedirectUrl(
+    memberId: Option[String]
+  )(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
     registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest(true, memberId))
 
   private def getRedirectUrl(url: String, businessVerificationCheck: Boolean, memberId: Option[String])(implicit
@@ -114,8 +129,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         appConfig.serviceIdentifier,
         appConfig.signOutLink,
         appConfig.grsAccessibilityStatementPath,
-        businessVerificationCheck =
-          businessVerificationCheck
+        businessVerificationCheck = businessVerificationCheck
       ),
       url
     )

@@ -18,4 +18,5 @@ package connectors
 
 class ServiceError(private val message: String, private val cause: Throwable) extends Exception(message, cause) {}
 
-case class DownstreamServiceError(private val message: String, private val cause: Throwable) extends ServiceError(message, cause) {}
+case class DownstreamServiceError(private val message: String, private val cause: Throwable)
+    extends ServiceError(message, cause) {}

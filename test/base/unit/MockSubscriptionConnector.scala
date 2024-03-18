@@ -48,15 +48,16 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
       )
     )
 
-  protected def simulateUpdateSubscriptionFailure(ex: RuntimeException): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateSubscriptionFailure(
+    ex: RuntimeException
+  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(Future.failed(ex))
 
-  protected def simulateUpdateSubscriptionFailureReturnedError(): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def simulateUpdateSubscriptionFailureReturnedError()
+    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.successful(
-        SubscriptionCreateOrUpdateResponseFailure(failures =
-          Seq(EisError("E1", "Big Error Number 1"))
-        )
+        SubscriptionCreateOrUpdateResponseFailure(failures = Seq(EisError("E1", "Big Error Number 1")))
       )
     )
 

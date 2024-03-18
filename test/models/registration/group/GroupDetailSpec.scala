@@ -89,13 +89,32 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
     GroupMember(
       customerIdentification1 = "cid1",
       customerIdentification2 = Some("cid2"),
-      organisationDetails = Some(OrganisationDetails(organisationType = "UK Company", organisationName = name, businessPartnerId = Some("BP-123"))),
-      contactDetails =
-        Some(GroupMemberContactDetails(firstName = "John", lastName = "Benkson", phoneNumber = Some("07875234567"), email = Some("john@ppt.com"), address = Some(anAddress()))),
+      organisationDetails = Some(
+        OrganisationDetails(
+          organisationType = "UK Company",
+          organisationName = name,
+          businessPartnerId = Some("BP-123")
+        )
+      ),
+      contactDetails = Some(
+        GroupMemberContactDetails(
+          firstName = "John",
+          lastName = "Benkson",
+          phoneNumber = Some("07875234567"),
+          email = Some("john@ppt.com"),
+          address = Some(anAddress())
+        )
+      ),
       addressDetails = anAddress()
     )
 
   private def anAddress() =
-    new UKAddress(addressLine1 = "addressLine1", addressLine2 = Some("addressLine2"), addressLine3 = Some("addressLine3"), townOrCity = "Wakefield", postCode = "WF15 4HD")
+    new UKAddress(
+      addressLine1 = "addressLine1",
+      addressLine2 = Some("addressLine2"),
+      addressLine3 = Some("addressLine3"),
+      townOrCity = "Wakefield",
+      postCode = "WF15 4HD"
+    )
 
 }

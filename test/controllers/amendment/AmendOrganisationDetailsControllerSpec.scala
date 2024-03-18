@@ -28,7 +28,10 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class AmendOrganisationDetailsControllerSpec extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec {
+class AmendOrganisationDetailsControllerSpec
+    extends ControllerSpec
+    with AddressCaptureSpec
+    with AmendmentControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -51,8 +54,7 @@ class AmendOrganisationDetailsControllerSpec extends ControllerSpec with Address
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(
             backLink = routes.AmendRegistrationController.displayPage().url,
-            successLink =
-              routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+            successLink = routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
             alfHeadingsPrefix = "addressLookup.business",
             pptHeadingKey = "addressCapture.business.heading",
             entityName = registration.organisationDetails.businessName,

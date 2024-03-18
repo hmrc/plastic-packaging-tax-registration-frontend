@@ -40,12 +40,18 @@ class PartnerJobTitleController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_job_title_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
     journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        renderPageFor(partner, partnerRoutes.PartnerContactNameController.displayNewPartner, partnerRoutes.PartnerJobTitleController.submitNewPartner())
+        renderPageFor(
+          partner,
+          partnerRoutes.PartnerContactNameController.displayNewPartner,
+          partnerRoutes.PartnerJobTitleController.submitNewPartner()
+        )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
@@ -60,7 +66,9 @@ class PartnerJobTitleController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result =
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result =
     partner.contactDetails.map { contactDetails =>
       contactDetails.name.map { contactName =>
         val form = contactDetails.jobTitle match {
@@ -116,9 +124,8 @@ class PartnerJobTitleController @Inject() (
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[JobTitle]) =>
-          partner.contactDetails.flatMap(_.name).map {
-            contactName =>
-              Future.successful(BadRequest(page(formWithErrors, contactName, submitCall)))
+          partner.contactDetails.flatMap(_.name).map { contactName =>
+            Future.successful(BadRequest(page(formWithErrors, contactName, submitCall)))
           }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner contact name missing"))),
         jobTitle =>
           updateAction(jobTitle).map {
@@ -127,7 +134,9 @@ class PartnerJobTitleController @Inject() (
           }
       )
 
-  private def updateInflightPartner(formData: JobTitle)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateInflightPartner(
+    formData: JobTitle
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
         registration.withInflightPartner(Some(withJobTitle(partner, formData)))
@@ -136,15 +145,15 @@ class PartnerJobTitleController @Inject() (
       }
     }
 
-  private def updateExistingPartner(formData: JobTitle, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateExistingPartner(formData: JobTitle, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.withUpdatedPartner(partnerId, partner => withJobTitle(partner, formData))
     }
 
   private def withJobTitle(partner: Partner, formData: JobTitle) = {
-    val withJobTitle = partner.contactDetails.getOrElse(PartnerContactDetails()).copy(jobTitle =
-      Some(formData.value)
-    )
+    val withJobTitle = partner.contactDetails.getOrElse(PartnerContactDetails()).copy(jobTitle = Some(formData.value))
     partner.copy(contactDetails = Some(withJobTitle))
   }
 

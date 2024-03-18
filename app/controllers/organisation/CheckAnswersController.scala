@@ -32,7 +32,9 @@ class CheckAnswersController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: check_answers_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>

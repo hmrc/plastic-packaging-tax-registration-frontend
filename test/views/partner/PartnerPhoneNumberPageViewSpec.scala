@@ -54,7 +54,9 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("partnership.otherPartners.contactPhoneNumberPage.title", contactName))
+      view.select("title").text() must include(
+        messages("partnership.otherPartners.contactPhoneNumberPage.title", contactName)
+      )
     }
 
     "display phone number input box" in {

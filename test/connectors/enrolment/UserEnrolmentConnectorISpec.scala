@@ -23,7 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
-import play.api.test.Helpers.{await, OK}
+import play.api.test.Helpers.{OK, await}
 import play.api.test.Injecting
 import connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
 import models.enrolment._

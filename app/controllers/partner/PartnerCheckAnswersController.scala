@@ -31,7 +31,9 @@ class PartnerCheckAnswersController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_check_answers_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -40,9 +42,10 @@ class PartnerCheckAnswersController @Inject() (
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     journeyAction.register { implicit request =>
-      val partner = request.registration.organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId)).getOrElse(
-        throw new IllegalStateException(s"Partner with id [$partnerId] absent")
-      )
+      val partner =
+        request.registration.organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId)).getOrElse(
+          throw new IllegalStateException(s"Partner with id [$partnerId] absent")
+        )
       Ok(page(partner))
     }
 

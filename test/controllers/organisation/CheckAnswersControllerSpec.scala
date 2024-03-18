@@ -33,7 +33,12 @@ class CheckAnswersControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new CheckAnswersController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
+    new CheckAnswersController(
+      journeyAction = spyJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

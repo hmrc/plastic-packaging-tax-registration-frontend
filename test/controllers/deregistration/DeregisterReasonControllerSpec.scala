@@ -46,7 +46,12 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
     DeregistrationDetails(deregister = Some(true), reason = None)
 
   private val controller =
-    new DeregisterReasonController(authenticate = FakeAmendAuthAction, mcc = mcc, deregistrationDetailRepository = repository, page = page)
+    new DeregisterReasonController(
+      authenticate = FakeAmendAuthAction,
+      mcc = mcc,
+      deregistrationDetailRepository = repository,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -64,7 +69,9 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
 
-        when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(Future.successful(Some(initialDeregistrationDetails)))
+        when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(initialDeregistrationDetails))
+        )
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -73,7 +80,9 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
 
       "user is authorised, details already exist and display page method is invoked" in {
 
-        when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(Future.successful(Some(initialDeregistrationDetails.copy(reason = Some(CeasedTrading)))))
+        when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(initialDeregistrationDetails.copy(reason = Some(CeasedTrading))))
+        )
         val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
@@ -83,7 +92,9 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
         "a reason is submitted" in {
           val expectedDeregistrationDetails =
             initialDeregistrationDetails.copy(reason = Some(CeasedTrading))
-          when(mockCache.putData[DeregistrationDetails](any(), any())(any(), any())).thenReturn(Future.successful(expectedDeregistrationDetails))
+          when(mockCache.putData[DeregistrationDetails](any(), any())(any(), any())).thenReturn(
+            Future.successful(expectedDeregistrationDetails)
+          )
 
           val result =
             controller.submit()(postRequestEncoded(DeregisterReasonForm(Some(CeasedTrading))))
@@ -91,7 +102,10 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.DeregisterCheckYourAnswersController.displayPage().url)
 
-          verify(mockCache).putData(ArgumentMatchers.eq(DeregistrationDetailsRepository.repositoryKey), ArgumentMatchers.eq(expectedDeregistrationDetails))(any(), any())
+          verify(mockCache).putData(
+            ArgumentMatchers.eq(DeregistrationDetailsRepository.repositoryKey),
+            ArgumentMatchers.eq(expectedDeregistrationDetails)
+          )(any(), any())
         }
       }
 

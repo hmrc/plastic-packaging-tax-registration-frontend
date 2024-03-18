@@ -31,8 +31,7 @@ class AddressLookupFrontendConnectorISpec extends ConnectorISpec with Injecting 
     inject[AddressLookupFrontendConnector]
 
   val initialiseRequest = AddressLookupConfigV2(
-    options =
-      JourneyOptions(continueUrl = "/continue", signOutHref = "/signout", serviceHref = "/service"),
+    options = JourneyOptions(continueUrl = "/continue", signOutHref = "/signout", serviceHref = "/service"),
     labels = JourneyLabels(en =
       LanguageLabels(
         appLevelLabels = AppLevelLabels(navTitle = "Title"),

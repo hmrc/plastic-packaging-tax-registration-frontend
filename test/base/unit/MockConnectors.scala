@@ -46,11 +46,15 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   val mockSubscriptionsConnector: SubscriptionsConnector = mock[SubscriptionsConnector]
 
-  def mockGetUkCompanyDetails(incorporationDetails: IncorporationDetails): ScalaOngoingStubbing[Future[IncorporationDetails]] =
+  def mockGetUkCompanyDetails(
+    incorporationDetails: IncorporationDetails
+  ): ScalaOngoingStubbing[Future[IncorporationDetails]] =
     when(mockUkCompanyGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(incorporationDetails))
 
-  def mockGetRegisteredSocietyDetails(incorporationDetails: IncorporationDetails): ScalaOngoingStubbing[Future[IncorporationDetails]] =
+  def mockGetRegisteredSocietyDetails(
+    incorporationDetails: IncorporationDetails
+  ): ScalaOngoingStubbing[Future[IncorporationDetails]] =
     when(mockRegisteredSocietyGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(incorporationDetails))
 
@@ -58,7 +62,9 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(soleTraderDetails))
 
-  def mockGetPartnershipBusinessDetails(partnershipBusinessDetails: PartnershipBusinessDetails): ScalaOngoingStubbing[Future[PartnershipBusinessDetails]] =
+  def mockGetPartnershipBusinessDetails(
+    partnershipBusinessDetails: PartnershipBusinessDetails
+  ): ScalaOngoingStubbing[Future[PartnershipBusinessDetails]] =
     when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(partnershipBusinessDetails))
 
@@ -75,31 +81,48 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       .thenThrow(ex)
 
   def mockSoleTraderCreateIncorpJourneyId(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())).thenReturn(Future.successful(redirectUrl))
+    when(mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())).thenReturn(
+      Future.successful(redirectUrl)
+    )
 
   def mockCreatePartnershipGrsJourneyCreation(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest], any[String])(any(), any())).thenReturn(Future.successful(redirectUrl))
+    when(
+      mockPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest], any[String])(any(), any())
+    ).thenReturn(Future.successful(redirectUrl))
 
   def mockCreateSoleTraderPartnershipGrsJourneyCreation(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest], any[String])(any(), any())).thenReturn(Future.successful(redirectUrl))
+    when(
+      mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest], any[String])(any(), any())
+    ).thenReturn(Future.successful(redirectUrl))
 
   def mockCreateUkCompanyPartnershipGrsJourneyCreation(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockUkCompanyGrsConnector.createJourney(any[IncorpEntityGrsCreateRequest], any[String])(any(), any())).thenReturn(Future.successful(redirectUrl))
+    when(
+      mockUkCompanyGrsConnector.createJourney(any[IncorpEntityGrsCreateRequest], any[String])(any(), any())
+    ).thenReturn(Future.successful(redirectUrl))
 
-  def mockCreateRegisteredSocietyPartnershipGrsJourneyCreation(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockRegisteredSocietyGrsConnector.createJourney(any[IncorpEntityGrsCreateRequest], any[String])(any(), any())).thenReturn(Future.successful(redirectUrl))
+  def mockCreateRegisteredSocietyPartnershipGrsJourneyCreation(
+    redirectUrl: String
+  ): ScalaOngoingStubbing[Future[String]] =
+    when(
+      mockRegisteredSocietyGrsConnector.createJourney(any[IncorpEntityGrsCreateRequest], any[String])(any(), any())
+    ).thenReturn(Future.successful(redirectUrl))
 
   def lastPartnershipGrsJourneyCreation(): (PartnershipGrsCreateRequest, String) = {
     val partnershipGrsCreateRequestCaptor: ArgumentCaptor[PartnershipGrsCreateRequest] =
       ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])
     val partnershipGrsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-    verify(mockPartnershipGrsConnector).createJourney(partnershipGrsCreateRequestCaptor.capture(), partnershipGrsUrlCaptor.capture())(any(), any())
+    verify(mockPartnershipGrsConnector).createJourney(
+      partnershipGrsCreateRequestCaptor.capture(),
+      partnershipGrsUrlCaptor.capture()
+    )(any(), any())
 
     (partnershipGrsCreateRequestCaptor.getValue, partnershipGrsUrlCaptor.getValue)
   }
 
   def mockSoleTraderCreateIncorpJourneyIdException(): ScalaOngoingStubbing[Future[String]] =
-    when(mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())).thenThrow(new RuntimeException("sole trader create journey error"))
+    when(mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())).thenThrow(
+      new RuntimeException("sole trader create journey error")
+    )
 
   def mockUkCompanyCreateIncorpJourneyId(redirectUrl: String): ScalaOngoingStubbing[Future[String]] =
     when(mockUkCompanyGrsConnector.createJourney(any())(any(), any()))
@@ -110,30 +133,51 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       .thenReturn(Future.successful(redirectUrl))
 
   def mockUkCompanyCreateIncorpJourneyIdException(): ScalaOngoingStubbing[Future[String]] =
-    when(mockUkCompanyGrsConnector.createJourney(any())(any(), any())).thenThrow(new RuntimeException("uk company create journey error"))
+    when(mockUkCompanyGrsConnector.createJourney(any())(any(), any())).thenThrow(
+      new RuntimeException("uk company create journey error")
+    )
 
   def mockRegisteredSocietyCreateIncorpJourneyIdException(): ScalaOngoingStubbing[Future[String]] =
-    when(mockRegisteredSocietyGrsConnector.createJourney(any())(any(), any())).thenThrow(new RuntimeException("registered society create journey error"))
+    when(mockRegisteredSocietyGrsConnector.createJourney(any())(any(), any())).thenThrow(
+      new RuntimeException("registered society create journey error")
+    )
 
-  protected def mockGetSubscriptionStatusFailure(ex: Exception): ScalaOngoingStubbing[Future[SubscriptionStatusResponse]] =
+  protected def mockGetSubscriptionStatusFailure(
+    ex: Exception
+  ): ScalaOngoingStubbing[Future[SubscriptionStatusResponse]] =
     when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any()))
       .thenThrow(ex)
 
-  protected def mockGetSubscriptionStatus(subscription: SubscriptionStatusResponse): ScalaOngoingStubbing[Future[SubscriptionStatusResponse]] =
+  protected def mockGetSubscriptionStatus(
+    subscription: SubscriptionStatusResponse
+  ): ScalaOngoingStubbing[Future[SubscriptionStatusResponse]] =
     when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any())).thenReturn(Future.successful(subscription))
 
-  protected def mockSubscriptionSubmit(subscription: SubscriptionCreateOrUpdateResponseSuccess): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def mockSubscriptionSubmit(
+    subscription: SubscriptionCreateOrUpdateResponseSuccess
+  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(Future.successful(subscription))
 
-  protected def mockSubscriptionSubmitFailure(ex: Exception): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  protected def mockSubscriptionSubmitFailure(
+    ex: Exception
+  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(Future.failed(ex))
 
-  protected def mockSubscriptionSubmitFailure(failureResponse: SubscriptionCreateOrUpdateResponseFailure): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
-    when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(Future.successful(failureResponse))
+  protected def mockSubscriptionSubmitFailure(
+    failureResponse: SubscriptionCreateOrUpdateResponseFailure
+  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(
+      Future.successful(failureResponse)
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUkCompanyGrsConnector, mockSoleTraderGrsConnector, mockRegisteredSocietyGrsConnector, mockPartnershipGrsConnector)
+    reset(
+      mockUkCompanyGrsConnector,
+      mockSoleTraderGrsConnector,
+      mockRegisteredSocietyGrsConnector,
+      mockPartnershipGrsConnector
+    )
   }
 
 }

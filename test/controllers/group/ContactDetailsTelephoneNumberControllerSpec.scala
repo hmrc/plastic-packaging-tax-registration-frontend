@@ -43,7 +43,12 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction, mcc = mcc, page = page, registrationUpdater = mockNewRegistrationUpdater)
+    new ContactDetailsTelephoneNumberController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = mockNewRegistrationUpdater
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -88,7 +93,9 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some("077123")
-        redirectLocation(result) mustBe Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url)
+        redirectLocation(result) mustBe Some(
+          groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url
+        )
         reset(mockRegistrationConnector)
       }
     }
@@ -127,14 +134,18 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
         mockRegistrationUpdateFailure()
 
-        intercept[DownstreamServiceError](status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))))
+        intercept[DownstreamServiceError](
+          status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123"))))
+        )
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
 
-        intercept[RuntimeException](status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))))
+        intercept[RuntimeException](
+          status(controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123"))))
+        )
       }
     }
   }

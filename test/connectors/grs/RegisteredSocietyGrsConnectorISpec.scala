@@ -51,7 +51,9 @@ class RegisteredSocietyGrsConnectorISpec extends ConnectorISpec with Injecting w
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
-              .withBody(Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString)
+              .withBody(
+                Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString
+              )
           )
       )
 

@@ -85,7 +85,9 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
     }
 
     "not display 'postcode' row" in {
-      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages("enrolment.checkAnswers.postcode"))
+      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages(
+        "enrolment.checkAnswers.postcode"
+      ))
     }
 
   }
@@ -155,7 +157,9 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
     }
 
     "not display 'postcode' row" in {
-      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages("enrolment.checkAnswers.postcode"))
+      view.getElementsByClass("govuk-summary-list__row").text() must not include (messages(
+        "enrolment.checkAnswers.postcode"
+      ))
     }
   }
 

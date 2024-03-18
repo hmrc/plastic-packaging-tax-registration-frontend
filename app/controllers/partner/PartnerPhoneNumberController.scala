@@ -32,10 +32,19 @@ class PartnerPhoneNumberController @Inject() (
   page: partner_phone_number_page,
   registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerPhoneNumberControllerBase(journeyAction = journeyAction.register, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
+    extends PartnerPhoneNumberControllerBase(
+      journeyAction = journeyAction.register,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = registrationUpdateService
+    ) {
 
   def displayNewPartner(): Action[AnyContent] =
-    doDisplay(None, partnerRoutes.PartnerContactNameController.displayNewPartner, partnerRoutes.PartnerPhoneNumberController.submitNewPartner())
+    doDisplay(
+      None,
+      partnerRoutes.PartnerContactNameController.displayNewPartner,
+      partnerRoutes.PartnerPhoneNumberController.submitNewPartner()
+    )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     doDisplay(

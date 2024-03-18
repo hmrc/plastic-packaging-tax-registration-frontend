@@ -31,10 +31,19 @@ class PartnerContactAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: NewRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends PartnerContactAddressControllerBase(journeyAction.register, addressCaptureService, mcc, registrationUpdater) {
+    extends PartnerContactAddressControllerBase(
+      journeyAction.register,
+      addressCaptureService,
+      mcc,
+      registrationUpdater
+    ) {
 
   def captureNewPartner(): Action[AnyContent] =
-    doDisplayPage(None, routes.PartnerPhoneNumberController.displayNewPartner(), routes.PartnerContactAddressController.addressCaptureCallbackNewPartner())
+    doDisplayPage(
+      None,
+      routes.PartnerPhoneNumberController.displayNewPartner(),
+      routes.PartnerContactAddressController.addressCaptureCallbackNewPartner()
+    )
 
   def captureExistingPartner(partnerId: String): Action[AnyContent] =
     doDisplayPage(

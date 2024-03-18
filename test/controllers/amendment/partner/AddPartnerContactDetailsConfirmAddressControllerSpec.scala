@@ -29,7 +29,11 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import scala.concurrent.Future
 
 class AddPartnerContactDetailsConfirmAddressControllerSpec
-    extends ControllerSpec with MockRegistrationAmendmentRepository with AddressCaptureSpec with AmendmentControllerSpec with PptTestData {
+    extends ControllerSpec
+    with MockRegistrationAmendmentRepository
+    with AddressCaptureSpec
+    with AmendmentControllerSpec
+    with PptTestData {
 
   private val mcc       = stubMessagesControllerComponents()
   private val sessionId = "123"
@@ -37,8 +41,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
   private val controller =
     new AddPartnerContactDetailsConfirmAddressController(
       journeyAction = spyJourneyAction,
-      registrationUpdater =
-        new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository),
+      registrationUpdater = new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository),
       addressCaptureService = mockAddressCaptureService,
       mcc = mcc
     )
@@ -49,9 +52,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
         generalPartnershipDetailsWithPartners.copy(
           partners = Seq(),
           inflightPartner = Some(
-            aSoleTraderPartner.copy(contactDetails =
-              aSoleTraderPartner.contactDetails.map(_.copy(address = None))
-            )
+            aSoleTraderPartner.copy(contactDetails = aSoleTraderPartner.contactDetails.map(_.copy(address = None)))
           )
         )
       )
@@ -76,8 +77,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(
             backLink = routes.AddPartnerContactDetailsTelephoneNumberController.displayPage().url,
-            successLink =
-              routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
+            successLink = routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
             alfHeadingsPrefix = "addressLookup.partner",
             pptHeadingKey = "addressCapture.contact.heading",
             entityName = partnershipRegistrationWithInflightPartner.inflightPartner.map(_.name),
@@ -105,7 +105,9 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
           registration.get.inflightPartner.get.contactDetails.get.address mustBe validCapturedAddress
         }
 
-        redirectLocation(Future.successful(resp)) mustBe Some(routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url)
+        redirectLocation(Future.successful(resp)) mustBe Some(
+          routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url
+        )
       }
     }
   }

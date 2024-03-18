@@ -47,11 +47,14 @@ object LiabilityExpectedWeight extends CommonFormValues {
 
   private val weightIsValidNumber: String => Boolean = weight => weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
-  private val weightAboveThreshold: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= LiabilityDetails.minimumLiabilityWeightKg
+  private val weightAboveThreshold: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= LiabilityDetails.minimumLiabilityWeightKg
 
-  private val weightWithinRange: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+  private val weightWithinRange: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
   def form(): Form[LiabilityExpectedWeight] =
     Form(

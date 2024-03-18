@@ -198,10 +198,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     s"$emailVerificationHost/email-verification/journey/$journeyId/passcode"
 
   def authenticatedFeedbackUrl(): String =
-    s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
+    s"$feedbackAuthenticatedLink?service=$serviceIdentifier"
 
   def unauthenticatedFeedbackUrl(): String =
-    s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
+    s"$feedbackUnauthenticatedLink?service=$serviceIdentifier"
 
   lazy val pptAccountUrl     = s"$pptAccountHost/plastic-packaging-tax/account"
   lazy val pptNotEnrolledUrl = s"$pptAccountHost/plastic-packaging-tax/account/not-enrolled"

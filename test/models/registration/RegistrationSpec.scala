@@ -160,7 +160,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
     }
 
     "Registration liability status" should {
-      //before new liability questions
+      // before new liability questions
 
       val newCompletedLiabilityDetails =
         LiabilityDetails(
@@ -175,7 +175,11 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
 
       "be Not Started" when {
         "liability details are missing entirely" in {
-          Registration(id = "123", liabilityDetails = LiabilityDetails(), registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+          Registration(
+            id = "123",
+            liabilityDetails = LiabilityDetails(),
+            registrationType = Some(RegType.SINGLE_ENTITY)
+          ).liabilityDetailsStatus mustBe TaskStatus.NotStarted
         }
       }
 
@@ -183,8 +187,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
         "old liability questions have been answered" in {
           Registration(
             id = "123",
-            liabilityDetails =
-              createOldLiabilityDetails,
+            liabilityDetails = createOldLiabilityDetails,
             registrationType = Some(RegType.SINGLE_ENTITY)
           ).liabilityDetailsStatus mustBe TaskStatus.InProgress
         }
@@ -203,8 +206,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "be complete for single organisation registration with completed liability details and selected registration type" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails,
+          liabilityDetails = newCompletedLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)
         ).liabilityDetailsStatus mustBe TaskStatus.Completed
       }
@@ -212,8 +214,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "be incomplete for registration with completed liability details but no registration type" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails,
+          liabilityDetails = newCompletedLiabilityDetails,
           registrationType = None
         ).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
@@ -221,16 +222,14 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "be in progress for single organisation registration with incomplete liability details" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails.copy(expectedWeightNext12m = None)
+          liabilityDetails = newCompletedLiabilityDetails.copy(expectedWeightNext12m = None)
         ).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
 
       "be complete for group registration with under group control set to 'true'" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails,
+          liabilityDetails = newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
           groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true)))
         ).liabilityDetailsStatus mustBe TaskStatus.Completed
@@ -239,8 +238,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "be in progress for group registration with under group control set to 'false'" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails,
+          liabilityDetails = newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
           groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(false)))
         ).liabilityDetailsStatus mustBe TaskStatus.InProgress
@@ -249,8 +247,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "be in progress for group registration with under group control un-answered" in {
         Registration(
           id = "123",
-          liabilityDetails =
-            newCompletedLiabilityDetails,
+          liabilityDetails = newCompletedLiabilityDetails,
           registrationType = Some(GROUP),
           groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
         ).liabilityDetailsStatus mustBe TaskStatus.InProgress
@@ -272,7 +269,10 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
           aRegistration(withPrimaryContactDetails(PrimaryContactDetails())).numberOfCompletedSections mustBe 2
         }
         "registration does not have complete contact or organisation details" in {
-          aRegistration(withPrimaryContactDetails(PrimaryContactDetails()), withOrganisationDetails(OrganisationDetails())).numberOfCompletedSections mustBe 1
+          aRegistration(
+            withPrimaryContactDetails(PrimaryContactDetails()),
+            withOrganisationDetails(OrganisationDetails())
+          ).numberOfCompletedSections mustBe 1
         }
         "registration not started" in {
           Registration("123").numberOfCompletedSections mustBe 0
@@ -290,13 +290,23 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
         "registration is complete" in {
           val registrationCompletedMetaData =
             aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
-          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(registrationCompletedMetaData), withGroupDetail(Some(groupDetails))).numberOfCompletedSections mustBe 5
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
+            withMetaData(registrationCompletedMetaData),
+            withGroupDetail(Some(groupDetails))
+          ).numberOfCompletedSections mustBe 5
         }
         "registration has not been completed" in {
-          aRegistration(withRegistrationType(Some(GROUP)), withGroupDetail(Some(groupDetails))).numberOfCompletedSections mustBe 4
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
+            withGroupDetail(Some(groupDetails))
+          ).numberOfCompletedSections mustBe 4
         }
         "registration does not have complete group members" in {
-          aRegistration(withRegistrationType(Some(GROUP)), withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))).numberOfCompletedSections mustBe 3
+          aRegistration(
+            withRegistrationType(Some(GROUP)),
+            withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))
+          ).numberOfCompletedSections mustBe 3
         }
         "registration does not have complete group members or contact details" in {
           aRegistration(
@@ -325,20 +335,23 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       "should report number of completed sections" when {
 
         val generalPartnershipRegistration =
-          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)), withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true)))
+          aRegistration(
+            withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)),
+            withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
+          )
 
         "registration is complete" in {
           generalPartnershipRegistration.numberOfCompletedSections mustBe 4
         }
         "registration has not been reviewed" in {
-          generalPartnershipRegistration.copy(metaData =
-            MetaData()
-          ).numberOfCompletedSections mustBe 3
+          generalPartnershipRegistration.copy(metaData = MetaData()).numberOfCompletedSections mustBe 3
         }
         "registration does not have other partners" in {
           generalPartnershipRegistration.copy(organisationDetails =
             generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
-              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(_.copy(partners = Seq(aLimitedCompanyPartner)))
+              generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
+                _.copy(partners = Seq(aLimitedCompanyPartner))
+              )
             )
           ).numberOfCompletedSections mustBe 2
         }
@@ -360,30 +373,29 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
       }
 
       "identify partnerships from registration organisation type" in {
-        val aPartnershipRegistration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP))))
+        val aPartnershipRegistration =
+          aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP))))
         aPartnershipRegistration.isPartnership mustBe true
       }
       "report nominated partner details as complete when we have a complete nominated partner" in {
         aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner)
-              )
+              scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner))
             )
           )
         ).nominatedPartnerDetailsStatus mustBe TaskStatus.Completed
       }
       "report nominated partner details as not started before we have a complete nominated partner" in {
-        aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))).nominatedPartnerDetailsStatus mustBe TaskStatus.NotStarted
+        aRegistration(
+          withPartnershipDetails(Some(scottishPartnershipDetails))
+        ).nominatedPartnerDetailsStatus mustBe TaskStatus.NotStarted
       }
       "report other partner details as complete when we have a complete nominated partner and 1 other partner" in {
         aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner, aSoleTraderPartner)
-              )
+              scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner, aSoleTraderPartner))
             )
           )
         ).otherPartnersDetailsStatus mustBe TaskStatus.Completed
@@ -392,9 +404,7 @@ class RegistrationSpec extends AnyWordSpec with Matchers with MockitoSugar with 
         aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner)
-              )
+              scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner))
             )
           )
         ).otherPartnersDetailsStatus mustBe TaskStatus.NotStarted

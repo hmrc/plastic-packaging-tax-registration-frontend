@@ -54,7 +54,9 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
 
       view.getElementsByClass("govuk-caption-l").text() must include(messages("liability.sectionHeader"))
-      view.getElementsByClass("govuk-heading-l").text() must include(messages("liability.expectToExceedThresholdWeight.title"))
+      view.getElementsByClass("govuk-heading-l").text() must include(
+        messages("liability.expectToExceedThresholdWeight.title")
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -65,18 +67,33 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display paragraph contents" in {
       view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.p1")
-      view.getElementsByClass("govuk-body").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.p1")
-      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.1")
-      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages("liability.expectToExceedThresholdWeight.inset.bullet.2")
-      view.getElementsByClass("govuk-body").get(4).text() mustBe messages("liability.expectToExceedThresholdWeight.example.1")
-      view.getElementsByClass("govuk-body").get(5).text() mustBe messages("liability.expectToExceedThresholdWeight.example.2")
+      view.getElementsByClass("govuk-body").get(1).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.inset.p1"
+      )
+      view.getElementsByClass("dashed-list-item").get(0).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.inset.bullet.1"
+      )
+      view.getElementsByClass("dashed-list-item").get(1).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.inset.bullet.2"
+      )
+      view.getElementsByClass("govuk-body").get(4).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.example.1"
+      )
+      view.getElementsByClass("govuk-body").get(5).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.example.2"
+      )
       val text = messages("liability.expectToExceedThresholdWeight.p3.link")
 
-      view.getElementsByClass("govuk-body").get(6).text() mustBe messages("liability.expectToExceedThresholdWeight.p3", text)
+      view.getElementsByClass("govuk-body").get(6).text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.p3",
+        text
+      )
     }
 
     "display radio buttons" in {
-      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages("liability.expectToExceedThresholdWeight.question")
+      view.getElementsByClass("govuk-fieldset__legend--m").text() mustBe messages(
+        "liability.expectToExceedThresholdWeight.question"
+      )
       view.getElementById("value-hint").text() mustBe messages("liability.expectToExceedThresholdWeight.hint")
       view.getElementsByClass("govuk-radios__item").get(0).text() mustBe "Yes"
       view.getElementsByClass("govuk-radios__item").get(1).text() mustBe "No"
@@ -90,5 +107,3 @@ class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
   }
 
 }
-
-

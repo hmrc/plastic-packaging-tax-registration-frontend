@@ -36,7 +36,8 @@ class CheckAnswersController @Inject() (
   userEnrolmentConnector: UserEnrolmentConnector,
   page: check_answers_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -60,7 +61,8 @@ class CheckAnswersController @Inject() (
             case UserEnrolmentFailedResponse(_, failureCode) =>
               failureCode match {
 
-                case "GroupEnrolmentFailed" | EnrolmentFailureCode.VerificationFailed | EnrolmentFailureCode.VerificationMissing =>
+                case "GroupEnrolmentFailed" | EnrolmentFailureCode.VerificationFailed |
+                    EnrolmentFailureCode.VerificationMissing =>
                   Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
 
                 case EnrolmentFailureCode.GroupEnrolled =>
