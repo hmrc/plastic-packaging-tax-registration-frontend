@@ -64,14 +64,18 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
       "Group organisation" in {
         val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
-        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.group.sectionHeader")
+        )
 
       }
     }
 
     "display job title question including contact name" in {
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.jobTitlePage.title", contactName))
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("primaryContactDetails.jobTitlePage.title", contactName)
+      )
     }
 
     "display job title input box" in {

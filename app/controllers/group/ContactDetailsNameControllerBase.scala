@@ -34,7 +34,9 @@ abstract class ContactDetailsNameControllerBase(
   page: member_name_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
+    extends FrontendController(mcc)
+    with ContactDetailsControllerBase
+    with I18nSupport {
 
   protected def doDisplayPage(memberId: String, getSubmitCall: String => Call): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -45,17 +47,35 @@ abstract class ContactDetailsNameControllerBase(
         case _ => MemberName.form()
       }
 
-      Ok(page(form, request.registration.findMember(memberId).map(_.businessName).getOrElse(getMissingOrgMessage), getSubmitCall(memberId), memberId))
+      Ok(
+        page(
+          form,
+          request.registration.findMember(memberId).map(_.businessName).getOrElse(getMissingOrgMessage),
+          getSubmitCall(memberId),
+          memberId
+        )
+      )
     }
 
-  protected def doSubmit(memberId: String, getSubmitCall: String => Call, getSuccessfulRedirect: String => Call): Action[AnyContent] =
+  protected def doSubmit(
+    memberId: String,
+    getSubmitCall: String => Call,
+    getSuccessfulRedirect: String => Call
+  ): Action[AnyContent] =
     journeyAction.async { implicit request =>
       MemberName.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[MemberName]) =>
             Future.successful(
-              BadRequest(page(formWithErrors, request.registration.findMember(memberId).map(_.businessName).getOrElse(getMissingOrgMessage), getSubmitCall(memberId), memberId))
+              BadRequest(
+                page(
+                  formWithErrors,
+                  request.registration.findMember(memberId).map(_.businessName).getOrElse(getMissingOrgMessage),
+                  getSubmitCall(memberId),
+                  memberId
+                )
+              )
             ),
           memberName =>
             updateRegistration(memberName, memberId).map { _ =>
@@ -64,12 +84,16 @@ abstract class ContactDetailsNameControllerBase(
         )
     }
 
-  private def updateRegistration(formData: MemberName, memberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateRegistration(formData: MemberName, memberId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(
-            registration.findMember(memberId).map(_.withUpdatedGroupMemberName(formData.firstName, formData.lastName)).getOrElse(
+            registration.findMember(memberId).map(
+              _.withUpdatedGroupMemberName(formData.firstName, formData.lastName)
+            ).getOrElse(
               throw new IllegalStateException("Expected group member absent")
             )
           )

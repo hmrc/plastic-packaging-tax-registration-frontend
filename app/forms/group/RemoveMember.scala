@@ -41,8 +41,8 @@ object RemoveMember extends CommonFormValidators {
     }
 
   def fromForm(removeMember: RemoveMember): Option[Option[String]] =
-    removeMember.value.map {
-      removeMember => if (removeMember) Some(YES) else Some(NO)
+    removeMember.value.map { removeMember =>
+      if (removeMember) Some(YES) else Some(NO)
     }
 
 }

@@ -92,14 +92,18 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
       "Liability Details 'In Progress'" when {
 
         val registration = aRegistration(
-          withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))),
+          withLiabilityDetails(
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
+          ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
@@ -125,7 +129,11 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           "new Liability questions not started" in {
 
             val registration =
-              aRegistration(withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true))), withIncorpJourneyId(None), withNoPrimaryContactDetails())
+              aRegistration(
+                withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true))),
+                withIncorpJourneyId(None),
+                withNoPrimaryContactDetails()
+              )
             val view: Html = createView(registration)
 
             val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
@@ -176,8 +184,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           withLiabilityDetails(
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
-              dateExceededThresholdWeight =
-                Some(Date(LocalDate.parse("2022-03-05"))),
+              dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
@@ -190,7 +197,9 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
@@ -214,7 +223,9 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.OrganisationDetailsTypeController.displayPage())
+          sectionLink(organisationElement, 0) must haveHref(
+            organisationRoutes.OrganisationDetailsTypeController.displayPage()
+          )
         }
 
         "Contact details" in {
@@ -278,7 +289,9 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
         "application status should reflect the completed sections" in {
 
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.complete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.complete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             completeRegistration.numberOfCompletedSections,

@@ -59,7 +59,10 @@ case class PartnershipDetails(
     partners.find(_.id == partnerId)
 
   def withPromotedInflightPartner(): PartnershipDetails =
-    this.copy(partners = partners :+ inflightPartner.getOrElse(throw new IllegalStateException("Inflight partner absent")), inflightPartner = None)
+    this.copy(
+      partners = partners :+ inflightPartner.getOrElse(throw new IllegalStateException("Inflight partner absent")),
+      inflightPartner = None
+    )
 
 }
 
@@ -67,7 +70,10 @@ object PartnershipDetails {
   implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
 }
 
-case class PartnerPartnershipDetails(partnershipName: Option[String] = None, partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None) {
+case class PartnerPartnershipDetails(
+  partnershipName: Option[String] = None,
+  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
+) {
 
   def name: Option[String] =
     Seq(partnershipName, partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))).flatten.headOption

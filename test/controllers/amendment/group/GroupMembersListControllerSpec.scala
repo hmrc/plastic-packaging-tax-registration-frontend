@@ -69,7 +69,9 @@ class GroupMembersListControllerSpec extends ControllerSpec with AmendmentContro
 
         val result: Future[Result] = sut.onSubmit()(request)
 
-        redirectLocation(result) shouldBe Some(group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage().url)
+        redirectLocation(result) shouldBe Some(
+          group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage().url
+        )
       }
 
       "submitted no" in {

@@ -52,8 +52,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       mcc = mcc,
       page = page,
       ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-      registeredSocietyGrsConnector =
-        mockRegisteredSocietyGrsConnector,
+      registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
       soleTraderGrsConnector = mockSoleTraderGrsConnector,
       appConfig = config,
       partnershipGrsConnector = mockPartnershipGrsConnector,
@@ -84,7 +83,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
+        val registration =
+          aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
 
         spyJourneyAction.setReg(registration)
 
@@ -103,7 +103,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, a registration already exists and display page method is invoked for representative member" in {
-        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
+        val registration =
+          aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY))))
 
         spyJourneyAction.setReg(registration)
 
@@ -152,9 +153,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
             withRegistrationType(Some(RegType.GROUP)),
             withPartnershipDetails(
               Some(
-                partnershipDetailsWithBusinessAddress(partnerTypeEnum =
-                  PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-                )
+                partnershipDetailsWithBusinessAddress(partnerTypeEnum = PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
               )
             )
           )
@@ -177,7 +176,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
-        assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION, routes.RegisterAsOtherOrganisationController.onPageLoad().url)
+        assertRedirectForOrgType(
+          CHARITABLE_INCORPORATED_ORGANISATION,
+          routes.RegisterAsOtherOrganisationController.onPageLoad().url
+        )
       }
       "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
         mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
@@ -276,7 +278,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       val correctForm = Seq("answer" -> SOLE_TRADER.toString)
 
-      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "sole trader create journey error"
+      intercept[RuntimeException](
+        status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
+      ).getMessage mustBe "sole trader create journey error"
     }
 
     "user submits form for uk company" in {
@@ -287,7 +291,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       val correctForm = Seq("answer" -> UK_COMPANY.toString)
 
-      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "uk company create journey error"
+      intercept[RuntimeException](
+        status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
+      ).getMessage mustBe "uk company create journey error"
     }
 
     "user submits form for registered society" in {
@@ -298,7 +304,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       val correctForm = Seq("answer" -> REGISTERED_SOCIETY.toString)
 
-      intercept[RuntimeException](status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))).getMessage mustBe "registered society create journey error"
+      intercept[RuntimeException](
+        status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
+      ).getMessage mustBe "registered society create journey error"
     }
   }
 

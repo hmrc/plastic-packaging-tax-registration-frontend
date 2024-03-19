@@ -32,7 +32,10 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
   private val singleMember = Seq(groupMember)
 
-  private def createView(form: Form[Boolean] = AddOrganisationForm.form(), members: Seq[GroupMember] = Seq(groupMember)): Document =
+  private def createView(
+    form: Form[Boolean] = AddOrganisationForm.form(),
+    members: Seq[GroupMember] = Seq(groupMember)
+  ): Document =
     page(form, "ACME Inc", members)(registrationJourneyRequest, messages)
 
   "OrganisationList View" should {
@@ -68,11 +71,15 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "display change link for nominated org" in {
-      view.getElementById("list-members-ul").children().select("a").get(0) must haveHref(orgRoutes.CheckAnswersController.displayPage())
+      view.getElementById("list-members-ul").children().select("a").get(0) must haveHref(
+        orgRoutes.CheckAnswersController.displayPage()
+      )
     }
 
     "display change links for group members" in {
-      view.getElementById("list-members-ul").children().select("a").get(1) must haveHref(groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id))
+      view.getElementById("list-members-ul").children().select("a").get(1) must haveHref(
+        groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id)
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -86,7 +93,9 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "display entry for added member" in {
-      view.getElementsByClass("hmrc-add-to-a-list__identifier").get(1).text() mustBe groupMember.organisationDetails.map(_.organisationName).get
+      view.getElementsByClass("hmrc-add-to-a-list__identifier").get(
+        1
+      ).text() mustBe groupMember.organisationDetails.map(_.organisationName).get
     }
 
     "have no remove button" when {

@@ -46,7 +46,14 @@ class AddressConversionUtils @Inject() (countryService: CountryService) {
     val lines                    = addressLookupConfirmation.extractAddressLines()
     val addressLookupCountryCode = addressLookupConfirmation.address.country.map(_.code).getOrElse(GB)
 
-    Address(lines._1, lines._2, lines._3, lines._4, addressLookupConfirmation.address.postcode, addressLookupCountryCode)
+    Address(
+      lines._1,
+      lines._2,
+      lines._3,
+      lines._4,
+      addressLookupConfirmation.address.postcode,
+      addressLookupCountryCode
+    )
 
   }
 

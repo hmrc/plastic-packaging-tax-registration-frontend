@@ -63,7 +63,9 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display guidance text" in {
 
-      view.getElementById("guidance-text").text() must include(messages("notLiable.guidance", messages("notLiable.guidance.link.description")))
+      view.getElementById("guidance-text").text() must include(
+        messages("notLiable.guidance", messages("notLiable.guidance.link.description"))
+      )
     }
 
     "display guidance link" in {
@@ -83,13 +85,17 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
     "display feedback text" in {
 
       view.getElementById("feedback-text1").text must include(messages("notLiable.think.info"))
-      view.getElementById("feedback-text2").text must include(messages("notLiable.think.feedback", messages("notLiable.think.feedback.link.description")))
+      view.getElementById("feedback-text2").text must include(
+        messages("notLiable.think.feedback", messages("notLiable.think.feedback.link.description"))
+      )
     }
 
     "display feedback link for authenticated users" in {
 
       when(appConfig.feedbackAuthenticatedLink).thenReturn("http://localhost:9250/contact/beta-feedback")
-      view.getElementById("feedback-link") must haveHref("http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/")
+      view.getElementById("feedback-link") must haveHref(
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
+      )
     }
 
     "display feedback link for unauthenticated users" in {

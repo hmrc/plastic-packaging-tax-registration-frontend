@@ -65,7 +65,13 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           contentAsString(resp) mustBe "Partnership name capture"
         }
         "registration does contain partnership name" in {
-          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partnershipName = Some("Partners in Plastics"))))))
+          spyJourneyAction.setReg(
+            aRegistration(
+              withPartnershipDetails(
+                Some(generalPartnershipDetails.copy(partnershipName = Some("Partners in Plastics")))
+              )
+            )
+          )
 
           val resp = controller.displayPage()(FakeRequest())
 

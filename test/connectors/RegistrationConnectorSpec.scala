@@ -93,7 +93,10 @@ class RegistrationConnectorSpec extends ConnectorISpec with Injecting with Scala
 
       "exists" in {
 
-        givenGetRegistrationReturns(Status.OK, Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpJourneyId"))).toString())
+        givenGetRegistrationReturns(
+          Status.OK,
+          Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpJourneyId"))).toString()
+        )
 
         val res = await(connector.find("123"))
 
@@ -146,7 +149,11 @@ class RegistrationConnectorSpec extends ConnectorISpec with Injecting with Scala
 
       "valid request send" in {
 
-        givenPutToRegistrationReturns(Status.CREATED, "123", Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpId"))).toString)
+        givenPutToRegistrationReturns(
+          Status.CREATED,
+          "123",
+          Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpId"))).toString
+        )
 
         val res =
           await(connector.update(Registration(id = "123", incorpJourneyId = Some("incorpId"))))

@@ -41,20 +41,27 @@ trait UserDataRepository {
   def deleteData[T: Writes](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Unit]
   def deleteData[T: Writes](id: String, key: String): Future[Unit]
 
-  def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit request: AuthenticatedRequest[Any]): Future[Unit]
+  def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Unit]
 
   def reset(): Unit
 }
 
 @Singleton
-class MongoUserDataRepository @Inject() (mongoComponent: MongoComponent, configuration: Configuration, timestampSupport: TimestampSupport)(implicit ec: ExecutionContext)
+class MongoUserDataRepository @Inject() (
+  mongoComponent: MongoComponent,
+  configuration: Configuration,
+  timestampSupport: TimestampSupport
+)(implicit ec: ExecutionContext)
     extends MongoCacheRepository(
       mongoComponent = mongoComponent,
       collectionName = "userDataCache",
       ttl = configuration.get[FiniteDuration]("mongodb.userDataCache.expiry"),
       timestampSupport = timestampSupport,
       cacheIdType = CacheIdType.SimpleCacheId
-    ) with UserDataRepository {
+    )
+    with UserDataRepository {
 
   private def id(implicit request: AuthenticatedRequest[Any]): String = request.cacheId
 
@@ -64,7 +71,8 @@ class MongoUserDataRepository @Inject() (mongoComponent: MongoComponent, configu
   override def putData[A: Writes](id: String, key: String, data: A): Future[A] =
     put[A](id)(DataKey(key), data).map(_ => data)
 
-  override def getData[A: Reads](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Option[A]] = get[A](id)(DataKey(key))
+  override def getData[A: Reads](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Option[A]] =
+    get[A](id)(DataKey(key))
 
   override def getData[A: Reads](id: String, key: String): Future[Option[A]] =
     get[A](id)(DataKey(key))
@@ -78,7 +86,9 @@ class MongoUserDataRepository @Inject() (mongoComponent: MongoComponent, configu
   override def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
 
-  override def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+  override def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Unit] =
     getData(key).map(data => data.map(data => putData(key, updater(data))))
 
   override def reset(): Unit = {}

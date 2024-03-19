@@ -28,15 +28,26 @@ import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.amendment.group.member_contact_check_answers_page
 
-class ContactDetailsCheckAnswersControllerSpec extends ControllerSpec with DefaultAwaitTimeout with PptTestData with AmendmentControllerSpec {
+class ContactDetailsCheckAnswersControllerSpec
+    extends ControllerSpec
+    with DefaultAwaitTimeout
+    with PptTestData
+    with AmendmentControllerSpec {
 
   private val page = mock[member_contact_check_answers_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(journeyAction = spyJourneyAction, amendRegistrationService = mockAmendRegService, mcc = mcc, page = page)
+    new ContactDetailsCheckAnswersController(
+      journeyAction = spyJourneyAction,
+      amendRegistrationService = mockAmendRegService,
+      mcc = mcc,
+      page = page
+    )
 
-  private val populatedRegistration = aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
+  private val populatedRegistration = aRegistration(
+    withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
+  )
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.setReg(populatedRegistration)

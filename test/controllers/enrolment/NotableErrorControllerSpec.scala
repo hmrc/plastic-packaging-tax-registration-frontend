@@ -49,8 +49,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
     super.beforeEach()
     reset(frontendConfig, enrolmentVerificationFailurePage, enrolmentReferenceNumberAlreadyUsedFailurePage)
 
-    when(enrolmentVerificationFailurePage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("error business not verified content"))
-    when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error ppt reference already been used content"))
+    when(enrolmentVerificationFailurePage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("error business not verified content")
+    )
+    when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error ppt reference already been used content")
+    )
     when(frontendConfig.referrerUrl(any())).thenReturn(Some("/referrer"))
   }
 

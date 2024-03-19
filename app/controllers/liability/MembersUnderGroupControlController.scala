@@ -37,13 +37,21 @@ class MembersUnderGroupControlController @Inject() (
   page: members_under_group_control_page,
   override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
       request.registration.groupDetail match {
         case Some(groupDetail) =>
-          Ok(page(MembersUnderGroupControl.form().fill(MembersUnderGroupControl(Some(groupDetail.membersUnderGroupControl.getOrElse(false))))))
+          Ok(
+            page(
+              MembersUnderGroupControl.form().fill(
+                MembersUnderGroupControl(Some(groupDetail.membersUnderGroupControl.getOrElse(false)))
+              )
+            )
+          )
         case _ => Ok(page(MembersUnderGroupControl.form()))
       }
     }
@@ -62,12 +70,12 @@ class MembersUnderGroupControlController @Inject() (
         )
     }
 
-  private def updateRegistration(formData: MembersUnderGroupControl)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    formData: MembersUnderGroupControl
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedGroupDetail =
-        registration.groupDetail.getOrElse(GroupDetail()).copy(membersUnderGroupControl =
-          formData.value
-        )
+        registration.groupDetail.getOrElse(GroupDetail()).copy(membersUnderGroupControl = formData.value)
       registration.copy(groupDetail = Some(updatedGroupDetail))
     }
 

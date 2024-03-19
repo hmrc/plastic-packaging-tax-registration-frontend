@@ -39,7 +39,12 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsJobTitleController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
+    new ContactDetailsJobTitleController(
+      journeyAction = spyJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -94,7 +99,9 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     "data exist" in {
 
-      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester")))))
+      spyJourneyAction.setReg(
+        aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester"))))
+      )
 
       await(controller.displayPage()(FakeRequest()))
 
@@ -104,7 +111,12 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
   "display page for a group organisation" in {
 
-    spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))), withGroupDetail(Some(groupDetailsWithMembers))))
+    spyJourneyAction.setReg(
+      aRegistration(
+        withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
+        withGroupDetail(Some(groupDetailsWithMembers))
+      )
+    )
 
     await(controller.displayPage()(FakeRequest()))
 

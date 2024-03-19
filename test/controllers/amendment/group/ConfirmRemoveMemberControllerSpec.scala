@@ -32,7 +32,10 @@ import views.html.amendment.group.confirm_remove_member_page
 
 import java.util.UUID
 
-class ConfirmRemoveMemberControllerSpec extends ControllerSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
+class ConfirmRemoveMemberControllerSpec
+    extends ControllerSpec
+    with AmendmentControllerSpec
+    with TableDrivenPropertyChecks {
 
   private val mcc  = stubMessagesControllerComponents()
   private val page = mock[confirm_remove_member_page]
@@ -76,7 +79,7 @@ class ConfirmRemoveMemberControllerSpec extends ControllerSpec with AmendmentCon
 
           // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")
-          val resp                 = controller.submit(groupMember.id)(postRequestTuplesEncoded(correctlyEncodedForm, sessionId))
+          val resp = controller.submit(groupMember.id)(postRequestTuplesEncoded(correctlyEncodedForm, sessionId))
 
           status(resp) mustBe SEE_OTHER
           verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())

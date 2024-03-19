@@ -30,7 +30,12 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
   private val registration = aRegistration()
 
   private val controller =
-    new ContactDetailsAddressController(spyJourneyAction, mockRegistrationConnector, mockAddressCaptureService, mcc = mcc)
+    new ContactDetailsAddressController(
+      spyJourneyAction,
+      mockRegistrationConnector,
+      mockAddressCaptureService,
+      mcc = mcc
+    )
 
   "Primary Contact Details Address Controller" should {
 
@@ -40,8 +45,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
         spyJourneyAction.setReg(registration)
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(
-            backLink =
-              routes.ContactDetailsConfirmAddressController.displayPage().url,
+            backLink = routes.ContactDetailsConfirmAddressController.displayPage().url,
             successLink = routes.ContactDetailsAddressController.update.url,
             alfHeadingsPrefix = "addressLookup.contact",
             pptHeadingKey = "addressCapture.contact.heading",

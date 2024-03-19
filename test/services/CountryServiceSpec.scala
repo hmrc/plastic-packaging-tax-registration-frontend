@@ -49,8 +49,8 @@ class CountryServiceSpec extends AnyWordSpecLike {
     }
     "retrieve the key for a country name in the synonyms resource if it cannot be found in the countriesEN resource" +
       " but is found in the countrySynonyms resource" in {
-      countryService.getKeyForName("england") mustBe Some(GB)
-    }
+        countryService.getKeyForName("england") mustBe Some(GB)
+      }
     "return None if the country is not found in the countriesEN or countrySynonyms resources" in {
       countryService.getKeyForName("Mars") mustBe None
     }

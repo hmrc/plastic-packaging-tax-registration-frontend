@@ -43,7 +43,9 @@ class ContactDetailsEmailAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: email_address_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -73,23 +75,22 @@ class ContactDetailsEmailAddressController @Inject() (
   private def buildEmailPage(form: Form[EmailAddress])(implicit request: JourneyRequest[AnyContent]) =
     page(form, routes.ContactDetailsEmailAddressController.submit(), request.registration.isGroup)
 
-  private def updateRegistration(formData: EmailAddress, credId: String)(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: EmailAddress, credId: String)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     emailVerificationService.getStatus(credId).flatMap {
       case Right(emailStatusResponse) =>
         emailStatusResponse match {
           case Some(response) =>
             update { registration =>
               registration.copy(
-                primaryContactDetails =
-                  updatedPrimaryContactDetails(formData, registration),
+                primaryContactDetails = updatedPrimaryContactDetails(formData, registration),
                 metaData = registration.metaData.add(response.emails)
               )
             }
           case None =>
             update { registration =>
-              registration.copy(primaryContactDetails =
-                updatedPrimaryContactDetails(formData, registration)
-              )
+              registration.copy(primaryContactDetails = updatedPrimaryContactDetails(formData, registration))
             }
         }
       case Left(error) => throw error
@@ -98,14 +99,19 @@ class ContactDetailsEmailAddressController @Inject() (
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
 
-  private def updatedJourneyId(registration: Registration, journeyId: String)(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
+  private def updatedJourneyId(registration: Registration, journeyId: String)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] = {
     val primaryContact = registration.primaryContactDetails.copy(journeyId = Some(journeyId))
-    update {
-      registration => registration.copy(primaryContactDetails = primaryContact)
+    update { registration =>
+      registration.copy(primaryContactDetails = primaryContact)
     }
   }
 
-  private def saveAndContinue(registration: Registration, credId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
+  private def saveAndContinue(registration: Registration, credId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Result] =
     LocalEmailVerification.getPrimaryEmailStatus(registration) match {
       case VERIFIED =>
         Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
@@ -117,9 +123,16 @@ class ContactDetailsEmailAddressController @Inject() (
     }
 
   private def createEmailVerification(credId: String, email: String)(implicit hc: HeaderCarrier): Future[String] =
-    this.emailVerificationService.sendVerificationCode(email, credId, routes.ContactDetailsEmailAddressController.displayPage().url)
+    this.emailVerificationService.sendVerificationCode(
+      email,
+      credId,
+      routes.ContactDetailsEmailAddressController.displayPage().url
+    )
 
-  private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
+  private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Result] =
     registration.primaryContactDetails.email match {
       case Some(emailAddress) =>
         createEmailVerification(credId, emailAddress).flatMap { journeyId =>

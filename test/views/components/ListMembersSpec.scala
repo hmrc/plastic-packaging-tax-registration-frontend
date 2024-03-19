@@ -62,13 +62,17 @@ class ListMembersSpec extends UnitViewSpec with Matchers {
       "has optional change link" in {
         val view: Html = component(Seq(ListMember(name = "Name", change = Some(Call("GET", "/change-url")))))(messages)
 
-        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__change > a").first() must haveHref("/change-url")
+        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__change > a").first() must haveHref(
+          "/change-url"
+        )
       }
 
       "has optional remove link" in {
         val view: Html = component(Seq(ListMember(name = "Name", remove = Some(Call("GET", "/remove-url")))))(messages)
 
-        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__remove > a").first() must haveHref("/remove-url")
+        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__remove > a").first() must haveHref(
+          "/remove-url"
+        )
       }
 
       "not render links" in {
@@ -89,7 +93,8 @@ class ListMembersSpec extends UnitViewSpec with Matchers {
 
     "render line separator" when {
       "remove link is rendered" in {
-        val view: Html = component(Seq(ListMember(name = "any name", remove = Some(Call("GET", "/remove-url")))))(messages)
+        val view: Html =
+          component(Seq(ListMember(name = "any name", remove = Some(Call("GET", "/remove-url")))))(messages)
 
         view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__remove") must haveSize(1)
       }

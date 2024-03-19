@@ -28,7 +28,9 @@ case class UserEnrolmentDetails(
 ) {
 
   def isComplete: Boolean =
-    pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(!_.requiresPostCode) || postcode.isDefined)
+    pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(
+      !_.requiresPostCode
+    ) || postcode.isDefined)
 
   def toUserEnrolmentRequest: UserEnrolmentRequest =
     UserEnrolmentRequest(

@@ -41,8 +41,8 @@ object RemovePartner extends CommonFormValidators {
     }
 
   def fromForm(removePartner: RemovePartner): Option[Option[String]] =
-    removePartner.value.map {
-      removePartner => if (removePartner) Some(YES) else Some(NO)
+    removePartner.value.map { removePartner =>
+      if (removePartner) Some(YES) else Some(NO)
     }
 
 }

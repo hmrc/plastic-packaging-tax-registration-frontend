@@ -47,7 +47,9 @@ class PptReferenceViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display ppt reference question" in {
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("enrolment.pptReference.title"))
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("enrolment.pptReference.title")
+      )
     }
 
     "display question hint" in {

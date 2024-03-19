@@ -52,7 +52,9 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injecting wit
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
-              .withBody(Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString)
+              .withBody(
+                Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString
+              )
           )
       )
 

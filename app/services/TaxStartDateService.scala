@@ -41,7 +41,10 @@ object MustHaveFieldExtension {
 
 }
 
-case class TaxStartDate private (private val maybeLiableFrom: Option[LocalDate], private val isDateFromBackwardsTest: Boolean) {
+case class TaxStartDate private (
+  private val maybeLiableFrom: Option[LocalDate],
+  private val isDateFromBackwardsTest: Boolean
+) {
 
   def act[R](notLiableAction: => R, isLiableAction: (LocalDate, Boolean) => R): R =
     maybeLiableFrom match {
@@ -66,15 +69,19 @@ class TaxStartDateService {
 
     liabilityDetails
       .mightHaveIf(_.dateExceededThresholdWeight, "dateExceededThresholdWeight", backwardsIsYes)
-      .mightHaveIf(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight", forwardsIsYes)
+      .mightHaveIf(
+        _.dateRealisedExpectedToExceedThresholdWeight,
+        "dateRealisedExpectedToExceedThresholdWeight",
+        forwardsIsYes
+      )
 
     val backwardsStartDate = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
     val forwardsStartDate  = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
 
     (backwardsStartDate, forwardsStartDate) match {
-      case (None, None)                                        => TaxStartDate.notLiable
-      case (Some(backwardsStartDate), None)                    => TaxStartDate.liableFromBackwardsTest(backwardsStartDate)
-      case (None, Some(forwardsStartDate))                     => TaxStartDate.liableFromForwardsTest(forwardsStartDate)
+      case (None, None)                     => TaxStartDate.notLiable
+      case (Some(backwardsStartDate), None) => TaxStartDate.liableFromBackwardsTest(backwardsStartDate)
+      case (None, Some(forwardsStartDate))  => TaxStartDate.liableFromForwardsTest(forwardsStartDate)
       case (Some(backwardsStartDate), Some(forwardsStartDate)) => takeEarliestOf(backwardsStartDate, forwardsStartDate)
     }
   }

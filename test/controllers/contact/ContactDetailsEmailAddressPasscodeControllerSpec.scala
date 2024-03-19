@@ -50,10 +50,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
   private val controller =
     new ContactDetailsEmailAddressPasscodeController(
       journeyAction = spyJourneyAction,
-      emailVerificationService =
-        mockEmailVerificationService,
-      registrationConnector =
-        mockRegistrationConnector,
+      emailVerificationService = mockEmailVerificationService,
+      registrationConnector = mockRegistrationConnector,
       mcc = mcc,
       page = page
     )
@@ -69,10 +67,16 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
   }
 
   def mockEmailVerificationVerifyPasscode(dataToReturn: JourneyStatus): ScalaOngoingStubbing[Future[JourneyStatus]] =
-    when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(Future.successful(dataToReturn))
+    when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(
+      Future.successful(dataToReturn)
+    )
 
-  def mockEmailVerificationVerifyPasscodeWithException(error: ServiceError): ScalaOngoingStubbing[Future[JourneyStatus]] =
-    when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(Future.failed(error))
+  def mockEmailVerificationVerifyPasscodeWithException(
+    error: ServiceError
+  ): ScalaOngoingStubbing[Future[JourneyStatus]] =
+    when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(
+      Future.failed(error)
+    )
 
   "ContactDetailsEmailAddressPasscodeController" should {
 
@@ -128,7 +132,9 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         val result =
           controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
+        )
         modifiedRegistration.metaData.emailVerified(email) mustBe true
 
         reset(mockRegistrationConnector)
@@ -183,12 +189,18 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         val reg = aRegistration(
           withPrimaryContactDetails(primaryContactDetails =
             PrimaryContactDetails(
-              name =
-                Some("Jack Gatsby"),
+              name = Some("Jack Gatsby"),
               jobTitle = Some("Developer"),
               phoneNumber = Some("0203 4567 890"),
               address = Some(
-                Address(addressLine1 = "2 Scala Street", addressLine2 = Some("Soho"), addressLine3 = None, townOrCity = "London", maybePostcode = Some("W1T 2HN"), countryCode = GB)
+                Address(
+                  addressLine1 = "2 Scala Street",
+                  addressLine2 = Some("Soho"),
+                  addressLine3 = None,
+                  townOrCity = "London",
+                  maybePostcode = Some("W1T 2HN"),
+                  countryCode = GB
+                )
               ),
               journeyId = Some("journey-id")
             )
@@ -198,7 +210,9 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
 
-        intercept[RegistrationException](status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))))
+        intercept[RegistrationException](
+          status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"))))
+        )
 
         reset(mockRegistrationConnector)
       }
@@ -210,9 +224,13 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationVerifyPasscodeWithException(DownstreamServiceError("Error", RegistrationException("Error")))
+        mockEmailVerificationVerifyPasscodeWithException(
+          DownstreamServiceError("Error", RegistrationException("Error"))
+        )
 
-        intercept[DownstreamServiceError](status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))))
+        intercept[DownstreamServiceError](
+          status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"))))
+        )
         reset(mockRegistrationConnector)
       }
     }
@@ -244,7 +262,9 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
     "data exist" in {
 
-      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))))
+      spyJourneyAction.setReg(
+        aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))))
+      )
 
       await(controller.displayPage()(FakeRequest()))
 

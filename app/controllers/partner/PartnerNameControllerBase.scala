@@ -44,7 +44,9 @@ abstract class PartnerNameControllerBase(
   page: partner_name_page,
   appConfig: AppConfig
 )(implicit executionContext: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with GRSRedirections {
+    extends FrontendController(mcc)
+    with I18nSupport
+    with GRSRedirections {
 
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -53,7 +55,12 @@ abstract class PartnerNameControllerBase(
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call, dropoutCall: Call): Action[AnyContent] =
+  protected def doSubmit(
+    partnerId: Option[String],
+    backCall: Call,
+    submitCall: Call,
+    dropoutCall: Call
+  ): Action[AnyContent] =
     journeyAction.async { implicit request =>
       getPartner(partnerId).map { partner =>
         def updateAction(partnerName: PartnerName): Future[Registration] =
@@ -67,7 +74,9 @@ abstract class PartnerNameControllerBase(
       }
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result =
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result =
     if (partner.canEditName) {
       val form = partner.partnerPartnershipDetails.flatMap(_.partnershipName) match {
         case Some(data) =>
@@ -91,15 +100,22 @@ abstract class PartnerNameControllerBase(
       PartnerName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PartnerName]) => Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
+          (formWithErrors: Form[PartnerName]) =>
+            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
           partnerName =>
             updateAction(partnerName).flatMap { _ =>
               // Select GRS journey type based on selected partner type
               partner.partnerType match {
                 case SCOTTISH_PARTNERSHIP =>
-                  getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl, grsCallbackUrl(existingPartnerId)).map(journeyStartUrl => SeeOther(journeyStartUrl))
+                  getPartnershipRedirectUrl(
+                    appConfig.scottishPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                 case GENERAL_PARTNERSHIP =>
-                  getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl, grsCallbackUrl(existingPartnerId)).map(journeyStartUrl => SeeOther(journeyStartUrl))
+                  getPartnershipRedirectUrl(
+                    appConfig.generalPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                 case _ =>
                   Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
               }
@@ -108,7 +124,9 @@ abstract class PartnerNameControllerBase(
     else
       throw new IllegalStateException("Partner type does not permit user supplied names")
 
-  private def updateInflightPartner(formData: PartnerName)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateInflightPartner(
+    formData: PartnerName
+  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.inflightPartner.map { partner: Partner =>
         registration.withInflightPartner(Some(setPartnershipNameFor(partner, formData)))
@@ -117,17 +135,20 @@ abstract class PartnerNameControllerBase(
       }
     }
 
-  private def updateExistingPartner(formData: PartnerName, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateExistingPartner(formData: PartnerName, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.withUpdatedPartner(partnerId, partner => setPartnershipNameFor(partner, formData))
     }
 
   private def setPartnershipNameFor(partner: Partner, formData: PartnerName): Partner = {
-    val partnershipDetailsWithPartnershipName = partner.partnerPartnershipDetails.map(_.copy(partnershipName = Some(formData.value))).getOrElse {
-      // Partnership details have not been created yet; we need to create a minimal one to carry the user supplied name
-      // until the GRS callback can fully populate it
-      PartnerPartnershipDetails(partnershipName = Some(formData.value))
-    }
+    val partnershipDetailsWithPartnershipName =
+      partner.partnerPartnershipDetails.map(_.copy(partnershipName = Some(formData.value))).getOrElse {
+        // Partnership details have not been created yet; we need to create a minimal one to carry the user supplied name
+        // until the GRS callback can fully populate it
+        PartnerPartnershipDetails(partnershipName = Some(formData.value))
+      }
     partner.copy(partnerPartnershipDetails = Some(partnershipDetailsWithPartnershipName))
   }
 

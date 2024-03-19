@@ -33,7 +33,8 @@ private[mappings] class LiabilityLocalDateFormatter(
   appConfig: AppConfig,
   args: Seq[String] = Seq.empty
 )(implicit messages: Messages)
-    extends Formatter[LocalDate] with Formatters {
+    extends Formatter[LocalDate]
+    with Formatters {
 
   private val dateFormatter = new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args)
 

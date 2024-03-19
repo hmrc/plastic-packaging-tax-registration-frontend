@@ -19,7 +19,12 @@ package views.viewmodels
 import play.api.data.Form
 import play.api.i18n.Messages
 
-class Title(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None, hasErrors: Boolean = false) {
+class Title(
+  headingKey: String,
+  headingArg: String = "",
+  headingArgs: Option[Seq[String]] = None,
+  hasErrors: Boolean = false
+) {
 
   def toString(implicit messages: Messages): String = {
     def args   = headingArgs.getOrElse(Seq(headingArg))

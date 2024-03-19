@@ -19,16 +19,7 @@ package views.organisation
 import base.unit.UnitViewSpec
 import forms.organisation.PartnerType
 import forms.organisation.PartnerType.FormMode
-import forms.organisation.PartnerTypeEnum.{
-  LIMITED_LIABILITY_PARTNERSHIP,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  PartnerTypeEnum,
-  REGISTERED_SOCIETY,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
@@ -41,10 +32,15 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
   private val submitLink = Call("POST", "/submit")
   private val page       = inject[partner_type]
 
-  private val registrationWithOtherPartners = aRegistration(withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners)))
+  private val registrationWithOtherPartners = aRegistration(
+    withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
+  )
 
   private def createViewNominated(form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)): Document =
-    page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(registrationJourneyRequest.copy(registration = registrationWithOtherPartners), messages)
+    page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(
+      registrationJourneyRequest.copy(registration = registrationWithOtherPartners),
+      messages
+    )
 
   private def createViewForOthers(form: Form[PartnerType] = PartnerType.form(FormMode.OtherPartnerType)): Document =
     page(form, None, submitLink)(registrationJourneyRequest, messages)
@@ -130,9 +126,15 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
     page.render(PartnerType.form(FormMode.NominatedPartnerType), None, submitLink, registrationJourneyRequest, messages)
   }
 
-  def radioInputMustBe(number: Int, partnershipPartnerType: PartnerTypeEnum, labelKey: Option[String] = None)(implicit view: Document) = {
-    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe partnershipPartnerType.toString
-    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(labelKey.getOrElse(s"partner.type.$partnershipPartnerType"))
+  def radioInputMustBe(number: Int, partnershipPartnerType: PartnerTypeEnum, labelKey: Option[String] = None)(implicit
+    view: Document
+  ) = {
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
+      "value"
+    ).text() mustBe partnershipPartnerType.toString
+    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
+      labelKey.getOrElse(s"partner.type.$partnershipPartnerType")
+    )
   }
 
 }

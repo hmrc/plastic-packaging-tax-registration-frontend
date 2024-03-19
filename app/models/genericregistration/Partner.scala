@@ -35,8 +35,8 @@ case class Partner(
   def registrationDetails: Option[RegistrationDetails] =
     partnerType match {
       case PartnerTypeEnum.SOLE_TRADER => soleTraderRegistration
-      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
-          PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
+      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
+          PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
         partnerRegistration
       case _ => incorporationRegistration
     }
@@ -51,17 +51,21 @@ case class Partner(
   def name: String =
     partnerType match {
       case PartnerTypeEnum.SOLE_TRADER => soleTraderName
-      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
-          PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
+      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
+          PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
         partnerName
       case _ => incorporationName
     }
 
   private def incorporationName =
-    incorporationDetails.map(_.companyName).getOrElse(throw new IllegalStateException("Incorporation details name absent"))
+    incorporationDetails.map(_.companyName).getOrElse(
+      throw new IllegalStateException("Incorporation details name absent")
+    )
 
   private def partnerName =
-    partnerPartnershipDetails.flatMap(_.name).getOrElse(throw new IllegalStateException("Partnership details name absent"))
+    partnerPartnershipDetails.flatMap(_.name).getOrElse(
+      throw new IllegalStateException("Partnership details name absent")
+    )
 
   private def soleTraderName =
     soleTraderDetails.map(_.name).getOrElse(throw new IllegalStateException("Sole Trader details name absent"))

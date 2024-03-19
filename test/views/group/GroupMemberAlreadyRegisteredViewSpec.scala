@@ -38,7 +38,9 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
     val view: Html = createView()
 
     "display title" in {
-      view.select("title").text() must include(messages("group.member.already.registered.title", "Plastic Packaging Ltd"))
+      view.select("title").text() must include(
+        messages("group.member.already.registered.title", "Plastic Packaging Ltd")
+      )
     }
 
     "display heading" in {
@@ -46,7 +48,9 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(messages("group.member.already.registered.detail1", "Plastic Packaging Ltd"))
+      view.select("p.govuk-body").text() must include(
+        messages("group.member.already.registered.detail1", "Plastic Packaging Ltd")
+      )
       val details = view.getElementsByClass(gdsPageBodyText)
       details.get(1) must containMessage("group.member.already.registered.detail2", "Plastic Packaging Ltd")
     }

@@ -25,8 +25,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ManageGroupMembersController @Inject() (journeyAction: JourneyAction, mcc: MessagesControllerComponents, page: manage_group_members_page)
-    extends FrontendController(mcc) with I18nSupport {
+class ManageGroupMembersController @Inject() (
+  journeyAction: JourneyAction,
+  mcc: MessagesControllerComponents,
+  page: manage_group_members_page
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.amend { implicit request =>

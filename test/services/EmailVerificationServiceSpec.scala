@@ -31,7 +31,12 @@ import models.emailverification.{EmailStatus, EmailVerificationJourneyStatus, Ve
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmailVerificationServiceSpec() extends AnyWordSpec with MockitoSugar with BeforeAndAfterEach with Matchers with DefaultAwaitTimeout {
+class EmailVerificationServiceSpec()
+    extends AnyWordSpec
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with Matchers
+    with DefaultAwaitTimeout {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
   implicit val hc: HeaderCarrier    = HeaderCarrier()
@@ -44,7 +49,9 @@ class EmailVerificationServiceSpec() extends AnyWordSpec with MockitoSugar with 
 
   override protected def beforeEach(): Unit = {
     when(mockEmailVerificationConnector.getStatus(any())(any())).thenReturn(Future.successful(Right(None)))
-    when(mockEmailVerificationConnector.create(any())(any())).thenReturn(Future.successful(Right(s"/email-verification/journey/${journeyId}?continueUrl=/ppt&origin=ppt")))
+    when(mockEmailVerificationConnector.create(any())(any())).thenReturn(
+      Future.successful(Right(s"/email-verification/journey/$journeyId?continueUrl=/ppt&origin=ppt"))
+    )
   }
 
   "Email Verification Service" should {
@@ -80,7 +87,9 @@ class EmailVerificationServiceSpec() extends AnyWordSpec with MockitoSugar with 
 
       "invalid" in {
         simulatePasscodeVerification(INCORRECT_PASSCODE, "XXX", "user@ppt.com", journeyId)
-        emailVerificationService.checkVerificationCode("XXX", "user@ppt.com", journeyId).map(_ mustBe INCORRECT_PASSCODE)
+        emailVerificationService.checkVerificationCode("XXX", "user@ppt.com", journeyId).map(
+          _ mustBe INCORRECT_PASSCODE
+        )
       }
 
       "failed due to too many attempts" in {
@@ -97,7 +106,9 @@ class EmailVerificationServiceSpec() extends AnyWordSpec with MockitoSugar with 
     "throw exceptions" when {
 
       "getting email verification status fails" in {
-        when(mockEmailVerificationConnector.getStatus(any())(any())).thenReturn(Future.successful(Left(DownstreamServiceError("BANG!", new IllegalStateException()))))
+        when(mockEmailVerificationConnector.getStatus(any())(any())).thenReturn(
+          Future.successful(Left(DownstreamServiceError("BANG!", new IllegalStateException())))
+        )
         intercept[Exception] {
           await(emailVerificationService.isEmailVerified("user@ppt.com", "123"))
         }
@@ -115,15 +126,26 @@ class EmailVerificationServiceSpec() extends AnyWordSpec with MockitoSugar with 
 
   private def expectVerifiedEmails(verifiedEmails: String*) =
     when(mockEmailVerificationConnector.getStatus(any())(any())).thenReturn(
-      Future.successful(Right(Some(VerificationStatus(verifiedEmails.map(EmailStatus(_, verified = true, locked = false))))))
+      Future.successful(
+        Right(Some(VerificationStatus(verifiedEmails.map(EmailStatus(_, verified = true, locked = false)))))
+      )
     )
 
   private def expectUnverifiedEmails(unverifiedEmails: String*) =
     when(mockEmailVerificationConnector.getStatus(any())(any())).thenReturn(
-      Future.successful(Right(Some(VerificationStatus(unverifiedEmails.map(EmailStatus(_, verified = false, locked = false))))))
+      Future.successful(
+        Right(Some(VerificationStatus(unverifiedEmails.map(EmailStatus(_, verified = false, locked = false)))))
+      )
     )
 
-  private def simulatePasscodeVerification(verificationStatus: EmailVerificationJourneyStatus.Value, passcode: String, email: String, journeyId: String) =
-    when(mockEmailVerificationConnector.verifyPasscode(journeyId, VerifyPasscodeRequest(passcode, email))).thenReturn(Future.successful(Right(verificationStatus)))
+  private def simulatePasscodeVerification(
+    verificationStatus: EmailVerificationJourneyStatus.Value,
+    passcode: String,
+    email: String,
+    journeyId: String
+  ) =
+    when(mockEmailVerificationConnector.verifyPasscode(journeyId, VerifyPasscodeRequest(passcode, email))).thenReturn(
+      Future.successful(Right(verificationStatus))
+    )
 
 }

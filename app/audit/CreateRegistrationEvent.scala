@@ -42,7 +42,11 @@ object CreateRegistrationEvent {
   implicit val format: OFormat[CreateRegistrationEvent] = Json.format[CreateRegistrationEvent]
   val eventType: String                                 = "createPPTRegistration"
 
-  def apply(registration: Registration, pptReference: Option[String], internalId: Option[String]): CreateRegistrationEvent =
+  def apply(
+    registration: Registration,
+    pptReference: Option[String],
+    internalId: Option[String]
+  ): CreateRegistrationEvent =
     new CreateRegistrationEvent(
       id = registration.id,
       pptReference = pptReference,

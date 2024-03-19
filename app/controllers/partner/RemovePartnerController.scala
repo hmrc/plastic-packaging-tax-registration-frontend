@@ -38,7 +38,9 @@ class RemovePartnerController @Inject() (
   mcc: MessagesControllerComponents,
   page: remove_partner_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   private val logger = Logger(this.getClass)
 
@@ -59,7 +61,8 @@ class RemovePartnerController @Inject() (
           RemovePartner.form()
             .bindFromRequest()
             .fold(
-              (formWithErrors: Form[RemovePartner]) => Future.successful(BadRequest(page(formWithErrors, partnerName, partnerId))),
+              (formWithErrors: Form[RemovePartner]) =>
+                Future.successful(BadRequest(page(formWithErrors, partnerName, partnerId))),
               partner =>
                 partner.value match {
                   case Some(true) =>
@@ -70,7 +73,10 @@ class RemovePartnerController @Inject() (
                         else
                           Redirect(routes.PartnerListController.displayPage())
                       case Left(error) =>
-                        logger.warn(s"Failed to remove partner [$partnerName] with id [$partnerId] - ${error.getMessage}", error)
+                        logger.warn(
+                          s"Failed to remove partner [$partnerName] with id [$partnerId] - ${error.getMessage}",
+                          error
+                        )
                         Redirect(routes.PartnerListController.displayPage())
                     }
                   case _ =>
@@ -84,15 +90,14 @@ class RemovePartnerController @Inject() (
   private def getPartnerName(partnerId: String)(implicit request: JourneyRequest[AnyContent]): Option[String] =
     request.registration.findPartner(partnerId).map(_.name)
 
-  private def removePartner(partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def removePartner(
+    partnerId: String
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(organisationDetails =
         registration.organisationDetails.copy(partnershipDetails =
-          registration.organisationDetails.partnershipDetails.map(
-            partnershipDetails =>
-              partnershipDetails.copy(partners =
-                partnershipDetails.partners.filter(_.id != partnerId)
-              )
+          registration.organisationDetails.partnershipDetails.map(partnershipDetails =>
+            partnershipDetails.copy(partners = partnershipDetails.partners.filter(_.id != partnerId))
           )
         )
       )

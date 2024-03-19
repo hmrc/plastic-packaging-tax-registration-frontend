@@ -46,14 +46,24 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val aDate                   = LocalDate.of(2022, 4, 1)
 
   private val controller =
-    new CheckLiabilityDetailsAnswersController(journeyAction = spyJourneyAction, mcc = mcc, mockRegistrationConnector, mockTaxStartDateService, config, page = page)
+    new CheckLiabilityDetailsAnswersController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      mockRegistrationConnector,
+      mockTaxStartDateService,
+      config,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(page, mockTaxStartDateService, mockRegistrationConnector, config)
 
     val registration =
-      aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
+      aRegistration(
+        withRegistrationType(Some(RegType.SINGLE_ENTITY)),
+        r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability)))
+      )
     spyJourneyAction.setReg(registration)
     given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
@@ -97,7 +107,10 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "group registration enabled and group of organisation is selected" in {
 
         val registration =
-          aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
+          aRegistration(
+            withRegistrationType(Some(RegType.GROUP)),
+            r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability)))
+          )
         spyJourneyAction.setReg(registration)
         given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 

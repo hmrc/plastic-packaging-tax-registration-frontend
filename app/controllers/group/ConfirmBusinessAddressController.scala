@@ -42,23 +42,32 @@ class ConfirmBusinessAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_business_address
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(memberId: String, redirectTo: String): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
-      val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
+      val member = request.registration.findMember(memberId).getOrElse(
+        throw new IllegalStateException("Provided group memberId not found")
+      )
 
       val orgType = member.organisationDetails
-        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
+        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets =>
+          OrgType.withName(dets.organisationType)
+        )
 
-      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")) { url =>
+      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(
+        throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")
+      ) { url =>
         member.addressDetails match {
           case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
             Future.successful(Ok(page(registeredBusinessAddress, member.businessName, url)))
           case _ =>
             orgType match {
-              case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
-              case _                          => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
+              case OVERSEAS_COMPANY_UK_BRANCH =>
+                initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
+              case _ => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
             }
         }
       }
@@ -88,7 +97,12 @@ class ConfirmBusinessAddressController @Inject() (
       res.getOrElse(initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false))
     }
 
-  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], redirectTo: String, forceUKAddress: Boolean): Future[Result] =
+  private def initialiseAddressLookup(
+    memberId: String,
+    request: JourneyRequest[AnyContent],
+    redirectTo: String,
+    forceUKAddress: Boolean
+  ): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.ConfirmBusinessAddressController.displayPage(memberId, redirectTo).url,
@@ -103,11 +117,13 @@ class ConfirmBusinessAddressController @Inject() (
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          update { reg =>
-            reg.withUpdatedMemberAddress(memberId, capturedAddress.getOrElse(throw new IllegalStateException("No captured address")))
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        update { reg =>
+          reg.withUpdatedMemberAddress(
+            memberId,
+            capturedAddress.getOrElse(throw new IllegalStateException("No captured address"))
+          )
+        }
       }.map { _ =>
         Redirect(routes.ContactDetailsNameController.displayPage(memberId))
       }

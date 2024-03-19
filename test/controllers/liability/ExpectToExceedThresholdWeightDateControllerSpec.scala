@@ -46,7 +46,14 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
   private val form                                              = mock[Form[LocalDate]]
   private val mcc: MessagesControllerComponents                 = stubMessagesControllerComponents()
 
-  private val sut = new ExpectToExceedThresholdWeightDateController(journeyAction = spyJourneyAction, mockRegistrationConnector, mcc, page, mockFormProvider, config)
+  private val sut = new ExpectToExceedThresholdWeightDateController(
+    journeyAction = spyJourneyAction,
+    mockRegistrationConnector,
+    mcc,
+    page,
+    mockFormProvider,
+    config
+  )
 
   override def beforeEach() = {
     super.beforeEach()
@@ -145,7 +152,10 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
   private def createExpectedRegistration(reg: Registration) = {
     val updatedLiableDetails =
-      reg.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 1))), newLiabilityStarted = Some(NewLiability))
+      reg.liabilityDetails.copy(
+        dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 1))),
+        newLiabilityStarted = Some(NewLiability)
+      )
 
     reg.copy(liabilityDetails = updatedLiableDetails)
   }

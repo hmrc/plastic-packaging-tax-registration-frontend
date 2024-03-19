@@ -60,7 +60,9 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      viewNom.select("title").text() must include(messages("partnership.otherPartners.contactEmailAddressPage.title", contactName))
+      viewNom.select("title").text() must include(
+        messages("partnership.otherPartners.contactEmailAddressPage.title", contactName)
+      )
     }
 
     "display email address input box" in {
@@ -78,7 +80,9 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
       "display a hint for each name input" in {
 
-        viewNom.getElementById("value-hint").text() must include("We’ll only use this to send notifications about this registration, the account and returns.")
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
 
       }
     }
@@ -93,7 +97,9 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
       "not display a hint for each name input" in {
 
-        viewNom.getElementById("value-hint").text() must include("We’ll only use this to send notifications about this registration, the account and returns.")
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
 
       }
     }

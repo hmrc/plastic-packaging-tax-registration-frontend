@@ -33,10 +33,19 @@ class PartnerContactNameController @Inject() (
   page: partner_member_name_page,
   registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(journeyAction = journeyAction.register, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
+    extends PartnerContactNameControllerBase(
+      journeyAction = journeyAction.register,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = registrationUpdateService
+    ) {
 
   def displayNewPartner: Action[AnyContent] =
-    doDisplay(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerContactNameController.submitNewPartner)
+    doDisplay(
+      None,
+      partnerRoutes.PartnerTypeController.displayNewPartner(),
+      partnerRoutes.PartnerContactNameController.submitNewPartner
+    )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     doDisplay(
@@ -46,7 +55,11 @@ class PartnerContactNameController @Inject() (
     )
 
   def submitNewPartner: Action[AnyContent] =
-    doSubmit(None, partnerRoutes.PartnerTypeController.displayNewPartner(), partnerRoutes.PartnerContactNameController.submitNewPartner)
+    doSubmit(
+      None,
+      partnerRoutes.PartnerTypeController.displayNewPartner(),
+      partnerRoutes.PartnerContactNameController.submitNewPartner
+    )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     doSubmit(

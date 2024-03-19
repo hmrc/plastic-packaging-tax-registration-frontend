@@ -33,7 +33,9 @@ abstract class ContactDetailsEmailAddressControllerBase(
   page: member_email_address_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
+    extends FrontendController(mcc)
+    with ContactDetailsControllerBase
+    with I18nSupport {
 
   protected def doDisplayPage(memberId: String): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -55,7 +57,13 @@ abstract class ContactDetailsEmailAddressControllerBase(
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(
-              BadRequest(page(formWithErrors, request.registration.findMember(memberId).flatMap(_.contactDetails.map(_.groupMemberName)), getSubmitCall(memberId)))
+              BadRequest(
+                page(
+                  formWithErrors,
+                  request.registration.findMember(memberId).flatMap(_.contactDetails.map(_.groupMemberName)),
+                  getSubmitCall(memberId)
+                )
+              )
             ),
           emailAddress =>
             updateRegistration(emailAddress, memberId).map { _ =>
@@ -64,12 +72,16 @@ abstract class ContactDetailsEmailAddressControllerBase(
         )
     }
 
-  private def updateRegistration(emailAddress: EmailAddress, memberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateRegistration(emailAddress: EmailAddress, memberId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(
-            registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(emailAddress.value)).getOrElse(throw new IllegalStateException("Expected group member absent"))
+            registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(emailAddress.value)).getOrElse(
+              throw new IllegalStateException("Expected group member absent")
+            )
           )
         )
       )

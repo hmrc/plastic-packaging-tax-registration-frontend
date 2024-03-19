@@ -33,13 +33,26 @@ class AddPartnerContactDetailsNameController @Inject() (
   page: partner_member_name_page,
   registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(journeyAction = journeyAction.amend, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
+    extends PartnerContactNameControllerBase(
+      journeyAction = journeyAction.amend,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = registrationUpdateService
+    ) {
 
   def displayPage: Action[AnyContent] =
-    doDisplay(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerContactDetailsNameController.submit)
+    doDisplay(
+      None,
+      routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+      routes.AddPartnerContactDetailsNameController.submit
+    )
 
   def submit: Action[AnyContent] =
-    doSubmit(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerContactDetailsNameController.submit)
+    doSubmit(
+      None,
+      routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+      routes.AddPartnerContactDetailsNameController.submit
+    )
 
   override def onwardCallNewPartner(implicit request: JourneyRequest[AnyContent]): Call =
     routes.AddPartnerContactDetailsEmailAddressController.displayPage()

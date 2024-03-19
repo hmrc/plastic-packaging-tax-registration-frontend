@@ -36,7 +36,9 @@ class TaskListController @Inject() (
   groupPage: task_list_group,
   partnershipPage: task_list_partnership,
   override val registrationConnector: RegistrationConnector
-) extends FrontendController(mcc) with I18nSupport with Cacheable {
+) extends FrontendController(mcc)
+    with I18nSupport
+    with Cacheable {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>

@@ -41,7 +41,8 @@ class NotableErrorController @Inject() (
   soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
   duplicateSubscriptionPage: duplicate_subscription_page,
   registrationFailedPage: registration_failed_page
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =
     authenticate { implicit request =>
@@ -73,7 +74,7 @@ class NotableErrorController @Inject() (
       Ok(duplicateSubscriptionPage())
     }
 
-  //noinspection ScalaUnusedSymbol
+  // noinspection ScalaUnusedSymbol
   def registrationFailed(timestamp: String): Action[AnyContent] =
     // Note - timestamp will appear as part of referrer link on "contact us" hyperlink
     authenticate { implicit request =>

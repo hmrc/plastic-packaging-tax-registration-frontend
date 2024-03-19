@@ -30,7 +30,10 @@ class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
 
   private val previousPage = Call("GET", "/some-back")
 
-  private def createView(form: Form[RegistrationDate] = RegistrationDate.form(), previousPage: Call = previousPage): Document =
+  private def createView(
+    form: Form[RegistrationDate] = RegistrationDate.form(),
+    previousPage: Call = previousPage
+  ): Document =
     page(form, previousPage)(registrationJourneyRequest, messages)
 
   "The Initial Registration Date View" should {

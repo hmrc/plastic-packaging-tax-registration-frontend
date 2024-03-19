@@ -49,12 +49,11 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
     "list all the other members" in {
       val others = sut.listMembers(mockMessages).tail
 
-      others.zip(members).map {
-        case (other, member) =>
-          other.name mustBe member.businessName
-          other.change mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
-          other.remove mustBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-          other.subHeading mustBe None
+      others.zip(members).map { case (other, member) =>
+        other.name mustBe member.businessName
+        other.change mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
+        other.remove mustBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+        other.subHeading mustBe None
       }
     }
 

@@ -35,7 +35,8 @@ class DeregisterCheckYourAnswersController @Inject() (
   deregistrationConnector: DeregistrationConnector,
   page: deregister_check_your_answers_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
@@ -46,14 +47,13 @@ class DeregisterCheckYourAnswersController @Inject() (
     authenticate.async { implicit request =>
       val pptReference = request.pptReference
 
-      deregistrationDetailRepository.get().flatMap {
-        deregistrationDetails =>
-          deregistrationConnector.deregister(pptReference, deregistrationDetails).map {
-            case Right(_) =>
-              deregistrationDetailRepository.delete()
-              Redirect(routes.DeregistrationSubmittedController.displayPage())
-            case Left(ex) => throw ex
-          }
+      deregistrationDetailRepository.get().flatMap { deregistrationDetails =>
+        deregistrationConnector.deregister(pptReference, deregistrationDetails).map {
+          case Right(_) =>
+            deregistrationDetailRepository.delete()
+            Redirect(routes.DeregistrationSubmittedController.displayPage())
+          case Left(ex) => throw ex
+        }
       }
     }
 

@@ -28,9 +28,10 @@ case class PartnershipName(value: String)
 object PartnershipName {
 
   implicit val format: OFormat[PartnershipName] = Json.format[PartnershipName]
-  private val PARTNERSHIP_NAME_REGEX            = Pattern.compile("""^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\[\]£€¥\\—–‐-]{1,160}$""")
-  private val maxLength                         = 160
-  private val partnershipName                   = "value"
+  private val PARTNERSHIP_NAME_REGEX =
+    Pattern.compile("""^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\[\]£€¥\\—–‐-]{1,160}$""")
+  private val maxLength       = 160
+  private val partnershipName = "value"
 
   private val mapping = Forms.mapping(
     partnershipName ->
@@ -40,12 +41,12 @@ object PartnershipName {
         .verifying("partnership.name.format.error", matchesRegex)
   )(PartnershipName.apply)(PartnershipName.unapply)
 
-  private def isShortEnough: String => Boolean = {
-    name => name.length <= maxLength
+  private def isShortEnough: String => Boolean = { name =>
+    name.length <= maxLength
   }
 
-  private def matchesRegex: String => Boolean = {
-    partnershipName => !isNonEmpty(partnershipName) || isMatchingPattern(partnershipName, PARTNERSHIP_NAME_REGEX)
+  private def matchesRegex: String => Boolean = { partnershipName =>
+    !isNonEmpty(partnershipName) || isMatchingPattern(partnershipName, PARTNERSHIP_NAME_REGEX)
   }
 
   def form(): Form[PartnershipName] = Form(mapping)

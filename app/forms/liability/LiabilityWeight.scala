@@ -39,11 +39,14 @@ object LiabilityWeight {
 
   private val weightIsValidNumber: String => Boolean = weight => weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
-  private val weightWithinRange: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+  private val weightWithinRange: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
-  private val weightAboveThreshold: String => Boolean = weight => weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
+  private val weightAboveThreshold: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
 
   def form(): Form[LiabilityWeight] =
     Form(

@@ -21,7 +21,13 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContent
 import spec.{PptTestData, ViewMatchers}
 
-abstract class UnitViewSpec extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers with ViewAssertions with PptTestData {
+abstract class UnitViewSpec
+    extends MessagesSpec
+    with MockRegistrationConnector
+    with MockitoSugar
+    with ViewMatchers
+    with ViewAssertions
+    with PptTestData {
 
   protected val emptyFormData: Map[String, String] = Map.empty
 

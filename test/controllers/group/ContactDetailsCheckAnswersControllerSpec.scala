@@ -35,12 +35,21 @@ class ContactDetailsCheckAnswersControllerSpec extends ControllerSpec with Defau
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
+    new ContactDetailsCheckAnswersController(
+      journeyAction = spyJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember))))))
+    spyJourneyAction.setReg(
+      aRegistration(
+        withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember))))
+      )
+    )
     when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Group member contact details check answers"))
   }
 

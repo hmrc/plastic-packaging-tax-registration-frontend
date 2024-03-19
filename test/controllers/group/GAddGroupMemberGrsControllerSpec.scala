@@ -43,7 +43,10 @@ import scala.concurrent.Future
 class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with PptTestData with BeforeAndAfterEach {
 
   private val reg =
-    aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()), withGroupDetail(Some(groupDetails.copy(currentMemberOrganisationType = Some(OrgType.UK_COMPANY)))))
+    aRegistration(
+      withOrganisationDetails(registeredUkCompanyOrgDetails()),
+      withGroupDetail(Some(groupDetails.copy(currentMemberOrganisationType = Some(OrgType.UK_COMPANY))))
+    )
 
   private val journeyAction       = mock[JourneyAction]
   private val registrationUpdater = mock[AmendRegistrationUpdateService]
@@ -83,7 +86,10 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
       val result: Future[Result] = sut.grsCallbackNewMember("123")(createRequest(reg))
 
       status(result) mustBe SEE_OTHER
-      assertResult(amendRoutes.AddGroupMemberConfirmBusinessAddressController.displayPage("uuid").url, redirectLocation(result).value)
+      assertResult(
+        amendRoutes.AddGroupMemberConfirmBusinessAddressController.displayPage("uuid").url,
+        redirectLocation(result).value
+      )
     }
 
     "redirect to the /group-organisation-already-registered page when user is alrready subscribed" in {

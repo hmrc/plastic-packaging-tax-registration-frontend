@@ -34,7 +34,8 @@ class NotableErrorController @Inject() (
   nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
   organisationAlreadyInGroupPage: organisation_already_in_group_page,
   groupMemberAlreadyRegisteredPage: group_member_already_registered_page
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
     (authenticate andThen getRegistration) { implicit request =>

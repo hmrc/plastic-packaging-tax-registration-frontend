@@ -52,7 +52,9 @@ class PostcodeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[Postcode]])(any(), any())).thenReturn(HtmlFormat.raw("Postcode Page"))
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(initialEnrolmentDetails)))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(initialEnrolmentDetails))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -63,7 +65,9 @@ class PostcodeControllerSpec extends ControllerSpec {
   "Postcode Controller" should {
     "display the postcode page" when {
       "user is authorised" in {
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA"))))))
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA")))))
+        )
 
         val result = controller.displayPage()(FakeRequest())
 
@@ -95,14 +99,19 @@ class PostcodeControllerSpec extends ControllerSpec {
       "a valid postcode is submitted" in {
         val expectedEnrolmentDetails =
           initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA")))
-        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(Future.successful(expectedEnrolmentDetails))
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
+          Future.successful(expectedEnrolmentDetails)
+        )
 
         val result = controller.submit()(postRequestEncoded(Postcode("LS1 1AA")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey), ArgumentMatchers.eq(expectedEnrolmentDetails))(any(), any())
+        verify(mockCache).putData(
+          ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
+          ArgumentMatchers.eq(expectedEnrolmentDetails)
+        )(any(), any())
       }
     }
   }

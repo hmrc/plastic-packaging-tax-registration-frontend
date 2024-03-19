@@ -44,17 +44,30 @@ import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpecLike with MockRegistrationConnector with MockSubscriptionConnector with MockitoSugar with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MockConnectors with PptTestData with Injecting {
+    extends AnyWordSpecLike
+    with MockRegistrationConnector
+    with MockSubscriptionConnector
+    with MockitoSugar
+    with Matchers
+    with GuiceOneAppPerSuite
+    with BeforeAndAfterEach
+    with DefaultAwaitTimeout
+    with MockConnectors
+    with PptTestData
+    with Injecting {
 
-  implicit val ec: ExecutionContext                                           = ExecutionContext.global
-  def getAuthenticatedRequest[A](request: Request[A]): RegistrationRequest[A] = RegistrationRequest[A](request, IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)))
-  val spyJourneyAction: FakeJourneyAction.type                                = spy(FakeJourneyAction)
+  implicit val ec: ExecutionContext = ExecutionContext.global
+  def getAuthenticatedRequest[A](request: Request[A]): RegistrationRequest[A] =
+    RegistrationRequest[A](request, IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)))
+  val spyJourneyAction: FakeJourneyAction.type = spy(FakeJourneyAction)
 
   object FakeBasicAuthAction extends BasicAuthAction {
     override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
-    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.RegistrationRequest[A] => Future[Result]): Future[Result] =
+    override def invokeBlock[A](
+      request: Request[A],
+      block: AuthenticatedRequest.RegistrationRequest[A] => Future[Result]
+    ): Future[Result] =
       block(getAuthenticatedRequest(request))
 
     override protected def executionContext: ExecutionContext = ec
@@ -63,8 +76,17 @@ trait ControllerSpec
   object FakeAmendAuthAction extends AmendAuthAction {
     override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
-    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]): Future[Result] =
-      block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "XMPPT0000000123"))
+    override def invokeBlock[A](
+      request: Request[A],
+      block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]
+    ): Future[Result] =
+      block(
+        PPTEnrolledRequest(
+          request = request,
+          identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)),
+          pptReference = "XMPPT0000000123"
+        )
+      )
 
     override protected def executionContext: ExecutionContext = ec
   }
@@ -89,7 +111,12 @@ trait ControllerSpec
         override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
         override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
-          block(JourneyRequest(getAuthenticatedRequest(request), registration.getOrElse(fail("registration is not set in FakeJourneyAction"))))
+          block(
+            JourneyRequest(
+              getAuthenticatedRequest(request),
+              registration.getOrElse(fail("registration is not set in FakeJourneyAction"))
+            )
+          )
 
         override protected def executionContext: ExecutionContext = ec
       }
@@ -100,7 +127,10 @@ trait ControllerSpec
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  def authRequest(headers: Headers = Headers(), user: SignedInUser = PptTestData.newUser("123")): AuthenticatedRequest[AnyContentAsEmpty.type] =
+  def authRequest(
+    headers: Headers = Headers(),
+    user: SignedInUser = PptTestData.newUser("123")
+  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
     authRequest(FakeRequest().withHeaders(headers))
 
   def authRequest[A](fakeRequest: FakeRequest[A]) =
@@ -121,7 +151,10 @@ trait ControllerSpec
     postRequestTuplesEncoded(getTuples(form), sessionId)
 
   // This function exists because getTuples used in the above may not always encode values correctly
-  protected def postRequestTuplesEncoded(formTuples: Seq[(String, String)], sessionId: String = "123"): Request[AnyContentAsFormUrlEncoded] =
+  protected def postRequestTuplesEncoded(
+    formTuples: Seq[(String, String)],
+    sessionId: String = "123"
+  ): Request[AnyContentAsFormUrlEncoded] =
     postRequest
       .withFormUrlEncodedBody(formTuples: _*)
       .withCSRFToken
@@ -151,7 +184,10 @@ trait ControllerSpec
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
 
-  protected def postJsonRequestEncodedFormAction(body: Seq[(String, String)], sessionId: String = "123"): Request[AnyContentAsFormUrlEncoded] =
+  protected def postJsonRequestEncodedFormAction(
+    body: Seq[(String, String)],
+    sessionId: String = "123"
+  ): Request[AnyContentAsFormUrlEncoded] =
     postRequestTuplesEncoded(body, sessionId)
 
 }

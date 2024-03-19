@@ -54,12 +54,16 @@ class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
     "display detail" when {
       "nominated member is already group" in {
         val view = createView(GroupError(MEMBER_IS_NOMINATED, "Nominated Member"))
-        view.select("p.govuk-body").text() must include(messages("organisation.already.in.group.detail.nominated", "Nominated Member"))
+        view.select("p.govuk-body").text() must include(
+          messages("organisation.already.in.group.detail.nominated", "Nominated Member")
+        )
       }
 
       "member is already group" in {
         val view = createView(GroupError(MEMBER_IN_GROUP, "Member"))
-        view.select("p.govuk-body").text() must include(messages("organisation.already.in.group.detail.member", "Member"))
+        view.select("p.govuk-body").text() must include(
+          messages("organisation.already.in.group.detail.member", "Member")
+        )
       }
     }
 

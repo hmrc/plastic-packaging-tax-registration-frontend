@@ -108,7 +108,14 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "mandatory address fields have not been submitted" in {
       val anInvalidAddress =
-        Address(addressLine1 = "", addressLine2 = None, addressLine3 = None, townOrCity = "", maybePostcode = Some(""), countryCode = "")
+        Address(
+          addressLine1 = "",
+          addressLine2 = None,
+          addressLine3 = None,
+          townOrCity = "",
+          maybePostcode = Some(""),
+          countryCode = ""
+        )
 
       val form = Address
         .form()
@@ -125,7 +132,13 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "address fields are not valid" in {
       val anInvalidAddress =
-        UKAddress(addressLine1 = "*&%^", addressLine2 = Some("Address Line 2*&%^"), addressLine3 = Some("Address Line 3*&%^"), townOrCity = "*&%^", postCode = "*&%^")
+        UKAddress(
+          addressLine1 = "*&%^",
+          addressLine2 = Some("Address Line 2*&%^"),
+          addressLine3 = Some("Address Line 3*&%^"),
+          townOrCity = "*&%^",
+          postCode = "*&%^"
+        )
 
       val form = Address
         .form()
@@ -143,8 +156,20 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(registrationJourneyRequest, messages)
-    page.render(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None, registrationJourneyRequest, messages)
+    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(
+      registrationJourneyRequest,
+      messages
+    )
+    page.render(
+      Address.form(),
+      countryService.getAll(),
+      updateLink,
+      headingKey,
+      contactName,
+      None,
+      registrationJourneyRequest,
+      messages
+    )
   }
 
 }

@@ -37,9 +37,16 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
   when(cyaPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Partner CYA"))
 
   private val controller =
-    new AddPartnerContactDetailsCheckAnswersController(amendRegistrationService = mockAmendRegService, journeyAction = spyJourneyAction, mcc = mcc, page = cyaPage)
+    new AddPartnerContactDetailsCheckAnswersController(
+      amendRegistrationService = mockAmendRegService,
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = cyaPage
+    )
 
-  private val partnerRegistrationInAmendment = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner)))))
+  private val partnerRegistrationInAmendment = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner))))
+  )
 
   override protected def beforeEach(): Unit = {
     reset(mockAmendRegService, spyJourneyAction)
@@ -87,7 +94,9 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          redirectLocation(resp) mustBe Some(
+            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
+          )
         }
         "update fails due to error returned from ETMP" in {
           simulateUpdateSubscriptionWithRegFailureReturnedError()
@@ -95,7 +104,9 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          redirectLocation(resp) mustBe Some(
+            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
+          )
         }
       }
     }

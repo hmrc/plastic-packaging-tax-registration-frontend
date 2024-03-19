@@ -52,10 +52,19 @@ class AddPartnerNameController @Inject() (
     ) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplay(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerNameController.submit())
+    doDisplay(
+      None,
+      routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+      routes.AddPartnerNameController.submit()
+    )
 
   def submit(): Action[AnyContent] =
-    doSubmit(None, routes.AddPartnerOrganisationDetailsTypeController.displayPage(), routes.AddPartnerNameController.submit(), routes.PartnersListController.displayPage())
+    doSubmit(
+      None,
+      routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+      routes.AddPartnerNameController.submit(),
+      routes.PartnersListController.displayPage()
+    )
 
   override def grsCallbackUrl(partnerId: Option[String]): String =
     appConfig.amendPartnerGrsCallbackUrl()

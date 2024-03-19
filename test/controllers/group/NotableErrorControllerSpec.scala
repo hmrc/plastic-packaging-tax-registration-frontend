@@ -58,8 +58,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     new NotableErrorController(
       authenticate = FakeBasicAuthAction,
       mcc = mcc,
-      nominatedOrganisationAlreadyRegisteredPage =
-        nominatedOrganisationAlreadyRegisteredPage,
+      nominatedOrganisationAlreadyRegisteredPage = nominatedOrganisationAlreadyRegisteredPage,
       organisationAlreadyInGroupPage = organisationAlreadyInGroupPage,
       groupMemberAlreadyRegisteredPage = groupMemberAlreadyRegisteredPage,
       getRegistration = FakeGetRegAction
@@ -67,9 +66,15 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(nominatedOrganisationAlreadyRegisteredPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error nominated organisation already been registered"))
-    when(organisationAlreadyInGroupPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("error organisation already in group"))
-    when(groupMemberAlreadyRegisteredPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("error group member already registered"))
+    when(nominatedOrganisationAlreadyRegisteredPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error nominated organisation already been registered")
+    )
+    when(organisationAlreadyInGroupPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("error organisation already in group")
+    )
+    when(groupMemberAlreadyRegisteredPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("error group member already registered")
+    )
 
   }
 
@@ -90,7 +95,9 @@ class NotableErrorControllerSpec extends ControllerSpec {
     "present organisation already in group page" when {
       "registration has group error" in {
 
-        val registration = aRegistration(withGroupDetail(Some(GroupDetail(groupError = Some(GroupError(MEMBER_IN_GROUP, "Member Name"))))))
+        val registration = aRegistration(
+          withGroupDetail(Some(GroupDetail(groupError = Some(GroupError(MEMBER_IN_GROUP, "Member Name")))))
+        )
         spyJourneyAction.setReg(registration)
 
         val resp = controller.organisationAlreadyInGroup()(FakeRequest())
@@ -116,7 +123,9 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present group member already been registered page" in {
 
-      val registration = aRegistration(withGroupDetail(Some(GroupDetail(groupError = Some(GroupError(MEMBER_IS_ALREADY_REGISTERED, "Member Name"))))))
+      val registration = aRegistration(
+        withGroupDetail(Some(GroupDetail(groupError = Some(GroupError(MEMBER_IS_ALREADY_REGISTERED, "Member Name")))))
+      )
       spyJourneyAction.setReg(registration)
 
       val resp = controller.groupMemberAlreadyRegistered()(FakeRequest())

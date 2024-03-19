@@ -29,8 +29,14 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
   private val page       = inject[email_address_passcode_page]
   private val updateCall = Call("GET", "/update")
 
-  private def createView(form: Form[EmailAddressPasscode] = EmailAddressPasscode.form(), emailAddress: String = "test@test.com"): Document =
-    page(form, Some(emailAddress), updateCall, Some("primaryContactDetails.sectionHeader"))(registrationJourneyRequest, messages)
+  private def createView(
+    form: Form[EmailAddressPasscode] = EmailAddressPasscode.form(),
+    emailAddress: String = "test@test.com"
+  ): Document =
+    page(form, Some(emailAddress), updateCall, Some("primaryContactDetails.sectionHeader"))(
+      registrationJourneyRequest,
+      messages
+    )
 
   "Email Address Passcode View" should {
 
@@ -60,17 +66,23 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
     "display hint" in {
 
-      view.getElementById("value-hint").text() must include(messages("primaryContactDetails.emailAddress.passcode.hint"))
+      view.getElementById("value-hint").text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.hint")
+      )
     }
 
     "display email address passcode label" in {
 
-      view.getElementsByAttributeValueMatching("for", "value").text() must include(messages("primaryContactDetails.emailAddress.passcode.label"))
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.label")
+      )
     }
 
     "display email address passcode question" in {
 
-      view.getElementsByClass("govuk-heading-l").text() must include(messages("primaryContactDetails.emailAddress.passcode.title"))
+      view.getElementsByClass("govuk-heading-l").text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.title")
+      )
     }
 
     "display email address passcode detail" in {
@@ -83,7 +95,9 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
     "display email address passcode summary detail" in {
       val summaryDetails = view.getElementsByClass("govuk-body")
       summaryDetails.get(1).text() mustBe messages("primaryContactDetails.emailAddress.passcode.summary.detail")
-      summaryDetails.get(2).text() must include(messages("primaryContactDetails.emailAddress.passcode.summary.detail.2", "provide a different email address"))
+      summaryDetails.get(2).text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.summary.detail.2", "provide a different email address")
+      )
     }
 
     "display email address passcode input box" in {
@@ -122,7 +136,10 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Enter the code that was sent by email to confirm the email address. For example PGYHNB")
+      view must haveGovukFieldError(
+        "value",
+        "Enter the code that was sent by email to confirm the email address. For example PGYHNB"
+      )
     }
 
     "email address passcode invalid" in {
@@ -133,13 +150,23 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Confirmation code is incorrect. Enter the code that was sent by email to confirm the email address. For example PGYHNB")
+      view must haveGovukFieldError(
+        "value",
+        "Confirmation code is incorrect. Enter the code that was sent by email to confirm the email address. For example PGYHNB"
+      )
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
     page.f(EmailAddressPasscode.form(), Some("test@test.com"), updateCall, None)(request, messages)
-    page.render(EmailAddressPasscode.form(), Some("test@test.com"), updateCall, Some("primaryContactDetails.sectionHeader"), request, messages)
+    page.render(
+      EmailAddressPasscode.form(),
+      Some("test@test.com"),
+      updateCall,
+      Some("primaryContactDetails.sectionHeader"),
+      request,
+      messages
+    )
   }
 
 }

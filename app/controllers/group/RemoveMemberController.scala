@@ -38,7 +38,11 @@ class RemoveMemberController @Inject() (
   mcc: MessagesControllerComponents,
   page: remove_group_member_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with RemoveMemberAction with Logging {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport
+    with RemoveMemberAction
+    with Logging {
 
   def displayPage(groupMemberId: String): Action[AnyContent] =
     journeyAction.register { implicit request: JourneyRequest[AnyContent] =>
@@ -57,7 +61,8 @@ class RemoveMemberController @Inject() (
           RemoveMember.form()
             .bindFromRequest()
             .fold(
-              (formWithErrors: Form[RemoveMember]) => Future.successful(BadRequest(page(formWithErrors, groupMemberName, groupMemberId))),
+              (formWithErrors: Form[RemoveMember]) =>
+                Future.successful(BadRequest(page(formWithErrors, groupMemberName, groupMemberId))),
               removeMember =>
                 removeMember.value match {
                   case Some(true) =>
@@ -65,7 +70,10 @@ class RemoveMemberController @Inject() (
                       case Right(_) =>
                         Redirect(routes.OrganisationListController.displayPage())
                       case Left(error) =>
-                        logger.warn(s"Failed to remove group member [$groupMemberName] with id [$groupMemberId] - ${error.getMessage}", error)
+                        logger.warn(
+                          s"Failed to remove group member [$groupMemberName] with id [$groupMemberId] - ${error.getMessage}",
+                          error
+                        )
                         Redirect(routes.OrganisationListController.displayPage())
                     }
                   case _ =>
@@ -81,7 +89,9 @@ class RemoveMemberController @Inject() (
       .flatMap(_.members.find(_.id == groupMemberId))
       .flatMap(_.organisationDetails.map(_.organisationName))
 
-  private def removeGroupMember(groupMemberId: String)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def removeGroupMember(
+    groupMemberId: String
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       doRemoveMemberAction(registration, groupMemberId)
     }

@@ -29,12 +29,19 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val groupRegistration = aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))))
+  private val groupRegistration = aRegistration(
+    withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember))))
+  )
 
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new ContactDetailsConfirmAddressController(journeyAction = spyJourneyAction, addressCaptureService = mockAddressCaptureService, mcc = mcc, mockNewRegistrationUpdater)
+    new ContactDetailsConfirmAddressController(
+      journeyAction = spyJourneyAction,
+      addressCaptureService = mockAddressCaptureService,
+      mcc = mcc,
+      mockNewRegistrationUpdater
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -52,10 +59,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
       "registered business address is not present" in {
         val expectedAddressCaptureConfig =
           AddressCaptureConfig(
-            backLink =
-              routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url,
-            successLink =
-              routes.ContactDetailsConfirmAddressController.addressCaptureCallback(groupMember.id).url,
+            backLink = routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url,
+            successLink = routes.ContactDetailsConfirmAddressController.addressCaptureCallback(groupMember.id).url,
             alfHeadingsPrefix = "addressLookup.partner",
             pptHeadingKey = "addressCapture.contact.heading",
             entityName = Some(groupMember.businessName),
@@ -72,12 +77,16 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
     "obtain address from address capture and update registration and redirect to organisation list" when {
       "control is returned from address capture" in {
-        spyJourneyAction.setReg(aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))))
+        spyJourneyAction.setReg(
+          aRegistration(withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember)))))
+        )
         simulateValidAddressCapture()
 
         val resp = controller.addressCaptureCallback(groupMember.id)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url)
+        redirectLocation(resp) mustBe Some(
+          groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url
+        )
 
         modifiedRegistration.lastMember.get.contactDetails.get.address mustBe Some(validCapturedAddress)
       }

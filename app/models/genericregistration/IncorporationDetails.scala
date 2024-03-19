@@ -18,7 +18,11 @@ package models.genericregistration
 
 import play.api.libs.json._
 
-case class GrsCompanyProfile(companyNumber: String, companyName: String, unsanitisedCHROAddress: IncorporationAddressDetails)
+case class GrsCompanyProfile(
+  companyNumber: String,
+  companyName: String,
+  unsanitisedCHROAddress: IncorporationAddressDetails
+)
 
 object GrsCompanyProfile {
   implicit val format: OFormat[GrsCompanyProfile] = Json.format[GrsCompanyProfile]
@@ -61,16 +65,12 @@ object IncorporationDetails {
       grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
       Some(
         RegistrationDetails(
-          identifiersMatch =
-            grsIncorporationDetails.identifiersMatch,
-          verificationStatus =
-            grsIncorporationDetails.businessVerification.map { bv =>
-              bv.verificationStatus
-            },
-          registrationStatus =
-            grsIncorporationDetails.registration.registrationStatus,
-          registeredBusinessPartnerId =
-            grsIncorporationDetails.registration.registeredBusinessPartnerId
+          identifiersMatch = grsIncorporationDetails.identifiersMatch,
+          verificationStatus = grsIncorporationDetails.businessVerification.map { bv =>
+            bv.verificationStatus
+          },
+          registrationStatus = grsIncorporationDetails.registration.registrationStatus,
+          registeredBusinessPartnerId = grsIncorporationDetails.registration.registeredBusinessPartnerId
         )
       )
     )

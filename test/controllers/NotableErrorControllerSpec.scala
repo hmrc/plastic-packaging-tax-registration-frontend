@@ -74,8 +74,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
     when(enrolmentFailurePage.apply()(any(), any(), any())).thenReturn(HtmlFormat.raw("error no save page content"))
     when(grsFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("grs failure content"))
-    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error business verification failed content"))
-    when(soleTraderVerificationFailedPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error sole trader verification failed content"))
+    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error business verification failed content")
+    )
+    when(soleTraderVerificationFailedPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error sole trader verification failed content")
+    )
     when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("duplicate subscription content"))
   }
 

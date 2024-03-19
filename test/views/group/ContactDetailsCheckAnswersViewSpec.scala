@@ -88,15 +88,18 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           groupMember.contactDetails.get.phoneNumber.get,
           Some(routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url)
         ),
-        (messages("contactDetails.member.check.contact.address"), extractAddress(groupMember.contactDetails.get.address.get), None)
+        (
+          messages("contactDetails.member.check.contact.address"),
+          extractAddress(groupMember.contactDetails.get.address.get),
+          None
+        )
       )
 
-      expectedContent.zipWithIndex.foreach {
-        case (expectedContent, idx) =>
-          rowDetails.get(idx).text() must include(expectedContent._1)
-          rowDetails.get(idx).text() must include(expectedContent._2)
-          if (expectedContent._3.isDefined)
-            rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
+      expectedContent.zipWithIndex.foreach { case (expectedContent, idx) =>
+        rowDetails.get(idx).text() must include(expectedContent._1)
+        rowDetails.get(idx).text() must include(expectedContent._2)
+        if (expectedContent._3.isDefined)
+          rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
       }
     }
 

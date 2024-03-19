@@ -33,9 +33,14 @@ abstract class PartnerContactAddressControllerBase(
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  protected def doDisplayPage(partnerId: Option[String], backLink: Call, captureAddressCallback: Call): Action[AnyContent] =
+  protected def doDisplayPage(
+    partnerId: Option[String],
+    backLink: Call,
+    captureAddressCallback: Call
+  ): Action[AnyContent] =
     journeyAction.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
@@ -52,29 +57,27 @@ abstract class PartnerContactAddressControllerBase(
 
   protected def onAddressCaptureCallback(partnerId: Option[String], successfulRedirect: Call): Action[AnyContent] =
     journeyAction.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          registrationUpdater.updateRegistration { registration =>
-            update(partnerId, capturedAddress)(registration)
-          }.map {
-            _ =>
-              Redirect(successfulRedirect)
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        registrationUpdater.updateRegistration { registration =>
+          update(partnerId, capturedAddress)(registration)
+        }.map { _ =>
+          Redirect(successfulRedirect)
+        }
       }
     }
 
-  private def update(partnerId: Option[String], address: Option[Address])(implicit registration: Registration): Registration =
+  private def update(partnerId: Option[String], address: Option[Address])(implicit
+    registration: Registration
+  ): Registration =
     partnerId match {
       case Some(partnerId) =>
         registration.withUpdatedPartner(
           partnerId,
-          partner =>
-            partner.copy(contactDetails =
-              partner.contactDetails.map(_.copy(address = address))
-            )
+          partner => partner.copy(contactDetails = partner.contactDetails.map(_.copy(address = address)))
         )
       case _ =>
-        val updatedInflightPartner = registration.withInflightPartner(registration.inflightPartner.map(_.withContactAddress(address)))
+        val updatedInflightPartner =
+          registration.withInflightPartner(registration.inflightPartner.map(_.withContactAddress(address)))
         updatedInflightPartner.withPromotedInflightPartner()
     }
 

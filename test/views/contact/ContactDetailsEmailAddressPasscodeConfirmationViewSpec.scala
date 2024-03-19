@@ -29,7 +29,10 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   "Email Address Passcode Confirmation View" should {
 
-    val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(request = registrationJourneyRequest, messages = messages)
+    val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
+      request = registrationJourneyRequest,
+      messages = messages
+    )
 
     "contain timeout dialog function" in {
 
@@ -39,7 +42,9 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
     "display title" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
+      view.select("title").text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.confirmation.title")
+      )
     }
 
     "display header" in {

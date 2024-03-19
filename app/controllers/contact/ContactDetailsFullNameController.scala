@@ -37,7 +37,9 @@ class ContactDetailsFullNameController @Inject() (
   mcc: MessagesControllerComponents,
   page: full_name_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -66,7 +68,9 @@ class ContactDetailsFullNameController @Inject() (
   private def buildPage(form: Form[FullName])(implicit request: JourneyRequest[AnyContent]) =
     page(form, routes.ContactDetailsFullNameController.submit(), request.registration.isGroup)
 
-  private def updateRegistration(formData: FullName)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    formData: FullName
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedPrimaryContactDetails =
         registration.primaryContactDetails.copy(name = Some(formData.value))

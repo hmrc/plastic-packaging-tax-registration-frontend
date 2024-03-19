@@ -77,15 +77,11 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with Sc
       sautr = "1234567890",
       postcode = "AA1 1AA",
       identifiersMatch = true,
-      businessVerification =
-        Some(GrsBusinessVerification("PASS")),
-      registration =
-        GrsRegistration(
-          registrationStatus =
-            "REGISTERED",
-          registeredBusinessPartnerId =
-            Some("123")
-        ),
+      businessVerification = Some(GrsBusinessVerification("PASS")),
+      registration = GrsRegistration(
+        registrationStatus = "REGISTERED",
+        registeredBusinessPartnerId = Some("123")
+      ),
       companyProfile = None
     )
 
@@ -127,7 +123,10 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with Sc
         )
     )
 
-  private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId: String, grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails) =
+  private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
+    journeyId: String,
+    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
+  ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(

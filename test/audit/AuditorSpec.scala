@@ -65,7 +65,8 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     "post group registration event" when {
       "registrationSubmitted invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
-        val registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)), withRegistrationType(Some(RegType.GROUP)))
+        val registration =
+          aRegistration(withGroupDetail(Some(groupDetailsWithMembers)), withRegistrationType(Some(RegType.GROUP)))
 
         auditor.registrationSubmitted(registration, None, Some("123456"))
 
@@ -169,7 +170,9 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     try {
       verify(
         postRequestedFor(urlEqualTo(url))
-          .withRequestBody(equalToJson(s"""{
+          .withRequestBody(
+            equalToJson(
+              s"""{
                |                  "auditSource": "plastic-packaging-tax-registration-frontend",
                |                  "auditType": "$eventType",
                |                  "eventId": "$${json-unit.any-string}",
@@ -185,7 +188,11 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
                |                  "detail": $body,
                |                  "generatedAt": "$${json-unit.any-string}"
                |                  }
-               |                }""".stripMargin, true, true))
+               |                }""".stripMargin,
+              true,
+              true
+            )
+          )
       )
       true
     } catch {

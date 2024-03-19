@@ -35,7 +35,9 @@ class PartnerListController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_list_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -47,7 +49,8 @@ class PartnerListController @Inject() (
       AddPartner.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[AddPartner]) => BadRequest(page(formWithErrors, getNominatedPartner(request), getOtherPartners(request))),
+          (formWithErrors: Form[AddPartner]) =>
+            BadRequest(page(formWithErrors, getNominatedPartner(request), getOtherPartners(request))),
           addPartner =>
             addPartner.answer match {
               case Some(true) =>

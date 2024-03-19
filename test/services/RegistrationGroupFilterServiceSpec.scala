@@ -23,7 +23,7 @@ import spec.PptTestData
 import forms.organisation.OrgType.UK_COMPANY
 import models.genericregistration.IncorporationDetails
 import models.registration.group.GroupMember
-import models.registration.{GroupDetail, Registration, OrganisationDetails => RegOrgDetails}
+import models.registration.{GroupDetail, OrganisationDetails => RegOrgDetails, Registration}
 import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
 class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with MockitoSugar {
@@ -67,17 +67,15 @@ class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with 
       withOrganisationDetails(
         RegOrgDetails(
           organisationType = Some(UK_COMPANY),
-          incorporationDetails =
-            Some(
-              IncorporationDetails(
-                companyNumber = "123456",
-                companyName = "NewPlastics",
-                ctutr = Some("1890894"),
-                companyAddress = testCompanyAddress,
-                registration =
-                  Some(registrationDetails)
-              )
-            ),
+          incorporationDetails = Some(
+            IncorporationDetails(
+              companyNumber = "123456",
+              companyName = "NewPlastics",
+              ctutr = Some("1890894"),
+              companyAddress = testCompanyAddress,
+              registration = Some(registrationDetails)
+            )
+          ),
           subscriptionStatus = Some(NOT_SUBSCRIBED)
         )
       ),
@@ -85,8 +83,6 @@ class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with 
     )
 
   def createExpectedResultFrom(reg: Registration, members: GroupMember*): Registration =
-    reg.copy(groupDetail =
-      Some(GroupDetail(membersUnderGroupControl = Some(true), members = members))
-    )
+    reg.copy(groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true), members = members)))
 
 }

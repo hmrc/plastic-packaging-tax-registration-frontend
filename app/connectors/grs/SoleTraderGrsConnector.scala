@@ -25,8 +25,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SoleTraderGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
-    extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
+class SoleTraderGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
+) extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
       httpClient,
       metrics,
       Some(config.soleTraderJourneyInitUrl),

@@ -41,17 +41,19 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   appConfig: AppConfig,
   page: check_liability_details_answers_page
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(
-        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
-        isLiableAction = (startDate, _) => {
-          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate))))
-        }
+        notLiableAction =
+          throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction =
+          (startDate, _) => Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate))))
       )
     }
 
@@ -60,16 +62,18 @@ class CheckLiabilityDetailsAnswersController @Inject() (
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(
-        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
-        isLiableAction = (taxStartDate, _) => {
+        notLiableAction =
+          throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction = (taxStartDate, _) =>
           updateRegistration(taxStartDate).map { _ =>
             Redirect(commonRoutes.TaskListController.displayPage())
           }
-        }
       )
     }
 
-  private def updateRegistration(startDate: LocalDate)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    startDate: LocalDate
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails = updateLiability(startDate))
     }

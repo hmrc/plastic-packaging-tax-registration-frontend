@@ -38,7 +38,9 @@ class ExpectToExceedThresholdWeightController @Inject() (
   page: expect_to_exceed_threshold_weight_page,
   form: ExpectToExceedThresholdWeight
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -69,7 +71,9 @@ class ExpectToExceedThresholdWeightController @Inject() (
     else
       Redirect(controllers.liability.routes.ExceededThresholdWeightController.displayPage)
 
-  private def updateRegistration(expectToExceedThresholdWeight: Boolean)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    expectToExceedThresholdWeight: Boolean
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
         registration.liabilityDetails.copy(

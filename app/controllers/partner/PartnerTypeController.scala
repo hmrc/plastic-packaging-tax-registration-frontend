@@ -44,7 +44,10 @@ class PartnerTypeController @Inject() (
     doDisplayPage(submitCall = routes.PartnerTypeController.submitNewPartner())
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    doDisplayPage(partnerId = Some(partnerId), submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId))
+    doDisplayPage(
+      partnerId = Some(partnerId),
+      submitCall = routes.PartnerTypeController.submitExistingPartner(partnerId)
+    )
 
   def submitNewPartner(): Action[AnyContent] =
     doSubmit(submitCall = routes.PartnerTypeController.submitNewPartner())

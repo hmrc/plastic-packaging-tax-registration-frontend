@@ -39,7 +39,12 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
+    new ContactDetailsTelephoneNumberController(
+      journeyAction = spyJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -111,7 +116,9 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
       "data exist" in {
 
-        spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(phoneNumber = Some("077123")))))
+        spyJourneyAction.setReg(
+          aRegistration(withPrimaryContactDetails(PrimaryContactDetails(phoneNumber = Some("077123"))))
+        )
 
         await(controller.displayPage()(FakeRequest()))
 

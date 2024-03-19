@@ -25,7 +25,9 @@ import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerificationConnector)(implicit ec: ExecutionContext) {
+class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerificationConnector)(implicit
+  ec: ExecutionContext
+) {
 
   def getStatus(credId: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] =
     emailVerificationConnector.getStatus(credId)
@@ -42,7 +44,9 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
       case Left(ex) => throw ex
     }
 
-  def sendVerificationCode(email: String, credId: String, continueUrl: String)(implicit hc: HeaderCarrier): Future[String] =
+  def sendVerificationCode(email: String, credId: String, continueUrl: String)(implicit
+    hc: HeaderCarrier
+  ): Future[String] =
     emailVerificationConnector.create(
       CreateEmailVerificationRequest(
         credId = credId,
@@ -59,7 +63,9 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
       case Left(ex)    => throw ex
     }
 
-  def checkVerificationCode(code: String, email: String, journeyId: String)(implicit hc: HeaderCarrier): Future[EmailVerificationJourneyStatus.Value] =
+  def checkVerificationCode(code: String, email: String, journeyId: String)(implicit
+    hc: HeaderCarrier
+  ): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationConnector.verifyPasscode(journeyId, VerifyPasscodeRequest(code, email)).map {
       case Right(verificationStatus) => verificationStatus
       case Left(ex)                  => throw ex

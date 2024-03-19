@@ -36,7 +36,9 @@ class ContactDetailsAddressController @Inject() (
   addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
@@ -56,17 +58,18 @@ class ContactDetailsAddressController @Inject() (
 
   def update: Action[AnyContent] =
     journeyAction.register.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          updateRegistration(capturedAddress).map {
-            case Right(_) =>
-              Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-            case Left(error) => throw error
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        updateRegistration(capturedAddress).map {
+          case Right(_) =>
+            Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+          case Left(error) => throw error
+        }
       }
     }
 
-  private def updateRegistration(formData: Option[Address])(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    formData: Option[Address]
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(primaryContactDetails = updateAddress(formData, registration))
     }

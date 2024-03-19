@@ -34,7 +34,8 @@ abstract class PartnerContactNameControllerBase(
   page: partner_member_name_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -46,7 +47,9 @@ abstract class PartnerContactNameControllerBase(
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result = {
+  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result = {
     val existingNameFields = for {
       contactDetails <- partner.contactDetails
       firstName      <- contactDetails.firstName
@@ -84,20 +87,30 @@ abstract class PartnerContactNameControllerBase(
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
 
-  private def handleSubmission(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call, onwardsCall: Call, updateAction: MemberName => Future[Registration])(
-    implicit request: JourneyRequest[AnyContent]
+  private def handleSubmission(
+    partner: Partner,
+    isNominated: Boolean,
+    backCall: Call,
+    submitCall: Call,
+    onwardsCall: Call,
+    updateAction: MemberName => Future[Registration]
+  )(implicit
+    request: JourneyRequest[AnyContent]
   ): Future[Result] =
     MemberName.form()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, submitCall))),
+        (formWithErrors: Form[MemberName]) =>
+          Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, submitCall))),
         fullName =>
           updateAction(fullName).map { _ =>
             Redirect(onwardsCall)
           }
       )
 
-  private def updateInflightPartner(formData: MemberName)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateInflightPartner(
+    formData: MemberName
+  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.inflightPartner.map { partner =>
         val updateContactDetails: PartnerContactDetails = partner.contactDetails match {
@@ -106,16 +119,16 @@ abstract class PartnerContactNameControllerBase(
           case None =>
             PartnerContactDetails(firstName = Some(formData.firstName), lastName = Some(formData.lastName))
         }
-        val withContactName = partner.copy(contactDetails =
-          Some(updateContactDetails)
-        )
+        val withContactName = partner.copy(contactDetails = Some(updateContactDetails))
         registration.withInflightPartner(Some(withContactName))
       }.getOrElse {
         registration
       }
     }
 
-  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.withUpdatedPartner(
         partnerId,

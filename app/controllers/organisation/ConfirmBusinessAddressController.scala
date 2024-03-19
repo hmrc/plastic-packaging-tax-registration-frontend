@@ -42,7 +42,9 @@ class ConfirmBusinessAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_business_address
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
@@ -78,8 +80,7 @@ class ConfirmBusinessAddressController @Inject() (
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.ConfirmBusinessAddressController.displayPage().url,
-        successLink =
-          routes.ConfirmBusinessAddressController.addressCaptureCallback().url,
+        successLink = routes.ConfirmBusinessAddressController.addressCaptureCallback().url,
         alfHeadingsPrefix = "addressLookup.business",
         entityName = request.registration.organisationDetails.businessName,
         pptHeadingKey = "addressCapture.business.heading",
@@ -99,15 +100,12 @@ class ConfirmBusinessAddressController @Inject() (
 
   def addressCaptureCallback(): Action[AnyContent] =
     journeyAction.register.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          update { reg =>
-            reg.copy(organisationDetails =
-              reg.organisationDetails.copy(businessRegisteredAddress = capturedAddress)
-            )
-          }.map { _ =>
-            Redirect(commonRoutes.TaskListController.displayPage())
-          }
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        update { reg =>
+          reg.copy(organisationDetails = reg.organisationDetails.copy(businessRegisteredAddress = capturedAddress))
+        }.map { _ =>
+          Redirect(commonRoutes.TaskListController.displayPage())
+        }
       }
     }
 

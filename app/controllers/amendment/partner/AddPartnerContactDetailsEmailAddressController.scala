@@ -39,10 +39,19 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   registrationUpdateService: AmendRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
-    extends PartnerEmailAddressControllerBase(journeyAction = journeyAction.amend, mcc = mcc, page = page, registrationUpdater = registrationUpdateService) {
+    extends PartnerEmailAddressControllerBase(
+      journeyAction = journeyAction.amend,
+      mcc = mcc,
+      page = page,
+      registrationUpdater = registrationUpdateService
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplay(None, routes.AddPartnerContactDetailsNameController.displayPage, routes.AddPartnerContactDetailsEmailAddressController.submit())
+    doDisplay(
+      None,
+      routes.AddPartnerContactDetailsNameController.displayPage,
+      routes.AddPartnerContactDetailsEmailAddressController.submit()
+    )
 
   def submit(): Action[AnyContent] =
     doSubmit(
@@ -81,9 +90,8 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
       val prospectiveEmail = getProspectiveEmail()
       isEmailVerified(prospectiveEmail).flatMap { isVerified =>
         if (isVerified)
-          registrationUpdater.updateRegistration(updatePartnersEmail(prospectiveEmail)).map {
-            _ =>
-              Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
+          registrationUpdater.updateRegistration(updatePartnersEmail(prospectiveEmail)).map { _ =>
+            Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
           }
         else
           Future.successful(Redirect(routes.AddPartnerContactDetailsEmailAddressController.displayPage()))
@@ -92,7 +100,10 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
 
   def confirmEmailUpdate(): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      showEmailVerifiedPage(routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode(), routes.AddPartnerContactDetailsEmailAddressController.confirmEmailUpdate())
+      showEmailVerifiedPage(
+        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode(),
+        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailUpdate()
+      )
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
@@ -100,9 +111,8 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
-  private def updatePartnersEmail(updatedEmail: String): Registration => Registration = {
-    registration: Registration =>
-      updateRegistrationWithPartnerEmail(registration, None, updatedEmail)
+  private def updatePartnersEmail(updatedEmail: String): Registration => Registration = { registration: Registration =>
+    updateRegistrationWithPartnerEmail(registration, None, updatedEmail)
   }
 
 }

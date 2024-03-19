@@ -35,7 +35,9 @@ abstract class PartnerEmailAddressControllerBase(
   page: partner_email_address_page,
   val registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with EmailVerificationActions {
+    extends FrontendController(mcc)
+    with I18nSupport
+    with EmailVerificationActions {
 
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     journeyAction { implicit request =>
@@ -46,7 +48,9 @@ abstract class PartnerEmailAddressControllerBase(
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit request: JourneyRequest[AnyContent]): Result =
+  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result =
     partner.contactDetails.map { contactDetails =>
       contactDetails.name.map { contactName =>
         val form = contactDetails.emailAddress match {
@@ -74,7 +78,16 @@ abstract class PartnerEmailAddressControllerBase(
       getPartner(partnerId).map { partner =>
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
 
-        handleSubmission(partner, isNominated, backCall, submitCall, onwardsCall, updateAction, emailVerificationContinueUrl, confirmEmailAddressCall)
+        handleSubmission(
+          partner,
+          isNominated,
+          backCall,
+          submitCall,
+          onwardsCall,
+          updateAction,
+          emailVerificationContinueUrl,
+          confirmEmailAddressCall
+        )
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
 
@@ -92,33 +105,39 @@ abstract class PartnerEmailAddressControllerBase(
       .bindFromRequest()
       .fold(
         (formWithErrors: Form[EmailAddress]) =>
-          partner.contactDetails.flatMap(_.name).map {
-            contactName =>
-              Future.successful(BadRequest(page(formWithErrors, submitCall, contactName, isNominated)))
+          partner.contactDetails.flatMap(_.name).map { contactName =>
+            Future.successful(BadRequest(page(formWithErrors, submitCall, contactName, isNominated)))
           }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner contact name missing"))),
         emailAddress =>
-          doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
-            isEmailVerificationRequired =>
-              if (!isEmailVerificationRequired)
-                updateAction(emailAddress).map(_ => Redirect(onwardCall))
-              else
-                promptForEmailVerificationCode(request, emailAddress, emailVerificationContinueUrl, confirmEmailAddressCall)
+          doesPartnerEmailRequireVerification(partner, emailAddress).flatMap { isEmailVerificationRequired =>
+            if (!isEmailVerificationRequired)
+              updateAction(emailAddress).map(_ => Redirect(onwardCall))
+            else
+              promptForEmailVerificationCode(
+                request,
+                emailAddress,
+                emailVerificationContinueUrl,
+                confirmEmailAddressCall
+              )
           }
       )
 
-  private def updateEmailAddress(existingPartnerId: Option[String], emailAddress: EmailAddress)(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateEmailAddress(existingPartnerId: Option[String], emailAddress: EmailAddress)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       updateRegistrationWithPartnerEmail(registration, existingPartnerId, emailAddress.value)
     }
 
-  protected def updateRegistrationWithPartnerEmail(registration: Registration, existingPartnerId: Option[String], emailAddress: String): Registration =
+  protected def updateRegistrationWithPartnerEmail(
+    registration: Registration,
+    existingPartnerId: Option[String],
+    emailAddress: String
+  ): Registration =
     existingPartnerId.map { partnerId =>
       registration.withUpdatedPartner(
         partnerId,
-        partner =>
-          partner.copy(contactDetails =
-            partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
-          )
+        partner => partner.copy(contactDetails = partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress))))
       )
     }.getOrElse {
       registration.inflightPartner.map { partner =>

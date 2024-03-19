@@ -33,7 +33,15 @@ class LiabilityLocalDateFormatterSpec extends PlaySpec with BeforeAndAfterEach {
   private val appConfig = mock[AppConfig]
 
   private val formatter =
-    new LiabilityLocalDateFormatter("emptyDateKey", "singleRequiredKey", "twoRequiredKey", "invalidKey", "dateOutOfRangeError", "isBeforeLiveDateError", appConfig)(message)
+    new LiabilityLocalDateFormatter(
+      "emptyDateKey",
+      "singleRequiredKey",
+      "twoRequiredKey",
+      "invalidKey",
+      "dateOutOfRangeError",
+      "isBeforeLiveDateError",
+      appConfig
+    )(message)
 
   override def beforeEach() = {
     super.beforeEach()
@@ -69,7 +77,14 @@ class LiabilityLocalDateFormatterSpec extends PlaySpec with BeforeAndAfterEach {
         when(message.apply(anyString(), any)).thenReturn("message")
         val date = LocalDate.now.plusMonths(1)
 
-        val result = formatter.bind("input", Map("input.day" -> date.getDayOfMonth.toString, "input.month" -> date.getMonthValue.toString, "input.year" -> date.getYear.toString))
+        val result = formatter.bind(
+          "input",
+          Map(
+            "input.day"   -> date.getDayOfMonth.toString,
+            "input.month" -> date.getMonthValue.toString,
+            "input.year"  -> date.getYear.toString
+          )
+        )
 
         result mustBe Left(Seq(FormError(s"input.day", "dateOutOfRangeError", Seq("message"))))
       }

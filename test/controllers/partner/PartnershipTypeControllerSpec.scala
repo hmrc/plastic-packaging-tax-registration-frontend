@@ -40,13 +40,10 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(
     journeyAction = spyJourneyAction,
     appConfig = config,
-    soleTraderGrsConnector =
-      mockSoleTraderGrsConnector,
+    soleTraderGrsConnector = mockSoleTraderGrsConnector,
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-    partnershipGrsConnector =
-      mockPartnershipGrsConnector,
-    registeredSocietyGrsConnector =
-      mockRegisteredSocietyGrsConnector,
+    partnershipGrsConnector = mockPartnershipGrsConnector,
+    registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
     registrationConnector = mockRegistrationConnector,
     mcc = mcc,
     page = page
@@ -84,7 +81,11 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
     "redirect to partnership GRS" when {
       forAll(
-        Seq((SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails), (LIMITED_PARTNERSHIP, limitedPartnershipDetails), (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails))
+        Seq(
+          (SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails),
+          (LIMITED_PARTNERSHIP, limitedPartnershipDetails),
+          (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails)
+        )
       ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
@@ -103,7 +104,9 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     }
 
     "capture partnership name" when {
-      forAll(Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails), (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails))) { partnershipDetails =>
+      forAll(
+        Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails), (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails))
+      ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
@@ -119,7 +122,15 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, LIMITED_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP)) { partnershipType =>
+    forAll(
+      Seq(
+        GENERAL_PARTNERSHIP,
+        SCOTTISH_PARTNERSHIP,
+        SCOTTISH_LIMITED_PARTNERSHIP,
+        LIMITED_PARTNERSHIP,
+        LIMITED_LIABILITY_PARTNERSHIP
+      )
+    ) { partnershipType =>
       s"update registration with $partnershipType type" in {
         val registration = aRegistration(withPartnershipDetails(None))
 
@@ -130,9 +141,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
 
         val expectedRegistration = registration.copy(organisationDetails =
-          registration.organisationDetails.copy(partnershipDetails =
-            Some(PartnershipDetails(partnershipType))
-          )
+          registration.organisationDetails.copy(partnershipDetails = Some(PartnershipDetails(partnershipType)))
         )
         verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
       }

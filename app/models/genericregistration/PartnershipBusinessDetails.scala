@@ -42,8 +42,12 @@ object GrsPartnershipBusinessDetails {
 
 }
 
-case class PartnershipBusinessDetails(sautr: String, postcode: String, companyProfile: Option[CompanyProfile], override val registration: Option[RegistrationDetails])
-    extends HasRegistrationDetails {
+case class PartnershipBusinessDetails(
+  sautr: String,
+  postcode: String,
+  companyProfile: Option[CompanyProfile],
+  override val registration: Option[RegistrationDetails]
+) extends HasRegistrationDetails {
 
   def companyName: Option[String] = companyProfile.map(_.companyName)
 
@@ -66,22 +70,15 @@ object PartnershipBusinessDetails {
     PartnershipBusinessDetails(
       sautr = grsPartnershipBusinessDetails.sautr,
       postcode = grsPartnershipBusinessDetails.postcode,
-      companyProfile = toCompanyProfile(grsCompanyProfile =
-        grsPartnershipBusinessDetails.companyProfile
-      ),
+      companyProfile = toCompanyProfile(grsCompanyProfile = grsPartnershipBusinessDetails.companyProfile),
       registration = Some(
         RegistrationDetails(
-          identifiersMatch =
-            grsPartnershipBusinessDetails.identifiersMatch,
-          verificationStatus =
-            grsPartnershipBusinessDetails.businessVerification.map {
-              bv =>
-                bv.verificationStatus
-            },
-          registrationStatus =
-            grsPartnershipBusinessDetails.registration.registrationStatus,
-          registeredBusinessPartnerId =
-            grsPartnershipBusinessDetails.registration.registeredBusinessPartnerId
+          identifiersMatch = grsPartnershipBusinessDetails.identifiersMatch,
+          verificationStatus = grsPartnershipBusinessDetails.businessVerification.map { bv =>
+            bv.verificationStatus
+          },
+          registrationStatus = grsPartnershipBusinessDetails.registration.registrationStatus,
+          registeredBusinessPartnerId = grsPartnershipBusinessDetails.registration.registeredBusinessPartnerId
         )
       )
     )
@@ -89,7 +86,13 @@ object PartnershipBusinessDetails {
   private def toCompanyProfile(grsCompanyProfile: Option[GrsCompanyProfile]): Option[CompanyProfile] =
     grsCompanyProfile match {
       case Some(profile) =>
-        Some(CompanyProfile(companyNumber = profile.companyNumber, companyName = profile.companyName, companyAddress = profile.unsanitisedCHROAddress))
+        Some(
+          CompanyProfile(
+            companyNumber = profile.companyNumber,
+            companyName = profile.companyName,
+            companyAddress = profile.unsanitisedCHROAddress
+          )
+        )
       case None => None
     }
 

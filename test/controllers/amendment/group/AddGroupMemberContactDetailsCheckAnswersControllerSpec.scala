@@ -37,7 +37,12 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
   when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Group Member CYA"))
 
   private val controller =
-    new AddGroupMemberContactDetailsCheckAnswersController(journeyAction = spyJourneyAction, mcc = mcc, page = cyaPage, amendRegistrationService = mockAmendRegService)
+    new AddGroupMemberContactDetailsCheckAnswersController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = cyaPage,
+      amendRegistrationService = mockAmendRegService
+    )
 
   private val groupRegistrationInAmendment: Registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 
@@ -100,7 +105,9 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
           val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          redirectLocation(resp) mustBe Some(
+            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
+          )
           verify(spyJourneyAction).amend
         }
         "update fails due to error returned from ETMP" in {
@@ -110,7 +117,9 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
           val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
+          redirectLocation(resp) mustBe Some(
+            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
+          )
           verify(spyJourneyAction).amend
         }
       }

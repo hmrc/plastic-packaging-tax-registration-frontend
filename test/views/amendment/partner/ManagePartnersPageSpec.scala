@@ -26,7 +26,9 @@ class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
 
   private val page: manage_partners_page = inject[manage_partners_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   private def createView(registration: Registration): Html =
     page(registration)(amendsJourneyRequest, messages)

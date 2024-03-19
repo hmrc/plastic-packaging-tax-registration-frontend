@@ -54,7 +54,9 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       view.select("title").text() must include(
         messages(
           "primaryContactDetails.phoneNumber.title",
-          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))
+          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
+            messages("primaryContactDetails.fullName.default")
+          )
         )
       )
     }
@@ -67,7 +69,9 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       "Group organisation" in {
         val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include("Representative member details")
-        view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.group.sectionHeader"))
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.group.sectionHeader")
+        )
 
       }
     }
@@ -81,7 +85,9 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
         messages(
           "contactDetails.member.phoneNumber.title",
-          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))
+          registrationJourneyRequest.registration.primaryContactDetails.name.getOrElse(
+            messages("primaryContactDetails.fullName.default")
+          )
         )
       )
     }

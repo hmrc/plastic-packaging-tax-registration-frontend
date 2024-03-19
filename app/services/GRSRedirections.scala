@@ -34,7 +34,10 @@ trait GRSRedirections extends I18nSupport {
   def partnershipGrsConnector: PartnershipGrsConnector
   def registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
 
-  def getUkCompanyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit request: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[String] =
+  def getUkCompanyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
+    request: JourneyRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[String] =
     ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(callbackUrl), grsUrl)
 
   def getPartnershipRedirectUrl(grsUrl: String, callbackUrl: String, businessVerification: Boolean = true)(implicit
@@ -53,7 +56,10 @@ trait GRSRedirections extends I18nSupport {
       grsUrl
     )
 
-  def getSoleTraderRedirectUrl(grsUrl: String, callbackUrl: String)(implicit request: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[String] =
+  def getSoleTraderRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
+    request: JourneyRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[String] =
     soleTraderGrsConnector.createJourney(
       SoleTraderGrsCreateRequest(
         callbackUrl,
@@ -66,7 +72,10 @@ trait GRSRedirections extends I18nSupport {
       grsUrl
     )
 
-  def getRegisteredSocietyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[String] =
+  def getRegisteredSocietyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
+    request: JourneyRequest[_],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
     registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest(callbackUrl), grsUrl)
 
   private def incorpEntityGrsCreateRequest(callbackUrl: String)(implicit request: JourneyRequest[_]) =
@@ -76,8 +85,7 @@ trait GRSRedirections extends I18nSupport {
       appConfig.serviceIdentifier,
       appConfig.signOutLink,
       appConfig.grsAccessibilityStatementPath,
-      businessVerificationCheck =
-        false
+      businessVerificationCheck = false
     )
 
 }

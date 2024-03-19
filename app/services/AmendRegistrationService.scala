@@ -26,7 +26,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendRegistrationService @Inject() (subscriptionsConnector: SubscriptionsConnector, registrationAmendmentRepository: RegistrationAmendmentRepository)(implicit
+class AmendRegistrationService @Inject() (
+  subscriptionsConnector: SubscriptionsConnector,
+  registrationAmendmentRepository: RegistrationAmendmentRepository
+)(implicit
   val executionContext: ExecutionContext
 ) {
 
@@ -34,7 +37,10 @@ class AmendRegistrationService @Inject() (subscriptionsConnector: SubscriptionsC
     updateFunction: Registration => Registration = identity
   )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse] =
     registrationAmendmentRepository.update(updateFunction)(request.authenticatedRequest).flatMap { registration =>
-      subscriptionsConnector.updateSubscription(request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")), registration)
+      subscriptionsConnector.updateSubscription(
+        request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")),
+        registration
+      )
     }
 
 }

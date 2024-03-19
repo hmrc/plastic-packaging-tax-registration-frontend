@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.test.Helpers.{await, OK}
+import play.api.test.Helpers.{OK, await}
 import play.api.test.Injecting
 import connectors.{DownstreamServiceError, ServiceError}
 

@@ -134,13 +134,30 @@ class CommonFormValidatorsSpec extends AnyWordSpec with Matchers with CommonForm
       }
     }
 
-    forAll(Seq("AA9A 9AA", "A9A 9AA", "A9 9AA", "A99 9AA", "AA99AA", "aa9a 9aa", "a9a 9aa", "a9 9aa", "a99 9aa", "aa9 9aa", "aa9a9aa", "a9a9aa", "a99aa", "a999aa", "aa99aa")) {
-      postcode =>
-        "return true for " + postcode when {
-          "valid" in {
-            isValidPostcode(postcode.toUpperCase) must be(true)
-          }
+    forAll(
+      Seq(
+        "AA9A 9AA",
+        "A9A 9AA",
+        "A9 9AA",
+        "A99 9AA",
+        "AA99AA",
+        "aa9a 9aa",
+        "a9a 9aa",
+        "a9 9aa",
+        "a99 9aa",
+        "aa9 9aa",
+        "aa9a9aa",
+        "a9a9aa",
+        "a99aa",
+        "a999aa",
+        "aa99aa"
+      )
+    ) { postcode =>
+      "return true for " + postcode when {
+        "valid" in {
+          isValidPostcode(postcode.toUpperCase) must be(true)
         }
+      }
     }
   }
 }

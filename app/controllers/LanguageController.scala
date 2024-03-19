@@ -23,8 +23,11 @@ import uk.gov.hmrc.play.language.LanguageUtils
 
 import javax.inject.Inject
 
-class LanguageController @Inject() (languageUtils: LanguageUtils, appConfig: AppConfig, cc: MessagesControllerComponents)
-    extends uk.gov.hmrc.play.language.LanguageController(languageUtils, cc) {
+class LanguageController @Inject() (
+  languageUtils: LanguageUtils,
+  appConfig: AppConfig,
+  cc: MessagesControllerComponents
+) extends uk.gov.hmrc.play.language.LanguageController(languageUtils, cc) {
 
   def enGb: Action[AnyContent] = switchToLanguage(language = "english")
 

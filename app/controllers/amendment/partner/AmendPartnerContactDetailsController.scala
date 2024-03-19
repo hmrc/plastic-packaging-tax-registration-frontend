@@ -49,15 +49,21 @@ class AmendPartnerContactDetailsController @Inject() (
   jobTitlePage: partner_job_title_page,
   addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendRegistrationService) with AddressLookupIntegration with EmailVerificationActions {
+    extends AmendmentController(mcc, amendRegistrationService)
+    with AddressLookupIntegration
+    with EmailVerificationActions {
 
   def contactName(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
       val form = MemberName.form().fill(
         MemberName(
-          firstName = partner.contactDetails.flatMap(_.firstName).getOrElse(throw new IllegalStateException("Partner first name absent")),
-          lastName = partner.contactDetails.flatMap(_.lastName).getOrElse(throw new IllegalStateException("Partner last name absent"))
+          firstName = partner.contactDetails.flatMap(_.firstName).getOrElse(
+            throw new IllegalStateException("Partner first name absent")
+          ),
+          lastName = partner.contactDetails.flatMap(_.lastName).getOrElse(
+            throw new IllegalStateException("Partner last name absent")
+          )
         )
       )
 
@@ -69,7 +75,10 @@ class AmendPartnerContactDetailsController @Inject() (
       MemberName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(buildContactNamePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
+          (formWithErrors: Form[MemberName]) =>
+            Future.successful(
+              BadRequest(buildContactNamePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))
+            ),
           partnerName =>
             updateRegistration(
               { registration: Registration =>
@@ -79,8 +88,7 @@ class AmendPartnerContactDetailsController @Inject() (
                     partner.copy(contactDetails =
                       partner.contactDetails.map(
                         _.copy(
-                          firstName =
-                            Some(partnerName.firstName),
+                          firstName = Some(partnerName.firstName),
                           lastName = Some(partnerName.lastName)
                         )
                       )
@@ -92,19 +100,24 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildContactNamePage(form: Form[MemberName], partner: Partner, isNominated: Boolean)(implicit request: Request[_]) =
+  private def buildContactNamePage(form: Form[MemberName], partner: Partner, isNominated: Boolean)(implicit
+    request: Request[_]
+  ) =
     contactNamePage(
       form = form,
       partnershipName = partner.name,
       isNominated,
-      updateCall =
-        routes.AmendPartnerContactDetailsController.updateContactName(partner.id)
+      updateCall = routes.AmendPartnerContactDetailsController.updateContactName(partner.id)
     )
 
   def emailAddress(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
       val form = EmailAddress.form().fill(
-        EmailAddress(getPartner(partnerId).contactDetails.flatMap(_.emailAddress).getOrElse(throw new IllegalStateException("Partner email address absent")))
+        EmailAddress(
+          getPartner(partnerId).contactDetails.flatMap(_.emailAddress).getOrElse(
+            throw new IllegalStateException("Partner email address absent")
+          )
+        )
       )
       Ok(buildContactEmailPage(form, getPartner(partnerId), isNominated(partnerId)))
     }
@@ -115,24 +128,29 @@ class AmendPartnerContactDetailsController @Inject() (
       EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[EmailAddress]) => Future.successful(BadRequest(buildContactEmailPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
+          (formWithErrors: Form[EmailAddress]) =>
+            Future.successful(
+              BadRequest(buildContactEmailPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))
+            ),
           emailAddress =>
-            doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
-              isEmailVerificationRequired =>
-                if (!isEmailVerificationRequired)
-                  updateRegistration(
-                    { registration: Registration =>
-                      registration.withUpdatedPartner(partnerId, partner => applyEmailAddressTo(partner, emailAddress.value))
-                    },
-                    successfulRedirect(partnerId)
-                  )
-                else
-                  promptForEmailVerificationCode(
-                    request,
-                    emailAddress,
-                    routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
-                    routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id)
-                  )
+            doesPartnerEmailRequireVerification(partner, emailAddress).flatMap { isEmailVerificationRequired =>
+              if (!isEmailVerificationRequired)
+                updateRegistration(
+                  { registration: Registration =>
+                    registration.withUpdatedPartner(
+                      partnerId,
+                      partner => applyEmailAddressTo(partner, emailAddress.value)
+                    )
+                  },
+                  successfulRedirect(partnerId)
+                )
+              else
+                promptForEmailVerificationCode(
+                  request,
+                  emailAddress,
+                  routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+                  routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id)
+                )
             }
         )
     }
@@ -166,7 +184,10 @@ class AmendPartnerContactDetailsController @Inject() (
   def emailVerified(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
       val partner = getPartner(partnerId)
-      showEmailVerifiedPage(routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id), routes.AmendPartnerContactDetailsController.confirmEmailUpdate(partnerId))
+      showEmailVerifiedPage(
+        routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
+        routes.AmendPartnerContactDetailsController.confirmEmailUpdate(partnerId)
+      )
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
@@ -190,11 +211,12 @@ class AmendPartnerContactDetailsController @Inject() (
       }
     }
 
-  private def buildContactEmailPage(form: Form[EmailAddress], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+  private def buildContactEmailPage(form: Form[EmailAddress], partner: Partner, isNominated: Boolean)(implicit
+    request: JourneyRequest[_]
+  ) =
     contactEmailPage(
       form = form,
-      updateCall =
-        routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
+      updateCall = routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
       contactName = partner.name,
       isNominated
     )
@@ -202,7 +224,13 @@ class AmendPartnerContactDetailsController @Inject() (
   def phoneNumber(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
       val form =
-        PhoneNumber.form().fill(PhoneNumber(getPartner(partnerId).contactDetails.flatMap(_.phoneNumber).getOrElse(throw new IllegalStateException("Partner phone number absent"))))
+        PhoneNumber.form().fill(
+          PhoneNumber(
+            getPartner(partnerId).contactDetails.flatMap(_.phoneNumber).getOrElse(
+              throw new IllegalStateException("Partner phone number absent")
+            )
+          )
+        )
       Ok(buildContactPhoneNumberPage(form, getPartner(partnerId), isNominated(partnerId)))
     }
 
@@ -211,7 +239,10 @@ class AmendPartnerContactDetailsController @Inject() (
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[PhoneNumber]) => Future.successful(BadRequest(buildContactPhoneNumberPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
+          (formWithErrors: Form[PhoneNumber]) =>
+            Future.successful(
+              BadRequest(buildContactPhoneNumberPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))
+            ),
           phoneNumber =>
             updateRegistration(
               { registration: Registration =>
@@ -228,11 +259,12 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildContactPhoneNumberPage(form: Form[PhoneNumber], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+  private def buildContactPhoneNumberPage(form: Form[PhoneNumber], partner: Partner, isNominated: Boolean)(implicit
+    request: JourneyRequest[_]
+  ) =
     contactPhoneNumberPage(
       form = form,
-      updateCall =
-        routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
+      updateCall = routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
       contactName = partner.name,
       isNominated
     )
@@ -242,8 +274,7 @@ class AmendPartnerContactDetailsController @Inject() (
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
           backLink = routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId).url,
-          successLink =
-            routes.AmendPartnerContactDetailsController.updateAddress(partnerId).url,
+          successLink = routes.AmendPartnerContactDetailsController.updateAddress(partnerId).url,
           alfHeadingsPrefix = "addressLookup.partner",
           entityName = Some(getPartner(partnerId).name),
           pptHeadingKey = "addressCapture.contact.heading",
@@ -255,19 +286,15 @@ class AmendPartnerContactDetailsController @Inject() (
 
   def updateAddress(partnerId: String): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
-        capturedAddress =>
-          updateRegistration(
-            registration =>
-              registration.withUpdatedPartner(
-                partnerId,
-                partner =>
-                  partner.copy(contactDetails =
-                    partner.contactDetails.map(_.copy(address = capturedAddress))
-                  )
-              ),
-            successfulRedirect(partnerId)
-          )
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap { capturedAddress =>
+        updateRegistration(
+          registration =>
+            registration.withUpdatedPartner(
+              partnerId,
+              partner => partner.copy(contactDetails = partner.contactDetails.map(_.copy(address = capturedAddress)))
+            ),
+          successfulRedirect(partnerId)
+        )
       }
     }
 
@@ -276,7 +303,9 @@ class AmendPartnerContactDetailsController @Inject() (
       val partner = getPartner(partnerId)
       val form = JobTitle.form().fill(
         JobTitle(value =
-          partner.contactDetails.flatMap(_.jobTitle).getOrElse(throw new IllegalStateException("Nominated Partner job title absent"))
+          partner.contactDetails.flatMap(_.jobTitle).getOrElse(
+            throw new IllegalStateException("Nominated Partner job title absent")
+          )
         )
       )
 
@@ -288,7 +317,10 @@ class AmendPartnerContactDetailsController @Inject() (
       JobTitle.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(buildJobTitlePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
+          (formWithErrors: Form[JobTitle]) =>
+            Future.successful(
+              BadRequest(buildJobTitlePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))
+            ),
           jobTitle =>
             updateRegistration(
               { registration: Registration =>
@@ -297,9 +329,7 @@ class AmendPartnerContactDetailsController @Inject() (
                   partner =>
                     partner.copy(contactDetails =
                       partner.contactDetails.map(
-                        _.copy(jobTitle =
-                          Some(jobTitle.value)
-                        )
+                        _.copy(jobTitle = Some(jobTitle.value))
                       )
                     )
                 )
@@ -309,12 +339,13 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildJobTitlePage(form: Form[JobTitle], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+  private def buildJobTitlePage(form: Form[JobTitle], partner: Partner, isNominated: Boolean)(implicit
+    request: JourneyRequest[_]
+  ) =
     jobTitlePage(
       form = form,
       contactName = partner.name,
-      updateCall =
-        routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
+      updateCall = routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )
 
   private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]): Partner =
@@ -328,8 +359,6 @@ class AmendPartnerContactDetailsController @Inject() (
     else routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
 
   private def applyEmailAddressTo(partner: Partner, emailAddress: String): Partner =
-    partner.copy(contactDetails =
-      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
-    )
+    partner.copy(contactDetails = partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress))))
 
 }

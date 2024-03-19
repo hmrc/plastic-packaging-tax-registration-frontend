@@ -49,8 +49,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       mcc = mcc,
       page = page,
       ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-      registeredSocietyGrsConnector =
-        mockRegisteredSocietyGrsConnector,
+      registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
       soleTraderGrsConnector = mockSoleTraderGrsConnector,
       appConfig = config,
       partnershipGrsConnector = mockPartnershipGrsConnector,
@@ -93,7 +92,17 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user is authorised and display page method for next group member" in {
 
         spyJourneyAction.setReg(
-          aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember), currentMemberOrganisationType = Some(UK_COMPANY)))))
+          aRegistration(
+            withGroupDetail(
+              Some(
+                GroupDetail(
+                  membersUnderGroupControl = Some(true),
+                  members = Seq(groupMember),
+                  currentMemberOrganisationType = Some(UK_COMPANY)
+                )
+              )
+            )
+          )
         )
         mockRegistrationUpdate()
         val result = controller.displayPageNewMember()(FakeRequest())
@@ -135,14 +144,20 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
-        assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION, organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url)
+        assertRedirectForOrgType(
+          CHARITABLE_INCORPORATED_ORGANISATION,
+          organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
+        )
       }
       "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
         mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
         assertRedirectForOrgType(OVERSEAS_COMPANY_UK_BRANCH, "http://test/redirect/overseas-uk-company")
       }
       "user submits organisation type: " + OVERSEAS_COMPANY_NO_UK_BRANCH in {
-        assertRedirectForOrgType(OVERSEAS_COMPANY_NO_UK_BRANCH, organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url)
+        assertRedirectForOrgType(
+          OVERSEAS_COMPANY_NO_UK_BRANCH,
+          organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
+        )
       }
     }
 

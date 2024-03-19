@@ -54,7 +54,9 @@ class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
       val mainContent = view.select("main").text()
       mainContent must include(messages("deregistration.confirmation.detail"))
       mainContent must include(messages("deregistration.confirmation.detail1"))
-      mainContent must include(messages("deregistration.confirmation.detail2", messages("deregistration.confirmation.detail2.link")))
+      mainContent must include(
+        messages("deregistration.confirmation.detail2", messages("deregistration.confirmation.detail2.link"))
+      )
 
       val mainContentLink = view.select("main a").get(0)
       mainContentLink must haveHref(appConfig.pptAccountUrl)

@@ -31,7 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @ImplementedBy(classOf[GetRegistrationForAmendmentActionImpl])
 trait GetRegistrationForAmendmentAction extends ActionTransformer[PPTEnrolledRequest, JourneyRequest]
 
-class GetRegistrationForAmendmentActionImpl @Inject() (subscriptionsConnector: SubscriptionsConnector, registrationAmendmentRepository: RegistrationAmendmentRepository)(implicit
+class GetRegistrationForAmendmentActionImpl @Inject() (
+  subscriptionsConnector: SubscriptionsConnector,
+  registrationAmendmentRepository: RegistrationAmendmentRepository
+)(implicit
   val executionContext: ExecutionContext
 ) extends GetRegistrationForAmendmentAction {
 

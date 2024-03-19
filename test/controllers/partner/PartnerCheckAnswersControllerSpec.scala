@@ -34,9 +34,16 @@ class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwait
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerCheckAnswersController(journeyAction = spyJourneyAction, registrationConnector = mockRegistrationConnector, mcc = mcc, page = page)
+    new PartnerCheckAnswersController(
+      journeyAction = spyJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page
+    )
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -61,14 +68,17 @@ class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwait
     }
 
     "show nominated partner detail" in {
-      val resp = controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest())
+      val resp =
+        controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
     }
     "show other partner detail" in {
       val firstPartnerId =
-        partnershipRegistration.organisationDetails.partnershipDetails.map(_.otherPartners.head.id).getOrElse(throw new IllegalStateException("Missing partner id"))
+        partnershipRegistration.organisationDetails.partnershipDetails.map(_.otherPartners.head.id).getOrElse(
+          throw new IllegalStateException("Missing partner id")
+        )
       val resp = controller.displayExistingPartner(firstPartnerId)(FakeRequest())
 
       status(resp) mustBe OK
@@ -86,7 +96,9 @@ class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwait
         spyJourneyAction.setReg(aRegistration())
 
         intercept[IllegalStateException] {
-          await(controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest()))
+          await(
+            controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest())
+          )
         }
       }
       "specific partner not found" in {

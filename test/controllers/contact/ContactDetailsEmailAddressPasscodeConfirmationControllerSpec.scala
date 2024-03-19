@@ -35,7 +35,11 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsEmailAddressPasscodeConfirmationController(journeyAction = spyJourneyAction, mcc = mcc, page = page)
+    new ContactDetailsEmailAddressPasscodeConfirmationController(
+      journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

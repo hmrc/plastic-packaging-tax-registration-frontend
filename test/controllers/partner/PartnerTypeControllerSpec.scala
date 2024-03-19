@@ -49,13 +49,14 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
     partnershipGrsConnector = mockPartnershipGrsConnector,
     registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
-    registrationUpdater =
-      mockNewRegistrationUpdater,
+    registrationUpdater = mockNewRegistrationUpdater,
     mcc = mcc,
     page = page
   )
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY)))))
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -73,7 +74,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
     "successfully return partnership partner type selection page" when {
       "no previous partnership partner type in registration" in {
-        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))))
+        val registration = aRegistration(
+          withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY)))))
+        )
 
         spyJourneyAction.setReg(registration)
 
@@ -83,7 +86,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
       }
 
       "previous partnership partner type in registration" in {
-        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))))
+        val registration = aRegistration(
+          withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY)))))
+        )
 
         spyJourneyAction.setReg(registration)
 
@@ -99,33 +104,23 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           Seq(
             (
               LIMITED_LIABILITY_PARTNERSHIP,
-              llpPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
-              )
+              llpPartnershipDetails.copy(partners = Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP)))
             ),
             (
               SCOTTISH_LIMITED_PARTNERSHIP,
-              scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-              )
+              scottishPartnershipDetails.copy(partners = Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP)))
             ),
             (
               SOLE_TRADER,
-              scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
-              )
+              scottishPartnershipDetails.copy(partners = Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER)))
             ),
             (
               UK_COMPANY,
-              scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
-              )
+              scottishPartnershipDetails.copy(partners = Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY)))
             ),
             (
               REGISTERED_SOCIETY,
-              scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY))
-              )
+              scottishPartnershipDetails.copy(partners = Seq(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY)))
             ),
             (
               OVERSEAS_COMPANY_UK_BRANCH,
@@ -156,28 +151,40 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                 val soleTraderGrsCreateRequest: ArgumentCaptor[SoleTraderGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[SoleTraderGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-                verify(mockSoleTraderGrsConnector).createJourney(soleTraderGrsCreateRequest.capture(), grsUrlCaptor.capture())(any(), any())
+                verify(mockSoleTraderGrsConnector).createJourney(
+                  soleTraderGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
                 soleTraderGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                 redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
                 val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-                verify(mockUkCompanyGrsConnector).createJourney(incorpEntityGrsCreateRequest.capture(), grsUrlCaptor.capture())(any(), any())
+                verify(mockUkCompanyGrsConnector).createJourney(
+                  incorpEntityGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
                 incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case REGISTERED_SOCIETY =>
                 redirectLocation(result) mustBe Some("http://test/redirect/registeredSociety")
                 val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-                verify(mockRegisteredSocietyGrsConnector).createJourney(incorpEntityGrsCreateRequest.capture(), grsUrlCaptor.capture())(any(), any())
+                verify(mockRegisteredSocietyGrsConnector).createJourney(
+                  incorpEntityGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
                 incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
                 redirectLocation(result) mustBe Some("http://test/redirect/partnership")
                 val partnerGrsCreateRequest: ArgumentCaptor[PartnershipGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-                verify(mockPartnershipGrsConnector).createJourney(partnerGrsCreateRequest.capture(), grsUrlCaptor.capture())(any(), any())
+                verify(mockPartnershipGrsConnector).createJourney(
+                  partnerGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
                 partnerGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case _ =>
                 redirectLocation(result) mustBe Some(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url)
@@ -189,7 +196,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
     "redirect to capture partner name for new partner" when {
       "user selected a type which has no GRS provided name" when {
-        forAll(Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails), (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails))) { partnershipDetails =>
+        forAll(
+          Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails), (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails))
+        ) { partnershipDetails =>
           s"a ${partnershipDetails._1} type was selected" in {
             val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
@@ -249,7 +258,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     }
 
     "returns bad request when empty radio button submitted" in {
-      val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))))
+      val registration = aRegistration(
+        withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY)))))
+      )
 
       spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()
@@ -271,9 +282,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             aRegistration(
               withPartnershipDetails(
                 Some(
-                  generalPartnershipDetails.copy(partners =
-                    Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
-                  )
+                  generalPartnershipDetails.copy(partners = Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY)))
                 )
               )
             )

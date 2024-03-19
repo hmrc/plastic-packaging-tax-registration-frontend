@@ -48,7 +48,10 @@ class PartnershipTypeController @Inject() (
   mcc: MessagesControllerComponents,
   page: partnership_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport
+    with GRSRedirections {
 
   private val form: Form[PartnerType] = PartnerType.form(PartnerType.FormMode.PartnershipType)
 
@@ -90,7 +93,9 @@ class PartnershipTypeController @Inject() (
         )
     }
 
-  private def updateRegistration(formData: PartnerType)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
+  private def updateRegistration(
+    formData: PartnerType
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
 
     val partnershipType = formData.answer
     update { registration =>
@@ -99,9 +104,7 @@ class PartnershipTypeController @Inject() (
           registration.copy(organisationDetails =
             registration.organisationDetails.copy(partnershipDetails =
               Some(
-                registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                  partnershipType
-                )
+                registration.organisationDetails.partnershipDetails.get.copy(partnershipType = partnershipType)
               )
             )
           )

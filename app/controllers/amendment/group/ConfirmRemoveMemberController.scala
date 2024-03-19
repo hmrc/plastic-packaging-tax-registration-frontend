@@ -38,7 +38,9 @@ class ConfirmRemoveMemberController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_remove_member_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport with RemoveMemberAction {
+    extends AmendmentController(mcc, amendRegistrationService)
+    with I18nSupport
+    with RemoveMemberAction {
 
   private def onwardCall = routes.GroupMembersListController.displayPage()
 

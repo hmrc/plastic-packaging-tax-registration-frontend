@@ -86,10 +86,9 @@ trait DateFluency {
 
     def asDateOfBirth(): DateInput =
       date copy (
-        items = date.items map {
-          item =>
-            val name = item.id.split('.').last
-            item copy (autocomplete = Some(s"bday-$name"))
+        items = date.items map { item =>
+          val name = item.id.split('.').last
+          item copy (autocomplete = Some(s"bday-$name"))
         }
       )
 

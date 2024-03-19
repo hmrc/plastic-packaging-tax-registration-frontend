@@ -29,8 +29,7 @@ case class PrimaryContactDetails(
   address: Option[Address] = None,
   // The following fields are used for email verification only
   journeyId: Option[String] = None,
-  prospectiveEmail: Option[String] =
-    None
+  prospectiveEmail: Option[String] = None
 ) {
 
   def status(emailVerified: String => Boolean): TaskStatus =

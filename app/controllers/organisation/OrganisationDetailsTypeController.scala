@@ -49,7 +49,10 @@ class OrganisationDetailsTypeController @Inject() (
   mcc: MessagesControllerComponents,
   page: organisation_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with OrganisationDetailsTypeHelper {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport
+    with OrganisationDetailsTypeHelper {
 
   def displayPageRepresentativeMember(): Action[AnyContent] =
     doDisplayPage(ActionEnum.RepresentativeMember)
@@ -62,7 +65,14 @@ class OrganisationDetailsTypeController @Inject() (
     journeyAction.register.async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
-          Future(Ok(page(form = OrganisationType.form(action).fill(OrganisationType(Some(data))), isGroup = request.registration.isGroup)))
+          Future(
+            Ok(
+              page(
+                form = OrganisationType.form(action).fill(OrganisationType(Some(data))),
+                isGroup = request.registration.isGroup
+              )
+            )
+          )
         case _ =>
           Future(Ok(page(form = OrganisationType.form(action), isGroup = request.registration.isGroup)))
       }
@@ -73,7 +83,8 @@ class OrganisationDetailsTypeController @Inject() (
       OrganisationType.form(action)
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup))),
+          (formWithErrors: Form[OrganisationType]) =>
+            Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup))),
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
@@ -84,29 +95,27 @@ class OrganisationDetailsTypeController @Inject() (
         )
     }
 
-  private def updateRegistration(formData: OrganisationType)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    formData: OrganisationType
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       if (registration.isGroup && formData.answer.exists(_.equals(OrgType.PARTNERSHIP))) {
         val updatedOrganisationDetails: OrganisationDetails =
           registration.organisationDetails.partnershipDetails match {
             case Some(_) =>
               registration.organisationDetails.copy(
-                partnershipDetails =
-                  Some(
-                    registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                      PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-                    )
-                  ),
+                partnershipDetails = Some(
+                  registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                  )
+                ),
                 organisationType = formData.answer
               )
             case _ =>
               registration.organisationDetails.copy(
-                partnershipDetails =
-                  Some(
-                    PartnershipDetails(partnershipType =
-                      PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-                    )
-                  ),
+                partnershipDetails = Some(
+                  PartnershipDetails(partnershipType = PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+                ),
                 organisationType = formData.answer
               )
           }

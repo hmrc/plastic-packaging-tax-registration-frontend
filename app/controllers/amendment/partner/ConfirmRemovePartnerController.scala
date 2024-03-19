@@ -37,7 +37,8 @@ class ConfirmRemovePartnerController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_remove_partner_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport {
+    extends AmendmentController(mcc, amendRegistrationService)
+    with I18nSupport {
 
   def displayPage(partnerId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
@@ -75,7 +76,9 @@ class ConfirmRemovePartnerController @Inject() (
           registration.organisationDetails.copy(partnershipDetails =
             registration.organisationDetails.partnershipDetails.map(
               _.copy(partners =
-                registration.organisationDetails.partnershipDetails.map(_.partners.filter(_.id != partnerId)).getOrElse(Seq())
+                registration.organisationDetails.partnershipDetails.map(_.partners.filter(_.id != partnerId)).getOrElse(
+                  Seq()
+                )
               )
             )
           )

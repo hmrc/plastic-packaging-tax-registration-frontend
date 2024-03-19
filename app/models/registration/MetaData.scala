@@ -35,9 +35,7 @@ case class MetaData(
     EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(email, EmailVerificationStatus.NOT_VERIFIED)
 
   def add(emails: Seq[EmailStatus]): MetaData =
-    this.copy(verifiedEmails =
-      this.verifiedEmails ++ emails
-    )
+    this.copy(verifiedEmails = this.verifiedEmails ++ emails)
 
 }
 

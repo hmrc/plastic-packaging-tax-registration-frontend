@@ -33,15 +33,24 @@ class PartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec wit
   private val mcc                 = stubMessagesControllerComponents()
   private val mockPartnerCYAsPage = mock[amend_partner_contact_check_answers_page]
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+  private val partnershipRegistration = aRegistration(
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+  )
 
   private val controller =
-    new PartnerContactDetailsCheckAnswersController(mcc = mcc, page = mockPartnerCYAsPage, journeyAction = spyJourneyAction, amendRegistrationService = mockAmendRegService)
+    new PartnerContactDetailsCheckAnswersController(
+      mcc = mcc,
+      page = mockPartnerCYAsPage,
+      journeyAction = spyJourneyAction,
+      amendRegistrationService = mockAmendRegService
+    )
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.setReg(partnershipRegistration)
 
-    when(mockPartnerCYAsPage.apply(ArgumentMatchers.eq(partnershipRegistration.nominatedPartner.get))(any(), any())).thenReturn(Html("Amend Partner CYAs Page"))
+    when(
+      mockPartnerCYAsPage.apply(ArgumentMatchers.eq(partnershipRegistration.nominatedPartner.get))(any(), any())
+    ).thenReturn(Html("Amend Partner CYAs Page"))
   }
 
   "Partner Contact Details Check Answers Controllers" should {

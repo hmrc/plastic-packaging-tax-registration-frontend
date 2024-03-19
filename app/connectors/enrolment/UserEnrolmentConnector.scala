@@ -31,7 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class UserEnrolmentConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
+class UserEnrolmentConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
+) {
 
   private val logger = Logger(this.getClass)
 
@@ -39,23 +41,22 @@ class UserEnrolmentConnector @Inject() (httpClient: HttpClient, appConfig: AppCo
     val timer = metrics.defaultRegistry.timer(UserEnrolmentTimer).time()
     httpClient.POST[UserEnrolmentRequest, HttpResponse](appConfig.pptEnrolmentUrl, payload.toUserEnrolmentRequest)
       .andThen { case _ => timer.stop() }
-      .map {
-        enrolmentResponse =>
-          logger.info(
-            s"PPT enrol user for PPT reference [${payload.pptReference.getOrElse("")}] had response status [${enrolmentResponse.status}] payload [${enrolmentResponse.body}]"
-          )
-          if (Status.isSuccessful(enrolmentResponse.status))
-            Try(enrolmentResponse.json.as[UserEnrolmentSuccessResponse]) match {
-              case Success(userEnrolmentSuccessResponse) => userEnrolmentSuccessResponse
-              case Failure(e) =>
-                throw new IllegalStateException(s"Unexpected successful user enrolment response - ${e.getMessage}", e)
-            }
-          else
-            Try(enrolmentResponse.json.as[UserEnrolmentFailedResponse]) match {
-              case Success(userEnrolmentFailedResponse) => userEnrolmentFailedResponse
-              case Failure(e) =>
-                throw new IllegalStateException(s"Unexpected failed user enrolment response - ${e.getMessage}", e)
-            }
+      .map { enrolmentResponse =>
+        logger.info(
+          s"PPT enrol user for PPT reference [${payload.pptReference.getOrElse("")}] had response status [${enrolmentResponse.status}] payload [${enrolmentResponse.body}]"
+        )
+        if (Status.isSuccessful(enrolmentResponse.status))
+          Try(enrolmentResponse.json.as[UserEnrolmentSuccessResponse]) match {
+            case Success(userEnrolmentSuccessResponse) => userEnrolmentSuccessResponse
+            case Failure(e) =>
+              throw new IllegalStateException(s"Unexpected successful user enrolment response - ${e.getMessage}", e)
+          }
+        else
+          Try(enrolmentResponse.json.as[UserEnrolmentFailedResponse]) match {
+            case Success(userEnrolmentFailedResponse) => userEnrolmentFailedResponse
+            case Failure(e) =>
+              throw new IllegalStateException(s"Unexpected failed user enrolment response - ${e.getMessage}", e)
+          }
       }
   }
 

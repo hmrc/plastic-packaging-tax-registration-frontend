@@ -20,7 +20,8 @@ import models.registration.Registration
 import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
 import play.api.mvc.WrappedRequest
 
-final case class JourneyRequest[+A](authenticatedRequest: AuthenticatedRequest[A], registration: Registration) extends WrappedRequest(authenticatedRequest) {
+final case class JourneyRequest[+A](authenticatedRequest: AuthenticatedRequest[A], registration: Registration)
+    extends WrappedRequest(authenticatedRequest) {
 
   def pptReference: Option[String] =
     authenticatedRequest match {

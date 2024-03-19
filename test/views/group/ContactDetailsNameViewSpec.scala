@@ -123,7 +123,10 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "First name must only include letters, hyphens, spaces, apostrophes and full stops")
+      view must haveGovukFieldError(
+        "firstName",
+        "First name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
     }
 
     "first name is > 35" in {
@@ -171,7 +174,10 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("lastName", "Last name must only include letters, hyphens, spaces, apostrophes and full stops")
+      view must haveGovukFieldError(
+        "lastName",
+        "Last name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
     }
 
     "last name is > 35" in {

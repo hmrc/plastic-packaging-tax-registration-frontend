@@ -34,7 +34,8 @@ class NotableErrorController @Inject() (
   referenceNumberAlreadyUsedPage: reference_number_already_used_failure_page,
   frontendConfig: ContactFrontendConfig,
   appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def enrolmentVerificationFailurePage(): Action[AnyContent] =
     authenticate { implicit request =>

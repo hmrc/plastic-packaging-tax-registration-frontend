@@ -19,17 +19,7 @@ package forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import forms.liability.LiabilityExpectedWeight.{
-  answer,
-  answerError,
-  maxTotalKg,
-  totalKg,
-  weightBelowThresholdError,
-  weightDecimalError,
-  weightEmptyError,
-  weightFormatError,
-  weightOutOfRangeError
-}
+import forms.liability.LiabilityExpectedWeight.{answer, answerError, maxTotalKg, totalKg, weightBelowThresholdError, weightDecimalError, weightEmptyError, weightFormatError, weightOutOfRangeError}
 import models.registration.LiabilityDetails
 
 class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {

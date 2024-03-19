@@ -105,16 +105,15 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           withOrganisationDetails(
             OrganisationDetails(
               organisationType = Some(UK_COMPANY),
-              incorporationDetails =
-                Some(
-                  IncorporationDetails(
-                    companyNumber = "123456",
-                    companyName = "NewPlastics",
-                    ctutr = Some("1890894"),
-                    companyAddress = testCompanyAddress,
-                    registration = Some(registrationDetails)
-                  )
-                ),
+              incorporationDetails = Some(
+                IncorporationDetails(
+                  companyNumber = "123456",
+                  companyName = "NewPlastics",
+                  ctutr = Some("1890894"),
+                  companyAddress = testCompanyAddress,
+                  registration = Some(registrationDetails)
+                )
+              ),
               subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
@@ -130,7 +129,13 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       ".displayPage is invoked with a sole trader" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = Some(soleTraderDetails), subscriptionStatus = Some(NOT_SUBSCRIBED)))
+          withOrganisationDetails(
+            OrganisationDetails(
+              organisationType = Some(SOLE_TRADER),
+              soleTraderDetails = Some(soleTraderDetails),
+              subscriptionStatus = Some(NOT_SUBSCRIBED)
+            )
+          )
         )
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
@@ -146,9 +151,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             OrganisationDetails(
               organisationType = Some(PARTNERSHIP),
               partnershipDetails = Some(
-                generalPartnershipDetails.copy(partners =
-                  Seq(aLimitedCompanyPartner, aSoleTraderPartner)
-                )
+                generalPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner, aSoleTraderPartner))
               ),
               subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
@@ -189,9 +192,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val registrationRequest: Registration =
           createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
 
-        val sanitisedReg = registrationRequest.copy(groupDetail =
-          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
-        )
+        val sanitisedReg =
+          registrationRequest.copy(groupDetail = registrationRequest.groupDetail.map(_.copy(members = Seq.empty)))
 
         when(mockRegistrationFilterService.removePartialGroupMembers(any()))
           .thenReturn(sanitisedReg)
@@ -209,9 +211,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           aCompletedGeneralPartnershipRegistration
             .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
             .copy(organisationDetails =
-              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(organisationType =
-                None
-              )
+              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(organisationType = None)
             )
         spyJourneyAction.setReg(unreadyRegistration)
 
@@ -262,7 +262,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
           )(any[HeaderCarrier])
 
-          metricsMock.defaultRegistry.counter("ppt.registration.success.submission.counter").getCount mustBe submissionCount
+          metricsMock.defaultRegistry.counter(
+            "ppt.registration.success.submission.counter"
+          ).getCount mustBe submissionCount
         }
       }
 
@@ -315,7 +317,11 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           )
         )
 
-        verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(ArgumentMatchers.eq(completedRegistrationWithNrsDetail), ArgumentMatchers.eq(Some("XXPPTP123456789")), any())(
+        verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
+          ArgumentMatchers.eq(completedRegistrationWithNrsDetail),
+          ArgumentMatchers.eq(Some("XXPPTP123456789")),
+          any()
+        )(
           any(),
           any()
         )
@@ -340,7 +346,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val registration = aCompletedUkCompanyRegistration
         spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
-          SubscriptionCreateOrUpdateResponseFailure(List(EisError("INVALID_SAFEID", "The remote endpoint has indicated that the SAFEID provided is invalid.")))
+          SubscriptionCreateOrUpdateResponseFailure(
+            List(EisError("INVALID_SAFEID", "The remote endpoint has indicated that the SAFEID provided is invalid."))
+          )
         )
 
         val result = controller.submit()(postRequest(JsObject.empty))
@@ -365,7 +373,12 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         spyJourneyAction.setReg(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
-            List(EisError("ACTIVE_SUBSCRIPTION_EXISTS", "The remote endpoint has indicated that Business Partner already has active subscription for this regime."))
+            List(
+              EisError(
+                "ACTIVE_SUBSCRIPTION_EXISTS",
+                "The remote endpoint has indicated that Business Partner already has active subscription for this regime."
+              )
+            )
           )
         )
 
@@ -416,8 +429,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     email = Some("test@test.com"),
     address = Some(
       Address(
-        addressLine1 =
-          "2 Scala Street",
+        addressLine1 = "2 Scala Street",
         addressLine2 = Some("Soho"),
         addressLine3 = None,
         townOrCity = "London",
@@ -432,17 +444,15 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       withOrganisationDetails(
         OrganisationDetails(
           organisationType = Some(UK_COMPANY),
-          incorporationDetails =
-            Some(
-              IncorporationDetails(
-                companyNumber = "123456",
-                companyName = "NewPlastics",
-                ctutr = Some("1890894"),
-                companyAddress = testCompanyAddress,
-                registration =
-                  Some(registrationDetails)
-              )
-            ),
+          incorporationDetails = Some(
+            IncorporationDetails(
+              companyNumber = "123456",
+              companyName = "NewPlastics",
+              ctutr = Some("1890894"),
+              companyAddress = testCompanyAddress,
+              registration = Some(registrationDetails)
+            )
+          ),
           subscriptionStatus = Some(NOT_SUBSCRIBED)
         )
       ),

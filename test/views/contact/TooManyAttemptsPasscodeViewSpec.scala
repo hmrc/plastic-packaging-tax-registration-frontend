@@ -45,8 +45,12 @@ class TooManyAttemptsPasscodeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display paragraph" in {
-      view.getElementById("tooManyAttempts-passcode-id-1").text() must include(messages("primaryContactDetails.tooManyAttempts.passcode.1"))
-      view.getElementById("tooManyAttempts-passcode-id-2").text() must include(messages("primaryContactDetails.tooManyAttempts.passcode.2"))
+      view.getElementById("tooManyAttempts-passcode-id-1").text() must include(
+        messages("primaryContactDetails.tooManyAttempts.passcode.1")
+      )
+      view.getElementById("tooManyAttempts-passcode-id-2").text() must include(
+        messages("primaryContactDetails.tooManyAttempts.passcode.2")
+      )
     }
   }
 

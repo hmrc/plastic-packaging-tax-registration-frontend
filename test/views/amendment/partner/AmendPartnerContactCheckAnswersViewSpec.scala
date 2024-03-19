@@ -61,11 +61,27 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(
-        (messages("partner.check.orgType"), messages(s"organisationDetails.type.${partner.partnerType.toString}"), None),
+        (
+          messages("partner.check.orgType"),
+          messages(s"organisationDetails.type.${partner.partnerType.toString}"),
+          None
+        ),
         (messages("partner.check.orgName"), partner.name, None),
-        (messages("partner.check.contact.name"), partner.contactDetails.get.name.get, Some(routes.AmendPartnerContactDetailsController.contactName(partner.id).url)),
-        (messages("partner.check.contact.email"), partner.contactDetails.get.emailAddress.get, Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id).url)),
-        (messages("partner.check.contact.phone"), partner.contactDetails.get.phoneNumber.get, Some(routes.AmendPartnerContactDetailsController.phoneNumber(partner.id).url)),
+        (
+          messages("partner.check.contact.name"),
+          partner.contactDetails.get.name.get,
+          Some(routes.AmendPartnerContactDetailsController.contactName(partner.id).url)
+        ),
+        (
+          messages("partner.check.contact.email"),
+          partner.contactDetails.get.emailAddress.get,
+          Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id).url)
+        ),
+        (
+          messages("partner.check.contact.phone"),
+          partner.contactDetails.get.phoneNumber.get,
+          Some(routes.AmendPartnerContactDetailsController.phoneNumber(partner.id).url)
+        ),
         (
           messages("partner.check.contact.address"),
           extractAddress(partner.contactDetails.get.address.get),
@@ -73,12 +89,11 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
         )
       )
 
-      expectedContent.zipWithIndex.foreach {
-        case (expectedContent, idx) =>
-          rowDetails.get(idx).text() must include(expectedContent._1)
-          rowDetails.get(idx).text() must include(expectedContent._2)
-          if (expectedContent._3.isDefined)
-            rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
+      expectedContent.zipWithIndex.foreach { case (expectedContent, idx) =>
+        rowDetails.get(idx).text() must include(expectedContent._1)
+        rowDetails.get(idx).text() must include(expectedContent._2)
+        if (expectedContent._3.isDefined)
+          rowDetails.get(idx).select("a").get(0) must haveHref(expectedContent._3.get)
       }
     }
 

@@ -24,7 +24,9 @@ trait CommonTestUtils {
   val alphabetAndWhitespaceChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ  "
 
   def randomAlphabetString(length: Int): String =
-    LazyList.continually(alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))) take length mkString
+    LazyList.continually(
+      alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
+    ) take length mkString
 
   def randomNumericString(length: Int): String =
     (1 to length).map(_ => Random.nextInt(9)).mkString("")

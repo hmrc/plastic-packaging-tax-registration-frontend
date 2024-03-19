@@ -24,7 +24,7 @@ import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import play.api.test.Helpers.{await, OK}
+import play.api.test.Helpers.{OK, await}
 import play.api.test.Injecting
 import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
 import models.emailverification._
@@ -38,10 +38,8 @@ class EmailVerificationConnectorISpec extends ConnectorISpec with Injecting with
     credId = "credId",
     continueUrl = "http://continue",
     origin = "origin",
-    accessibilityStatementUrl =
-      "http://accessibility",
-    email =
-      Email(address = "test@hmrc.com", enterUrl = "hhtp://enterUrl"),
+    accessibilityStatementUrl = "http://accessibility",
+    email = Email(address = "test@hmrc.com", enterUrl = "hhtp://enterUrl"),
     backUrl = "http://back",
     pageTitle = "PPT Title",
     deskproServiceName = "ppt"

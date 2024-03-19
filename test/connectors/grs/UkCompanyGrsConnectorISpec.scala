@@ -49,7 +49,9 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injecting with Scal
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
-              .withBody(Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString)
+              .withBody(
+                Json.obj("journeyStartUrl" -> testJourneyStartUrl, "deskProServiceId" -> testDeskProServiceId).toString
+              )
           )
       )
 

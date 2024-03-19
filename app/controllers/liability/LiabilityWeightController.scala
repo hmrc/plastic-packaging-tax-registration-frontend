@@ -36,7 +36,9 @@ class LiabilityWeightController @Inject() (
   mcc: MessagesControllerComponents,
   page: liability_weight_page
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -60,11 +62,11 @@ class LiabilityWeightController @Inject() (
         )
     }
 
-  private def updateRegistration(formData: LiabilityWeight)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    formData: LiabilityWeight
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.copy(liabilityDetails =
-        registration.liabilityDetails.copy(expectedWeightNext12m = Some(formData))
-      )
+      registration.copy(liabilityDetails = registration.liabilityDetails.copy(expectedWeightNext12m = Some(formData)))
     }
 
 }

@@ -50,6 +50,8 @@ object EmailVerificationStatusMapper {
 object LocalEmailVerification {
 
   def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus =
-    registration.primaryContactDetails.email.map(email => registration.metaData.getEmailStatus(email)).getOrElse(EmailVerificationStatus.NOT_VERIFIED)
+    registration.primaryContactDetails.email.map(email => registration.metaData.getEmailStatus(email)).getOrElse(
+      EmailVerificationStatus.NOT_VERIFIED
+    )
 
 }

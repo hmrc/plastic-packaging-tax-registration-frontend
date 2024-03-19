@@ -54,7 +54,13 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
       "address mandatory fields are valid" in {
 
         val input =
-          Map("addressLine1" -> "Address Line 1 .'-&", "addressLine2" -> "Address Line 2 .'-&", "townOrCity" -> "Town or City .'-&", "postCode" -> "LS4 1RH", "countryCode" -> GB)
+          Map(
+            "addressLine1" -> "Address Line 1 .'-&",
+            "addressLine2" -> "Address Line 2 .'-&",
+            "townOrCity"   -> "Town or City .'-&",
+            "postCode"     -> "LS4 1RH",
+            "countryCode"  -> GB
+          )
 
         val form = Address.form().bind(input)
         form.errors.size mustBe 0
@@ -63,7 +69,13 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
       "address mandatory fields with lower case post code are valid " in {
 
         val input =
-          Map("addressLine1" -> "Address Line 1 .'-&", "addressLine2" -> "Address Line 2 .'-&", "townOrCity" -> "Town or City .'-&", "postCode" -> "ls4 1rh", "countryCode" -> GB)
+          Map(
+            "addressLine1" -> "Address Line 1 .'-&",
+            "addressLine2" -> "Address Line 2 .'-&",
+            "townOrCity"   -> "Town or City .'-&",
+            "postCode"     -> "ls4 1rh",
+            "countryCode"  -> GB
+          )
 
         val form = Address.form().bind(input)
         form.errors.size mustBe 0
@@ -127,11 +139,21 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
 
     "be created from AddressLookupConfirmation" when {
 
-      def addressLookupConfirmation(lines: List[String], postcode: Option[String], country: Option[AddressLookupCountry] = None) =
-        AddressLookupConfirmation(auditRef = "ref", id = Some("id"), address = AddressLookupAddress(lines = lines, postcode = postcode, country = country))
+      def addressLookupConfirmation(
+        lines: List[String],
+        postcode: Option[String],
+        country: Option[AddressLookupCountry] = None
+      ) =
+        AddressLookupConfirmation(
+          auditRef = "ref",
+          id = Some("id"),
+          address = AddressLookupAddress(lines = lines, postcode = postcode, country = country)
+        )
 
       "four address lines and a postcode are returned" in {
-        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode")))
+        val address = addressConversionUtils.toPptAddress(
+          addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode"))
+        )
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe Some("line3")
@@ -140,7 +162,9 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
       }
 
       "three address lines and postcode are returned" in {
-        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "line2", "town"), Some("postCode")))
+        val address = addressConversionUtils.toPptAddress(
+          addressLookupConfirmation(List("line1", "line2", "town"), Some("postCode"))
+        )
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe None
@@ -149,7 +173,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
       }
 
       "two address lines and a postcode is returned" in {
-        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "town"), Some("postCode")))
+        val address =
+          addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "town"), Some("postCode")))
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe None
         address.addressLine3 mustBe None
@@ -159,7 +184,9 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
 
       "address with overseas country is returned" in {
         val address =
-          addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "town"), None, Some(AddressLookupCountry("IE", "Ireland"))))
+          addressConversionUtils.toPptAddress(
+            addressLookupConfirmation(List("line1", "town"), None, Some(AddressLookupCountry("IE", "Ireland")))
+          )
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe None
         address.addressLine3 mustBe None
@@ -170,10 +197,16 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
   }
 
   "Address" should {
-    //To handle invalid address state saved before live issue fix on 18th May 2022
+    // To handle invalid address state saved before live issue fix on 18th May 2022
     "read a UKAddress with an empty string from Json when there is no postcode" in {
 
-      val gbAddressNoPostcode = Json.obj("addressLine1" -> "testLine1", "addressLine2" -> "testLine2", "addressLine3" -> "testLine3", "townOrCity" -> "town", "countryCode" -> GB)
+      val gbAddressNoPostcode = Json.obj(
+        "addressLine1" -> "testLine1",
+        "addressLine2" -> "testLine2",
+        "addressLine3" -> "testLine3",
+        "townOrCity"   -> "town",
+        "countryCode"  -> GB
+      )
 
       gbAddressNoPostcode.as[Address] mustBe UKAddress(
         addressLine1 = "testLine1",

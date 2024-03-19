@@ -28,20 +28,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext) {
+class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
+) {
 
   def getStatus(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.getStatus.timer").time()
     httpClient.GET[Option[VerificationStatus]](appConfig.getEmailVerificationStatusUrl(id))
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toVerificationStatus)))
-      .recover {
-        case ex: Exception =>
-          Left(DownstreamServiceError(s"Failed to retrieve email verification status, error: ${ex.getMessage}", ex))
+      .recover { case ex: Exception =>
+        Left(DownstreamServiceError(s"Failed to retrieve email verification status, error: ${ex.getMessage}", ex))
       }
   }
 
-  def create(payload: CreateEmailVerificationRequest)(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] = {
+  def create(
+    payload: CreateEmailVerificationRequest
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.create.timer").time()
     httpClient.POST[CreateEmailVerificationRequest, HttpResponse](appConfig.emailVerificationUrl, payload)
       .andThen { case _ => timer.stop() }
@@ -55,15 +58,19 @@ class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: A
               CreateEmailVerificationException("Failed to create email verification")
             )
           )
-      }.recover {
-        case ex: Exception =>
-          Left(DownstreamServiceError(s"Error while verifying email, error: ${ex.getMessage}", ex))
+      }.recover { case ex: Exception =>
+        Left(DownstreamServiceError(s"Error while verifying email, error: ${ex.getMessage}", ex))
       }
   }
 
-  def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit hc: HeaderCarrier): Future[Either[ServiceError, JourneyStatus]] = {
+  def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[ServiceError, JourneyStatus]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
-    httpClient.POST[VerifyPasscodeRequest, HttpResponse](appConfig.getSubmitPassscodeUrl(journeyId = journeyId), payload)
+    httpClient.POST[VerifyPasscodeRequest, HttpResponse](
+      appConfig.getSubmitPassscodeUrl(journeyId = journeyId),
+      payload
+    )
       .andThen { case _ => timer.stop() }
       .map {
         case _ @HttpResponse(OK, _, _) =>
@@ -75,10 +82,14 @@ class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: A
         case _ @HttpResponse(NOT_FOUND, _, _) =>
           Right(JOURNEY_NOT_FOUND)
         case response =>
-          Left(DownstreamServiceError(s"Failed to verify passcode, status: ${response.status}, error: ${response.body}", VerifyPasscodeException("Failed to verify passcode")))
-      }.recover {
-        case ex: Exception =>
-          Left(DownstreamServiceError(s"Error while verifying passcode, error: ${ex.getMessage}", ex))
+          Left(
+            DownstreamServiceError(
+              s"Failed to verify passcode, status: ${response.status}, error: ${response.body}",
+              VerifyPasscodeException("Failed to verify passcode")
+            )
+          )
+      }.recover { case ex: Exception =>
+        Left(DownstreamServiceError(s"Error while verifying passcode, error: ${ex.getMessage}", ex))
       }
   }
 

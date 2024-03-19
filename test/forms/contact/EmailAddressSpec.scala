@@ -64,7 +64,9 @@ class EmailAddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "exceeds the max length" in {
 
-        val input          = Map(emailAddress -> "aasdasdfsdaadsdfsfklgjfdlgjdflgdfjkndflfgjflgjfdlgjdfkgdfkghflkghslkgjhighkdngkngflgdioldlndndkgndfjkgkgdfgkdfgkdhgkdhgkdhgdfkgh@test.com")
+        val input = Map(
+          emailAddress -> "aasdasdfsdaadsdfsfklgjfdlgjdflgdfjkndflfgjflgjfdlgjdfkgdfkghflkghslkgjhighkdngkngflgdioldlndndkgndfjkgkgdfgkdfgkdhgkdhgkdhgdfkgh@test.com"
+        )
         val expectedErrors = Seq(FormError(emailAddress, emailAddressFormatError))
 
         testFailedValidationErrors(input, expectedErrors)

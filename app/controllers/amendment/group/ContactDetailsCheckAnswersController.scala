@@ -36,7 +36,13 @@ class ContactDetailsCheckAnswersController @Inject() (
 
   def displayPage(memberId: String): Action[AnyContent] =
     journeyAction.amend { implicit request =>
-      Ok(page(request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(throw new IllegalStateException("Missing group member"))))
+      Ok(
+        page(
+          request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
+            throw new IllegalStateException("Missing group member")
+          )
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =

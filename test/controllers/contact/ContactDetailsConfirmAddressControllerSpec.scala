@@ -46,9 +46,20 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
   private val registrationWithoutPrimaryContactAddress = aRegistration(
     withPrimaryContactDetails(
-      PrimaryContactDetails(name = Some("Jack Gatsby"), jobTitle = Some("Developer"), email = Some("test@test.com"), phoneNumber = Some("0203 4567 890"), address = None)
+      PrimaryContactDetails(
+        name = Some("Jack Gatsby"),
+        jobTitle = Some("Developer"),
+        email = Some("test@test.com"),
+        phoneNumber = Some("0203 4567 890"),
+        address = None
+      )
     ),
-    withOrganisationDetails(OrganisationDetails(businessRegisteredAddress = Some(addressConversionUtils.toPptAddress(testCompanyAddress)), organisationType = Some(UK_COMPANY)))
+    withOrganisationDetails(
+      OrganisationDetails(
+        businessRegisteredAddress = Some(addressConversionUtils.toPptAddress(testCompanyAddress)),
+        organisationType = Some(UK_COMPANY)
+      )
+    )
   )
 
   override protected def beforeEach(): Unit = {
@@ -88,7 +99,16 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        spyJourneyAction.setReg(aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)))))
+        spyJourneyAction.setReg(
+          aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(UK_COMPANY),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
+        )
         mockRegistrationUpdate()
         val result = controller.displayPage()(FakeRequest())
 
@@ -99,7 +119,9 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     "show page for group membership" in {
       spyJourneyAction.setReg(
         aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails))),
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails))
+          ),
           withGroupDetail(Some(groupDetailsWithMembers))
         )
       )
@@ -115,7 +137,9 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for sole trader" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = Some(soleTraderDetails))),
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = Some(soleTraderDetails))
+          ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
         spyJourneyAction.setReg(registration)
@@ -128,7 +152,12 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for partnership" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP), partnershipDetails = Some(generalPartnershipDetails))),
+          withOrganisationDetails(
+            OrganisationDetails(
+              organisationType = Some(PARTNERSHIP),
+              partnershipDetails = Some(generalPartnershipDetails)
+            )
+          ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
 
@@ -141,7 +170,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       }
 
       "display page method is invoked for uk company" in {
-        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails))))
+        val registration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails))
+          )
+        )
 
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
@@ -153,7 +186,14 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for registered society" in {
         val registration =
-          aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(REGISTERED_SOCIETY), incorporationDetails = Some(incorporationDetails))))
+          aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(REGISTERED_SOCIETY),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
 
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
@@ -164,7 +204,9 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       }
 
       "throw IllegalStateException when business registered address is missing" in {
-        val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION))))
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION)))
+        )
 
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
@@ -242,7 +284,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "return an error" when {
 
         "user display page and get uk company details fails" in {
-          val registration = aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY))))
+          val registration =
+            aRegistration(withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY))))
 
           spyJourneyAction.setReg(registration)
 

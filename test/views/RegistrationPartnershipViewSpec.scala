@@ -98,8 +98,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(Registration("123"))
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 0, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
+            0,
+            4
+          )
         }
 
         "Eligibility check" in {
@@ -128,7 +134,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
 
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -150,8 +158,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withLiabilityDetails(
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
-              dateExceededThresholdWeight =
-                Some(Date(LocalDate.parse("2022-03-05"))),
+              dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
@@ -164,8 +171,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 1, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
+            1,
+            4
+          )
         }
 
         "Eligibility check" in {
@@ -184,7 +197,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.partnership")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
-          sectionLink(organisationElement, 0) must haveHref(organisationRoutes.OrganisationDetailsTypeController.displayPage())
+          sectionLink(organisationElement, 0) must haveHref(
+            organisationRoutes.OrganisationDetailsTypeController.displayPage()
+          )
         }
 
         "Partners details" in {
@@ -194,7 +209,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -216,8 +233,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withLiabilityDetails(
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
-              dateExceededThresholdWeight =
-                Some(Date(LocalDate.parse("2022-03-05"))),
+              dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
@@ -230,8 +246,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 2, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
+            2,
+            4
+          )
         }
 
         "Eligibility check" in {
@@ -261,7 +283,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerTypeController.displayNewPartner())
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
 
         }
@@ -283,8 +307,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withLiabilityDetails(
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
-              dateExceededThresholdWeight =
-                Some(Date(LocalDate.parse("2022-03-05"))),
+              dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
@@ -293,9 +316,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ),
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner)
-              )
+              scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner))
             )
           ),
           withNoPrimaryContactDetails()
@@ -303,8 +324,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 2, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
+            2,
+            4
+          )
         }
 
         "Eligibility check" in {
@@ -334,7 +361,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.notStarted")
           sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
 
@@ -357,8 +386,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withLiabilityDetails(
             LiabilityDetails(
               exceededThresholdWeight = Some(true),
-              dateExceededThresholdWeight =
-                Some(Date(LocalDate.parse("2022-03-05"))),
+              dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
               startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
               newLiabilityStarted = Some(NewLiability),
@@ -367,9 +395,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ),
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(partners =
-                Seq(aLimitedCompanyPartner, aSoleTraderPartner)
-              )
+              scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner, aSoleTraderPartner))
             )
           ),
           withNoPrimaryContactDetails()
@@ -377,8 +403,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.incomplete")
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages("registrationPage.completedSections", 3, 4)
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.incomplete"
+          )
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+            "registrationPage.completedSections",
+            3,
+            4
+          )
         }
 
         "Eligibility check" in {
@@ -408,7 +440,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
           sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
 
@@ -434,9 +468,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           aRegistration(
             withPartnershipDetails(
               Some(
-                scottishPartnershipDetails.copy(partners =
-                  Seq(aLimitedCompanyPartner, aSoleTraderPartner)
-                )
+                scottishPartnershipDetails.copy(partners = Seq(aLimitedCompanyPartner, aSoleTraderPartner))
               )
             ),
             withMetaData(registrationCompletedMetaData)
@@ -447,7 +479,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         "application status should reflect the completed sections" in {
 
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages("registrationPage.subheading.complete")
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+            "registrationPage.subheading.complete"
+          )
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
             "registrationPage.completedSections",
             completeRegistration.numberOfCompletedSections,
@@ -482,7 +516,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails.partnership")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(partnerRoutes.PartnerListController.displayPage())
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.partnership.otherPartners")
+          sectionName(contactElement, 1) mustBe messages(
+            "registrationPage.task.contactDetails.partnership.otherPartners"
+          )
           sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
           sectionLink(contactElement, 1) must haveHref(partnerRoutes.PartnerListController.displayPage())
         }
@@ -503,8 +539,17 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(registrationJourneyRequest, messages)
-    registrationPage.render(registrationWithPartnershipDetails, liabilityStartLink, false, registrationJourneyRequest, messages)
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(
+      registrationJourneyRequest,
+      messages
+    )
+    registrationPage.render(
+      registrationWithPartnershipDetails,
+      liabilityStartLink,
+      false,
+      registrationJourneyRequest,
+      messages
+    )
   }
 
 }

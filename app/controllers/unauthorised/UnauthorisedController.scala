@@ -29,7 +29,8 @@ class UnauthorisedController @Inject() (
   unauthorisedPage: unauthorised,
   unauthorisedNotAdminPage: unauthorised_not_admin,
   unauthorisedAgent: unauthorised_agent
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   private val logger = Logger(this.getClass)
 

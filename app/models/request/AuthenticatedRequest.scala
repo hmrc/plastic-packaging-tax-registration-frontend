@@ -26,14 +26,21 @@ sealed abstract class AuthenticatedRequest[+A](request: Request[A]) extends Wrap
   def cacheId: String    = internalID
 
   val credId: String =
-    identityData.credentials.map(_.providerId).getOrElse(throw DownstreamServiceError("Cannot find user credentials id", RegistrationException("Cannot find user credentials id")))
+    identityData.credentials.map(_.providerId).getOrElse(
+      throw DownstreamServiceError(
+        "Cannot find user credentials id",
+        RegistrationException("Cannot find user credentials id")
+      )
+    )
 
 }
 
 object AuthenticatedRequest {
 
-  final case class RegistrationRequest[+A](request: Request[A], identityData: IdentityData) extends AuthenticatedRequest[A](request)
+  final case class RegistrationRequest[+A](request: Request[A], identityData: IdentityData)
+      extends AuthenticatedRequest[A](request)
 
-  final case class PPTEnrolledRequest[+A](request: Request[A], identityData: IdentityData, pptReference: String) extends AuthenticatedRequest[A](request)
+  final case class PPTEnrolledRequest[+A](request: Request[A], identityData: IdentityData, pptReference: String)
+      extends AuthenticatedRequest[A](request)
 
 }

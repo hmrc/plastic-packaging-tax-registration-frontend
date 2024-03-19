@@ -25,8 +25,9 @@ import models.genericregistration.{GrsIncorporationDetails, IncorpEntityGrsCreat
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class RegisteredSocietyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit ec: ExecutionContext)
-    extends GrsConnector[IncorpEntityGrsCreateRequest, GrsIncorporationDetails, IncorporationDetails](
+class RegisteredSocietyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
+) extends GrsConnector[IncorpEntityGrsCreateRequest, GrsIncorporationDetails, IncorporationDetails](
       httpClient,
       metrics,
       Some(config.incorpRegistedSocietyJourneyUrl),

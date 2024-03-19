@@ -50,8 +50,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val controller =
     new ContactDetailsEmailAddressController(
       journeyAction = spyJourneyAction,
-      emailVerificationService =
-        mockEmailVerificationService,
+      emailVerificationService = mockEmailVerificationService,
       registrationConnector = mockRegistrationConnector,
       mcc = mcc,
       page = page
@@ -67,14 +66,20 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     super.afterEach()
   }
 
-  def mockEmailVerificationGetStatus(dataToReturn: Option[VerificationStatus]): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  def mockEmailVerificationGetStatus(
+    dataToReturn: Option[VerificationStatus]
+  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Right(dataToReturn)))
 
-  def mockEmailVerificationGetStatusWithException(error: ServiceError): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  def mockEmailVerificationGetStatusWithException(
+    error: ServiceError
+  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Left(error)))
 
   def mockEmailVerificationCreate(dataToReturn: String): ScalaOngoingStubbing[Future[String]] =
-    when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(Future.successful(dataToReturn))
+    when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
+      Future.successful(dataToReturn)
+    )
 
   def mockEmailVerificationCreateWithException(error: ServiceError): ScalaOngoingStubbing[Future[String]] =
     when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(Future.failed(error))
@@ -105,7 +110,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false))))
+        )
 
         val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
@@ -157,14 +164,14 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return 303 (OK) for not verified email address " when {
       "user submits an email address" in {
         val reg = aRegistration(
-          withMetaData(metaData =
-            MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, false)))
-          )
+          withMetaData(metaData = MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, false))))
         )
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false))))
+        )
         mockEmailVerificationCreate("/email-verification/journey/234234234-23423/passcode")
 
         val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
@@ -180,15 +187,15 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       "user submits an email address" in {
         val reg = aRegistration(
           withMetaData(metaData =
-            MetaData(verifiedEmails =
-              Seq(EmailStatus(emailAddress = "test@test.com", false, true))
-            )
+            MetaData(verifiedEmails = Seq(EmailStatus(emailAddress = "test@test.com", false, true)))
           )
         )
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test1@test.com", verified = false, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test1@test.com", verified = false, locked = false))))
+        )
 
         val result =
           controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
@@ -227,7 +234,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))))
+        )
         mockEmailVerificationCreateWithException(DownstreamServiceError("Failed to get status", new Exception()))
 
         intercept[DownstreamServiceError] {
@@ -248,12 +257,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           ),
           withPrimaryContactDetails(primaryContactDetails =
             PrimaryContactDetails(
-              name =
-                Some("Jack Gatsby"),
+              name = Some("Jack Gatsby"),
               jobTitle = Some("Developer"),
               phoneNumber = Some("0203 4567 890"),
               address = Some(
-                Address(addressLine1 = "2 Scala Street", addressLine2 = Some("Soho"), addressLine3 = None, townOrCity = "London", maybePostcode = Some("W1T 2HN"), countryCode = GB)
+                Address(
+                  addressLine1 = "2 Scala Street",
+                  addressLine2 = Some("Soho"),
+                  addressLine3 = None,
+                  townOrCity = "London",
+                  maybePostcode = Some("W1T 2HN"),
+                  countryCode = GB
+                )
               ),
               journeyId = Some("journey-id")
             )
@@ -262,7 +277,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))))
+        )
 
         intercept[DownstreamServiceError] {
           await(controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"))))
@@ -284,7 +301,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
-        mockEmailVerificationGetStatus(Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false)))))
+        mockEmailVerificationGetStatus(
+          Some(VerificationStatus(Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))))
+        )
         intercept[DownstreamServiceError] {
           await(controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"))))
         }
@@ -303,7 +322,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "data exist" in {
 
-      spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))))
+      spyJourneyAction.setReg(
+        aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))))
+      )
 
       await(controller.displayPage()(FakeRequest()))
 
@@ -313,7 +334,12 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
   "return page for a group" in {
 
-    spyJourneyAction.setReg(aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))), withGroupDetail(Some(groupDetailsWithMembers))))
+    spyJourneyAction.setReg(
+      aRegistration(
+        withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))),
+        withGroupDetail(Some(groupDetailsWithMembers))
+      )
+    )
 
     await(controller.displayPage()(FakeRequest()))
 

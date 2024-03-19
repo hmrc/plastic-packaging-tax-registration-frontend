@@ -40,7 +40,9 @@ class ExpectToExceedThresholdWeightDateController @Inject() (
   form: ExpectToExceedThresholdWeightDate,
   appConfig: AppConfig
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc)
+    with Cacheable
+    with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     journeyAction.register { implicit request =>
@@ -65,10 +67,14 @@ class ExpectToExceedThresholdWeightDateController @Inject() (
 
     }
 
-  private def updateRegistration(dateRealisedExpectedToExceedThresholdWeight: LocalDate)(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(
+    dateRealisedExpectedToExceedThresholdWeight: LocalDate
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
-        registration.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight = Some(Date(dateRealisedExpectedToExceedThresholdWeight)))
+        registration.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight =
+          Some(Date(dateRealisedExpectedToExceedThresholdWeight))
+        )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 

@@ -25,7 +25,13 @@ class SubscriptionCreateOrUpdateResponseSpec extends AnyWordSpecLike with TableD
   "EisError" should {
     "identify duplicate subscription errors" in {
       val duplicateSubscriptionErrorCodes =
-        Table("Error code", "ACTIVE_SUBSCRIPTION_EXISTS", "BUSINESS_VALIDATION", "ACTIVE_GROUP_SUBSCRIPTION_EXISTS", "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION")
+        Table(
+          "Error code",
+          "ACTIVE_SUBSCRIPTION_EXISTS",
+          "BUSINESS_VALIDATION",
+          "ACTIVE_GROUP_SUBSCRIPTION_EXISTS",
+          "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION"
+        )
 
       forAll(duplicateSubscriptionErrorCodes) { errorCode =>
         EisError(errorCode, "xxx").isDuplicateSubscription mustBe true

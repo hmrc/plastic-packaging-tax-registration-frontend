@@ -34,13 +34,17 @@ trait RegistrationAmendmentRepository {
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[Registration]]
 
-  def update(updateRegistration: Registration => Registration)(implicit request: AuthenticatedRequest[Any]): Future[Registration]
+  def update(updateRegistration: Registration => Registration)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Registration]
 
   def reset(): Unit
 }
 
 @Singleton
-class RegistrationAmendmentRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit ec: ExecutionContext) extends RegistrationAmendmentRepository {
+class RegistrationAmendmentRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit
+  ec: ExecutionContext
+) extends RegistrationAmendmentRepository {
 
   def put(id: String, registration: Registration): Future[Registration] =
     userDataRepository.putData[Registration](id, repositoryKey, registration)
@@ -54,7 +58,9 @@ class RegistrationAmendmentRepositoryImpl @Inject() (userDataRepository: UserDat
   def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[Registration]] =
     userDataRepository.getData[Registration](repositoryKey)
 
-  def update(updateRegistration: Registration => Registration)(implicit request: AuthenticatedRequest[Any]): Future[Registration] =
+  def update(
+    updateRegistration: Registration => Registration
+  )(implicit request: AuthenticatedRequest[Any]): Future[Registration] =
     get().flatMap {
       case Some(registration) => put(updateRegistration(registration))
       case _                  => throw new IllegalStateException("Missing registration in user data repository")
