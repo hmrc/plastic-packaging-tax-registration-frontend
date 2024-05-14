@@ -76,7 +76,7 @@ trait DateFluency {
       date copy (hint = Some(hint))
 
     def withFormGroupClasses(classes: String): DateInput =
-      date copy (formGroupClasses = classes)
+      date copy (formGroup = date.formGroup.copy(classes = Some(classes)))
 
     def withCssClass(newClass: String): DateInput =
       date copy (classes = s"${date.classes} $newClass")

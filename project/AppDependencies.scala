@@ -4,14 +4,14 @@ import sbt._
 
 object AppDependencies {
 
-  private val bootstrapVersion = "8.4.0"
+  private val bootstrapVersion = "8.6.0"
   private val playVersion      = "30"
-  private val mongoVersion     = "1.7.0"
+  private val mongoVersion     = "1.9.0"
 
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"       %% s"bootstrap-frontend-play-$playVersion" % bootstrapVersion,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30"            % "8.5.0",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc-play-30"            % "9.10.0",
     "uk.gov.hmrc.mongo" %% s"hmrc-mongo-play-$playVersion"         % mongoVersion,
     "uk.gov.hmrc"       %% "play-conditional-form-mapping-play-30" % "2.0.0"
   )
@@ -20,8 +20,8 @@ object AppDependencies {
     "uk.gov.hmrc"            %% s"bootstrap-test-play-$playVersion"  % bootstrapVersion,
     "uk.gov.hmrc.mongo"      %% s"hmrc-mongo-test-play-$playVersion" % mongoVersion,
     "org.playframework"      %% "play-test"                          % current,
-    "org.scalatestplus.play" %% "scalatestplus-play"                 % "5.1.0",
-    "org.mockito"            %% "mockito-scala-scalatest"            % "1.17.14"
+    "org.scalatestplus.play" %% "scalatestplus-play"                 % "7.0.1",
+    "org.mockito"            %% "mockito-scala-scalatest"            % "1.17.29"
   ).map(_ % "test")
 
 }
