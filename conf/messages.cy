@@ -304,7 +304,7 @@ confirmationPage.heading  = Cofrestriad wedi’i gyflwyno ar {0}
 confirmationPage.group.heading  = Cofrestriad grŵp wedi’i gyflwyno ar {0}
 confirmationPage.panel.body  = Eich rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig yw {0}
 confirmationPage.panel.body.default  =  Mae’ch cofrestriad eisoes wedi cael ei gyflwyno
-confirmationPage.detail.1  = Bydd angen y rhif cofrestru hwn arnoch os byddwch yn cysylltu â CThEM ynghylch eich cyfrif Treth Deunydd Pacio Plastig.
+confirmationPage.detail.1  = Bydd angen y rhif cofrestru hwn arnoch os byddwch yn cysylltu â CThEF ynghylch eich cyfrif Treth Deunydd Pacio Plastig.
 confirmationPage.detail.2  = Gwnewch yn siŵr eich bod yn cadw cofnod ohono oherwydd ni fyddwn yn anfon e-bost cadarnhau atoch.
 confirmationPage.detail.3  = Gallwch hefyd ddod o hyd i’r rhif cofrestru hwn ar brif sgrin eich {0}.
 confirmationPage.detail.3.link  = cyfrif Treth Deunydd Pacio Plastig
@@ -491,7 +491,7 @@ soleTraderEntityVerification.failure.detail = Gwiriwch eich cofnodion Hunanasesi
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
 
-pptHelpline.intro  =  Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM os oes gennych unrhyw gwestiynau.
+pptHelpline.intro  =  Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF os oes gennych unrhyw gwestiynau.
 pptHelpline.telephone.title  =  Ffôn:
 pptHelpline.telephone.detail  =  0300 300 3000
 pptHelpline.textphone.title  =  Ffôn testun:
@@ -502,7 +502,7 @@ pptHelpline.openingTimes.title  =  Oriau agor:
 pptHelpline.openingTimes.detail.1  =  Dydd Llun i ddydd Gwener: 08:30 i 17:00
 pptHelpline.openingTimes.detail.2  =  Ar gau ar Ddydd Sul y Pasg, Dydd Nadolig, Gŵyl San Steffan a Dydd Calan.
 
-corpTaxHelpline.intro  = Os ydych yn dal i gael problemau, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM.
+corpTaxHelpline.intro  = Os ydych yn dal i gael problemau, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF.
 corpTaxHelpline.telephone.title  = Ffôn
 corpTaxHelpline.telephone.detail  = 0300 200 1900
 corpTaxHelpline.telephone.outsideUK.title  = Y tu allan i’r DU:
@@ -511,7 +511,7 @@ corpTaxHelpline.openingTimes.title  = Oriau agor:
 corpTaxHelpline.openingTimes.detail.1  = Dydd Llun i ddydd Gwener, 8.30am i 5pm
 corpTaxHelpline.openingTimes.detail.2  = Ar gau ar benwythnosau a gwyliau banc.
 
-selfAssessmentHelpline.intro  = Os ydych yn dal i gael problemau, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM.
+selfAssessmentHelpline.intro  = Os ydych yn dal i gael problemau, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEF.
 selfAssessmentHelpline.telephone.title  = Ffôn
 selfAssessmentHelpline.telephone.detail  = 0300 200 1900
 selfAssessmentHelpline.telephone.outsideUK.title  = Y tu allan i’r DU:
@@ -569,7 +569,7 @@ enrolment.not.verified.detail.3 = Gwnewch yn siŵr eich bod yn nodi’r manylion
 enrolment.not.verified.detail.3.1 = rhif cofrestru
 enrolment.not.verified.detail.3.2 = rdyddiad cofrestru
 enrolment.not.verified.detail.4 = Gallwch ddod o hyd i’r rhain yn y llythyr a anfonwyd atoch ynglŷn â sut i actifadu eich cyfrif Treth Deunydd Pacio Plastig ar-lein.
-enrolment.not.verified.detail.5 = Os na allwn ddilysu eich sefydliad ar ôl hynny, gallai hyn fod oherwydd bod y cyfeiriad sydd gan CThEM ar gyfer eich sefydliad wedi dyddio. Efallai y bydd angen i chi ddiweddaru’ch cyfeiriad gyda CThEM.
+enrolment.not.verified.detail.5 = Os na allwn ddilysu eich sefydliad ar ôl hynny, gallai hyn fod oherwydd bod y cyfeiriad sydd gan CThEF ar gyfer eich sefydliad wedi dyddio. Efallai y bydd angen i chi ddiweddaru’ch cyfeiriad gyda CThEF.
 enrolment.not.verified.detail.6 = Os ydych yn dal i gael problemau, {0}.
 enrolment.not.verified.detail.6.link-text = cysylltwch â ni
 
