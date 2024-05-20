@@ -17,7 +17,6 @@
 package views.viewmodels
 
 import play.api.mvc.Call
-import uk.gov.hmrc.http.HttpVerbs.GET
 
 sealed trait BackButtonLink
 

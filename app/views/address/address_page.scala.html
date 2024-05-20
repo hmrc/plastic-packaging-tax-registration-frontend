@@ -19,6 +19,7 @@
 @import views.html.components.countryCodeAutoComplete
 @import views.html.main_template
 @import views.viewmodels.{BackButtonJs, Title}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 
 @this(
         formHelper: FormWithCSRF,
@@ -80,7 +81,7 @@
         Select(
             id = "countryCode",
             name = "countryCode",
-            formGroupClasses = "autocomplete-wrapper",
+            formGroup = FormGroup(Some("autocomplete-wrapper")),
             attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
             items =
                 Seq(SelectItem(value = None, text = "Empty value")) ++
