@@ -20,7 +20,7 @@ object AppDependencies {
     "uk.gov.hmrc"            %% s"bootstrap-test-play-$playVersion"  % bootstrapVersion,
     "uk.gov.hmrc.mongo"      %% s"hmrc-mongo-test-play-$playVersion" % mongoVersion,
     "org.scalatestplus.play" %% "scalatestplus-play"                 % "7.0.1",
-    "org.mockito"            %% "mockito-scala-scalatest"            % "1.17.29"
+    "org.mockito"            %% "mockito-scala-scalatest"            % "1.17.31"
   ).map(_ % "test")
 
 }
