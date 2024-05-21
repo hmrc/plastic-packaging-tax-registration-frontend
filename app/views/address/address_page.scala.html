@@ -84,7 +84,7 @@
             formGroup = FormGroup(Some("autocomplete-wrapper")),
             attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
             items =
-                Seq(SelectItem(value = None, text = "Empty value")) ++
+                Seq(SelectItem(value = Some(""), text = "Empty value")) ++
                         countryMap.map { countryEntry =>
                             SelectItem(
                                 value = Some(countryEntry._1),
