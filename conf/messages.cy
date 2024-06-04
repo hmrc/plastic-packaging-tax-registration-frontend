@@ -403,7 +403,7 @@ unauthorised.paragraph.2  = Os hoffech roi eich adborth hefyd, gallwch {0}. Bydd
 unauthorised.paragraph.2.link  = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
 unauthorised.not.admin.heading = Mae’n rhaid i chi feddu ar hawliau gweinyddwr i ddefnyddio’r gwasanaeth hwn
-unauthorised.not.admin.paragraph.1 = Nid oes gan eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth hawliau gweinyddwr.
+unauthorised.not.admin.paragraph.1 = Nid oes gan eich Dynodydd Defnyddiwr hawliau gweinyddwr.
 unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gweinyddwr gwblhau’r cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
@@ -411,7 +411,7 @@ unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y g
 unauthorised.agent.title = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient – Asiantau
 unauthorised.agent.heading = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient
 unauthorised.agent.paragraph.1 = Ni all asiantau gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eu cleientiaid.
-unauthorised.agent.paragraph.2 = Mae’n rhaid i’ch cleient gofrestru ei hun gan ddefnyddio’i Ddynodydd Porth y Llywodraeth.
+unauthorised.agent.paragraph.2 = Mae’n rhaid i’ch cleient gofrestru gan ddefnyddio’i fanylion mewngofnodi ei hun ar gyfer CThEF.
 unauthorised.agent.paragraph.3 = Ar ôl i’ch cleient gofrestru a’ch awdurdodi, byddwch yn gallu rheoli ei gyfrif ar gyfer y Dreth Deunydd Pacio Plastig.
 unauthorised.agent.paragraph.4 = Ewch i’ch {0}
 unauthorised.agent.paragraph.4.link.text = cyfrif gwasanaethau asiant
@@ -592,8 +592,8 @@ organisationDetails.type.GroupPartnership  = Partneriaeth atebolrwydd cyfyngedig
 organisationDetails.other.type.hint  = Mae’n rhaid i Sefydliadau Corfforedig Elusennol, ymddiriedolaethau, sefydliadau tramor heb safle yn y DU a chyrff cyhoeddus gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar wahân
 
 enrolment.referenceNumber.already.used.title  =  Mae’ch cyfeirnod Treth Deunydd Pacio Plastig eisoes wedi’i ddefnyddio
-enrolment.referenceNumber.already.used.detail1  =  Mae’r cyfeirnod Treth Deunydd Pacio Plastig a nodwyd gennych eisoes wedi’i gysylltu â chyfrif Porth y Llywodraeth gwahanol.
-enrolment.referenceNumber.already.used.detail2  =  I gael at y cyfrif ar gyfer y cyfeirnod Treth Deunydd Pacio Plastig hwnnw, bydd angen i chi fewngofnodi gan ddefnyddio’r cyfrif Porth y Llywodraeth sydd wedi’i gysylltu ag ef.
+enrolment.referenceNumber.already.used.detail1  =  Mae’r cyfeirnod PPT a nodwyd gennych eisoes wedi’i gysylltu â Dynodydd Defnyddiwr gwahanol.
+enrolment.referenceNumber.already.used.detail2  =  I gael mynediad at y cyfrif ar gyfer y cyfeirnod PPT hwnnw, bydd angen i chi fewngofnodi gan ddefnyddio’r manylion mewngofnodi ar gyfer CThEF sydd wedi’u cysylltu ag ef.
 enrolment.referenceNumber.already.used.button  =  Yn ôl i’ch cyfrif treth busnes
 
 nominated.organisation.already.registered.title  = Ni allwch sefydlu grŵp newydd
