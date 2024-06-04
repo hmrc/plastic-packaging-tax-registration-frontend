@@ -390,7 +390,7 @@ unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
 unauthorised.not.admin.heading = You must have administrator rights to use this service
-unauthorised.not.admin.paragraph.1 = Your Government Gateway ID does not have administrator rights.
+unauthorised.not.admin.paragraph.1 = Your One Login For Government ID does not have administrator rights.
 unauthorised.not.admin.paragraph.2 = Someone from your organisation with administrator rights can complete the Plastic Packaging Tax registration.
 unauthorised.not.admin.paragraph.3 = Visit the {0} for more information.
 unauthorised.not.admin.paragraph.3.link = Plastic Packaging Tax guidance
@@ -398,7 +398,7 @@ unauthorised.not.admin.paragraph.3.link = Plastic Packaging Tax guidance
 unauthorised.agent.title = You cannot register for Plastic Packaging Tax for your client - Agent
 unauthorised.agent.heading = You cannot register for Plastic Packaging Tax for your client
 unauthorised.agent.paragraph.1 = Agents are not able to complete Plastic Packaging Tax registration on behalf of clients.
-unauthorised.agent.paragraph.2 = Your client must register using their own Government Gateway ID.
+unauthorised.agent.paragraph.2 = Your client must register using their own One Login For Government ID.
 unauthorised.agent.paragraph.3 = Once registration is complete and your client has authorised you, you’ll be able to manage their Plastic Packaging Tax account.
 unauthorised.agent.paragraph.4 = Go to your {0}
 unauthorised.agent.paragraph.4.link.text = agent services account
@@ -589,8 +589,8 @@ organisationDetails.type.GroupPartnership = Limited liability partnership
 organisationDetails.other.type.hint = Charitable incorporated organisations (CIO), trusts, overseas organisations without a UK establishment, and public bodies must register for Plastic Packaging Tax separately.
 
 enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
-enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.
-enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the Government Gateway it was linked to.
+enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different One Login For Government.
+enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the One Login For Government it was linked to.
 enrolment.referenceNumber.already.used.button = Back to your business tax account
 
 nominated.organisation.already.registered.title = You cannot set up a new group
