@@ -76,12 +76,16 @@
 }
 
 @scripts = {
-    <script src='@routes.Assets.versioned("lib/govuk-frontend/dist/govuk/all.js")' @CSPNonce.attr></script>
-    <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")' @CSPNonce.attr></script>
-    <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
-    <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
 
-    <script @CSPNonce.attr>
+    <script type="module" @{CSPNonce.attr} src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+    <script type="module" @CSPNonce.attr src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")' ></script>
+    <script type="module" @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
+    <script type="module" @{CSPNonce.attr}>
+        import { initAll } from '@routes.Assets.versioned("lib/govuk-frontend/dist/govuk/govuk-frontend.min.js")'
+        initAll()
+    </script>
+
+    <script type="module" @CSPNonce.attr>
         // handle back click
         var backLinkElem = document.querySelector('.govuk-back-link');
 
@@ -95,7 +99,7 @@
     </script>
 
     @if(useTimeoutDialog) {
-        <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")' @CSPNonce.attr> </script>
+        <script type="module" src='@routes.Assets.versioned("javascripts/timeoutDialog.js")' @CSPNonce.attr> </script>
     }
 }
 
