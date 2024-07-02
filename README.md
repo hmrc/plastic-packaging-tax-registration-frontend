@@ -5,6 +5,12 @@ This is the Scala microservice responsible for the PPT registration UI user jour
  
 This service integrates with the Generic Registration Service and Tax Enrolments.
 
+Other related PPT services:
+- Backend service: [plastic-packaging-tax-registration](https://github.com/hmrc/plastic-packaging-tax-registration)
+- Stubs: [plastic-packaging-tax-stub](https://github.com/hmrc/plastic-packaging-tax-stub)
+- Returns service: [plastic-packaging-tax-returns-frontend](https://github.com/hmrc/plastic-packaging-tax-returns-frontend)
+- Returns service: [plastic-packaging-tax-returns](https://github.com/hmrc/plastic-packaging-tax-returns)
+
 ### How to run the service
 
 * Start a MongoDB instance
@@ -13,13 +19,13 @@ This service integrates with the Generic Registration Service and Tax Enrolments
  
 ```
 # Start the plastic packaging services and dependencies for company and registered society organisation types - 
-sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALLADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}' 
+sm2 --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALLADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}' 
 
 # For the above organisation types along with partnerships and sole traders use these profiles -
-sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
+sm2 --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
 
 # confirm all services are running
-sm -s 
+sm2 -s 
 ```
 
 It is necessary (at least for a time after writing this [23/12/2021]) to specifically permit `localhost` as a permitted host for URLs passed to the Address Lookup Frontend.
@@ -34,7 +40,7 @@ It can be done as follows:
 
 ```
 # Stop the microservice in service manager 
-sm --stop PLASTIC_PACKAGING_TAX_REGISTRATION_FRONTEND
+sm2 --stop PLASTIC_PACKAGING_TAX_REGISTRATION_FRONTEND
 
 # Run the microservice using sbt  (script run_local-sh)
 sbt -Dapplication.router=testOnlyDoNotUseInAppConf.Routes run
