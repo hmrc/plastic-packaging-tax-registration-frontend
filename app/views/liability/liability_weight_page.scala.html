@@ -67,7 +67,8 @@
                 suffix = Some(PrefixOrSuffix(
                     content = Text("kg")
                 )),
-                classes = "govuk-input--width-10"
+                classes = "govuk-input--width-10",
+                attributes = Map("inputmode" -> "numeric", "pattern" -> "[0-9]*")
             )
         )
         @saveButtons()
