@@ -76,10 +76,8 @@
 }
 
 @scripts = {
-    <script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")' @CSPNonce.attr></script>
     <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")' @CSPNonce.attr></script>
     <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
-    <script @CSPNonce.attr>window.GOVUKFrontend.initAll();</script>
 
     <script @CSPNonce.attr>
         // handle back click
