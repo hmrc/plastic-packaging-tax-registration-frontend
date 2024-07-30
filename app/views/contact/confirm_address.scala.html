@@ -36,9 +36,7 @@
 
 @(form: Form[ConfirmAddress], businessAddress: Address, isGroup: Boolean = false)(implicit request: Request[_], messages: Messages)
 
-@fieldSetBody = {
-
-@govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
+@radioButtons = {
 @govukRadios(Radios(
     hint = None,
     idPrefix = Some(form("useRegisteredAddress").name),
@@ -61,21 +59,21 @@
 @govukLayout(
     title = Title(form, "primaryContactDetails.confirmAddress.title"),
     backButton = Some(BackButtonJs)) {
-    @errorSummary(form.errors)
-
-    @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
-
+        @errorSummary(form.errors)
         @sectionHeader(caption)
+        @pageHeading(messages("primaryContactDetails.confirmAddress.heading"), classes="govuk-heading-l")
+        @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
 
         @govukFieldset(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("primaryContactDetails.confirmAddress.heading")),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-            )),
-            html = fieldSetBody
-        ))
+                                legend = Some(Legend(
+                                content = Text(messages("primaryContactDetails.confirmAddress.heading")),
+                                classes = "govuk-visually-hidden",
+                                isPageHeading = true
+                                                    ))
+                        ))
 
-        @saveButtons()
+        @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
+            @radioButtons
+            @saveButtons()
     }
 }
