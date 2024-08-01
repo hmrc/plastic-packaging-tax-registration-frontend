@@ -47,14 +47,8 @@
 
     @formHelper(action = Call("GET", nextPage), 'autoComplete -> "off") {
 
-        @govukFieldset(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("company.confirmAddress.title", companyName)),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-            )),
-            html = fieldSetBody
-        ))
+        @pageHeading(messages("company.confirmAddress.title", companyName), classes=gdsFieldsetPageHeading)
+        @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
 
         @saveButtons()
     }
