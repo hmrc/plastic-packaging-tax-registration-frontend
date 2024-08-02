@@ -37,24 +37,14 @@
 
 @(businessAddress: Address, companyName : String, nextPage : String)(implicit request: Request[_], messages: Messages)
 
-@fieldSetBody = {
-@govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
-}
-
 @govukLayout(
     title = Title("company.confirmAddress.title", companyName),
     backButton = Some(BackButton(messages("site.back"), Call("GET", "javascript:window.history.back()"), messages("site.back.hiddenText")))) {
 
     @formHelper(action = Call("GET", nextPage), 'autoComplete -> "off") {
 
-        @govukFieldset(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("company.confirmAddress.title", companyName)),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-            )),
-            html = fieldSetBody
-        ))
+        @pageHeading(messages("company.confirmAddress.title", companyName), classes=gdsFieldsetPageHeading)
+        @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
 
         @saveButtons()
     }
