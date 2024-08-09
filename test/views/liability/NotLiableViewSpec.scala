@@ -79,14 +79,14 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display feedback subheading" in {
 
-      view.getElementById("feedback-heading").text must include(messages("notLiable.think.title"))
+      view.getElementById("feedback-heading").text must include(messages("common.feedback.title"))
     }
 
     "display feedback text" in {
 
-      view.getElementById("feedback-text1").text must include(messages("notLiable.think.info"))
+      view.getElementById("feedback-text1").text must include(messages("common.feedback.info"))
       view.getElementById("feedback-text2").text must include(
-        messages("notLiable.think.feedback", messages("notLiable.think.feedback.link.description"))
+        messages("common.feedback.link", messages("common.feedback.link.description"))
       )
     }
 

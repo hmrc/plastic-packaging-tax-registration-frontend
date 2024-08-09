@@ -133,8 +133,10 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
 
     "display exit survey link" in {
       val exitSurveyDetail = view.select("div#exit-survey p")
-      exitSurveyDetail.get(0).text must include(
-        messages("confirmationPage.exitSurvey.link", messages("confirmationPage.exitSurvey.link.text"))
+
+      exitSurveyDetail.get(0).text must include(messages("common.feedback.info"))
+      exitSurveyDetail.get(1).text must include(
+        messages("common.feedback.link", messages("common.feedback.link.description"))
       )
 
       exitSurveyDetail.select("a").get(0) must haveHref(realAppConfig.exitSurveyUrl)

@@ -1,6 +1,11 @@
 feedback = Mae hwn yn wasanaeth newydd - bydd eich {0} yn ein helpu i’w wella.
 feedback.link = adborth
 
+common.feedback.title = Cyn i chi fynd
+common.feedback.info = Mae’ch adborth yn ein helpu i wella ein gwasanaeth.
+common.feedback.link = Llenwch ein harolwg
+common.feedback.link.description = {0} i rannu’ch adborth ar y gwasanaeth.
+
 service.name = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 title.format = {0} - {1} - GOV.UK
@@ -317,9 +322,6 @@ confirmationPage.whatHappensNext.detail.item2  = cael gwybod sut i baratoi Ffurf
 confirmationPage.whatHappensNext.bta  = Gallwch hefyd ddefnyddio’ch {0} i reoli’ch cyfrif Treth Deunydd Pacio Plastig neu i ganiatáu i rywun arall ei reoli ar eich rhan.
 confirmationPage.whatHappensNext.bta.link  = cyfrif treth busnes
 
-confirmationPage.exitSurvey.link  = {0}
-confirmationPage.exitSurvey.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
-
 registrationType.title  = Beth hoffech ei gofrestru?
 registrationType.singleEntity  = Sefydliad unigol
 registrationType.group  = Grŵp o sefydliadau
@@ -429,10 +431,6 @@ notLiable.inset  = Bydd angen i chi gofrestru ar ei chyfer yn y dyfodol os byddw
 notLiable.guidance  = Mae’r arweiniad ynghylch y Dreth Deunydd Pacio Plastig yn cynnwys {0}.
 notLiable.guidance.link.description  = rhagor o wybodaeth am y math o gofnodion y mae’n rhaid i chi eu cadw (yn agor tab newydd)
 notLiable.guidance.link.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-notLiable.think.title  = Rhowch eich barn
-notLiable.think.info  = Mae hwn yn wasanaeth newydd ac rydym eisiau gwybod beth yw’ch barn amdano.
-notLiable.think.feedback  = {0}. Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
-notLiable.think.feedback.link.description  = Anfonwch eich adborth atom
 
 liability.expectToExceedThresholdWeight.title = Cyrraedd y trothwy yn ystod y 30 diwrnod nesaf
 liability.expectToExceedThresholdWeight.p1 = 10,000kg neu fwy yw’r trothwy ar gyfer cydrannau deunydd pacio plastig gorffenedig. Gallech weithgynhyrchu, mewnforio neu wneud cymysgedd o’r ddau.
@@ -560,8 +558,6 @@ enrolment.confirmation.whatHappensNext.detail.1.bullet.1 = cyflwyno Ffurflenni T
 enrolment.confirmation.whatHappensNext.detail.1.bullet.2 = dysgu faint sydd arnoch
 enrolment.confirmation.whatHappensNext.detail.2 = Gallwch hefyd gael mynediad at eich cyfrif Treth Deunydd Pacio Plastig o’ch {0}.
 enrolment.confirmation.whatHappensNext.detail.2.link.text = cyfrif treth busnes
-enrolment.confirmation.whatHappensNext.detail.3 = {0}
-enrolment.confirmation.whatHappensNext.detail.3.link.text = Beth oedd eich barn am y gwasanaeth hwn?
 
 enrolment.not.verified.title = Nid oedd modd dilysu’ch sefydliad
 enrolment.not.verified.detail.1 = Dydy’r wybodaeth a roesoch ddim yn cyd-fynd â’r manylion sydd gennym am eich sefydliad.

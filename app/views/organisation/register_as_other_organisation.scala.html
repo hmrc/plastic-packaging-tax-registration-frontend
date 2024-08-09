@@ -26,6 +26,7 @@
     paragraph: paragraph,
     govUkLink: govUkLink,
     govukButton: GovukButton,
+    feedbackContent: feedbackContent,
     sectionHeader: sectionHeader,
     link: link
 )
@@ -60,4 +61,6 @@
     @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.1"))
     @gformParagraph
     @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.3"))
+
+    @feedbackContent()
 }

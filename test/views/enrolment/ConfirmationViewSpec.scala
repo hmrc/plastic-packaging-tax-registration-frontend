@@ -78,9 +78,10 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
         )
       }
       withClue("feedback link") {
-        whatHappensNextDetail.get(2) must containMessage(
-          "enrolment.confirmation.whatHappensNext.detail.3",
-          messages("enrolment.confirmation.whatHappensNext.detail.3.link.text")
+        whatHappensNextDetail.get(2) must containMessage("common.feedback.info")
+        whatHappensNextDetail.get(3) must containMessage(
+          "common.feedback.link.description",
+          messages("common.feedback.link")
         )
       }
     }
