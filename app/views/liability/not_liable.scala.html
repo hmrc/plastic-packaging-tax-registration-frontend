@@ -24,6 +24,7 @@
         pageHeading: pageHeading,
         subHeading: subHeading,
         paragraph: paragraph,
+        feedbackContent: feedbackContent,
         link: link,
         govukButton: GovukButton,
         govukInput: GovukInput,
@@ -79,36 +80,10 @@
     )
 }
 
-@feedbackLink = @{
-    link(
-        id = Some("feedback-link"),
-        text = messages("notLiable.think.feedback.link.description"),
-        call = Call(
-            method = "GET",
-            url = feedbackUrl
-        )
-    )
-}
-
-@feedback = {
-    @subHeading(
-        text = messages("notLiable.think.title"),
-        id = Some("feedback-heading")
-    )
-    @paragraph(
-        content = Html(messages("notLiable.think.info")),
-        id = Some("feedback-text1")
-    )
-    @paragraph(
-        content = Html(messages("notLiable.think.feedback", feedbackLink)),
-        id = Some("feedback-text2")
-    )
-}
-
 @govukLayout(title = Title("notLiable.title")) {
 
     @notLiableHead
     @recordsWarning
     @guidance
-    @feedback
+    @feedbackContent(feedbackUrl)
 }

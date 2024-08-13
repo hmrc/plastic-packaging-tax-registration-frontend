@@ -80,6 +80,15 @@ class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
         "organisationDetails.registerAsOtherOrganisation.gform.link.description"
       )
     }
+
+    "display feedback content" in {
+      view.getElementById("feedback-heading") must containMessage("common.feedback.title")
+      view.getElementById("feedback-text1") must containMessage("common.feedback.info")
+      view.getElementById("feedback-text2") must containMessage(
+        "common.feedback.link.description",
+        messages("common.feedback.link")
+      )
+    }
   }
 
   override def exerciseGeneratedRenderingMethods() = {

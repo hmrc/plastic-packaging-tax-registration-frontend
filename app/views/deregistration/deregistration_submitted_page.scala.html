@@ -26,8 +26,9 @@
         paragraph: paragraph,
         paragraphBody: paragraphBody,
         govukPanel: GovukPanel,
+        feedbackContent: feedbackContent,
         link: link,
-        appConfig: AppConfig
+        appConfig: AppConfig,
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -45,4 +46,6 @@
 
     @paragraph(content = Html(messages("deregistration.confirmation.detail2",
         link(text = messages("deregistration.confirmation.detail2.link"), call = Call("GET", appConfig.pptAccountUrl)))))
+
+    @feedbackContent()
 }

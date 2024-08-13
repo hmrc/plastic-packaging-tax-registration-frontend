@@ -1,5 +1,7 @@
-feedback=This is a new service - your {0} will help us to improve it.
-feedback.link=feedback
+common.feedback.title = Before you go
+common.feedback.info = Your feedback helps us make our service better.
+common.feedback.link = Take a short survey
+common.feedback.link.description = {0} to share your feedback on this service.
 
 service.name=Register for Plastic Packaging Tax
 
@@ -302,9 +304,6 @@ confirmationPage.whatHappensNext.detail.item2 = find out how to prepare a return
 confirmationPage.whatHappensNext.bta = You can also use {0} to manage your PPT account or allow someone else to manage it for you.
 confirmationPage.whatHappensNext.bta.link = your business tax account
 
-confirmationPage.exitSurvey.link = {0}
-confirmationPage.exitSurvey.link.text = What did you think of this service?
-
 registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
@@ -416,10 +415,6 @@ notLiable.inset = You will need to register for it in the future if you meet the
 notLiable.guidance = The Plastic Packaging Tax guidance has {0}.
 notLiable.guidance.link.description = more information on the type of records you may need to keep (opens in a new tab)
 notLiable.guidance.link.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-notLiable.think.title = Tell us what you think
-notLiable.think.info = This is a new service and we want to know what you think of it.
-notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make improvements.
-notLiable.think.feedback.link.description = Send us your feedback
 
 liability.expectToExceedThresholdWeight.title = Meeting the threshold in the next 30 days
 liability.expectToExceedThresholdWeight.p1 = The threshold is 10,000kg or more of finished plastic packaging components. You could manufacture, import or a mixture of both.
@@ -556,9 +551,6 @@ enrolment.confirmation.whatHappensNext.detail.1.bullet.1 = submit returns
 enrolment.confirmation.whatHappensNext.detail.1.bullet.2 = find out how much you owe
 enrolment.confirmation.whatHappensNext.detail.2 = You can also access your Plastic Packaging Tax account from your {0}.
 enrolment.confirmation.whatHappensNext.detail.2.link.text = business tax account
-enrolment.confirmation.whatHappensNext.detail.3 = {0} (takes 30 seconds).
-enrolment.confirmation.whatHappensNext.detail.3.link.text = What did you think of this service?
-
 
 enrolment.not.verified.title = Your organisation could not be verified
 enrolment.not.verified.detail.1 = The information you provided does not match the details we have about your organisation.

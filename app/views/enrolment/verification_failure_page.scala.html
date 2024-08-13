@@ -24,6 +24,7 @@
         paragraphBody: paragraphBody,
         pageHeading: pageHeading,
         govukButton: GovukButton,
+        feedbackContent: feedbackContent,
         bulletList: bulletList,
         link: link
 )
@@ -57,5 +58,7 @@
         @govukButton(Button(
             content = Text(messages("site.button.tryAgain")),
             attributes = Map("id" -> "submit", "name" -> "TryAgain")))
+
+       @feedbackContent()
     }
 }

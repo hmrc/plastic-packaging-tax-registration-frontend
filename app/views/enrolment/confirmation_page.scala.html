@@ -22,6 +22,7 @@
     govukLayout: main_template,
     govukPanel: GovukPanel,
     paragraphBody: paragraphBody,
+    feedbackContent: feedbackContent,
     link: link,
     bulletList: bulletList,
     subHeading: subHeading,
@@ -52,8 +53,6 @@
       link(text = messages("enrolment.confirmation.whatHappensNext.detail.2.link.text"),
           call = Call("GET", appConfig.businessAccountUrl))))
 
-  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.3",
-      link(text = messages("enrolment.confirmation.whatHappensNext.detail.3.link.text"),
-          call = Call("GET", appConfig.exitSurveyUrl))))
+  @feedbackContent()
 
 }
