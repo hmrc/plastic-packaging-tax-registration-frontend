@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.test.Helpers.{OK, await}
+import play.api.test.Helpers.await
 import play.api.test.Injecting
 
 class PptReferenceConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
@@ -38,7 +38,7 @@ class PptReferenceConnectorISpec extends ConnectorISpec with Injecting with Scal
         stubFor(
           get(urlMatching(s"/plastic-packaging-tax/ppt-reference"))
             .willReturn(
-              aResponse().withStatus(OK)
+              aResponse().withStatus(Status.OK)
                 withBody (Json.obj("clientPPT" -> validPPTReference).toString())
             )
         )
@@ -49,7 +49,20 @@ class PptReferenceConnectorISpec extends ConnectorISpec with Injecting with Scal
         getTimer(PPTReference.pptReferenceTimer).getCount mustBe 1
       }
 
-      "handle when an exception is thrown" in {
+      "handle a 404 response" in {
+        stubFor(
+          get(urlMatching(s"/plastic-packaging-tax/ppt-reference"))
+            .willReturn(
+              aResponse().withStatus(Status.NOT_FOUND)
+            )
+        )
+
+        intercept[Exception] {
+          await(connector.get(hc))
+        }
+      }
+
+      "handle a 500 response" in {
         stubFor(
           get(urlMatching(s"/plastic-packaging-tax/ppt-reference"))
             .willReturn(aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
