@@ -18,6 +18,7 @@ package controllers.actions.auth
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.AppConfig
+import connectors.PptReferenceConnector
 import models.enrolment.PptEnrolment
 import models.request.AuthenticatedRequest.PPTEnrolledRequest
 import models.request.IdentityData
@@ -38,7 +39,8 @@ trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
 class AmendAuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
   override val parser: BodyParsers.Default,
-  appConfig: AppConfig
+  appConfig: AppConfig,
+  pptReferenceConnector: PptReferenceConnector
 )(implicit
   val executionContext: ExecutionContext
 ) extends AmendAuthAction
@@ -57,12 +59,11 @@ class AmendAuthActionImpl @Inject() (
       AffinityGroup.Agent.or(Enrolment(PptEnrolment.Key).and(CredentialStrength(CredentialStrength.strong)))
     ).retrieve(retrievals) {
       case credentials ~ internalId ~ _ ~ affinityGroup if affinityGroup.contains(AffinityGroup.Agent) =>
-        request.session.get("clientPPT") match {
-          case Some(selectedPPTRef) =>
+        pptReferenceConnector.get(hc)
+          .flatMap(selectedPPTRef =>
             block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), selectedPPTRef))
-          case None => Future.successful(Redirect(appConfig.pptAccountUrl))
-        }
-
+          )
+          .recover(_ => Redirect(appConfig.pptAccountUrl))
       case credentials ~ internalId ~ allEnrolments ~ _ =>
         val pptIdentifier = allEnrolments
           .getEnrolment(PptEnrolment.Key).getOrElse(throw new IllegalStateException("No PPT Enrolment found"))
@@ -70,7 +71,6 @@ class AmendAuthActionImpl @Inject() (
             throw new IllegalStateException("PPT enrolment has no identifier")
           )
           .value
-
         block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), pptIdentifier))
     } recover {
       case _: NoActiveSession =>

@@ -208,6 +208,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val changeGroupLeadUrl = s"$pptAccountHost/plastic-packaging-tax/select-new-representative-member"
 
+  lazy val pptReferenceUrl = s"$pptAccountHost/plastic-packaging-tax/ppt-reference"
+
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")
 
   lazy val businessAccountUrl: String = config.get[String]("urls.businessAccount")
