@@ -147,6 +147,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptAccountHost: String =
     config.getOptional[String]("platform.frontend.host").getOrElse(servicesConfig.baseUrl("ppt-account-frontend"))
 
+  lazy val pptReturnsFrontendHost: String =
+    servicesConfig.baseUrl("plastic-packaging-tax-returns-frontend")
+
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
   lazy val feedbackUnauthenticatedLink: String =
@@ -208,7 +211,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val changeGroupLeadUrl = s"$pptAccountHost/plastic-packaging-tax/select-new-representative-member"
 
-  lazy val pptReferenceUrl = s"$pptAccountHost/plastic-packaging-tax/ppt-reference"
+  lazy val pptReferenceUrl = s"$pptReturnsFrontendHost/plastic-packaging-tax/ppt-reference"
 
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")
 

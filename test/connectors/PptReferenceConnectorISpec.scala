@@ -29,7 +29,6 @@ class PptReferenceConnectorISpec extends ConnectorISpec with Injecting with Scal
   lazy val connector: PptReferenceConnector = inject[PptReferenceConnector]
   val validInternalId                       = "Int-123"
   val validPPTReference                     = "123456"
-  val validResponse                         = validPPTReference
 
   "PptReferenceConnector" when {
     "calling 'get'" should {
@@ -45,7 +44,7 @@ class PptReferenceConnectorISpec extends ConnectorISpec with Injecting with Scal
 
         val res = await(connector.get(hc))
 
-        res mustBe validResponse
+        res mustBe validPPTReference
         getTimer(PPTReference.pptReferenceTimer).getCount mustBe 1
       }
 
