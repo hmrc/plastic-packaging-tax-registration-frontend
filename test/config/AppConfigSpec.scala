@@ -35,6 +35,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.partnership-identification-frontend.port=9722
         |microservice.services.plastic-packaging-tax-registration.host=localhost
         |microservice.services.plastic-packaging-tax-registration.port=8502
+        |microservice.services.plastic-packaging-tax-returns-frontend.host=localhost
+        |microservice.services.plastic-packaging-tax-returns-frontend.port=8505
         |microservice.services.contact-frontend.host=localhost
         |microservice.services.contact-frontend.port=9250
         |microservice.services.ppt-account-frontend.host=localhost
@@ -100,6 +102,10 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'pptAccountUrl' defined" in {
       validAppConfig.pptAccountUrl must be("http://localhost:8505/plastic-packaging-tax/account")
+    }
+
+    "have 'pptReferenceUrl' defined" in {
+      validAppConfig.pptReferenceUrl must be("http://localhost:8505/plastic-packaging-tax/ppt-reference")
     }
 
     "have 'mfaUpliftUrl' defined" in {
