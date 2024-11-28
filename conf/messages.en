@@ -580,9 +580,9 @@ organisationDetails.other.next.group.title = What type of organisation do you wa
 organisationDetails.type.GroupPartnership = Limited liability partnership
 organisationDetails.other.type.hint = Charitable incorporated organisations (CIO), trusts, overseas organisations without a UK establishment, and public bodies must register for Plastic Packaging Tax separately.
 
-enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
-enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different user ID.
-enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the HMRC sign in details it was linked to.
+enrolment.referenceNumber.already.used.title = This Plastic Packaging Tax registration number has already been used
+enrolment.referenceNumber.already.used.detail1 = The Plastic Packaging Tax registration number you entered has already been linked to a different Government Gateway.
+enrolment.referenceNumber.already.used.detail2 = To access the account for that Plastic Packaging registration number you need to sign in with the Government Gateway it was linked to.
 enrolment.referenceNumber.already.used.button = Back to your business tax account
 
 nominated.organisation.already.registered.title = You cannot set up a new group

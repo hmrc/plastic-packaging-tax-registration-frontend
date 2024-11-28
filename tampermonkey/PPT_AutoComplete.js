@@ -901,7 +901,7 @@ const enrolmentRegistrationDate = () => {
 }
 
 const enrolmentVerificationFailure = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-not-verified')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/registration-number-already-used')) {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
