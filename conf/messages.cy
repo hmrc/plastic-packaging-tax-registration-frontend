@@ -587,9 +587,9 @@ organisationDetails.other.next.group.title  =  Pa fath o sefydliad yr hoffech ei
 organisationDetails.type.GroupPartnership  = Partneriaeth atebolrwydd cyfyngedig
 organisationDetails.other.type.hint  = Mae’n rhaid i Sefydliadau Corfforedig Elusennol, ymddiriedolaethau, sefydliadau tramor heb safle yn y DU a chyrff cyhoeddus gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar wahân
 
-enrolment.referenceNumber.already.used.title  =  Mae’ch cyfeirnod Treth Deunydd Pacio Plastig eisoes wedi’i ddefnyddio
-enrolment.referenceNumber.already.used.detail1  =  Mae’r cyfeirnod PPT a nodwyd gennych eisoes wedi’i gysylltu â Dynodydd Defnyddiwr gwahanol.
-enrolment.referenceNumber.already.used.detail2  =  I gael mynediad at y cyfrif ar gyfer y cyfeirnod PPT hwnnw, bydd angen i chi fewngofnodi gan ddefnyddio’r manylion mewngofnodi ar gyfer CThEF sydd wedi’u cysylltu ag ef.
+enrolment.referenceNumber.already.used.title  =  Mae’r rhif cofrestru hwn ar gyfer y Dreth Deunydd Pacio Plastig eisoes wedi’i ddefnyddio
+enrolment.referenceNumber.already.used.detail1  =  Mae’r rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig a nodwyd gennych eisoes wedi’i gysylltu â chyfrif Porth y Llywodraeth gwahanol.
+enrolment.referenceNumber.already.used.detail2  =   I gael mynediad at y cyfrif ar gyfer y rhif cofrestru hwnnw ar gyfer y Dreth Deunydd Pacio Plastig, bydd angen i chi fewngofnodi gan ddefnyddio’r cyfrif Porth y Llywodraeth sydd wedi’i gysylltu ag ef.
 enrolment.referenceNumber.already.used.button  =  Yn ôl i’ch cyfrif treth busnes
 
 nominated.organisation.already.registered.title  = Ni allwch sefydlu grŵp newydd

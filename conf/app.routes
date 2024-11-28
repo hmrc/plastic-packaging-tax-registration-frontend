@@ -254,7 +254,7 @@ POST       /activate-account-check-answers                              controll
 
 GET        /account-activated                                           controllers.enrolment.ConfirmationController.displayPage()
 
-GET        /enrolment-not-verified                                      controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
+GET        /registration-number-already-used                            controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
 
 GET        /enrolment-reference-number-already-used                     controllers.enrolment.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage()
 

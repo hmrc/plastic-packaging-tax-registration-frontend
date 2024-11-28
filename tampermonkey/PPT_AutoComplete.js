@@ -901,7 +901,7 @@ const enrolmentRegistrationDate = () => {
 }
 
 const enrolmentVerificationFailure = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-not-verified')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/registration-number-already-used')) {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -909,7 +909,7 @@ const enrolmentVerificationFailure = () => {
 const generateCrn = () => {
     return Math.floor(10000000 + Math.random() * 90000000)
 }
-/*########################     MAIN FUNCTION     ########################## */
+/*########################     MAIN FUNCTION     ########################## */registration-number-already-used
 function completeJourney(manualJourney) {
 
     // main
