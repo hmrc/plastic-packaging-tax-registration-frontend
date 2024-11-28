@@ -586,10 +586,10 @@ enrolment.referenceNumber.already.used.detail2 = To access the account for that 
 enrolment.referenceNumber.already.used.button = Back to your business tax account
 
 nominated.organisation.already.registered.title = You cannot set up a new group
-nominated.organisation.already.registered.detail1 = {0} has already registered for PPT, either as a single organisation or as part of a group.
-nominated.organisation.already.registered.detail2 = To set up a new group, you’ll need to de-register for PPT first.
+nominated.organisation.already.registered.detail1 = {0} has already registered for Plastic Packaging Tax (PPT), either as a single organisation or as part of a group.
+nominated.organisation.already.registered.detail2 = To set up a new group, you’ll need to deregister for PPT first.
 nominated.organisation.already.registered.detail3 = You could also set up a {0}.
-nominated.organisation.already.registered.detail3.link.text = new group with a different nominated organisation
+nominated.organisation.already.registered.detail3.link.text = new group with a different representative member
 
 organisation.already.in.group.title = {0} cannot be added to the group again
 organisation.already.in.group.detail.member = You’ve already added {0} to the group.
