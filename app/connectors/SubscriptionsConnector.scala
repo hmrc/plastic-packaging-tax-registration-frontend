@@ -34,7 +34,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class SubscriptionsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
-                                                                                                      ec: ExecutionContext
+  ec: ExecutionContext
 ) {
 
   private val logger = Logger(this.getClass)

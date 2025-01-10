@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
-                                                                                                        ec: ExecutionContext
+  ec: ExecutionContext
 ) {
 
   def find(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Registration]]] = {

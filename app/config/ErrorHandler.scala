@@ -28,8 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)(implicit
   val ec: ExecutionContext
-)
-    extends FrontendErrorHandler {
+) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: RequestHeader

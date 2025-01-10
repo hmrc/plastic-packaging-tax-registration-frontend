@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailTestOnlyPasscodeConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig)(implicit
-                                                                                               ec: ExecutionContext
+  ec: ExecutionContext
 ) {
 
   def getTestOnlyPasscode()(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =

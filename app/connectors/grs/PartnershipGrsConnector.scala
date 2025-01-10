@@ -26,8 +26,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PartnershipGrsConnector @Inject()(httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
-                                                                                                       ec: ExecutionContext
+class PartnershipGrsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
 ) extends GrsConnector[PartnershipGrsCreateRequest, GrsPartnershipBusinessDetails, PartnershipBusinessDetails](
       httpClient,
       metrics,

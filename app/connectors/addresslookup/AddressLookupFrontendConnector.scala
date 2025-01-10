@@ -40,9 +40,9 @@ class AddressLookupFrontendConnector @Inject() (http: HttpClientV2, appConfig: A
       .post(url"${appConfig.addressLookupInitUrl}")
       .withBody(Json.toJson(addressLookupRequest))
       .execute[HttpResponse]
-      .andThen {
-      case _ => timer.stop()
-    }
+      .andThen { case _ =>
+        timer.stop()
+      }
       .map {
         case response @ HttpResponse(ACCEPTED, _, _) =>
           response.header(LOCATION) match {

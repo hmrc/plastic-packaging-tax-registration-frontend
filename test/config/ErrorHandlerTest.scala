@@ -27,7 +27,13 @@ import views.html.error_template
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ErrorHandlerTest extends MessagesSpec with Matchers with DefaultAwaitTimeout with ScalaFutures with OptionValues with PptTestData {
+class ErrorHandlerTest
+    extends MessagesSpec
+    with Matchers
+    with DefaultAwaitTimeout
+    with ScalaFutures
+    with OptionValues
+    with PptTestData {
 
   private val errorPage    = inject[error_template]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())

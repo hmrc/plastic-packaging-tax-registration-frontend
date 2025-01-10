@@ -33,8 +33,8 @@ object ClientRegistration {
 }
 
 @Singleton
-class PptReferenceConnector @Inject()(httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
-                                                                                                        ec: ExecutionContext
+class PptReferenceConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
 ) {
   import ClientRegistration._
   def get(implicit hc: HeaderCarrier): Future[String] = {

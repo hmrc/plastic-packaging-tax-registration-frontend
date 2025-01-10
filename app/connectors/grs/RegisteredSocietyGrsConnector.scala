@@ -26,8 +26,8 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class RegisteredSocietyGrsConnector @Inject()(httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
-                                                                                                             ec: ExecutionContext
+class RegisteredSocietyGrsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
+  ec: ExecutionContext
 ) extends GrsConnector[IncorpEntityGrsCreateRequest, GrsIncorporationDetails, IncorporationDetails](
       httpClient,
       metrics,
