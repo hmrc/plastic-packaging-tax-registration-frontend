@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import controllers.organisation.{routes => orgRoutes}
 @import forms.contact.Address
 @import views.html.main_template
-@import views.viewmodels.{BackButton, Title}
+@import views.viewmodels.{BackButtonJs, Title}
 @import views.utils.ViewUtils
 
 @this(
@@ -34,16 +33,15 @@
         link: link
 )
 
-
 @(businessAddress: Address, companyName : String, nextPage : String)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("company.confirmAddress.title", companyName),
-    backButton = Some(BackButton(messages("site.back"), Call("GET", "javascript:window.history.back()"), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs)) {
 
     @formHelper(action = Call("GET", nextPage), 'autoComplete -> "off") {
 
-        @pageHeading(messages("company.confirmAddress.title", companyName), classes=gdsFieldsetPageHeading)
+        @pageHeading(messages("company.confirmAddress.title", companyName), classes=gdsPageHeading)
         @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
 
         @saveButtons()

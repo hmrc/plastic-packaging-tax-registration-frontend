@@ -16,20 +16,21 @@
 
 package connectors.grs
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
+import models.genericregistration.GrsJourneyCreationRequest
 import play.api.Logger
 import play.api.http.Status.CREATED
-import play.api.libs.json.Writes
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
-import models.genericregistration.GrsJourneyCreationRequest
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, InternalServerException, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest[
   GrsCreateJourneyPayload
 ], GrsResponse, TranslatedResponse](
-  httpClient: HttpClient,
+  httpClient: HttpClientV2,
   metrics: Metrics,
   val grsCreateJourneyUrl: Option[String],
   val grsGetDetailsUrl: String,
@@ -55,7 +56,10 @@ abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest
     journeyId: String
   )(implicit rds: HttpReads[GrsResponse], hc: HeaderCarrier): Future[TranslatedResponse] = {
     val timerCtx = metrics.defaultRegistry.timer(getJourneyDetailsTimerTag).time()
-    httpClient.GET[GrsResponse](s"$grsGetDetailsUrl/$journeyId").map(translateDetails(_))
+    httpClient
+      .get(url"$grsGetDetailsUrl/$journeyId")
+      .execute[GrsResponse]
+      .map(translateDetails)
       .andThen { case _ => timerCtx.stop() }
   }
 
@@ -66,7 +70,10 @@ abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest
     hc: HeaderCarrier
   ): Future[RedirectUrl] = {
     val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
-    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](url, payload.setBusinessVerificationCheckFalse)
+    httpClient
+      .post(url"$url")
+      .withBody(Json.toJson(payload.setBusinessVerificationCheckFalse))
+      .execute[HttpResponse]
       .andThen { case _ =>
         timerCtx.stop()
       }

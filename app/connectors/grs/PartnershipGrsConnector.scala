@@ -17,17 +17,17 @@
 package connectors.grs
 
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
 import connectors.grs.GeneralPartnershipGrsConnector.{CreateJourneyTimer, GetDetailsTimer}
 import models.genericregistration.{GrsPartnershipBusinessDetails, PartnershipBusinessDetails, PartnershipGrsCreateRequest}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PartnershipGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit
-  ec: ExecutionContext
+class PartnershipGrsConnector @Inject()(httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
+                                                                                                       ec: ExecutionContext
 ) extends GrsConnector[PartnershipGrsCreateRequest, GrsPartnershipBusinessDetails, PartnershipBusinessDetails](
       httpClient,
       metrics,

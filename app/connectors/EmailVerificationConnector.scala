@@ -16,25 +16,29 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import play.api.http.Status._
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
 import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
 import models.emailverification.{CreateEmailVerificationRequest, VerificationStatus, VerifyPasscodeRequest}
+import play.api.http.Status._
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
+class EmailVerificationConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) {
 
   def getStatus(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.getStatus.timer").time()
-    httpClient.GET[Option[VerificationStatus]](appConfig.getEmailVerificationStatusUrl(id))
+    httpClient
+      .get(url"${appConfig.getEmailVerificationStatusUrl(id)}")
+      .execute[Option[VerificationStatus]]
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toVerificationStatus)))
       .recover { case ex: Exception =>
@@ -46,7 +50,10 @@ class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: A
     payload: CreateEmailVerificationRequest
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.create.timer").time()
-    httpClient.POST[CreateEmailVerificationRequest, HttpResponse](appConfig.emailVerificationUrl, payload)
+    httpClient
+      .post(url"${appConfig.emailVerificationUrl}")
+      .withBody(Json.toJson(payload))
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map {
         case response @ HttpResponse(CREATED, _, _) =>
@@ -67,10 +74,10 @@ class EmailVerificationConnector @Inject() (httpClient: HttpClient, appConfig: A
     hc: HeaderCarrier
   ): Future[Either[ServiceError, JourneyStatus]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
-    httpClient.POST[VerifyPasscodeRequest, HttpResponse](
-      appConfig.getSubmitPassscodeUrl(journeyId = journeyId),
-      payload
-    )
+    httpClient
+      .post(url"${appConfig.getSubmitPassscodeUrl(journeyId = journeyId)}")
+      .withBody(Json.toJson(payload))
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map {
         case _ @HttpResponse(OK, _, _) =>

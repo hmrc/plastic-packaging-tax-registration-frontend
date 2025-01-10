@@ -16,36 +16,23 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.Request
+import play.api.i18n.MessagesApi
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
-import views.html.error_template
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import views.html.error_template
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)
+class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)(implicit
+  val ec: ExecutionContext
+)
     extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
-    request: Request[_]
-  ): Html =
-    error_template(pageTitle, heading, List(message))
-
-  override def badRequestTemplate(implicit request: Request[_]): Html          = pptErrorTemplate()
-  override def notFoundTemplate(implicit request: Request[_]): Html            = pptErrorTemplate()
-  override def internalServerErrorTemplate(implicit request: Request[_]): Html = pptErrorTemplate()
-
-  private def pptErrorTemplate()(implicit request: Request[_]) =
-    customisedErrorTemplate(
-      Messages("error.title"),
-      Messages("error.title"),
-      List(Messages("error.detail1"), Messages("error.detail2"))
-    )
-
-  private def customisedErrorTemplate(pageTitle: String, heading: String, messages: List[String])(implicit
-    request: Request[_]
-  ): Html =
-    error_template(pageTitle, heading, messages)
-
+    request: RequestHeader
+  ): Future[Html] =
+    Future.successful(error_template(pageTitle, heading, List(message)))
 }

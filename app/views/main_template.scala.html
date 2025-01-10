@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,44 +14,34 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet, HmrcReportTechnicalIssueHelper, HmrcStandardHeader}
-@import config.TimeoutDialogConfig
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import controllers.{routes => pptRoutes}
-@import models.request.AuthenticatedRequest
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
-@import views.viewmodels.{BackButton, BackButtonJs, Title, BackButtonLink}
-@import config.AppConfig
-@import uk.gov.hmrc.play.language.LanguageUtils
-@import models.request.AuthenticatedRequest
-@import models.request.JourneyRequest
+@import config.{AppConfig, TimeoutDialogConfig}
+@import models.request.{AuthenticatedRequest, JourneyRequest}
+@import views.viewmodels.{Title, BackButton, BackButtonJs, BackButtonLink}
 @import views.html.helper.CSPNonce
 
 @this(
-        appConfig: AppConfig,
-        govukHeader: GovukHeader,
-        govukLayout: GovukLayout,
-        govukPhaseBanner: GovukPhaseBanner,
-        timeoutDialogConfig: TimeoutDialogConfig,
-        govukBackLink: GovukBackLink,
-        hmrcLanguageSelect: HmrcLanguageSelect,
-        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        hmrcFooter: HmrcStandardFooter,
-        hmrcTimeoutDialog: HmrcTimeoutDialog,
-        hmrcStandardHeader: HmrcStandardHeader,
-        utils: LanguageUtils
+    hmrcStandardPage: HmrcStandardPage,
+    standardBetaBanner: StandardBetaBanner,
+    timeoutDialogConfig: TimeoutDialogConfig,
+    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+    hmrcTimeoutDialog: HmrcTimeoutDialog,
+    appConfig: AppConfig
 )
-@(title: Title,
-  backButton: Option[BackButtonLink] = None,
-  useCustomContentWidth: Boolean = false
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@(
+    title: Title,
+    backButton: Option[BackButtonLink] = None,
+    useCustomContentWidth: Boolean = false
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 
 @head = {
-    @hmrcTrackingConsentSnippet()
 
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' type="text/css" />
     <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
@@ -79,89 +69,45 @@
     <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")' @CSPNonce.attr></script>
     <script @CSPNonce.attr>window.HMRCFrontend.initAll();</script>
 
-    <script @CSPNonce.attr>
-        // handle back click
-        var backLinkElem = document.querySelector('.govuk-back-link');
-
-        if(backLinkElem != null) {
-            backLinkElem.addEventListener('click', function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                window.history.back();
-            });
-        }
-    </script>
-
     @if(useTimeoutDialog) {
         <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")' @CSPNonce.attr> </script>
     }
 }
 
-@backLink(title: String, url: String, hiddenText: Option[String] = None, jsDisabledHide: Boolean = false) = @{
-    govukBackLink(BackLink(
-        content = HtmlContent(Html(s"""${title}${hiddenText.fold("")(o => s"""<span class="govuk-visually-hidden">$o</span>""")}""")),
-        attributes = Map("id" -> "back-link"),
-        classes = s"govuk-!-display-none-print ${if(jsDisabledHide)"js-visible" else ""}",
-        href = url
-    ))
-}
-
-@beforeContentBlock = {
-
-    @{
-        def playLangToUiLanguage(l: Lang) = l.code.take(2) match {
-            case "cy" => Cy
-            case "en" => En
-            case _ => En
-        }
-
-        if(appConfig.welshEnabled) {
-            hmrcLanguageSelect(LanguageSelect(
-            playLangToUiLanguage(messages.lang),
-            appConfig.languageLinks: _*
-            ))
-        }
+@backLink = @{
+    backButton.map {
+        case BackButtonJs =>
+            BackLink.mimicsBrowserBackButtonViaJavaScript.copy(
+                classes = "govuk-!-display-none-print js-visible",
+                attributes = Map("id" -> "back-link", "data-module" -> "hmrc-back-link")
+            )
+        case BackButton(title, call, hiddenText) =>
+            BackLink(
+                href = call.url,
+                content = HtmlContent(Html(s"""$title<span class="govuk-visually-hidden">$hiddenText</span>""")),
+                classes = "govuk-!-display-none-print",
+                attributes = Map("id" -> "back-link")
+            )
     }
-
-
-    <div class="govuk-back-link-div">
-        @backButton.map {
-            case BackButtonJs => {
-                @govukBackLink(BackLink(href = "#", content = Text(messages("site.back")), classes="js-visible"))
-            }
-            case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
-        }
-    </div>
 }
-
 @content = {
     @contentBlock
     @hmrcReportTechnicalIssueHelper()
 }
 
-@signOutHref = @{
-    if (request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]])
-        Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction).url)
-    else
-        None
-}
-
-@govukLayout(
-    pageTitle = Some(title.toString),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    bodyEndBlock = None,
-    scriptsBlock = Some(scripts),
-    headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = Some(pptRoutes.StartRegistrationController.startRegistration.url),
-        signOutUrl  = signOutHref,
-        phaseBanner = None,
-        userResearchBanner = Some(UserResearchBanner(
-            utils.getCurrentLang(request).code.take(2) match {
-                case "cy" => Cy
-                case "en" => En
-                case _ => En
-            }, appConfig.userResearchUrl))
-)),
-    footerBlock = Some(hmrcFooter())
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = Some(pptRoutes.StartRegistrationController.startRegistration.url),
+            signOutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction).url)
+        ),
+        banners = Banners(phaseBanner = None),
+        pageTitle = Some(title.toString(messages)),
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = Some(head),
+            additionalScriptsBlock = Some(scripts)
+        ),
+        isWelshTranslationAvailable = appConfig.welshEnabled,
+        backLink = backLink
+    )
 )(content)

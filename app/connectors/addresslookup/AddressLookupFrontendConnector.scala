@@ -16,25 +16,31 @@
 
 package connectors.addresslookup
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import play.api.http.HeaderNames.LOCATION
-import play.api.http.Status.ACCEPTED
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
 import models.addresslookup.{AddressLookupConfigV2, AddressLookupConfirmation, AddressLookupOnRamp}
+import play.api.http.HeaderNames.LOCATION
+import play.api.http.Status.ACCEPTED
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddressLookupFrontendConnector @Inject() (http: HttpClient, appConfig: AppConfig, metrics: Metrics) {
+class AddressLookupFrontendConnector @Inject() (http: HttpClientV2, appConfig: AppConfig, metrics: Metrics) {
 
   def initialiseJourney(
     addressLookupRequest: AddressLookupConfigV2
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.initialise.timer").time()
-    http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl, addressLookupRequest).andThen {
+    http
+      .post(url"${appConfig.addressLookupInitUrl}")
+      .withBody(Json.toJson(addressLookupRequest))
+      .execute[HttpResponse]
+      .andThen {
       case _ => timer.stop()
     }
       .map {
@@ -50,7 +56,9 @@ class AddressLookupFrontendConnector @Inject() (http: HttpClient, appConfig: App
 
   def getAddress(id: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupConfirmation] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.getaddress.timer").time()
-    http.GET[AddressLookupConfirmation](appConfig.addressLookupConfirmedUrl, Seq("id" -> id))
+    http
+      .get(url"${appConfig.addressLookupConfirmedUrl}?id=$id")
+      .execute[AddressLookupConfirmation]
       .andThen { case _ => timer.stop() }
   }
 

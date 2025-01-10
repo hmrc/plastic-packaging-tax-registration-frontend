@@ -16,23 +16,27 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import config.AppConfig
 import models.registration.Registration
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
-  ec: ExecutionContext
+class RegistrationConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
+                                                                                                        ec: ExecutionContext
 ) {
 
   def find(id: String)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Registration]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.find.timer").time()
-    httpClient.GET[Option[Registration]](appConfig.pptRegistrationUrl(id))
+    httpClient
+      .get(url"${appConfig.pptRegistrationUrl(id)}")
+      .execute[Option[Registration]]
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toRegistration)))
       .recover { case ex: Exception =>
@@ -42,7 +46,10 @@ class RegistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppCon
 
   def create(payload: Registration)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.create.timer").time()
-    httpClient.POST[Registration, Registration](appConfig.pptRegistrationUrl, payload)
+    httpClient
+      .post(url"${appConfig.pptRegistrationUrl}")
+      .withBody(Json.toJson(payload))
+      .execute[Registration]
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
       .recover { case ex: Exception =>
@@ -52,7 +59,10 @@ class RegistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppCon
 
   def update(payload: Registration)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
     val timer = metrics.defaultRegistry.timer("ppt.registration.update.timer").time()
-    httpClient.PUT[Registration, Registration](appConfig.pptRegistrationUrl(payload.id), payload)
+    httpClient
+      .put(url"${appConfig.pptRegistrationUrl(payload.id)}")
+      .withBody(Json.toJson(payload))
+      .execute[Registration]
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
       .recover { case ex: Exception =>

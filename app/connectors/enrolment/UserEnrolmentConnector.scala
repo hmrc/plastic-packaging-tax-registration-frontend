@@ -16,30 +16,35 @@
 
 package connectors.enrolment
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import play.api.http.Status
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
 import connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
 import models.enrolment._
 import models.registration.UserEnrolmentDetails
+import play.api.Logger
+import play.api.http.Status
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class UserEnrolmentConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
-  ec: ExecutionContext
+class UserEnrolmentConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
+                                                                                                         ec: ExecutionContext
 ) {
 
   private val logger = Logger(this.getClass)
 
   def enrol(payload: UserEnrolmentDetails)(implicit hc: HeaderCarrier): Future[UserEnrolmentResponse] = {
     val timer = metrics.defaultRegistry.timer(UserEnrolmentTimer).time()
-    httpClient.POST[UserEnrolmentRequest, HttpResponse](appConfig.pptEnrolmentUrl, payload.toUserEnrolmentRequest)
+    httpClient
+      .post(url"${appConfig.pptEnrolmentUrl}")
+      .withBody(Json.toJson(payload.toUserEnrolmentRequest))
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map { enrolmentResponse =>
         logger.info(
