@@ -18,13 +18,22 @@ package config
 
 import base.unit.MessagesSpec
 import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.stubMessagesApi
 import spec.PptTestData
 import views.html.error_template
 
-class ErrorHandlerTest extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class ErrorHandlerTest
+    extends MessagesSpec
+    with Matchers
+    with DefaultAwaitTimeout
+    with ScalaFutures
+    with OptionValues
+    with PptTestData {
 
   private val errorPage    = inject[error_template]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())
@@ -34,7 +43,7 @@ class ErrorHandlerTest extends MessagesSpec with Matchers with DefaultAwaitTimeo
     "standardErrorTemplate" in {
 
       val result =
-        errorHandler.standardErrorTemplate("title", "heading", "message")(registrationJourneyRequest).body
+        errorHandler.standardErrorTemplate("title", "heading", "message")(registrationJourneyRequest).futureValue.body
 
       result must include("title")
       result must include("heading")

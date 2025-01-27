@@ -115,7 +115,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
         }
 
         "display organisation details" in {
-          view.select("h2").get(1).text() must include(messages(organisationType match {
+          view.select("h2").first().text() must include(messages(organisationType match {
             case Organisation => "amend.organisation.subheading"
             case SoleTrader   => "amend.individual.subheading"
             case Group        => "amend.group.subheading"
@@ -143,7 +143,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
         }
 
         "display main contact details subheading" in {
-          view.select("h2").get(2).text() must include(messages(organisationType match {
+          view.select("h2").get(1).text() must include(messages(organisationType match {
             case Organisation => "amend.contactDetails.organisation.subheading"
             case SoleTrader   => "amend.contactDetails.individual.subheading"
             case Group        => "amend.contactDetails.group.subheading"

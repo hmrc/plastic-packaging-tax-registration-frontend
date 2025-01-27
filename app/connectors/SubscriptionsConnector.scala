@@ -16,22 +16,24 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import play.api.http.Status
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
 import models.registration.Registration
 import models.subscriptions.{SubscriptionCreateOrUpdateResponse, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatusResponse}
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class SubscriptionsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit
+class SubscriptionsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) {
 
@@ -39,7 +41,9 @@ class SubscriptionsConnector @Inject() (httpClient: HttpClient, config: AppConfi
 
   def getSubscriptionStatus(safeId: String)(implicit hc: HeaderCarrier): Future[SubscriptionStatusResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.status.timer").time()
-    httpClient.GET[SubscriptionStatusResponse](config.pptSubscriptionStatusUrl(safeId))
+    httpClient
+      .get(url"${config.pptSubscriptionStatusUrl(safeId)}")
+      .execute[SubscriptionStatusResponse]
       .andThen { case _ => timer.stop() }
       .andThen {
         case Success(response) =>
@@ -55,7 +59,9 @@ class SubscriptionsConnector @Inject() (httpClient: HttpClient, config: AppConfi
 
   def getSubscription(pptReference: String)(implicit hc: HeaderCarrier): Future[Registration] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
-    httpClient.GET[Registration](config.pptSubscriptionGetUrl(pptReference))
+    httpClient
+      .get(url"${config.pptSubscriptionGetUrl(pptReference)}")
+      .execute[Registration]
       .andThen { case _ => timer.stop() }
       .andThen {
         case Success(registration) =>
@@ -73,7 +79,10 @@ class SubscriptionsConnector @Inject() (httpClient: HttpClient, config: AppConfi
     hc: HeaderCarrier
   ): Future[SubscriptionCreateOrUpdateResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.update.timer").time()
-    httpClient.PUT[Registration, HttpResponse](config.pptSubscriptionUpdateUrl(pptReference), registration)
+    httpClient
+      .put(url"${config.pptSubscriptionUpdateUrl(pptReference)}")
+      .withBody(Json.toJson(registration))
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map { updateSubscriptionResponse =>
         logger.info(
@@ -100,7 +109,10 @@ class SubscriptionsConnector @Inject() (httpClient: HttpClient, config: AppConfi
     hc: HeaderCarrier
   ): Future[SubscriptionCreateOrUpdateResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
-    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeId), payload)
+    httpClient
+      .post(url"${config.pptSubscriptionCreateUrl(safeId)}")
+      .withBody(Json.toJson(payload))
+      .execute[HttpResponse]
       .andThen { case _ => timer.stop() }
       .map { createSubscriptionResponse =>
         logger.info(

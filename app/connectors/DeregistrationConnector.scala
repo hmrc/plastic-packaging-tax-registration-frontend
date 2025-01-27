@@ -16,19 +16,20 @@
 
 package connectors
 
-import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import play.api.http.Status.OK
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import config.AppConfig
 import models.deregistration.DeregistrationDetails
-import models.deregistration.DeregistrationReason.DeregistrationReason
+import play.api.http.Status.OK
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeregistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig, metrics: Metrics)(implicit
+class DeregistrationConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) {
 
@@ -36,12 +37,13 @@ class DeregistrationConnector @Inject() (httpClient: HttpClient, appConfig: AppC
     hc: HeaderCarrier
   ): Future[Either[ServiceError, Unit]] = {
     val timer = metrics.defaultRegistry.timer("ppt.deregister.timer").time()
-    httpClient.PUT[Option[DeregistrationReason], HttpResponse](
-      appConfig.pptSubscriptionDeregisterUrl(pptReference),
-      deregistrationDetails.reason
-    ).andThen { case _ =>
-      timer.stop()
-    }
+    httpClient
+      .put(url"${appConfig.pptSubscriptionDeregisterUrl(pptReference)}")
+      .withBody(Json.toJson(deregistrationDetails.reason))
+      .execute[HttpResponse]
+      .andThen { case _ =>
+        timer.stop()
+      }
       .map {
         case response @ HttpResponse(OK, _, _) =>
           Right(())

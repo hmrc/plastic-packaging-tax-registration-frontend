@@ -72,7 +72,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     }
 
     "output hidden label correctly" in {
-      view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
+      view.select("label.govuk-visually-hidden").first().text() must include(
         messages(
           "contactDetails.member.phoneNumber.title",
           contactName.getOrElse(messages("primaryContactDetails.fullName.default"))

@@ -17,15 +17,15 @@
 package connectors.grs
 
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
-import uk.gov.hmrc.http.HttpClient
 import config.AppConfig
 import models.genericregistration.{GrsSoleTraderDetails, SoleTraderDetails, SoleTraderGrsCreateRequest}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SoleTraderGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(implicit
+class SoleTraderGrsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
       httpClient,

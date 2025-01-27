@@ -19,7 +19,7 @@
 
 @this(govukLayout: main_template)
 
-@(pageTitle: String, heading: String, messageFragments: List[String])(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, heading: String, messageFragments: List[String])(implicit request: RequestHeader, messages: Messages)
 
 @govukLayout(title = Title(pageTitle)) {
  <div class="govuk-grid-row">
