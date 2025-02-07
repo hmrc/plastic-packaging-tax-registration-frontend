@@ -601,7 +601,7 @@ group.member.already.registered.detail2 = {0} will need to deregister for PPT be
 
 company.confirmAddress.title = Confirm the registered address for {0}
 
-missing.organisationName = your organisation
+missing.organisationName = Your organisation
 
 ukAddress.title = Is the contact address for {0} in the UK?
 ukAddress.empty.error = Select yes if the address is in the UK or the Isle of Man
