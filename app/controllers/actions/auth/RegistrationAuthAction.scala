@@ -54,7 +54,7 @@ class RegistrationAuthActionImpl @Inject() (
     val continueUrl = request.target.path
 
     authorised(
-      AffinityGroup.Organisation.or(AffinityGroup.Individual).and(User).and(
+      AffinityGroup.Organisation.and(User).and(
         CredentialStrength(CredentialStrength.strong)
       )
     )
