@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package test.repositories
 
 import builders.RegistrationBuilder
 import models.registration.Registration
+import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.{reset, verify, when}
 import org.mockito.invocation.InvocationOnMock
@@ -25,6 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.AnyContent
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.await
 import repositories.{RegistrationAmendmentRepositoryImpl, UserDataRepository}
@@ -41,7 +43,7 @@ class MongoRegistrationAmendmentRepositorySpec
 
   private val sessionId            = "123"
   private val registration         = aRegistration()
-  private implicit val authRequest = registrationRequest
+  private implicit val authRequest: AuthenticatedRequest.RegistrationRequest[AnyContent] = registrationRequest
 
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)
