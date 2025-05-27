@@ -25,6 +25,7 @@ site.link.remove  = Tynnu
 site.link.remove.hidden  = Tynnu {0} o’r rhestr
 site.button.continue  = Yn eich blaen
 site.button.tryAgain  = Rhowch gynnig arall arni
+site.button.signIn = Mewngofnodi
 
 general.true  = Iawn
 general.false  = Na
@@ -418,6 +419,11 @@ unauthorised.agent.paragraph.3 = Ar ôl i’ch cleient gofrestru a’ch awdurdod
 unauthorised.agent.paragraph.4 = Ewch i’ch {0}
 unauthorised.agent.paragraph.4.link.text = cyfrif gwasanaethau asiant
 unauthorised.agent.paragraph.4.full.stop = .
+
+unauthorised.individual.title = Does dim modd i chi ddefnyddio’r gwasanaeth hwn - Unigol
+unauthorised.individual.heading = Does dim modd i chi ddefnyddio’r gwasanaeth hwn
+unauthorised.individual.paragraph.1 = Gwnaethoch fewngofnodi gan ddefnyddio’r manylion ar gyfer mewngofnodi i wasanaethau CThEF sy’n gysylltiedig ag unigolyn. Rydym wedi’ch allgofnodi.
+unauthorised.individual.paragraph.2 = I ddefnyddio’r gwasanaeth hwn, mewngofnodwch gan ddefnyddio’r manylion ar gyfer mewngofnodi i wasanaethau CThEF sydd wedi’i gysylltu â’r cwmni sy’n cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
 
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.

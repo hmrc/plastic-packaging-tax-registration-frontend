@@ -24,8 +24,9 @@ import models.request.IdentityData
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{allEnrolments, credentials, internalId}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, credentials, internalId}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -46,24 +47,28 @@ class RegistrationAuthActionImpl @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  private val retrievals = credentials and internalId and allEnrolments
+  private val retrievals = credentials and internalId and allEnrolments and affinityGroup
 
   override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    val continueUrl = request.target.path
-
+    val continueUrl                = request.target.path
     authorised(
-      AffinityGroup.Organisation.and(User).and(
-        CredentialStrength(CredentialStrength.strong)
-      )
+      User.and(CredentialStrength(CredentialStrength.strong))
     )
       .retrieve(retrievals) {
-        case _ ~ _ ~ allEnrolments if allEnrolments.getEnrolment(PptEnrolment.Key).isDefined =>
-          Future.successful(Redirect(appConfig.pptAccountUrl))
-        case credentials ~ internalId ~ _ =>
-          val identityData = IdentityData(internalId, credentials)
+        case _ ~ _ ~ _ ~ Some(Individual) =>
+          Future.successful(
+            Redirect(controllers.unauthorised.routes.UnauthorisedController.showIndividualUnauthorised())
+          )
 
+        case _ ~ _ ~ _ ~ Some(Agent) =>
+          Future.successful(Redirect(controllers.unauthorised.routes.UnauthorisedController.showAgentUnauthorised()))
+
+        case _ ~ _ ~ allEnrolments ~ _ if allEnrolments.getEnrolment(PptEnrolment.Key).isDefined =>
+          Future.successful(Redirect(appConfig.pptAccountUrl))
+
+        case credentials ~ internalId ~ _ ~ _ =>
+          val identityData = IdentityData(internalId, credentials)
           block(RegistrationRequest(request, identityData))
       } recover {
       case _: NoActiveSession =>

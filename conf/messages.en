@@ -22,6 +22,7 @@ site.link.remove = Remove
 site.link.remove.hidden = Remove {0} from the list
 site.button.continue = Continue
 site.button.tryAgain = Try again
+site.button.signIn = Sign in
 
 general.true = Yes
 general.false = No
@@ -402,6 +403,11 @@ unauthorised.agent.paragraph.3 = Once registration is complete and your client h
 unauthorised.agent.paragraph.4 = Go to your {0}
 unauthorised.agent.paragraph.4.link.text = agent services account
 unauthorised.agent.paragraph.4.full.stop = .
+
+unauthorised.individual.title = You cannot use this service - Individual
+unauthorised.individual.heading = You cannot use this service
+unauthorised.individual.paragraph.1 = You signed in with the HMRC sign in details for an individual. We have signed you out.
+unauthorised.individual.paragraph.2 = To use this service, sign in with the HMRC sign in details for the company that is registering for the Plastic Packaging Tax.
 
 organisationDetails.registerAsOtherOrganisation.title = Register as a charitable incorporated organisation, trust or overseas company without a UK establishment
 organisationDetails.registerAsOtherOrganisation.paragraph.1 = This is a new service and this organisation type is not supported yet.

@@ -19,7 +19,7 @@ package controllers.unauthorised
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import views.html.unauthorised.{unauthorised, unauthorised_agent, unauthorised_not_admin}
+import views.html.unauthorised.{unauthorised, unauthorised_agent, unauthorised_individual, unauthorised_not_admin}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -28,7 +28,8 @@ class UnauthorisedController @Inject() (
   mcc: MessagesControllerComponents,
   unauthorisedPage: unauthorised,
   unauthorisedNotAdminPage: unauthorised_not_admin,
-  unauthorisedAgent: unauthorised_agent
+  unauthorisedAgent: unauthorised_agent,
+  unauthorisedIndividual: unauthorised_individual
 ) extends FrontendController(mcc)
     with I18nSupport {
 
@@ -49,6 +50,12 @@ class UnauthorisedController @Inject() (
     Action { implicit request =>
       logger.info("Agent attempting registration - showing unauthorised page")
       Ok(unauthorisedAgent())
+    }
+
+  def showIndividualUnauthorised(): Action[AnyContent] =
+    Action { implicit request =>
+      logger.info("Individual attempting registration - showing unauthorised page")
+      Ok(unauthorisedIndividual())
     }
 
 }
