@@ -184,6 +184,7 @@ GET        /security-signed-out                                         controll
 GET        /unauthorised                                                controllers.unauthorised.UnauthorisedController.showGenericUnauthorised()
 GET        /cannot-register-as-assistant                                controllers.unauthorised.UnauthorisedController.showAssistantUnauthorised()
 GET        /cannot-register-for-client                                  controllers.unauthorised.UnauthorisedController.showAgentUnauthorised()
+GET        /cannot-register-as-individual                                 controllers.unauthorised.UnauthorisedController.showIndividualUnauthorised()
 
 GET        /keep-alive                                                  controllers.KeepAliveController.keepAlive()
 

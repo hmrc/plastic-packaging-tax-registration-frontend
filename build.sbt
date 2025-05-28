@@ -30,7 +30,6 @@ lazy val microservice = Project(appName, file("."))
     // ***************
   )
   .configs(A11yTest)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(headerSettings(A11yTest): _*)
   .settings(automateHeaderSettings(A11yTest))
   .settings(scoverageSettings)

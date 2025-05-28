@@ -29,16 +29,24 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
-  private val page                  = mock[unauthorised]
-  private val wrongCredRolePage     = mock[unauthorised_not_admin]
-  private val unauthorisedAgentPage = mock[unauthorised_agent]
+  private val page                       = mock[unauthorised]
+  private val wrongCredRolePage          = mock[unauthorised_not_admin]
+  private val unauthorisedAgentPage      = mock[unauthorised_agent]
+  private val unauthorisedIndividualPage = mock[unauthorised_individual]
 
   when(page.apply()(any(), any())).thenReturn(Html("unauthorised"))
   when(wrongCredRolePage.apply()(any(), any())).thenReturn(Html("wrong cred role"))
   when(unauthorisedAgentPage.apply()(any(), any())).thenReturn(Html("unauthorised agent"))
+  when(unauthorisedIndividualPage.apply()(any(), any())).thenReturn(Html("unauthorised individual"))
 
   val controller =
-    new UnauthorisedController(stubMessagesControllerComponents(), page, wrongCredRolePage, unauthorisedAgentPage)
+    new UnauthorisedController(
+      stubMessagesControllerComponents(),
+      page,
+      wrongCredRolePage,
+      unauthorisedAgentPage,
+      unauthorisedIndividualPage
+    )
 
   ".onPageLoad" should {
 
@@ -58,6 +66,14 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "unauthorised agent"
+      }
+
+      "showIndividualUnauthorised can be invoked" in {
+
+        val result = controller.showIndividualUnauthorised()(FakeRequest())
+
+        status(result) must be(OK)
+        contentAsString(result) should fullyMatch regex "unauthorised individual"
       }
 
       "showAssistantUnauthorised can be invoked" in {
