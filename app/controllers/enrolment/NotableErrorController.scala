@@ -40,7 +40,7 @@ class NotableErrorController @Inject() (
   def enrolmentVerificationFailurePage(): Action[AnyContent] =
     authenticate { implicit request =>
       val referrer      = frontendConfig.referrerUrl.map(Utils.urlEncode).getOrElse("<referrer-unknown>")
-      val contactUsHref = appConfig.reportTechincalProblemUrl + "&referrerUrl=" + referrer
+      val contactUsHref = appConfig.reportTechnicalProblemUrl + "&referrerUrl=" + referrer
       Ok(verificationFailurePage(contactUsHref))
     }
 
