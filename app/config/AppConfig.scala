@@ -54,36 +54,37 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     .getOptional[String]("platform.frontend.host")
     .getOrElse("http://localhost:8503")
 
-  def isRunningLocally() = !config.getOptional[String]("platform.frontend.host").isDefined
+  private def isRunningLocally = config.getOptional[String]("platform.frontend.host").isEmpty
 
   def selfUrl(call: Call): String = s"$selfBaseUrl${call.url}"
 
-  lazy val contactBaseUrl = config
+  private lazy val contactBaseUrl = config
     .getOptional[String]("platform.frontend.host")
     .getOrElse("http://localhost:9250")
 
-  lazy val reportTechincalProblemUrl: String =
+  lazy val reportTechnicalProblemUrl: String =
     s"$contactBaseUrl/contact/report-technical-problem?service=$serviceIdentifier"
 
   lazy val contactHmrcUrl: String =
     s"$contactBaseUrl/contact/contact-hmrc?service=$serviceIdentifier"
 
-  lazy val loginUrl         = config.get[String]("urls.login")
-  lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
+  lazy val loginUrl: String         = config.get[String]("urls.login")
+  lazy val loginContinueUrl: String = config.get[String]("urls.loginContinue")
+  lazy val signOutUrl: String       = config.get[String]("urls.logOut")
 
-  lazy val signOutLink = {
-    val signOutUrl = controllers.routes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction)
-    if (isRunningLocally())
-      selfUrl(signOutUrl)
+  lazy val signOutLink: String = {
+    val signOutMethod = controllers.routes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction)
+    if (isRunningLocally)
+      selfUrl(signOutMethod)
     else // Use a relative link
-      signOutUrl.url
+      signOutMethod.url
   }
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
   lazy val agentServicesUrl: String = config.get[String]("urls.agentServicesUrl")
 
-  lazy val incorpIdHost: String =
+  private lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
   private lazy val incorpBaseUrl           = s"$incorpIdHost/incorporated-entity-identification/api"
@@ -91,7 +92,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpRegistedSocietyJourneyUrl = s"$incorpBaseUrl/registered-society-journey"
   lazy val incorpDetailsUrl                = s"$incorpBaseUrl/journey"
 
-  lazy val soleTraderHost: String =
+  private lazy val soleTraderHost: String =
     servicesConfig.baseUrl("sole-trader-identification-frontend")
 
   lazy val soleTraderJourneyInitUrl =
@@ -99,7 +100,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
 
-  lazy val partnershipHost: String =
+  private lazy val partnershipHost: String =
     servicesConfig.baseUrl("partnership-identification-frontend")
 
   lazy val partnershipBaseUrl            = s"$partnershipHost/partnership-identification/api"
@@ -138,34 +139,34 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def amendPartnerGrsCallbackUrl(): String =
     config.get[String]("urls.amendPartnerGrsCallback")
 
-  lazy val pptServiceHost: String =
+  private lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
-  lazy val emailVerificationHost: String =
+  private lazy val emailVerificationHost: String =
     servicesConfig.baseUrl("email-verification")
 
-  lazy val pptAccountHost: String =
+  private lazy val pptAccountHost: String =
     config.getOptional[String]("platform.frontend.host").getOrElse(servicesConfig.baseUrl("ppt-account-frontend"))
 
-  lazy val pptReturnsFrontendHost: String =
+  private lazy val pptReturnsFrontendHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-returns-frontend")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
-  lazy val feedbackUnauthenticatedLink: String =
+  private lazy val feedbackUnauthenticatedLink: String =
     config.get[String]("urls.feedback.unauthenticatedLink")
 
-  lazy val exitSurveyUrl   = config.get[String]("urls.exitSurvey")
-  lazy val hmrcPrivacyUrl  = config.get[String]("urls.hmrcPrivacy")
-  lazy val govUkUrl        = config.get[String]("urls.govUk")
-  lazy val userResearchUrl = config.get[String]("urls.userResearchUrl")
+  lazy val exitSurveyUrl: String   = config.get[String]("urls.exitSurvey")
+  lazy val hmrcPrivacyUrl: String  = config.get[String]("urls.hmrcPrivacy")
+  lazy val govUkUrl: String        = config.get[String]("urls.govUk")
+  lazy val userResearchUrl: String = config.get[String]("urls.userResearchUrl")
 
-  lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
-  lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
-  lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
-  lazy val pptEnrolmentUrl: String     = s"$pptServiceHost/enrolment"
+  private lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
+  lazy val pptRegistrationUrl: String          = s"$pptServiceHost/registrations"
+  lazy val emailVerificationUrl                = s"$emailVerificationHost/email-verification/verify-email"
+  lazy val pptEnrolmentUrl: String             = s"$pptServiceHost/enrolment"
 
-  lazy val addressLookupHost: String =
+  private lazy val addressLookupHost: String =
     servicesConfig.baseUrl("address-lookup-frontend")
 
   lazy val addressLookupInitUrl: String =

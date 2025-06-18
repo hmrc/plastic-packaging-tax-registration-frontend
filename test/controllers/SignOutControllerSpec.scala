@@ -28,6 +28,8 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.session_timed_out
 import views.viewmodels.SignOutReason
 
+import java.net.URLEncoder
+
 class SignOutControllerSpec extends ControllerSpec {
 
   private val mcc                = stubMessagesControllerComponents()
@@ -35,6 +37,14 @@ class SignOutControllerSpec extends ControllerSpec {
 
   private val controller =
     new SignOutController(config, sessionTimeoutPage, mcc)
+
+  private val sessionTimeoutUrlEncoded: String =
+    URLEncoder.encode(routes.SignOutController.sessionTimeoutSignedOut().url, "UTF-8")
+
+  private val feedbackSurveyUrlEncoded: String =
+    URLEncoder.encode(givenExistSurveyUrl, "UTF-8")
+
+  when(config.signOutUrl).thenReturn("http://localhost:9553/bas-gateway/sign-out-without-state")
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -52,21 +62,17 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-        val exitSurveyUrl: String = givenExistSurveyUrl
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        redirectLocation(result) mustBe Some(exitSurveyUrl)
+        redirectLocation(result) mustBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
 
       }
 
       "unauth user signs out" in {
 
-        val exitSurveyUrl: String = givenExistSurveyUrl
-
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        redirectLocation(result) mustBe Some(exitSurveyUrl)
+        redirectLocation(result) mustBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
 
       }
     }
@@ -120,7 +126,8 @@ class SignOutControllerSpec extends ControllerSpec {
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.SignOutController.sessionTimeoutSignedOut().url)
+
+        redirectLocation(result).get must include(sessionTimeoutUrlEncoded)
 
       }
 
@@ -129,7 +136,8 @@ class SignOutControllerSpec extends ControllerSpec {
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.SignOutController.sessionTimeoutSignedOut().url)
+
+        redirectLocation(result).get must include(sessionTimeoutUrlEncoded)
 
       }
     }
