@@ -16,7 +16,6 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import forms.contact.Address
-@import views.html.components.countryCodeAutoComplete
 @import views.html.main_template
 @import views.viewmodels.{BackButtonJs, Title}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
@@ -33,8 +32,7 @@
         paragraphBody: paragraphBody,
         saveButton: saveAndContinue,
         errorSummary: errorSummary,
-        link: link,
-        countryCodeAutoComplete: countryCodeAutoComplete
+        link: link
 )
 
 @(form: Form[Address], countryMap: Map[String, String], updateCall: Call, headingKey: String, entityName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
@@ -100,8 +98,6 @@
             errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
         )
     )
-
-    @countryCodeAutoComplete()
 }
 
 @govukLayout(
