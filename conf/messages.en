@@ -32,12 +32,11 @@ general.year = year
 general.and = {0} and {1}
 
 sessionTimout.title = For your security, you have been signed out
-sessionTimout.detail = Your answers have been saved.
+sessionTimout.detail = We saved your answers for 1 hour.
 sessionTimout.signin.button = Sign in
 
 timeoutDialog.title = You’re about to be signed out
 timeoutDialog.message = For your security, we will sign you out in
-timeoutDialog.messageSuffix = Your answers will be saved.
 timeoutDialog.keepAlive.text = Stay signed in
 timeoutDialog.signout.text = Sign out
 

@@ -58,7 +58,7 @@
           timeoutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.SessionTimeout).url),
           title = Some(messages("timeoutDialog.title")),
           message = Some(messages("timeoutDialog.message")),
-          messageSuffix = Some(messages("timeoutDialog.messageSuffix")),
+          messageSuffix = None,
           keepAliveButtonText = Some(messages("timeoutDialog.keepAlive.text")),
           signOutButtonText = Some(messages("timeoutDialog.signout.text"))
         ))
