@@ -35,7 +35,7 @@ general.year = flwyddyn
 general.and = {0} a’r {1}
 
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
-sessionTimout.detail  = Mae’ch atebion wedi’u cadw.
+sessionTimout.detail  = Rydym wedi cadw’ch atebion am 1 awr.
 sessionTimout.signin.button  = Mewngofnodi
 
 timeoutDialog.title  = Rydych ar fin cael eich allgofnodi
