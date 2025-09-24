@@ -3,6 +3,7 @@ $hmrc-assets-path: "/register-for-plastic-packaging-tax/assets/lib/hmrc-frontend
 @import "lib/govuk-frontend/dist/govuk/index";
 @import "lib/hmrc-frontend/hmrc/all";
 $govuk-suppressed-warnings: ie8;
+$govuk-new-organisation-colours: true;
 
 @import '_registration';
 @import '_account';
