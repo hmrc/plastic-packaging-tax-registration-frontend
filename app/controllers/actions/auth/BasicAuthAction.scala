@@ -57,7 +57,7 @@ class BasicAuthActionImpl @Inject() (
         block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials)))
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl), "accountType" -> Seq("Organisation")))
       case _: IncorrectCredentialStrength => upliftCredentialStrength(continueUrl)
       case _: UnsupportedCredentialRole =>
         Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())

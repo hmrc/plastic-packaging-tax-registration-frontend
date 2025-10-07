@@ -72,7 +72,7 @@ class RegistrationAuthActionImpl @Inject() (
           block(RegistrationRequest(request, identityData))
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl), "accountType" -> Seq("Organisation")))
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength(continueUrl)
       case _: InsufficientEnrolments => Results.Redirect(appConfig.pptNotEnrolledUrl)
