@@ -26,7 +26,9 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
+import java.time.format.DateTimeFormatter
+import scala.util.Try
 
 @Singleton
 class ViewUtils @Inject() (countryService: CountryService) {
@@ -76,6 +78,17 @@ class ViewUtils @Inject() (countryService: CountryService) {
 
   def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
     s"${date.getDayOfMonth} ${getDateMonth(date)} ${date.getYear}"
+
+  def displayLocalDateStr(optDate: Option[String])(implicit messages: Messages): Option[String] = {
+    optDate.flatMap { date =>
+      Try(LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME).toLocalDate)
+        .recover { case _: Exception =>
+          ZonedDateTime.parse(date).toLocalDate
+        }
+        .toOption
+    }
+      .map(displayLocalDate(_))
+  }
 
   private def getDateMonth(date: LocalDate)(implicit messages: Messages): String =
     messages(s"date.month.${date.getMonthValue}")

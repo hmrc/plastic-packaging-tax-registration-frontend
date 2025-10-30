@@ -38,7 +38,8 @@ case class Registration(
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
   metaData: MetaData = MetaData(),
-  userHeaders: Option[Map[String, String]] = None
+  userHeaders: Option[Map[String, String]] = None,
+  processingDate: Option[String] = Some(LocalDate.now().toString)
 ) {
 
   def clearAddressFromGrs =
