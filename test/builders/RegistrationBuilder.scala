@@ -105,7 +105,7 @@ trait RegistrationBuilder {
       ),
       metaData =
         MetaData(verifiedEmails = Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false))),
-      processingDate = Some(LocalDateTime.now.toString)
+      processingDate = Some("2025-03-05T11:12:02.553489")
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
