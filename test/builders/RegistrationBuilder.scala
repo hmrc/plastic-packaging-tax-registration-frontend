@@ -29,7 +29,7 @@ import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import services.CountryService
 import utils.AddressConversionUtils
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 
 //noinspection ScalaStyle
 trait RegistrationBuilder {
@@ -104,7 +104,8 @@ trait RegistrationBuilder {
         subscriptionStatus = Some(NOT_SUBSCRIBED)
       ),
       metaData =
-        MetaData(verifiedEmails = Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false)))
+        MetaData(verifiedEmails = Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false))),
+      processingDate = Some("2025-03-05T11:12:02.553489")
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
