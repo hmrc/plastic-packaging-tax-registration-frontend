@@ -51,7 +51,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       mcc = mcc,
       mockRegistrationConnector,
       mockTaxStartDateService,
-      config,
       page = page
     )
 
