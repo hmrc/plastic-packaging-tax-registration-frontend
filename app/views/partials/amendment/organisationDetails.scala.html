@@ -60,7 +60,7 @@
             viewUtils.summaryListRow(organisationNameMessageKey, registration.organisationDetails.businessName, None),
             viewUtils.summaryListRow("amend.pptRef.label", pptReferenceNumber, None),
             viewUtils.summaryListRow("amend.taxStartDate.label", viewUtils.displayOldDate(registration.liabilityDetails.startDate), None),
-            viewUtils.summaryListRow("amend.dateOfRegistration.label", viewUtils.displayLocalDateStr(registration.processingDate), None),
+            viewUtils.summaryListRow("amend.dateOfRegistration.label", viewUtils.displayLocalDate(registration.dateOfRegistration), None),
             viewUtils.summaryListRow("amend.registeredAddress.label", registration.organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), None),
         ).filterNot(_.value.content == Empty)
     )
