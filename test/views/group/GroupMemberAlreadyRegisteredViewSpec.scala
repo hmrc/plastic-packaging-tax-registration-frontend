@@ -49,10 +49,12 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
 
     "display detail" in {
       view.select("p.govuk-body").text() must include(
-        messages("group.member.already.registered.detail1", "Plastic Packaging Ltd")
+        messages("group.member.already.registered.detail1")
       )
       val details = view.getElementsByClass(gdsPageBodyText)
-      details.get(1) must containMessage("group.member.already.registered.detail2", "Plastic Packaging Ltd")
+      details.get(1) must containMessage("group.member.already.registered.detail2")
+      details.get(2) must containMessage("group.member.already.registered.detail3")
+      details.get(3) must containMessage("group.member.already.registered.detail4")
     }
   }
 

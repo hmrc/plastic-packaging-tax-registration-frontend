@@ -609,8 +609,10 @@ organisation.already.in.group.detail.member  = Rydych eisoes wedi ychwanegu {0} 
 organisation.already.in.group.detail.nominated  =  Mae’r sefydliad enwebedig {0} eisoes yn y grŵp.
 
 group.member.already.registered.title  = Ni allwch ychwanegu {0} at y grŵp
-group.member.already.registered.detail1  = Mae {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig, felly does dim modd ei ychwanegu at y grŵp.
-group.member.already.registered.detail2  = Bydd angen i {0} ddatgofrestru rhag y Dreth Deunydd Pacio Plastig cyn i chi allu ei ychwanegu at y grŵp.
+group.member.already.registered.detail1  = Mae hyn oherwydd bod y sefydliad dan sylw eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig (PPT), naill ai fel rhan o grŵp arall neu ar ei liwt ei hun.
+group.member.already.registered.detail2  = Os yw’r sefydliad eisoes yn rhan o grŵp arall, mae angen i chi sicrhau ei fod wedi’i dynnu o’r grŵp hwnnw.
+group.member.already.registered.detail3  = Os yw’r sefydliad wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig (PPT) ar ei liwt ei hun, bydd angen iddo ddatgofrestru.
+group.member.already.registered.detail4  = Yna, gallwch ei ychwanegu at y grŵp hwn.
 
 company.confirmAddress.title  = Cadarnhewch y cyfeiriad cofrestredig ar gyfer {0}
 
