@@ -16,6 +16,7 @@
 
 package controllers.liability
 
+import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
@@ -37,6 +38,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   mcc: MessagesControllerComponents,
   override val registrationConnector: RegistrationConnector,
   taxStarDateService: TaxStartDateService,
+  appConfig: AppConfig,
   page: check_liability_details_answers_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc)

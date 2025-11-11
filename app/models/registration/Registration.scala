@@ -38,11 +38,10 @@ case class Registration(
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
   metaData: MetaData = MetaData(),
-  userHeaders: Option[Map[String, String]] = None,
-  processingDate: Option[String] = None
+  userHeaders: Option[Map[String, String]] = None
 ) {
 
-  def clearAddressFromGrs: Registration =
+  def clearAddressFromGrs =
     copy(organisationDetails = organisationDetails.clearGrsStuff)
 
   def toRegistration: Registration =
@@ -274,4 +273,5 @@ case class Registration(
 
 object Registration {
   implicit val format: OFormat[Registration] = Json.format[Registration]
+
 }
