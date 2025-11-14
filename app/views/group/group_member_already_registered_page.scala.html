@@ -36,10 +36,17 @@
 @govukLayout(title = Title("group.member.already.registered.title", organisationName)) {
     @pageHeading(text = messages("group.member.already.registered.title", organisationName))
     @paragraphBody(
-        message = messages("group.member.already.registered.detail1",organisationName)
+        message = messages("group.member.already.registered.detail1")
     )
     @paragraphBody(
-        message = messages("group.member.already.registered.detail2",organisationName))
+        message = messages("group.member.already.registered.detail2")
+    )
+    @paragraphBody(
+        message = messages("group.member.already.registered.detail3")
+    )
+    @paragraphBody(
+        message = messages("group.member.already.registered.detail4")
+    )
     @paragraph{
         @link(
             text = messages("site.button.continue"),
