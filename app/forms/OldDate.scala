@@ -101,6 +101,6 @@ object OldDate {
         isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt), int => int.map(_.toString))
-    )(OldDate.apply)(OldDate.unapply)
+    )(OldDate.apply)(od => Some(od.day, od.month, od.year))
 
 }

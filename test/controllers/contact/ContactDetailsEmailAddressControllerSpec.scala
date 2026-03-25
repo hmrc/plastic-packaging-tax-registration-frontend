@@ -25,9 +25,9 @@ import models.emailverification.{EmailStatus, VerificationStatus}
 import models.registration.{MetaData, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.mockito.stubbing.ScalaOngoingStubbing
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.stubbing.OngoingStubbing
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -68,20 +68,20 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
   def mockEmailVerificationGetStatus(
     dataToReturn: Option[VerificationStatus]
-  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Right(dataToReturn)))
 
   def mockEmailVerificationGetStatusWithException(
     error: ServiceError
-  ): ScalaOngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Left(error)))
 
-  def mockEmailVerificationCreate(dataToReturn: String): ScalaOngoingStubbing[Future[String]] =
+  def mockEmailVerificationCreate(dataToReturn: String): OngoingStubbing[Future[String]] =
     when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
       Future.successful(dataToReturn)
     )
 
-  def mockEmailVerificationCreateWithException(error: ServiceError): ScalaOngoingStubbing[Future[String]] =
+  def mockEmailVerificationCreateWithException(error: ServiceError): OngoingStubbing[Future[String]] =
     when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(Future.failed(error))
 
   "ContactDetailsEmailAddressController" should {
@@ -92,7 +92,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -100,7 +100,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -116,10 +116,10 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.primaryContactDetails.email shouldBe Some("test@test.com")
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
 
         reset(mockRegistrationConnector)
       }
@@ -136,10 +136,10 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         val result =
           controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.primaryContactDetails.email shouldBe Some("test@test.com")
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
 
         reset(mockRegistrationConnector)
       }
@@ -176,8 +176,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         val result = controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ContactDetailsEmailAddressPasscodeController.displayPage.url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsEmailAddressPasscodeController.displayPage.url)
 
         reset(mockRegistrationConnector)
       }
@@ -200,8 +200,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         val result =
           controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(pptRoutes.TaskListController.displayPage().url)
         reset(mockRegistrationConnector)
       }
     }
@@ -214,9 +214,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         val result =
           controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
 
         reset(mockRegistrationConnector)
       }
@@ -328,7 +328,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       await(controller.displayPage()(FakeRequest()))
 
-      pageForm.get.value mustBe "test@test.com"
+      pageForm.get.value shouldBe "test@test.com"
     }
   }
 
@@ -345,7 +345,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     val captor = ArgumentCaptor.forClass(classOf[Boolean])
     verify(page).apply(any(), any(), captor.capture())(any(), any())
-    captor.getValue mustBe true
+    captor.getValue shouldBe true
   }
 
   "return 400 (BAD_REQUEST)" when {
@@ -355,7 +355,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       val result =
         controller.submit()(postRequest(Json.toJson(EmailAddress("test@"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 

@@ -39,7 +39,7 @@
     title = Title(form, "liability.exceededThresholdWeightDate.title"),
     backButton = Some(BackButtonJs)) {
 
-    @formHelper(action = pptRoutes.ExceededThresholdWeightDateController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ExceededThresholdWeightDateController.submit(), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

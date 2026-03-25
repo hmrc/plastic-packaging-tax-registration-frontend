@@ -74,7 +74,7 @@
 
     @errorSummary(form.errors)
 
-    @formHelper(action = updateCall, 'autoComplete -> "off") {
+    @formHelper(action = updateCall, Symbol("autoComplete") -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

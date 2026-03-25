@@ -18,7 +18,7 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
@@ -130,8 +130,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case _ =>
               val result =
                 controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(partnerRoutes.PartnerContactNameController.displayNewPartner.url)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(partnerRoutes.PartnerContactNameController.displayNewPartner.url)
           }
 
         }
@@ -148,8 +148,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockGetSoleTraderDetails(soleTraderDetails)
         val result =
           controller.grsCallbackExistingPartner(registration.incorpJourneyId.get, "123")(FakeRequest())
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(
           partnerRoutes.PartnerContactNameController.displayExistingPartner("123").url
         )
       }
@@ -173,8 +173,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val result =
           controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.duplicateRegistration().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(pptRoutes.NotableErrorController.duplicateRegistration().url)
       }
     }
 
@@ -199,10 +199,10 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val result =
           controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         // businessPartnerId is an example of a field we would expect to have captured from GRS
-        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) mustBe Some("XXPPTP123456789")
+        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) shouldBe Some("XXPPTP123456789")
       }
     }
 
@@ -232,12 +232,12 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val result =
           controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         // businessPartnerId is an example of a field we would expect to have captured from GRS
         modifiedRegistration.inflightPartner.flatMap(
           _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("User supplied partnership name")
+        ) shouldBe Some("User supplied partnership name")
       }
     }
 

@@ -18,8 +18,8 @@ package controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import controllers.unauthorised.UnauthorisedController
@@ -56,7 +56,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
         val result = controller.showGenericUnauthorised()(FakeRequest())
 
-        status(result) must be(OK)
+        status(result) shouldBe OK
         contentAsString(result) should fullyMatch regex "unauthorised"
       }
 
@@ -64,7 +64,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
         val result = controller.showAgentUnauthorised()(FakeRequest())
 
-        status(result) must be(OK)
+        status(result) shouldBe OK
         contentAsString(result) should fullyMatch regex "unauthorised agent"
       }
 
@@ -72,7 +72,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
         val result = controller.showIndividualUnauthorised()(FakeRequest())
 
-        status(result) must be(OK)
+        status(result) shouldBe OK
         contentAsString(result) should fullyMatch regex "unauthorised individual"
       }
 
@@ -80,7 +80,7 @@ class UnauthorisedControllerSpec extends ControllerSpec {
 
         val result = controller.showAssistantUnauthorised()(FakeRequest())
 
-        status(result) must be(OK)
+        status(result) shouldBe OK
         contentAsString(result) should fullyMatch regex "wrong cred role"
       }
     }

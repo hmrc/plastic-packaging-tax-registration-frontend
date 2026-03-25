@@ -96,7 +96,7 @@
 
     @pageHeading(messages("partner.check.title"))
 
-    @formHelper(action = partnerRoutes.PartnerCheckAnswersController.continue(), 'autoComplete -> "off") {
+    @formHelper(action = partnerRoutes.PartnerCheckAnswersController.continue(), Symbol("autoComplete") -> "off") {
 
         @govukSummaryList(
             if(partner.incorporationDetails.isDefined)

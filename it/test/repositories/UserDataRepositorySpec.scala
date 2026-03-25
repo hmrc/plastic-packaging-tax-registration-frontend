@@ -67,20 +67,20 @@ class UserDataRepositorySpec
         val id = "123"
         await(repository.putData(id, "testKey", "testData"))
 
-        await(repository.getData[String](id, "testKey")) mustBe Some("testData")
+        await(repository.getData[String](id, "testKey")) shouldBe Some("testData")
       }
       "user's session id used as id" in {
 
         await(repository.putData("testKey", "testData"))
 
-        await(repository.getData[String]("testKey")) mustBe Some("testData")
+        await(repository.getData[String]("testKey")) shouldBe Some("testData")
       }
       "user's session id used as id to findBySessionId" in {
         implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
         await(repository.putData("testKey", "testData"))
         val registration: (String, JsValue) = "testKey" -> Json.toJson("testData")
 
-        await(repository.findBySessionId(request.cacheId).map(_.data)) mustBe JsObject.apply(Map(registration))
+        await(repository.findBySessionId(request.cacheId).map(_.data)) shouldBe JsObject.apply(Map(registration))
       }
       "no cacheItem found for sessionId" in {
         await(repository.putData("testKey", "testData"))
@@ -91,7 +91,7 @@ class UserDataRepositorySpec
     }
 
     "return None when no data found" in {
-      await(repository.getData[String]("some-key")) mustBe None
+      await(repository.getData[String]("some-key")) shouldBe None
     }
 
     "add data to cache and delete it" when {
@@ -99,12 +99,12 @@ class UserDataRepositorySpec
         val id = "123"
         await(repository.putData(id, "testKey", "testData"))
 
-        await(repository.deleteData[String](id, "testKey")).mustBe(())
+        await(repository.deleteData[String](id, "testKey")).shouldBe(())
       }
       "user's session id used as id" in {
         await(repository.putData("testKey", "testData"))
 
-        await(repository.deleteData[String]("testKey")).mustBe(())
+        await(repository.deleteData[String]("testKey")).shouldBe(())
       }
     }
   }

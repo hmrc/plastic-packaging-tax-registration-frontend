@@ -41,7 +41,7 @@
 
     @pageHeading(messages("deregister.checkAnswers.heading"))
 
-    @formHelper(action = routes.DeregisterCheckYourAnswersController.continue(), 'autoComplete -> "off") {
+    @formHelper(action = routes.DeregisterCheckYourAnswersController.continue(), Symbol("autoComplete") -> "off") {
         @govukSummaryList(
             SummaryList(
                 Seq(

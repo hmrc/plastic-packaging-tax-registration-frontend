@@ -20,7 +20,7 @@ import builders.RegistrationBuilder
 import models.registration.Registration
 import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, when, verify}
 import org.mockito.invocation.InvocationOnMock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -64,8 +64,8 @@ class MongoRegistrationAmendmentRepositorySpec
       }
 
       "getting registration" in {
-        await(mongoRegistrationAmendmentRepository.get()) mustBe Some(registration)
-        await(mongoRegistrationAmendmentRepository.get(sessionId)) mustBe Some(registration)
+        await(mongoRegistrationAmendmentRepository.get()) shouldBe Some(registration)
+        await(mongoRegistrationAmendmentRepository.get(sessionId)) shouldBe Some(registration)
       }
 
       "updating a registration" in {

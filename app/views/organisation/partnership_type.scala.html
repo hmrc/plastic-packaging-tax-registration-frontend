@@ -17,6 +17,7 @@
 @import controllers.organisation.{routes => pptRoutes}
 @import controllers.partner.{routes => partnerRoutes}
 @import forms.organisation.PartnerType
+@import forms.organisation.PartnerTypeEnum
 @import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, displayName}
 @import views.html.main_template
 @import views.viewmodels.{BackButton, Title}
@@ -42,7 +43,7 @@
 
         @pageHeading(messages("partnership.type.title"))
 
-        @formHelper(action = partnerRoutes.PartnershipTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = partnerRoutes.PartnershipTypeController.submit(), Symbol("autoComplete") -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

@@ -22,8 +22,8 @@ import forms.contact.JobTitle
 import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -65,7 +65,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
     }
@@ -79,10 +79,10 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         val result =
           controller.submit()(postRequestEncoded(JobTitle("tester")))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.primaryContactDetails.jobTitle shouldBe Some("tester")
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsEmailAddressController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsEmailAddressController.displayPage().url)
 
         reset(mockRegistrationConnector)
       }
@@ -105,7 +105,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
       await(controller.displayPage()(FakeRequest()))
 
-      pageForm.get.value mustBe "tester"
+      pageForm.get.value shouldBe "tester"
     }
   }
 
@@ -122,7 +122,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     val captor = ArgumentCaptor.forClass(classOf[Boolean])
     verify(page).apply(any(), any(), captor.capture())(any(), any())
-    captor.getValue mustBe true
+    captor.getValue shouldBe true
   }
 
   "return 400 (BAD_REQUEST)" when {
@@ -132,7 +132,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       val result =
         controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 

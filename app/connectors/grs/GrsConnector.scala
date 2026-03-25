@@ -17,10 +17,11 @@
 package connectors.grs
 
 import models.genericregistration.GrsJourneyCreationRequest
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.CREATED
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, InternalServerException, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
@@ -36,10 +37,9 @@ abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest
   val grsGetDetailsUrl: String,
   createJourneyTimerTag: String,
   getJourneyDetailsTimerTag: String
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends Logging {
   type RedirectUrl = String
-
-  private val logger = Logger(this.getClass)
 
   def createJourney(
     payload: GrsCreateJourneyPayload

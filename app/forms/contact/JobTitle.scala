@@ -38,7 +38,7 @@ object JobTitle extends CommonFormValidators {
           .verifying(jobTitleEmptyError, isNonEmpty)
           .verifying(jobTitleTooLongError, isNotExceedingMaxLength(_, maxLength))
           .verifying(jobTitleNonAlphaCharError, containsOnlyAlphaAndWhitespacesAnd(_, None))
-      )(JobTitle.apply)(JobTitle.unapply)
+      )(JobTitle.apply)(jt => Some(jt.value))
     )
 
 }

@@ -19,6 +19,7 @@
 @import views.html.main_template
 @import controllers.{routes => pptRoutes}
 @import controllers.organisation.{routes => organisationRoutes}
+@import forms.organisation.OrgType
 @import forms.organisation.OrgType._
 @import forms.organisation.OrganisationType
 
@@ -79,7 +80,7 @@
 
         @sectionHeader(messages(section))
 
-        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), Symbol("autoComplete") -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

@@ -21,7 +21,8 @@ import models.addresslookup.{AddressLookupConfigV2, AddressLookupConfirmation, A
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status.ACCEPTED
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics

@@ -24,6 +24,7 @@ import forms.enrolment.IsUkAddress.{NO, YES}
 import forms.partner.RemovePartner
 import views.html.partner.remove_partner_page
 import java.util.UUID
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
 
@@ -40,7 +41,7 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -56,16 +57,16 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display radio inputs" in {
-      view.getElementById("value").attr("value").text() mustBe YES
-      view.getElementsByClass("govuk-label").get(0).text() mustBe messages("general.true")
+      view.getElementById("value").attr("value").text() shouldBe YES
+      view.getElementsByClass("govuk-label").get(0).text() shouldBe messages("general.true")
 
-      view.getElementById("value-2").attr("value").text() mustBe NO
-      view.getElementsByClass("govuk-label").get(1).text() mustBe messages("general.false")
+      view.getElementById("value-2").attr("value").text() shouldBe NO
+      view.getElementsByClass("govuk-label").get(1).text() shouldBe messages("general.false")
     }
 
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
     "display error" when {

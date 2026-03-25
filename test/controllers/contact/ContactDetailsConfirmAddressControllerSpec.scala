@@ -26,8 +26,8 @@ import models.genericregistration.IncorporationAddressDetails
 import models.registration.{OrganisationDetails, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -91,8 +91,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         )
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.UpdateCompaniesHouseController.onPageLoad().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(pptRoutes.UpdateCompaniesHouseController.onPageLoad().url)
       }
     }
 
@@ -112,7 +112,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -130,7 +130,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())
-      captor.getValue mustBe true
+      captor.getValue shouldBe true
     }
 
     "update business address" when {
@@ -147,7 +147,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "display page method is invoked for partnership" in {
@@ -166,7 +166,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "display page method is invoked for uk company" in {
@@ -181,7 +181,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "display page method is invoked for registered society" in {
@@ -200,7 +200,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "throw IllegalStateException when business registered address is missing" in {
@@ -216,22 +216,22 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     }
 
     def primaryContactAddressPopulatedSameAs(expected: IncorporationAddressDetails): Unit = {
-      modifiedRegistration.primaryContactDetails.address.get.addressLine1 mustBe expected.premises.get
-      modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
-      modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
-      modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.primaryContactDetails.address.get.maybePostcode mustBe expected.postal_code
-      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe GB
-      modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
+      modifiedRegistration.primaryContactDetails.address.get.addressLine1 shouldBe expected.premises.get
+      modifiedRegistration.primaryContactDetails.address.get.addressLine2 shouldBe expected.address_line_1
+      modifiedRegistration.primaryContactDetails.address.get.addressLine3 shouldBe expected.address_line_2
+      modifiedRegistration.primaryContactDetails.address.get.townOrCity shouldBe expected.locality.get
+      modifiedRegistration.primaryContactDetails.address.get.maybePostcode shouldBe expected.postal_code
+      modifiedRegistration.primaryContactDetails.address.get.countryCode shouldBe GB
+      modifiedRegistration.primaryContactDetails.useRegisteredAddress shouldBe Some(true)
     }
 
     def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails): Unit = {
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.maybePostcode mustBe expected.postal_code
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe GB
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine1 shouldBe expected.premises.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 shouldBe expected.address_line_1
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 shouldBe expected.address_line_2
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity shouldBe expected.locality.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.maybePostcode shouldBe expected.postal_code
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode shouldBe GB
     }
 
     "return 303 (OK) for " when {
@@ -243,12 +243,12 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val correctForm = Seq("useRegisteredAddress" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         primaryContactAddressPopulatedSameAs(testCompanyAddress)
         businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsCheckAnswersController.displayPage().url)
       }
 
       "user does not accept the registered address" in {
@@ -259,14 +259,14 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val correctForm = Seq("useRegisteredAddress" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        modifiedRegistration.primaryContactDetails.address mustBe None
-        modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(false)
+        modifiedRegistration.primaryContactDetails.address shouldBe None
+        modifiedRegistration.primaryContactDetails.useRegisteredAddress shouldBe Some(false)
 
         businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsAddressController.displayPage.url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsAddressController.displayPage.url)
 
       }
 
@@ -277,7 +277,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty))
 
-          status(result) mustBe BAD_REQUEST
+          status(result) shouldBe BAD_REQUEST
         }
       }
 

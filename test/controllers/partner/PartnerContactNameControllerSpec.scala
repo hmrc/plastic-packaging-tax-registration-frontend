@@ -21,8 +21,7 @@ import connectors.DownstreamServiceError
 import forms.group.MemberName
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
@@ -80,7 +79,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "displaying an existing partner to edit their contact name" in {
@@ -89,7 +88,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -101,11 +100,11 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerEmailAddressController.displayNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerEmailAddressController.displayNewPartner().url)
 
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.firstName)) mustBe Some("John")
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.lastName)) mustBe Some("Smith")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.firstName)) shouldBe Some("John")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.lastName)) shouldBe Some("Smith")
       }
 
       "nominated partner submits a contact name and is prompted for job title" in {
@@ -115,8 +114,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerJobTitleController.displayNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerJobTitleController.displayNewPartner().url)
       }
 
       "user submits an amendment to an existing partners contact name" in {
@@ -127,12 +126,12 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         val result =
           controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(MemberName("Jane", "Smith")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         val modifiedContactDetails =
           modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
-        modifiedContactDetails.flatMap(_.firstName) mustBe Some("Jane")
-        modifiedContactDetails.flatMap(_.lastName) mustBe Some("Smith")
+        modifiedContactDetails.flatMap(_.firstName) shouldBe Some("Jane")
+        modifiedContactDetails.flatMap(_.lastName) shouldBe Some("Smith")
       }
     }
 
@@ -144,7 +143,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         val result =
           controller.submitNewPartner()(postRequestEncoded(MemberName("John", "")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters a long name" in {
@@ -153,7 +152,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.submitNewPartner()(postRequestEncoded(MemberName("abced" * 40, "Smith")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
@@ -163,7 +162,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         val result =
           controller.submitNewPartner()(postRequestEncoded(MemberName("FirstNam807980234£$", "LastName")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 

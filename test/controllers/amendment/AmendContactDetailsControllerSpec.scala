@@ -20,9 +20,9 @@ import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import forms.contact._
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}
@@ -91,8 +91,8 @@ class AmendContactDetailsControllerSpec
 
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
           }
 
           s"$testName page requested and registration unpopulated" in {
@@ -100,8 +100,8 @@ class AmendContactDetailsControllerSpec
 
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
           }
       }
     }
@@ -114,7 +114,7 @@ class AmendContactDetailsControllerSpec
           () => FullName(""),
           () => FullName("John Johnson"),
           (req: Request[AnyContent]) => controller.updateContactName()(req),
-          (reg: Registration) => reg.primaryContactDetails.name mustBe Some("John Johnson"),
+          (reg: Registration) => reg.primaryContactDetails.name shouldBe Some("John Johnson"),
           "name amendment"
         ),
         (
@@ -122,7 +122,7 @@ class AmendContactDetailsControllerSpec
           () => JobTitle(""),
           () => JobTitle("CEO"),
           (req: Request[AnyContent]) => controller.updateJobTitle()(req),
-          (reg: Registration) => reg.primaryContactDetails.jobTitle mustBe Some("CEO"),
+          (reg: Registration) => reg.primaryContactDetails.jobTitle shouldBe Some("CEO"),
           "job title amendment"
         ),
         (
@@ -130,7 +130,7 @@ class AmendContactDetailsControllerSpec
           () => PhoneNumber("xxx"),
           () => PhoneNumber("07123 123456"),
           (req: Request[AnyContent]) => controller.updatePhoneNumber()(req),
-          (reg: Registration) => reg.primaryContactDetails.phoneNumber mustBe Some("07123 123456"),
+          (reg: Registration) => reg.primaryContactDetails.phoneNumber shouldBe Some("07123 123456"),
           "phone number amendment"
         )
       )
@@ -152,8 +152,8 @@ class AmendContactDetailsControllerSpec
 
             val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()): _*))
 
-            status(resp) mustBe BAD_REQUEST
-            contentAsString(resp) mustBe expectedPageContent
+            status(resp) shouldBe BAD_REQUEST
+            contentAsString(resp) shouldBe expectedPageContent
           }
       }
     }
@@ -176,7 +176,7 @@ class AmendContactDetailsControllerSpec
             await(call(FakeRequest("POST", "").withFormUrlEncodedBody(getTuples(createValidForm()): _*)))
 
             verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-            val updatedRegistration = getUpdatedRegistrationMethod().apply(registration)
+            val updatedRegistration = getUpdatedRegistrationMethod(registration)
             test(updatedRegistration)
           }
       }
@@ -197,7 +197,7 @@ class AmendContactDetailsControllerSpec
 
       val resp = controller.address()(FakeRequest())
 
-      redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+      redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
     }
 
     "update address on address capture callback" in {
@@ -205,11 +205,11 @@ class AmendContactDetailsControllerSpec
 
       val resp = controller.updateAddress()(FakeRequest())
 
-      redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+      redirectLocation(resp) shouldBe Some(routes.AmendRegistrationController.displayPage().url)
 
       verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-      val updatedRegistration = getUpdatedRegistrationMethod().apply(populatedRegistration)
-      updatedRegistration.primaryContactDetails.address mustBe Some(validCapturedAddress)
+      val updatedRegistration = getUpdatedRegistrationMethod(populatedRegistration)
+      updatedRegistration.primaryContactDetails.address shouldBe Some(validCapturedAddress)
 
     }
   }

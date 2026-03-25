@@ -19,8 +19,7 @@ package controllers.amendment.partner
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import controllers.amendment.{routes => amendRoutes}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -63,8 +62,8 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
           spyJourneyAction.setReg(partnerRegistrationInAmendment)
           val resp = controller.displayPage()(FakeRequest())
 
-          status(resp) mustBe OK
-          contentAsString(resp) mustBe "Amend Reg - New Partner CYA"
+          status(resp) shouldBe OK
+          contentAsString(resp) shouldBe "Amend Reg - New Partner CYA"
         }
       }
     }
@@ -74,18 +73,18 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
-        val updated = getUpdatedRegistrationMethod()(partnerRegistrationInAmendment)
+        val updated = getUpdatedRegistrationMethod(partnerRegistrationInAmendment)
 
-        updated.inflightPartner mustBe None
-        updated.newPartner mustBe Some(aSoleTraderPartner)
+        updated.inflightPartner shouldBe None
+        updated.newPartner shouldBe Some(aSoleTraderPartner)
       }
 
       "redirect to the manage group page when update successful" in {
 
         val resp = controller.submit()(postRequest(JsObject.empty))
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.ManagePartnersController.displayPage().toString)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.ManagePartnersController.displayPage().toString)
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
@@ -93,8 +92,8 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
 
           val resp = controller.submit()(postRequest(JsObject.empty))
 
-          status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
+          status(resp) shouldBe SEE_OTHER
+          redirectLocation(resp) shouldBe Some(
             amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
           )
         }
@@ -103,8 +102,8 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec 
 
           val resp = controller.submit()(postRequest(JsObject.empty))
 
-          status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
+          status(resp) shouldBe SEE_OTHER
+          redirectLocation(resp) shouldBe Some(
             amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
           )
         }

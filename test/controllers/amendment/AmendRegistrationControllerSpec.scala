@@ -18,8 +18,8 @@ package controllers.amendment
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
@@ -67,8 +67,8 @@ class AmendRegistrationControllerSpec
       "user is authenticated" in {
         val resp = controller.displayPage()(FakeRequest())
 
-        status(resp) mustBe OK
-        contentAsString(resp) mustBe "registration amendment"
+        status(resp) shouldBe OK
+        contentAsString(resp) shouldBe "registration amendment"
       }
     }
 
@@ -76,8 +76,8 @@ class AmendRegistrationControllerSpec
 
       val resp = controller.registrationUpdateFailed()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "registration amendment error"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "registration amendment error"
     }
   }
 

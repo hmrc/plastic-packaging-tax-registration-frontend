@@ -57,10 +57,9 @@ class ConfirmRemoveMemberController @Inject() (
     journeyAction.amend.async { implicit request =>
       request.registration.findMember(memberId).map { member =>
         RemoveMember.form().bindFromRequest().fold(
-          { formWithErrors: Form[RemoveMember] =>
-            Future.successful(BadRequest(page(formWithErrors, member)))
-          },
-          { removeMember: RemoveMember =>
+          (formWithErrors: Form[RemoveMember]) =>
+            Future.successful(BadRequest(page(formWithErrors, member))),
+          { (removeMember: RemoveMember) =>
             removeMember.value match {
               case Some(true) =>
                 removeGroupMember(member.id)

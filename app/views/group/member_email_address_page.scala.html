@@ -48,7 +48,7 @@
   backButton = Some(BackButtonJs)) {
   @errorSummary(form.errors)
 
-  @formHelper(action = updateCall, 'autoComplete -> "off") {
+  @formHelper(action = updateCall, Symbol("autoComplete") -> "off") {
 
     @govukInput(
         Input(

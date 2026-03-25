@@ -83,7 +83,7 @@
 
  @pageHeading(messages("partner.check.title"))
 
- @formHelper(action = partnerRoutes.AddPartnerContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+ @formHelper(action = partnerRoutes.AddPartnerContactDetailsCheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
 
   @govukSummaryList(
    if(partner.incorporationDetails.isDefined)

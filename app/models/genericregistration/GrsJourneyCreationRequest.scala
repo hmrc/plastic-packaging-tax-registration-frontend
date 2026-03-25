@@ -16,16 +16,28 @@
 
 package models.genericregistration
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
 import models.genericregistration
-import models.genericregistration.Regime.Regime
+import models.genericregistration.Regime.given_Format_Regime
 
-object Regime extends Enumeration {
-  type Regime = Value
+import scala.util.Try
 
-  val PPT: genericregistration.Regime.Value = Value
+enum Regime:
+  case PPT extends Regime
 
-  implicit val format: Format[Regime] = Format(Reads.enumNameReads(Regime), Writes.enumNameWrites)
+object Regime {
+  given Format[Regime] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(Regime.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown Regime: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(regime => JsString(regime.toString))
+    )
 }
 
 trait GrsJourneyCreationRequest[R <: GrsJourneyCreationRequest[R]] {

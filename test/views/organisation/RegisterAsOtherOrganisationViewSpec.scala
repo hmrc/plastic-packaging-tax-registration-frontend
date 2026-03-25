@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import views.components.Styles
 import views.html.organisation.register_as_other_organisation
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
@@ -33,7 +34,7 @@ class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {

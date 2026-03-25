@@ -139,7 +139,7 @@ class EmailVerificationServiceSpec()
     )
 
   private def simulatePasscodeVerification(
-    verificationStatus: EmailVerificationJourneyStatus.Value,
+    verificationStatus: EmailVerificationJourneyStatus,
     passcode: String,
     email: String,
     journeyId: String

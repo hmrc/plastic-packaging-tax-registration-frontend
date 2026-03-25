@@ -18,8 +18,8 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.BAD_REQUEST
 import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
@@ -62,7 +62,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
         "registration does not contain partnership name" in {
           val resp = controller.displayPage()(FakeRequest())
 
-          contentAsString(resp) mustBe "Partnership name capture"
+          contentAsString(resp) shouldBe "Partnership name capture"
         }
         "registration does contain partnership name" in {
           spyJourneyAction.setReg(
@@ -75,7 +75,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
           val resp = controller.displayPage()(FakeRequest())
 
-          contentAsString(resp) mustBe "Partnership name capture"
+          contentAsString(resp) shouldBe "Partnership name capture"
         }
       }
     }
@@ -84,7 +84,9 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
 
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipName mustBe Some("Partners in Plastic")
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipName shouldBe Some(
+        "Partners in Plastic"
+      )
     }
 
     "redirect to general partnership grs journey" in {
@@ -93,7 +95,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
-      grsJourneyCreationUrl mustBe config.generalPartnershipJourneyUrl
+      grsJourneyCreationUrl shouldBe config.generalPartnershipJourneyUrl
     }
 
     "redirect to scottish partnership grs journey" in {
@@ -104,13 +106,13 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
-      grsJourneyCreationUrl mustBe config.scottishPartnershipJourneyUrl
+      grsJourneyCreationUrl shouldBe config.scottishPartnershipJourneyUrl
     }
 
     "reject invalid partnership names" in {
       val resp = controller.submit()(postRequestEncoded(PartnershipName("~~~")))
 
-      status(resp) mustBe BAD_REQUEST
+      status(resp) shouldBe BAD_REQUEST
     }
 
     "throw exception" when {

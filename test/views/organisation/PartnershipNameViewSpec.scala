@@ -24,6 +24,7 @@ import controllers.partner.{routes => partnerRoutes}
 import forms.organisation.PartnershipName
 import forms.organisation.PartnershipName.form
 import views.html.organisation.partnership_name
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
 
@@ -37,7 +38,7 @@ class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -62,7 +63,7 @@ class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
   }
 

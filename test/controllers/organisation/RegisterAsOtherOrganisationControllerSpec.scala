@@ -19,7 +19,7 @@ package controllers.organisation
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -56,7 +56,7 @@ class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
 
         val result = controller.onPageLoad()(FakeRequest())
 
-        status(result) must be(OK)
+        status(result) shouldBe OK
       }
     }
   }

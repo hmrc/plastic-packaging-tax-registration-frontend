@@ -19,7 +19,7 @@ package controllers.group
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -29,7 +29,7 @@ import forms.group.RemoveMember
 import models.registration.group.{GroupMember, OrganisationDetails}
 import models.registration.{GroupDetail, Registration}
 import org.mockito.Mockito.never
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import views.html.group.remove_group_member_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -67,8 +67,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
 
       val result = removeMemberController.displayPage(groupMember1.id)(FakeRequest())
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe "Remove Member Page"
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe "Remove Member Page"
     }
 
     "redirect to group member list when group member not found in registration" in {
@@ -77,8 +77,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
 
       val result = removeMemberController.displayPage(s"${groupMember1.id}xxx")(FakeRequest())
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.OrganisationListController.displayPage().url)
     }
 
     "remove identified group member when remove action confirmed" in {
@@ -92,8 +92,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
         ArgumentCaptor.forClass(classOf[Registration])
       verify(mockRegistrationConnector).update(registrationCaptor.capture())(any())
 
-      registrationCaptor.getValue.groupDetail.get.members.size mustBe 1
-      registrationCaptor.getValue.groupDetail.get.members.head mustBe groupMember2
+      registrationCaptor.getValue.groupDetail.get.members.size shouldBe 1
+      registrationCaptor.getValue.groupDetail.get.members.head shouldBe groupMember2
     }
 
     "leave registration unchanged when unknown group member id specified" in {
@@ -113,8 +113,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
       val result =
         removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(("value", "no")))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.OrganisationListController.displayPage().url)
     }
 
     "redirect to group member list when member removal fails" in {
@@ -126,8 +126,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
       val result =
         removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(("value", "yes")))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.OrganisationListController.displayPage().url)
     }
 
     "display validation error" when {
@@ -140,7 +140,7 @@ class RemoveMemberControllerSpec extends ControllerSpec {
         val result =
           removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(emptySelection: _*))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
   }

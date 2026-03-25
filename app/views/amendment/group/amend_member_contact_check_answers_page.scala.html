@@ -47,7 +47,7 @@
 
     @pageHeading(messages("contactDetails.member.check.title"))
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
 
         @govukSummaryList(
             SummaryList(

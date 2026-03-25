@@ -17,7 +17,7 @@
 package models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import models.emailverification.EmailVerificationStatus.EmailVerificationStatus
+import models.emailverification.EmailVerificationStatus
 import models.emailverification.{EmailStatus, EmailVerificationStatus, EmailVerificationStatusMapper}
 import models.nrs.NrsDetails
 

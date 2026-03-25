@@ -18,8 +18,7 @@ package controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -57,7 +56,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
         spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -65,7 +64,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
         spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -77,11 +76,11 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000))))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        modifiedRegistration.liabilityDetails.expectedWeightNext12m mustBe Some(LiabilityWeight(Some(20000)))
+        modifiedRegistration.liabilityDetails.expectedWeightNext12m shouldBe Some(LiabilityWeight(Some(20000)))
 
-        redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.RegistrationTypeController.displayPage().url)
       }
     }
 
@@ -93,14 +92,14 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(LiabilityWeight(None)))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
       "user provides an out of range projected 12m weight" in {
 
         val result =
           controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(100000000000L)))))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
   }

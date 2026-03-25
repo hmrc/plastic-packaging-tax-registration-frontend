@@ -20,9 +20,9 @@ import builders.RegistrationBuilder
 import connectors.{DownstreamServiceError, RegistrationConnector, ServiceError}
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.stubbing.OngoingStubbing
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,15 +34,15 @@ trait MockRegistrationConnector extends MockitoSugar with RegistrationBuilder wi
 
   protected val mockRegistrationConnector = mock[RegistrationConnector]
 
-  def mockRegistrationUpdate(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdate(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenAnswer((inv: InvocationOnMock) => Future.successful(Right(inv.getArgument(0))))
 
-  def mockRegistrationException(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationException(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenThrow(new RuntimeException("some error"))
 
-  def mockRegistrationUpdateFailure(): ScalaOngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdateFailure(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenReturn(Future.successful(Left(DownstreamServiceError("some error", new Exception("some error")))))
 

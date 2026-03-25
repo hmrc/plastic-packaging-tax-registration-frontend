@@ -22,8 +22,8 @@ import forms.contact.FullName
 import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -64,7 +64,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         )
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -77,11 +77,11 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
+        modifiedRegistration.primaryContactDetails.name shouldBe Some("FirstName -'. LastName")
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsJobTitleController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsJobTitleController.displayPage().url)
 
       }
     }
@@ -91,14 +91,14 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(FullName("")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters a long name" in {
 
         val result = controller.submit()(postRequestEncoded(FullName("abced" * 40)))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
@@ -106,7 +106,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(postRequestEncoded(FullName("FirstNam807980234£$ LastName")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters non-alphabetic no digits" in {
@@ -114,7 +114,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(postRequestEncoded(FullName("()/,& LastName")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters accented characters" in {
@@ -122,7 +122,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 
@@ -158,7 +158,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
       verify(page).apply(any(), any(), captor.capture())(any(), any())
-      captor.getValue mustBe true
+      captor.getValue shouldBe true
     }
   }
 }

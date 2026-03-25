@@ -38,6 +38,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.{AnyContent, Call}
 import views.components.Styles.gdsPageHeading
 import views.html.review_registration_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 import java.time.LocalDate
 
@@ -58,7 +59,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
     val view: Document = createView(aRegistration())
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -204,9 +205,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
               getKeyFor(liabilitySection, 2, liabilityView) must containMessage("liability.checkAnswers.startDate")
 
-              getValueFor(liabilitySection, 0, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 1, liabilityView) mustBe "5 March 2022"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "1 April 2022"
+              getValueFor(liabilitySection, 0, liabilityView) shouldBe "Yes"
+              getValueFor(liabilitySection, 1, liabilityView) shouldBe "5 March 2022"
+              getValueFor(liabilitySection, 2, liabilityView) shouldBe "1 April 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
                 controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
@@ -241,10 +242,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
               getKeyFor(liabilitySection, 3, liabilityView) must containMessage("liability.checkAnswers.startDate")
 
-              getValueFor(liabilitySection, 0, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 1, liabilityView) mustBe "6 March 2022"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "No"
-              getValueFor(liabilitySection, 3, liabilityView) mustBe "6 March 2022"
+              getValueFor(liabilitySection, 0, liabilityView) shouldBe "Yes"
+              getValueFor(liabilitySection, 1, liabilityView) shouldBe "6 March 2022"
+              getValueFor(liabilitySection, 2, liabilityView) shouldBe "No"
+              getValueFor(liabilitySection, 3, liabilityView) shouldBe "6 March 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
                 liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
@@ -282,23 +283,23 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
-              getValueFor(organisationSection, 0) mustBe OrgType.displayName(UK_COMPANY)
-              getValueFor(organisationSection, 1) mustBe ukCompanyRegistration.organisationDetails.businessName.get
+              getValueFor(organisationSection, 0) shouldBe OrgType.displayName(UK_COMPANY)
+              getValueFor(organisationSection, 1) shouldBe ukCompanyRegistration.organisationDetails.businessName.get
               getValueFor(
                 organisationSection,
                 2,
                 ukCompanyView
-              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
+              ) shouldBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
               getValueFor(
                 organisationSection,
                 3,
                 ukCompanyView
-              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
+              ) shouldBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
               getValueFor(
                 organisationSection,
                 4,
                 ukCompanyView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+              ) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             }
 
@@ -333,32 +334,32 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
-              getValueFor(organisationSection, 0, soleTraderView) mustBe OrgType.displayName(OrgType.SOLE_TRADER)
+              getValueFor(organisationSection, 0, soleTraderView) shouldBe OrgType.displayName(OrgType.SOLE_TRADER)
               getValueFor(
                 organisationSection,
                 1,
                 soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
+              ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
               getValueFor(
                 organisationSection,
                 2,
                 soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
+              ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
               getValueFor(
                 organisationSection,
                 3,
                 soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
+              ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
               getValueFor(
                 organisationSection,
                 4,
                 soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
+              ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
               getValueFor(
                 organisationSection,
                 5,
                 soleTraderView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+              ) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             }
 
@@ -384,17 +385,17 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
-              getValueFor(organisationSection, 0, partnershipView) mustBe PARTNERSHIP.toString
+              getValueFor(organisationSection, 0, partnershipView) shouldBe PARTNERSHIP.toString
               getValueFor(
                 organisationSection,
                 1,
                 partnershipView
-              ) mustBe generalPartnershipDetailsWithPartners.partnershipOrCompanyName.get
+              ) shouldBe generalPartnershipDetailsWithPartners.partnershipOrCompanyName.get
               getValueFor(
                 organisationSection,
                 2,
                 partnershipView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+              ) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
             }
 
           }
@@ -407,11 +408,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getKeyFor(contactDetailsSection, 3) must containMessage("primaryContactDetails.check.phoneNumber")
             getKeyFor(contactDetailsSection, 4) must containMessage("primaryContactDetails.check.address")
 
-            getValueFor(contactDetailsSection, 0) mustBe "Jack Gatsby"
-            getValueFor(contactDetailsSection, 1) mustBe registration.primaryContactDetails.jobTitle.get
-            getValueFor(contactDetailsSection, 2) mustBe registration.primaryContactDetails.email.get
-            getValueFor(contactDetailsSection, 3) mustBe registration.primaryContactDetails.phoneNumber.get
-            getValueFor(contactDetailsSection, 4) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+            getValueFor(contactDetailsSection, 0) shouldBe "Jack Gatsby"
+            getValueFor(contactDetailsSection, 1) shouldBe registration.primaryContactDetails.jobTitle.get
+            getValueFor(contactDetailsSection, 2) shouldBe registration.primaryContactDetails.email.get
+            getValueFor(contactDetailsSection, 3) shouldBe registration.primaryContactDetails.phoneNumber.get
+            getValueFor(contactDetailsSection, 4) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             getChangeLinkFor(contactDetailsSection, 0) must haveHref(
               contactRoutes.ContactDetailsFullNameController.displayPage()
@@ -437,7 +438,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               case SINGLE_ENTITY =>
                 groupMembersView.getElementsByClass(
                   "govuk-summary-list"
-                ).size mustBe 3 // Group member section not displayed!
+                ).size shouldBe 3 // Group member section not displayed!
               case GROUP =>
                 registration.groupDetail.get.members.zipWithIndex.foreach { case (member, idx) =>
                   groupMembersView.getElementById(s"group-members-heading-${idx + 1}").text() must include(
@@ -541,46 +542,50 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               "reviewRegistration.partner.contact.address"
             )
             val nominatedPartner = partnershipRegistration.nominatedPartner.get
-            getValueFor(nominatedPartnerSection, 0, partnershipView) mustBe PartnerTypeEnum.displayName(
+            getValueFor(nominatedPartnerSection, 0, partnershipView) shouldBe PartnerTypeEnum.displayName(
               nominatedPartner.partnerType
             )
-            getValueFor(nominatedPartnerSection, 1, partnershipView) mustBe nominatedPartner.name
+            getValueFor(nominatedPartnerSection, 1, partnershipView) shouldBe nominatedPartner.name
             getValueFor(
               nominatedPartnerSection,
               2,
               partnershipView
-            ) mustBe nominatedPartner.soleTraderDetails.get.dateOfBirth.get
+            ) shouldBe nominatedPartner.soleTraderDetails.get.dateOfBirth.get
             getValueFor(
               nominatedPartnerSection,
               3,
               partnershipView
-            ) mustBe nominatedPartner.soleTraderDetails.get.ninoOrTrn
+            ) shouldBe nominatedPartner.soleTraderDetails.get.ninoOrTrn
             getValueFor(
               nominatedPartnerSection,
               4,
               partnershipView
-            ) mustBe nominatedPartner.soleTraderDetails.get.sautr.get
-            getValueFor(nominatedPartnerSection, 5, partnershipView) mustBe nominatedPartner.contactDetails.get.name.get
+            ) shouldBe nominatedPartner.soleTraderDetails.get.sautr.get
+            getValueFor(
+              nominatedPartnerSection,
+              5,
+              partnershipView
+            ) shouldBe nominatedPartner.contactDetails.get.name.get
             getValueFor(
               nominatedPartnerSection,
               6,
               partnershipView
-            ) mustBe nominatedPartner.contactDetails.get.jobTitle.get
+            ) shouldBe nominatedPartner.contactDetails.get.jobTitle.get
             getValueFor(
               nominatedPartnerSection,
               7,
               partnershipView
-            ) mustBe nominatedPartner.contactDetails.get.emailAddress.get
+            ) shouldBe nominatedPartner.contactDetails.get.emailAddress.get
             getValueFor(
               nominatedPartnerSection,
               8,
               partnershipView
-            ) mustBe nominatedPartner.contactDetails.get.phoneNumber.get
+            ) shouldBe nominatedPartner.contactDetails.get.phoneNumber.get
             getValueFor(
               nominatedPartnerSection,
               9,
               partnershipView
-            ) mustBe "1 High Street Cloverfield Leeds LS1 1AA United Kingdom"
+            ) shouldBe "1 High Street Cloverfield Leeds LS1 1AA United Kingdom"
 
           }
 

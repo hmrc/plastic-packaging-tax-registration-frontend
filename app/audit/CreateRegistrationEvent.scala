@@ -17,7 +17,8 @@
 package audit
 
 import play.api.libs.json.{Json, OFormat}
-import forms.liability.RegType.RegType
+import forms.liability.RegType
+import forms.liability.RegType.given_Format_RegType
 import models.registration._
 
 import java.time.LocalDate

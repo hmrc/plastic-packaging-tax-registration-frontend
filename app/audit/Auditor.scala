@@ -16,7 +16,7 @@
 
 package audit
 
-import forms.organisation.OrgType.OrgType
+import forms.organisation.OrgType
 import models.registration.Registration
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector

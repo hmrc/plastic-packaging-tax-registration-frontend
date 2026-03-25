@@ -84,7 +84,7 @@ class AmendEmailAddressController @Inject() (
   private def isEmailChanged(newEmail: String)(implicit request: JourneyRequest[AnyContent]) =
     !request.registration.primaryContactDetails.email.contains(newEmail)
 
-  private def updateEmail(updatedEmail: String): Registration => Registration = { registration: Registration =>
+  private def updateEmail(updatedEmail: String): Registration => Registration = { (registration: Registration) =>
     registration.copy(primaryContactDetails = registration.primaryContactDetails.copy(email = Some(updatedEmail)))
   }
 

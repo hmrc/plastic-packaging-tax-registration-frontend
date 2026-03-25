@@ -18,15 +18,15 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.mockito.Mockito.never
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
 import forms.partner.RemovePartner
-import org.mockito.MockitoSugar.reset
+import org.mockito.Mockito.reset
 import play.api.test.FakeRequest
 import views.html.partner.remove_partner_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -63,8 +63,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       val result = removePartnerController.displayPage(aSoleTraderPartner.id)(FakeRequest())
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe "Remove Partner Page"
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe "Remove Partner Page"
     }
 
     "redirect to partner list when partner not found in registration" in {
@@ -73,8 +73,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       val result = removePartnerController.displayPage(s"${soleTraderPartner.id}xxx")(FakeRequest())
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.PartnerListController.displayPage().url)
     }
 
     "remove identified partner when remove action confirmed" in {
@@ -84,8 +84,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       await(removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes"))))
 
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size shouldBe 2
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head shouldBe
         partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(1).get
     }
 
@@ -96,15 +96,15 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
       await(removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes"))))
 
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
-      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size shouldBe 2
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head shouldBe
         partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(1).get
 
       spyJourneyAction.setReg(modifiedRegistration)
       mockRegistrationUpdate()
       val result = removePartnerController.submit("456")(postJsonRequestEncoded(("value", "yes")))
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PartnerTypeController.displayNewPartner().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.PartnerTypeController.displayNewPartner().url)
     }
 
     "leave registration unchanged when unknown partner id specified" in {
@@ -124,8 +124,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       val result =
         removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "no")))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.PartnerListController.displayPage().url)
     }
 
     "redirect to partner list when partner removal fails" in {
@@ -137,8 +137,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       val result =
         removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(("value", "yes")))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.PartnerListController.displayPage().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.PartnerListController.displayPage().url)
     }
 
     "display validation error" when {
@@ -151,7 +151,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
         val result =
           removePartnerController.submit(soleTraderPartner.id)(postJsonRequestEncoded(emptySelection: _*))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
   }

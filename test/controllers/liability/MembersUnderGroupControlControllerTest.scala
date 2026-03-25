@@ -18,8 +18,7 @@ package controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
@@ -63,7 +62,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user has previously selected an answer and display page method is invoked" in {
@@ -74,7 +73,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -87,9 +86,9 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         val correctForm = Seq("value" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
       }
     }
 
@@ -102,9 +101,9 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.NotMembersUnderGroupControlController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.NotMembersUnderGroupControlController.displayPage().url)
       }
     }
 
@@ -115,7 +114,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
           val result = controller.submit()(postRequestEncoded(MembersUnderGroupControl(None)))
 
-          status(result) mustBe BAD_REQUEST
+          status(result) shouldBe BAD_REQUEST
         }
       }
 

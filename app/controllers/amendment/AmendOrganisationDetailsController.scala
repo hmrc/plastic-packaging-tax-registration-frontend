@@ -56,7 +56,7 @@ class AmendOrganisationDetailsController @Inject() (
   def addressCaptureCallback(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
       def updateBusinessAddress(address: Option[Address]): Registration => Registration = {
-        registration: Registration =>
+        (registration: Registration) =>
           val updatedOrganisationDetails =
             registration.organisationDetails.copy(businessRegisteredAddress = address)
           registration.copy(organisationDetails = updatedOrganisationDetails)

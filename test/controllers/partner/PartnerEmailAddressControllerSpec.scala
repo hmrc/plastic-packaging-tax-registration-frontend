@@ -23,8 +23,7 @@ import models.emailverification.EmailVerificationJourneyStatus
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
@@ -126,7 +125,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists with already collected contact name and email address display page method is invoked" in {
@@ -135,7 +134,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "displaying an existing partner to edit their contact name" in {
@@ -144,7 +143,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -160,12 +159,12 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.submitNewPartner()(postRequestEncoded(EmailAddress("proposed-email@localhost")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerEmailAddressController.confirmNewPartnerEmailCode().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerEmailAddressController.confirmNewPartnerEmailCode().url)
 
         // Assert that the detail of the email verification journey were stashed in the expected place
-        modifiedRegistration.primaryContactDetails.journeyId mustBe Some("an-email-verification-journey-id")
-        modifiedRegistration.primaryContactDetails.prospectiveEmail mustBe Some("proposed-email@localhost")
+        modifiedRegistration.primaryContactDetails.journeyId shouldBe Some("an-email-verification-journey-id")
+        modifiedRegistration.primaryContactDetails.prospectiveEmail shouldBe Some("proposed-email@localhost")
       }
 
       "user is prompted to enter email verification code" in {
@@ -184,7 +183,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.confirmNewPartnerEmailCode()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user submits correct email verification code" in {
@@ -212,8 +211,8 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val result =
           controller.checkNewPartnerEmailVerificationCode()(postRequestEncoded(EmailAddressPasscode("ACODE")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerEmailAddressController.emailVerifiedNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerEmailAddressController.emailVerifiedNewPartner().url)
       }
 
       "user submits blank verification code" in {
@@ -232,12 +231,12 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         // Email verification will not be called in this case
         val result = controller.checkNewPartnerEmailVerificationCode()(postRequestEncoded(EmailAddressPasscode("")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user requests too many attempts page" in {
         val result = controller.emailVerificationTooManyAttempts()(FakeRequest())
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is prompted for confirm they still want to apply the verified email address" in {
@@ -257,7 +256,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.emailVerifiedNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user submits a valid email address for non nominated partner has it accepted immediately without verification" in {
@@ -267,10 +266,10 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.submitNewPartner()(postRequestEncoded(EmailAddress("new-partners-email@localhost")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerPhoneNumberController.displayNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerPhoneNumberController.displayNewPartner().url)
 
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some(
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress)) shouldBe Some(
           "new-partners-email@localhost"
         )
       }
@@ -298,10 +297,10 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.confirmEmailUpdateNewPartner()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerPhoneNumberController.displayNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerPhoneNumberController.displayNewPartner().url)
 
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some(
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress)) shouldBe Some(
           "an-email@localhost"
         )
       }
@@ -318,13 +317,13 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           postRequestEncoded(EmailAddress("amended@localhost"))
         )
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(
           routes.PartnerPhoneNumberController.displayExistingPartner(nonNominatedExistingPartner.id).url
         )
         modifiedRegistration.findPartner(nonNominatedExistingPartner.id).flatMap(_.contactDetails).flatMap(
           _.emailAddress
-        ) mustBe Some("amended@localhost")
+        ) shouldBe Some("amended@localhost")
       }
 
       "user is prompted to enter email verification code for existing nominated partner" in {
@@ -344,7 +343,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val result =
           controller.confirmExistingPartnerEmailCode(existingNominatedPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user submits correct email verification code for existing nominated partner" in {
@@ -374,8 +373,8 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           postRequestEncoded(EmailAddressPasscode("ACODE"))
         )
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(
           routes.PartnerEmailAddressController.emailVerifiedExistingPartner(existingNominatedPartner.id).url
         )
       }
@@ -399,7 +398,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val result =
           controller.confirmEmailUpdateExistingPartner(existingNominatedPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user submits confirmation of verified email address and has it updated" in {
@@ -421,14 +420,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         val result =
           controller.emailVerifiedExistingPartner(existingNominatedPartner.id)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(
           routes.PartnerPhoneNumberController.displayExistingPartner(existingNominatedPartner.id).url
         )
 
         modifiedRegistration.findPartner(existingNominatedPartner.id).flatMap(
           _.contactDetails.flatMap(_.emailAddress)
-        ) mustBe Some("an-email@localhost")
+        ) shouldBe Some("an-email@localhost")
       }
     }
 

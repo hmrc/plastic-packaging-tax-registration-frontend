@@ -56,7 +56,7 @@
     @paragraphBody(message = messages("deregistration.deregister.detail1"))
     @paragraphBody(message = messages("deregistration.deregister.detail2"))
 
-    @formHelper(action = routes.DeregisterController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.DeregisterController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

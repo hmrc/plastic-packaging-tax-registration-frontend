@@ -17,8 +17,8 @@
 package forms.mappings
 
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec

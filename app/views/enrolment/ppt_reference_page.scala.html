@@ -37,7 +37,7 @@
   title = Title(form, "enrolment.pptReference.title")) {
     @errorSummary(form.errors)
 
-    @formHelper(action = pptRoutes.PptReferenceController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.PptReferenceController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukInput(Input(
             id    = pptReferenceField.name,

@@ -37,7 +37,7 @@ object EmailAddressPasscode {
     emailAddressPasscode ->
       text()
         .verifying(emailAddressPasscodeEmptyError, isNonEmpty)
-  )(EmailAddressPasscode.apply)(EmailAddressPasscode.unapply)
+  )(EmailAddressPasscode.apply)(eap => Some(eap.value))
 
   def form(): Form[EmailAddressPasscode] = Form(mapping)
 }

@@ -16,10 +16,10 @@
 
 package forms.group
 
+import forms.CommonFormValidators
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
-import forms.CommonFormValidators
 
 case class MemberName(firstName: String, lastName: String)
 
@@ -45,7 +45,7 @@ object MemberName extends CommonFormValidators {
           .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
           .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
           .verifying(nonAlphabeticError(lastName), isValidName)
-    )(MemberName.apply)(MemberName.unapply)
+    )(MemberName.apply)(mn => Some((mn.firstName, mn.lastName)))
 
   def form(): Form[MemberName] = Form(mapping)
 

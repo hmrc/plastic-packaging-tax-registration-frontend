@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import forms.contact.PhoneNumber
 import views.html.partner.partner_phone_number_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
@@ -42,7 +43,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
 
     }
 
@@ -67,7 +68,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }

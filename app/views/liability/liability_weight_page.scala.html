@@ -51,7 +51,7 @@
 
     @sectionHeader(messages("liability.sectionHeader"))
 
-    @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.LiabilityWeightController.submit(), Symbol("autoComplete") -> "off") {
         @govukInput(
             Input(
                 id = s"${totalWeightField.name}",

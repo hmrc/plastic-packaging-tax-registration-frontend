@@ -20,7 +20,7 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -58,8 +58,8 @@ class PartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec wit
       val resp =
         controller.displayPage(partnershipRegistration.nominatedPartner.get.id)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Amend Partner CYAs Page"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Amend Partner CYAs Page"
     }
 
     "throw IllegalStateException is requested partner is not found" in {
@@ -71,8 +71,8 @@ class PartnerContactDetailsCheckAnswersControllerSpec extends ControllerSpec wit
     "redirect to partners list when submitted" in {
       val resp = controller.submit()(FakeRequest())
 
-      status(resp) mustBe SEE_OTHER
-      redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
+      status(resp) shouldBe SEE_OTHER
+      redirectLocation(resp) shouldBe Some(routes.PartnersListController.displayPage().url)
     }
   }
 

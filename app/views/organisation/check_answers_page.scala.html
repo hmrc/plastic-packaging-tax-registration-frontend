@@ -44,7 +44,7 @@
 
     @pageHeading(messages("organisation.checkAnswers.title"))
 
-    @formHelper(action = pptRoutes.TaskListController.displayPage(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.TaskListController.displayPage(), Symbol("autoComplete") -> "off") {
         @organisationDetails(request.registration.organisationDetails, request.registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @saveButtons()
     }

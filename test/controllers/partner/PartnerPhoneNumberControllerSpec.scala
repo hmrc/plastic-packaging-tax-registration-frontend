@@ -21,8 +21,7 @@ import connectors.DownstreamServiceError
 import forms.contact.PhoneNumber
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.status
@@ -94,7 +93,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists with already collected contact name and phone number display page method is invoked" in {
@@ -103,7 +102,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "displaying an existing partner to edit their phone number" in {
@@ -112,7 +111,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -125,7 +124,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         val result =
           controller.submitNewPartner()(postRequestEncoded(PhoneNumber("abcdef")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 
@@ -137,9 +136,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.submitNewPartner()(postRequestEncoded(PhoneNumber("12345678")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.phoneNumber)) mustBe Some("12345678")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.phoneNumber)) shouldBe Some("12345678")
       }
 
       "user submits an amendment to an existing partners phone number" in {
@@ -149,11 +148,11 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result = controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PhoneNumber("987654321")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         modifiedRegistration.findPartner(existingPartner.id).flatMap(
           _.contactDetails.flatMap(_.phoneNumber)
-        ) mustBe Some("987654321")
+        ) shouldBe Some("987654321")
       }
     }
 

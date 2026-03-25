@@ -17,9 +17,10 @@
 package models.subscriptions
 
 import play.api.libs.json.{Json, OFormat}
-import models.subscriptions.SubscriptionStatus.Status
+import models.subscriptions.SubscriptionStatus
+import models.subscriptions.SubscriptionStatus.given_Format_SubscriptionStatus
 
-case class SubscriptionStatusResponse(status: Status, pptReference: Option[String] = None)
+case class SubscriptionStatusResponse(status: SubscriptionStatus, pptReference: Option[String] = None)
 
 object SubscriptionStatusResponse {
   implicit val format: OFormat[SubscriptionStatusResponse] = Json.format[SubscriptionStatusResponse]

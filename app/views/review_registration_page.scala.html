@@ -56,7 +56,7 @@
 
     @pageHeading(messages("reviewRegistration.organisationDetails.title"))
 
-    @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), Symbol("autoComplete") -> "off") {
 
         @subHeading(messages("reviewRegistration.organisationDetails.check.liability"))
         @liabilityCheckAnswers(registration)

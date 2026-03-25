@@ -20,14 +20,14 @@ import base.unit.ControllerSpec
 import com.codahale.metrics.SharedMetricRegistries
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.enrolment.{DateData, RegistrationDate}
 import models.registration.UserEnrolmentDetails
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import views.html.enrolment.registration_date_page
@@ -70,8 +70,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Registration Date Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Registration Date Page"
       }
 
       "user is authorised and cache is empty" in {
@@ -79,8 +79,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Registration Date Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Registration Date Page"
       }
     }
 
@@ -94,8 +94,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
         )
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe "Registration Date Page"
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) shouldBe "Registration Date Page"
       }
     }
 
@@ -113,9 +113,9 @@ class RegistrationDateControllerSpec extends ControllerSpec {
         )
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.CheckAnswersController.displayPage().url)
 
         verify(mockCache).putData(
           ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),

@@ -61,7 +61,7 @@ class AmendMemberContactDetailsController @Inject() (
   def updateContactName(memberId: String): Action[AnyContent] = {
 
     def updateContactName(firstName: String, lastName: String): Registration => Registration = {
-      registration: Registration =>
+      (registration: Registration) =>
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
@@ -109,7 +109,7 @@ class AmendMemberContactDetailsController @Inject() (
 
   def updatePhoneNumber(memberId: String): Action[AnyContent] = {
 
-    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = { registration: Registration =>
+    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = { (registration: Registration) =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(
@@ -153,16 +153,17 @@ class AmendMemberContactDetailsController @Inject() (
 
   def updateEmail(memberId: String): Action[AnyContent] = {
 
-    def updateEmailAddress(updatedEmailAddress: String): Registration => Registration = { registration: Registration =>
-      registration.copy(groupDetail =
-        registration.groupDetail.map(
-          _.withUpdatedOrNewMember(
-            registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(updatedEmailAddress)).getOrElse(
-              throw new IllegalStateException("Expected group member absent")
+    def updateEmailAddress(updatedEmailAddress: String): Registration => Registration = {
+      (registration: Registration) =>
+        registration.copy(groupDetail =
+          registration.groupDetail.map(
+            _.withUpdatedOrNewMember(
+              registration.findMember(memberId).map(_.withUpdatedGroupMemberEmail(updatedEmailAddress)).getOrElse(
+                throw new IllegalStateException("Expected group member absent")
+              )
             )
           )
         )
-      )
     }
 
     journeyAction.amend.async { implicit request =>
@@ -200,7 +201,7 @@ class AmendMemberContactDetailsController @Inject() (
 
   def updateAddress(memberId: String): Action[AnyContent] = {
 
-    def updateAddress(updatedAddress: Option[Address]): Registration => Registration = { registration: Registration =>
+    def updateAddress(updatedAddress: Option[Address]): Registration => Registration = { (registration: Registration) =>
       registration.copy(groupDetail =
         registration.groupDetail.map(
           _.withUpdatedOrNewMember(

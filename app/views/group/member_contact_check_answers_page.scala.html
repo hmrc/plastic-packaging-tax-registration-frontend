@@ -41,7 +41,7 @@
 
     @pageHeading(messages("contactDetails.member.check.title"))
 
-    @formHelper(action = groupRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = groupRoutes.ContactDetailsCheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukSummaryList(
             SummaryList(

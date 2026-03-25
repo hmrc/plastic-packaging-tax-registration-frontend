@@ -19,14 +19,14 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.enrolment.PptReference
 import models.registration.UserEnrolmentDetails
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import views.html.enrolment.ppt_reference_page
@@ -65,8 +65,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "PPT Reference Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "PPT Reference Page"
       }
 
       "user is authorised and cache is empty" in {
@@ -74,8 +74,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "PPT Reference Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "PPT Reference Page"
       }
     }
 
@@ -84,8 +84,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(PptReference("XXX")))
 
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe "PPT Reference Page"
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) shouldBe "PPT Reference Page"
       }
     }
 
@@ -98,8 +98,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(pptReference))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.VerifyOrganisationController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.VerifyOrganisationController.displayPage().url)
 
         verify(mockCache).putData(
           ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),

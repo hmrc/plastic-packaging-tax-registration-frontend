@@ -168,12 +168,12 @@
             ),
             value = Value(
                 registration.groupDetail match {
-                case Some(group) =>
-                    group.membersUnderGroupControl match {
-                        case Some(true) => Text(messages("general.true"))
-                        case Some(false) => Text(messages("general.false"))
-                        case _ => Empty
-                    }
+                    case Some(group) =>
+                        group.membersUnderGroupControl match {
+                            case Some(true) => Text(messages("general.true"))
+                            case Some(false) => Text(messages("general.false"))
+                            case _ => Empty
+                        }
                     case _ => Empty
                 }
             ),

@@ -54,7 +54,7 @@
 
     @listMembers(viewModel.listMembers)
 
-    @formHelper(action = routes.GroupMembersListController.onSubmit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.GroupMembersListController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

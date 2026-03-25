@@ -19,7 +19,7 @@ package controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -47,8 +47,8 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
       spyJourneyAction.setReg(aRegistration(withIncorpDetails(incorporationDetails)))
       val resultF = sut.onPageLoad()(FakeRequest())
 
-      status(resultF) mustBe OK
-      contentAsString(resultF) mustBe "Test View"
+      status(resultF) shouldBe OK
+      contentAsString(resultF) shouldBe "Test View"
       verify(mockView).apply(refEq(testCompanyNumber), refEq(testCompanyName))(any(), any())
     }
   }
@@ -63,8 +63,8 @@ class UpdateCompaniesHouseControllerSpec extends ControllerSpec {
         .thenReturn(Future.successful(Right(updated)))
       val resultF = sut.reset()(FakeRequest())
 
-      status(resultF) mustBe SEE_OTHER
-      redirectLocation(resultF) mustBe Some(routes.TaskListController.displayPage().url)
+      status(resultF) shouldBe SEE_OTHER
+      redirectLocation(resultF) shouldBe Some(routes.TaskListController.displayPage().url)
       verify(mockRegistrationConnector).update(refEq(updated))(any())
     }
   }

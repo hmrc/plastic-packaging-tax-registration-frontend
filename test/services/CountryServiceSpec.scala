@@ -17,7 +17,7 @@
 package services
 
 import models.addresslookup.CountryCode.GB
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpecLike
 
 class CountryServiceSpec extends AnyWordSpecLike {
@@ -26,33 +26,33 @@ class CountryServiceSpec extends AnyWordSpecLike {
 
   ".getAll" should {
     "read country details from resource file" in {
-      countryService.getAll().size mustBe 195
+      countryService.getAll().size shouldBe 195
     }
   }
 
   ".getName" should {
     "return country names" in {
-      countryService.tryLookupCountryName(GB) mustBe "United Kingdom"
+      countryService.tryLookupCountryName(GB) shouldBe "United Kingdom"
     }
 
     "return the original country Code" when {
       "country cannot be found for code provided" in {
 
-        countryService.tryLookupCountryName("XX") mustBe "XX"
+        countryService.tryLookupCountryName("XX") shouldBe "XX"
       }
     }
   }
 
   ".getKeyForName" should {
     "retrieve the key for a country name in the countriesEN resource" in {
-      countryService.getKeyForName("United Kingdom") mustBe Some(GB)
+      countryService.getKeyForName("United Kingdom") shouldBe Some(GB)
     }
     "retrieve the key for a country name in the synonyms resource if it cannot be found in the countriesEN resource" +
       " but is found in the countrySynonyms resource" in {
-        countryService.getKeyForName("england") mustBe Some(GB)
+        countryService.getKeyForName("england") shouldBe Some(GB)
       }
     "return None if the country is not found in the countriesEN or countrySynonyms resources" in {
-      countryService.getKeyForName("Mars") mustBe None
+      countryService.getKeyForName("Mars") shouldBe None
     }
   }
 }

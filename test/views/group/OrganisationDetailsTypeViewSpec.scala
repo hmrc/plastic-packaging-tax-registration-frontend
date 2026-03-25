@@ -18,7 +18,8 @@ package views.group
 
 import base.unit.UnitViewSpec
 import controllers.group.routes
-import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, UK_COMPANY}
 import forms.organisation.{ActionEnum, OrganisationType}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
@@ -125,9 +126,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      radioInputMustBe(1, UK_COMPANY)
-      radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
-      radioInputMustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputmustBe(1, UK_COMPANY)
+      radioInputmustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
+      radioInputmustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display hint link" in {
@@ -190,7 +191,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     )
   }
 
-  def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
+  def radioInputmustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
     view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
     view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
       labelKey.getOrElse(s"organisationDetails.type.$orgType")

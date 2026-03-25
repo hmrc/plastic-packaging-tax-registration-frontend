@@ -16,9 +16,9 @@
 
 package models.subscriptions
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.must.Matchers.mustBe
 
 class SubscriptionCreateOrUpdateResponseSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
 

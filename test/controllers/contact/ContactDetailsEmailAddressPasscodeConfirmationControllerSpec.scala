@@ -20,8 +20,8 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.{reset, verify}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify}
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -45,7 +45,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
     super.beforeEach()
     val registration = aRegistration()
     spyJourneyAction.setReg(registration)
-    given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -61,7 +61,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -74,7 +74,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
         verify(page).apply(any(), captor.capture())(any(), any())
-        captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
+        captor.getValue shouldBe Some("primaryContactDetails.group.sectionHeader")
       }
 
       "is single registration" in {
@@ -85,7 +85,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
         verify(page).apply(any(), captor.capture())(any(), any())
-        captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
+        captor.getValue shouldBe Some("primaryContactDetails.sectionHeader")
       }
     }
 
@@ -95,7 +95,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
       }
     }
 
@@ -108,8 +108,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
         val result =
           controller.submit()(FakeRequest("POST", ""))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
       }
     }
   }

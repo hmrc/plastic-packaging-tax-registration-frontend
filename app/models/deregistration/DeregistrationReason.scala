@@ -16,21 +16,31 @@
 
 package models.deregistration
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
 
-object DeregistrationReason extends Enumeration {
-  type DeregistrationReason = Value
+import scala.util.Try
 
-  val RegisteredIncorrectly      = Value("Registered Incorrectly")
-  val CeasedTrading              = Value("Ceased Trading")
-  val BelowDeminimis             = Value("Below De-minimus")
-  val TakenIntoGroupRegistration = Value("Taken into Group Registration")
+enum DeregistrationReason(val value: String):
+  case RegisteredIncorrectly      extends DeregistrationReason("Registered Incorrectly")
+  case CeasedTrading              extends DeregistrationReason("Ceased Trading")
+  case BelowDeminimis             extends DeregistrationReason("Below De-minimus")
+  case TakenIntoGroupRegistration extends DeregistrationReason("Taken into Group Registration")
 
-  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+object DeregistrationReason {
+  def withNameOpt(name: String): Option[DeregistrationReason] = DeregistrationReason.values.find(_.toString == name)
 
   implicit def value(reason: DeregistrationReason): String = reason.toString
 
-  implicit val format: Format[DeregistrationReason] =
-    Format(Reads.enumNameReads(DeregistrationReason), Writes.enumNameWrites)
-
+  given Format[DeregistrationReason] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(DeregistrationReason.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown DeregistrationReason: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(deRegistrationReason => JsString(deRegistrationReason.toString))
+    )
 }

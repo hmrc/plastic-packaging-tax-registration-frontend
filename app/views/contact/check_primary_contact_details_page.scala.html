@@ -69,7 +69,7 @@
     @sectionHeader(caption)
     @pageHeading(messages("primaryContactDetails.check.title"))
 
-    @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
         @govukSummaryList(
             SummaryList(
                 rows = Seq(

@@ -22,7 +22,6 @@ import forms.contact.Address.UKAddress
 import models.registration.GroupDetail
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -77,8 +76,8 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec
 
       val resp = controller.displayPage(testMemberId)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "business registered address"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "business registered address"
       verify(spyJourneyAction).amend
     }
 
@@ -112,7 +111,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec
 
         val resp = controller.displayPage(testMemberId)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
         verify(spyJourneyAction).amend
       }
     }
@@ -128,12 +127,12 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec
 
           val resp = controller.addressCaptureCallback(testMemberId)(FakeRequest())
 
-          redirectLocation(resp) mustBe Some(
+          redirectLocation(resp) shouldBe Some(
             routes.AddGroupMemberContactDetailsNameController.displayPage(testMemberId).url
           )
 
           modifiedRegistration.groupDetail.get.findGroupMember(Some(testMemberId), None)
-            .get.addressDetails mustBe validCapturedAddress
+            .get.addressDetails shouldBe validCapturedAddress
           verify(spyJourneyAction).amend
         }
       }

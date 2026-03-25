@@ -189,7 +189,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   private def updatePartnersEmail(partner: Option[Partner], updatedEmail: String): Registration => Registration = {
-    registration: Registration =>
+    (registration: Registration) =>
       updateRegistrationWithPartnerEmail(registration, partner.map(_.id), updatedEmail)
   }
 

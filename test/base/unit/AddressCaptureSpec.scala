@@ -17,12 +17,12 @@
 package base.unit
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
 import forms.contact.Address
 import org.mockito.invocation.InvocationOnMock
 import models.addresslookup.CountryCode.GB
+import org.mockito.Mockito.when
 import services.{AddressCaptureConfig, AddressCaptureService}
 
 import scala.concurrent.Future

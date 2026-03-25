@@ -19,7 +19,7 @@ package controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, same}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.OK
 import play.api.mvc.Call
 import play.api.test.Helpers.{await, contentAsString, status}
@@ -28,7 +28,7 @@ import controllers.liability.{routes => liabilityRoutes}
 import forms.liability.RegType
 import models.registration.{LiabilityDetails, Registration}
 import org.mockito.Mockito.{never, verifyNoInteractions}
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -76,16 +76,16 @@ class TaskListControllerSpec extends ControllerSpec {
 
           val result = controller.displayPage()(FakeRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Single Entity Page"
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Single Entity Page"
         }
 
         "a 'businessPartnerId' does not exist" in {
 
           val result = controller.displayPage()(FakeRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Single Entity Page"
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Single Entity Page"
 
           verifyNoInteractions(mockSubscriptionsConnector)
         }
@@ -95,8 +95,8 @@ class TaskListControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration().copy(registrationType = Some(RegType.GROUP)))
           val result = controller.displayPage()(FakeRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Group Page"
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Group Page"
         }
 
         "show partnership task-list when a partnership with partners registration is being preformed" in {
@@ -105,8 +105,8 @@ class TaskListControllerSpec extends ControllerSpec {
 
           val result = controller.displayPage()(FakeRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Partnership Page"
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Partnership Page"
         }
 
         "show single entity task-list when an LLP registration is being preformed" in {
@@ -115,8 +115,8 @@ class TaskListControllerSpec extends ControllerSpec {
 
           val result = controller.displayPage()(FakeRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Single Entity Page"
+          status(result) shouldBe OK
+          contentAsString(result) shouldBe "Single Entity Page"
         }
       }
     }
@@ -156,7 +156,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
       val result = controller.displayPage()(FakeRequest())
 
-      status(result) mustBe OK
+      status(result) shouldBe OK
       verifyStartLink(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
     }
 
@@ -166,7 +166,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
       val result = controller.displayPage()(FakeRequest())
 
-      status(result) mustBe OK
+      status(result) shouldBe OK
       verifyStartLink(liabilityRoutes.CheckLiabilityDetailsAnswersController.displayPage().url)
 
     }
@@ -174,7 +174,7 @@ class TaskListControllerSpec extends ControllerSpec {
     def verifyStartLink(startLink: String): Unit = {
       val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
       verify(singleEntityPage).apply(any(), startLinkCaptor.capture(), any())(any(), any())
-      startLinkCaptor.getValue.url mustBe startLink
+      startLinkCaptor.getValue.url shouldBe startLink
     }
   }
 }

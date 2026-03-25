@@ -17,7 +17,7 @@
 package controllers.group
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.test.Helpers.{await, redirectLocation}
 import controllers.group.{routes => groupRoutes}
 import models.registration.{GroupDetail, NewRegistrationUpdateService}
@@ -71,7 +71,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
         val resp = controller.displayPage(groupMember.id)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -84,11 +84,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
 
         val resp = controller.addressCaptureCallback(groupMember.id)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(
+        redirectLocation(resp) shouldBe Some(
           groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url
         )
 
-        modifiedRegistration.lastMember.get.contactDetails.get.address mustBe Some(validCapturedAddress)
+        modifiedRegistration.lastMember.get.contactDetails.get.address shouldBe Some(validCapturedAddress)
       }
     }
 

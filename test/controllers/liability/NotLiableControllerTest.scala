@@ -18,8 +18,7 @@ package controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
@@ -53,7 +52,7 @@ class NotLiableControllerTest extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 

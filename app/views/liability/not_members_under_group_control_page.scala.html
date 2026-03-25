@@ -33,7 +33,7 @@
   title = Title("group.notMembersUnderGroupControl.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.MembersUnderGroupControlController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @formHelper(action = pptRoutes.NotMembersUnderGroupControlController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.NotMembersUnderGroupControlController.submit(), Symbol("autoComplete") -> "off") {
         @pageHeading(messages("group.notMembersUnderGroupControl.title"))
 
         @paragraphBody(messages("group.notMembersUnderGroupControl.detail"))

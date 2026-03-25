@@ -17,6 +17,7 @@
 package utils
 
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpec
 
 class URLSanitisationUtilsSpec extends AnyWordSpec with Matchers {
@@ -25,7 +26,7 @@ class URLSanitisationUtilsSpec extends AnyWordSpec with Matchers {
     "convert an absolute url to a relative url" in {
       URLSanitisationUtils.asRelativeUrl(
         "https://dodgy-website.com/register-for-plastic-packaging-tax/contact-name"
-      ) mustBe Some(
+      ) shouldBe Some(
         "/register-for-plastic-packaging-tax/contact-name"
       )
     }

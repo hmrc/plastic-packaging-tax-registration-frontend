@@ -37,7 +37,7 @@
 
     @errorSummary(form.errors)
 
-    @formHelper(action = pptRoutes.PostcodeController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.PostcodeController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukInput(Input(
             id    = postcodeField.name,

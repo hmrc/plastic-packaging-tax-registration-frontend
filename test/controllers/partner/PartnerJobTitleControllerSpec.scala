@@ -20,8 +20,7 @@ import base.unit.ControllerSpec
 import connectors.DownstreamServiceError
 import forms.contact.JobTitle
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
@@ -77,7 +76,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "displaying an existing partner to edit their job title" in {
@@ -86,7 +85,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -98,10 +97,10 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         val result = controller.submitNewPartner()(postRequestEncoded(JobTitle("Director")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PartnerEmailAddressController.displayNewPartner().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PartnerEmailAddressController.displayNewPartner().url)
 
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.jobTitle)) mustBe Some("Director")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.jobTitle)) shouldBe Some("Director")
       }
 
       "user submits an amendment to an existing partners job title" in {
@@ -112,11 +111,11 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         val result =
           controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(JobTitle("Company secretary")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         val modifiedContactDetails =
           modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
-        modifiedContactDetails.flatMap(_.jobTitle) mustBe Some("Company secretary")
+        modifiedContactDetails.flatMap(_.jobTitle) shouldBe Some("Company secretary")
       }
     }
 
@@ -128,7 +127,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         val result =
           controller.submitNewPartner()(postRequestEncoded(JobTitle("")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters a long title" in {
@@ -137,7 +136,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         val result = controller.submitNewPartner()(postRequestEncoded(JobTitle("abced" * 40)))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
@@ -147,7 +146,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         val result =
           controller.submitNewPartner()(postRequestEncoded(JobTitle("Director 123")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 

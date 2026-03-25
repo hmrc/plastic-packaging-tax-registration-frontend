@@ -18,8 +18,8 @@ package controllers.amendment.partner
 
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec, MockRegistrationAmendmentRepository}
 import models.registration.AmendRegistrationUpdateService
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation}
 import services.AddressCaptureConfig
@@ -88,7 +88,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
         val resp = controller.displayPage()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -102,10 +102,10 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
         val resp = await(controller.addressCaptureCallback()(FakeRequest()))
 
         inMemoryRegistrationAmendmentRepository.get(sessionId).map { registration =>
-          registration.get.inflightPartner.get.contactDetails.get.address mustBe validCapturedAddress
+          registration.get.inflightPartner.get.contactDetails.get.address shouldBe validCapturedAddress
         }
 
-        redirectLocation(Future.successful(resp)) mustBe Some(
+        redirectLocation(Future.successful(resp)) shouldBe Some(
           routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url
         )
       }

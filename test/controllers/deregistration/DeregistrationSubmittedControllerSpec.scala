@@ -19,7 +19,7 @@ package controllers.deregistration
 import base.unit.{ControllerSpec, MockDeregistrationDetailRepository}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
@@ -46,8 +46,8 @@ class DeregistrationSubmittedControllerSpec
 
         val resp = deregistrationSubmittedController.displayPage()(FakeRequest())
 
-        status(resp) mustBe OK
-        contentAsString(resp) mustBe "Deregistration Submitted"
+        status(resp) shouldBe OK
+        contentAsString(resp) shouldBe "Deregistration Submitted"
       }
     }
   }

@@ -19,8 +19,8 @@ package controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
@@ -41,7 +41,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
     super.beforeEach()
 
     spyJourneyAction.setReg(registration)
-    given(page.apply()(any(), any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply()(any(), any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -58,14 +58,14 @@ class ConfirmationControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is already enrolled and display page method is invoked" in {
         mockRegistrationUpdate()
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
     }

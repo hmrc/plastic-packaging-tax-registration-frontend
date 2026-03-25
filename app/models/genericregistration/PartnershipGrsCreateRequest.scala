@@ -17,7 +17,8 @@
 package models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
-import models.genericregistration.Regime.{PPT, Regime}
+import models.genericregistration.Regime.PPT
+import models.genericregistration.Regime.given_Format_Regime
 
 case class PartnershipGrsCreateRequest(
   continueUrl: String,

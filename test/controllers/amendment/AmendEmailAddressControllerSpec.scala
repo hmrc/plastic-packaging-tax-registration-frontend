@@ -23,8 +23,8 @@ import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORR
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verifyNoInteractions}
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.{AnyContent, Request, Result}
@@ -126,8 +126,8 @@ class AmendEmailAddressControllerSpec
           s"$testName page requested and registration populated" in {
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
           }
 
           s"$testName page requested and registration unpopulated" in {
@@ -135,8 +135,8 @@ class AmendEmailAddressControllerSpec
 
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
           }
       }
     }
@@ -150,8 +150,8 @@ class AmendEmailAddressControllerSpec
           )
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendRegistrationController.displayPage().url)
 
         verifyNoInteractions(mockEmailVerificationService)
       }
@@ -168,13 +168,13 @@ class AmendEmailAddressControllerSpec
           postRequest.withFormUrlEncodedBody(getTuples(EmailAddress(previouslyVerifiedEmail)): _*)
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendRegistrationController.displayPage().url)
 
         await(resp)
 
-        val updatedReg = getUpdatedRegistrationMethod()(populatedRegistration)
-        updatedReg.primaryContactDetails.email mustBe Some(previouslyVerifiedEmail)
+        val updatedReg = getUpdatedRegistrationMethod(populatedRegistration)
+        updatedReg.primaryContactDetails.email shouldBe Some(previouslyVerifiedEmail)
       }
     }
 
@@ -192,13 +192,13 @@ class AmendEmailAddressControllerSpec
           )
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendEmailAddressController.emailVerificationCode().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendEmailAddressController.emailVerificationCode().url)
 
         await(resp)
 
         val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(cacheId))
-        updatedReg.get.primaryContactDetails.email mustBe populatedRegistration.primaryContactDetails.email
+        updatedReg.get.primaryContactDetails.email shouldBe populatedRegistration.primaryContactDetails.email
         verifyEmailVerificationCodeSentAsExpected(unverifiedEmail)
       }
     }
@@ -212,8 +212,8 @@ class AmendEmailAddressControllerSpec
           postRequestEncoded(form = EmailAddressPasscode(goodPasscode), sessionId = cacheId)
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendEmailAddressController.emailVerified().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendEmailAddressController.emailVerified().url)
         verify(mockAmendRegService, never()).updateSubscriptionWithRegistration(any())(any(), any())
       }
     }
@@ -228,13 +228,12 @@ class AmendEmailAddressControllerSpec
 
         val resp = controller.confirmEmailUpdate()(FakeRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendRegistrationController.displayPage().url)
 
         verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-        getUpdatedRegistrationMethod().apply(
-          populatedRegistration
-        ).primaryContactDetails.email mustBe populatedRegistration.primaryContactDetails.prospectiveEmail
+        getUpdatedRegistrationMethod(populatedRegistration)
+          .primaryContactDetails.email shouldBe populatedRegistration.primaryContactDetails.prospectiveEmail
       }
     }
 
@@ -244,8 +243,8 @@ class AmendEmailAddressControllerSpec
 
         val resp = controller.updateEmail()(postRequestEncoded(form = EmailAddress(invalidEmail), sessionId = cacheId))
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "email amendment"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "email amendment"
       }
 
       "invalid email verification passcode supplied" in {
@@ -255,8 +254,8 @@ class AmendEmailAddressControllerSpec
           postRequestEncoded(form = EmailAddressPasscode(invalidPasscode), sessionId = cacheId)
         )
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "email passcode"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "email passcode"
       }
 
       "incorrect email verification passcode is supplied" in {
@@ -267,8 +266,8 @@ class AmendEmailAddressControllerSpec
           postRequestEncoded(form = EmailAddressPasscode(badPasscode), sessionId = cacheId)
         )
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "email passcode"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "email passcode"
       }
 
       "email verification journey id cannot be found" in {
@@ -279,8 +278,8 @@ class AmendEmailAddressControllerSpec
           postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = cacheId)
         )
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "email passcode"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "email passcode"
       }
     }
 
@@ -293,8 +292,8 @@ class AmendEmailAddressControllerSpec
           postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = cacheId)
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AmendEmailAddressController.emailVerificationTooManyAttempts().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AmendEmailAddressController.emailVerificationTooManyAttempts().url)
       }
     }
   }
@@ -307,7 +306,7 @@ class AmendEmailAddressControllerSpec
   private def verifyEmailVerificationCodeSentAsExpected(email: String) =
     verify(mockEmailVerificationService).sendVerificationCode(ArgumentMatchers.eq(email), any(), any())(any())
 
-  private def simulateEmailVerificationPassword(passcode: String, status: EmailVerificationJourneyStatus.Value) =
+  private def simulateEmailVerificationPassword(passcode: String, status: EmailVerificationJourneyStatus) =
     when(mockEmailVerificationService.checkVerificationCode(ArgumentMatchers.eq(passcode), any(), any())(any()))
       .thenReturn(Future.successful(status))
 

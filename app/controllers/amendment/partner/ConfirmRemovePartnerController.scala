@@ -52,10 +52,9 @@ class ConfirmRemovePartnerController @Inject() (
     journeyAction.amend.async { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
         RemovePartner.form().bindFromRequest().fold(
-          { formWithErrors: Form[RemovePartner] =>
-            Future.successful(BadRequest(page(formWithErrors, partner)))
-          },
-          { removePartner: RemovePartner =>
+          (formWithErrors: Form[RemovePartner]) =>
+            Future.successful(BadRequest(page(formWithErrors, partner))),
+          { (removePartner: RemovePartner) =>
             removePartner.value match {
               case Some(true) =>
                 doRemovePartner(partner.id)

@@ -56,7 +56,7 @@
     @paragraphBody(messages("liability.expectToExceedThresholdDate.example.1"))
     @paragraphBody(messages("liability.expectToExceedThresholdDate.example.2"))
 
-    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, Symbol("autoComplete") -> "off") {
 
         @govukDateInput(
             DateViewModel(

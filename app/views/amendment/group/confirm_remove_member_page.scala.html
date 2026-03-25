@@ -41,7 +41,7 @@
     title = Title(headingKey = "amend.group.remove.title", member.businessName),
     backButton = Some(BackButtonJs)) {
 
-    @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
+    @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), Symbol("autoComplete") -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
                 content = Text(messages("amend.group.remove.title", member.businessName)),

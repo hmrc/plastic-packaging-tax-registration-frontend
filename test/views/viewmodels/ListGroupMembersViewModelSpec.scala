@@ -25,6 +25,7 @@ import controllers.amendment.group.routes
 import models.registration.group.GroupMember
 import models.registration.{GroupDetail, Registration}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 
@@ -39,9 +40,9 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
     "have the lead member first" in {
       val first = sut.listMembers(mockMessages).head
 
-      first.name mustBe registration.organisationDetails.businessName.get
-      first.change mustBe None
-      first.remove mustBe None
+      first.name shouldBe registration.organisationDetails.businessName.get
+      first.change shouldBe None
+      first.remove shouldBe None
 
       verify(mockMessages).apply(refEq("amend.group.manage.representativeMember"), any())
     }
@@ -50,10 +51,10 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
       val others = sut.listMembers(mockMessages).tail
 
       others.zip(members).map { case (other, member) =>
-        other.name mustBe member.businessName
-        other.change mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
-        other.remove mustBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-        other.subHeading mustBe None
+        other.name shouldBe member.businessName
+        other.change shouldBe Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id))
+        other.remove shouldBe Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+        other.subHeading shouldBe None
       }
     }
 
@@ -61,13 +62,13 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
       "has two member only" in {
         val viewModel = createViewModel(createRegistration(Seq(groupMember)))
 
-        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
+        viewModel.listMembers(mockMessages).foreach(_.remove shouldBe None)
       }
 
       "has one member only" in {
         val viewModel = createViewModel(createRegistration(Seq.empty))
 
-        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
+        viewModel.listMembers(mockMessages).foreach(_.remove shouldBe None)
       }
     }
   }

@@ -28,6 +28,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import views.html.task_list_group
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 import java.time.LocalDate
 
@@ -50,7 +51,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
 
     }
 
@@ -95,10 +96,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() shouldBe messages(
             "registrationPage.subheading.incomplete"
           )
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() shouldBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
             5
@@ -109,8 +110,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
-          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
+          sectionName(liabilityElement, 0) shouldBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) shouldBe messages("task.status.inProgress")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
@@ -120,8 +121,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(businessElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(businessElement, 0) mustBe messages("registrationPage.task.organisation.group")
-          sectionStatus(businessElement, 0) mustBe messages("task.status.completed")
+          sectionName(businessElement, 0) shouldBe messages("registrationPage.task.organisation.group")
+          sectionStatus(businessElement, 0) shouldBe messages("task.status.completed")
         }
 
         "Nominated organisation contact details" in {
@@ -130,8 +131,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.group")
-          sectionStatus(contactElement, 1) mustBe messages("task.status.notStarted")
+          sectionName(contactElement, 1) shouldBe messages("registrationPage.task.contactDetails.group")
+          sectionStatus(contactElement, 1) shouldBe messages("task.status.notStarted")
         }
 
         "Other organisations in group details" in {
@@ -140,8 +141,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.otherOrganisation.heading"))
 
-          sectionName(contactElement, 0) mustBe messages("registrationPage.task.otherOrganisation")
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionName(contactElement, 0) shouldBe messages("registrationPage.task.otherOrganisation")
+          sectionStatus(contactElement, 0) shouldBe messages("task.status.cannotStartYet")
         }
 
         "Review and send" in {
@@ -149,8 +150,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
-          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) shouldBe messages("task.status.cannotStartYet")
         }
 
       }
@@ -176,10 +177,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val view: Html = createView(registration)
 
         "application status should reflect the completed sections" in {
-          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() mustBe messages(
+          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(0).text() shouldBe messages(
             "registrationPage.subheading.incomplete"
           )
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() shouldBe messages(
             "registrationPage.completedSections",
             registration.numberOfCompletedSections,
             5
@@ -190,8 +191,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
-          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
+          sectionName(liabilityElement, 0) shouldBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) shouldBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
@@ -201,8 +202,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(organisationElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.group")
-          sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
+          sectionName(organisationElement, 0) shouldBe messages("registrationPage.task.organisation.group")
+          sectionStatus(organisationElement, 0) shouldBe messages("task.status.notStarted")
           sectionLink(organisationElement, 0) must haveHref(
             organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember()
           )
@@ -214,8 +215,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.group")
-          sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
+          sectionName(contactElement, 1) shouldBe messages("registrationPage.task.contactDetails.group")
+          sectionStatus(contactElement, 1) shouldBe messages("task.status.cannotStartYet")
         }
 
         "Other organisations in group details" in {
@@ -224,8 +225,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.otherOrganisation.heading"))
 
-          sectionName(contactElement, 0) mustBe messages("registrationPage.task.otherOrganisation")
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionName(contactElement, 0) shouldBe messages("registrationPage.task.otherOrganisation")
+          sectionStatus(contactElement, 0) shouldBe messages("task.status.cannotStartYet")
         }
 
         "Review and send" in {
@@ -233,8 +234,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
-          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) shouldBe messages("task.status.cannotStartYet")
         }
 
       }
@@ -257,8 +258,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.group")
-          sectionStatus(contactElement, 1) mustBe messages("task.status.inProgress")
+          sectionName(contactElement, 1) shouldBe messages("registrationPage.task.contactDetails.group")
+          sectionStatus(contactElement, 1) shouldBe messages("task.status.inProgress")
           sectionLink(contactElement, 1) must haveHref(contactRoutes.ContactDetailsFullNameController.displayPage())
         }
 
@@ -267,8 +268,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
-          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) shouldBe messages("task.status.cannotStartYet")
         }
 
       }
@@ -289,7 +290,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "application status should reflect the completed sections" in {
 
-          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() mustBe messages(
+          view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(0).text() shouldBe messages(
             "registrationPage.completedSections",
             completeRegistration.numberOfCompletedSections,
             5
@@ -300,8 +301,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(messages("registrationPage.task.eligibility.heading"))
-          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
+          sectionName(liabilityElement, 0) shouldBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) shouldBe messages("task.status.completed")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
@@ -311,8 +312,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(organisationElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation.group")
-          sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
+          sectionName(organisationElement, 0) shouldBe messages("registrationPage.task.organisation.group")
+          sectionStatus(organisationElement, 0) shouldBe messages("task.status.completed")
           sectionLink(organisationElement, 0) must haveHref(organisationRoutes.CheckAnswersController.displayPage())
         }
 
@@ -322,8 +323,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(contactElement) must include(messages("registrationPage.task.organisation.heading.group"))
 
-          sectionName(contactElement, 1) mustBe messages("registrationPage.task.contactDetails.group")
-          sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
+          sectionName(contactElement, 1) shouldBe messages("registrationPage.task.contactDetails.group")
+          sectionStatus(contactElement, 1) shouldBe messages("task.status.completed")
           sectionLink(contactElement, 1) must haveHref(contactRoutes.ContactDetailsCheckAnswersController.displayPage())
         }
 
@@ -332,7 +333,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
           header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+          sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
 
         }
 
@@ -350,7 +351,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-        sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+        sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
 
       }
 
@@ -366,7 +367,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-        sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+        sectionName(reviewElement, 0) shouldBe messages("registrationPage.task.review")
 
       }
     }

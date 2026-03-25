@@ -32,7 +32,7 @@
 
 @govukLayout(title = Title("verify.organisation.title"), backButton = None) {
 
- @formHelper(action = pptRoutes.VerifyOrganisationController.submit(), 'autoComplete -> "off") {
+ @formHelper(action = pptRoutes.VerifyOrganisationController.submit(), Symbol("autoComplete") -> "off") {
 
   @pageHeading(messages("verify.organisation.title"))
 

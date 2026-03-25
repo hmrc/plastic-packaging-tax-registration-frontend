@@ -67,7 +67,7 @@
 
     @listMembers(listofMembers)
 
-    @formHelper(action = controllers.group.routes.OrganisationListController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = controllers.group.routes.OrganisationListController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

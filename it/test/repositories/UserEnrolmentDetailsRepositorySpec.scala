@@ -19,7 +19,7 @@ package test.repositories
 import forms.enrolment._
 import models.registration.UserEnrolmentDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, when, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
@@ -58,14 +58,14 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
         val result = await(sut.get()(authenticatedRequest))
 
         verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
-        result mustBe userEnrolmentDetails
+        result shouldBe userEnrolmentDetails
       }
       "there is NOT one" in {
         when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = await(sut.get()(authenticatedRequest))
 
         verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
-        result mustBe UserEnrolmentDetails()
+        result shouldBe UserEnrolmentDetails()
       }
     }
     "put" in {
@@ -74,7 +74,7 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
 
       verify(mockUserDataRepository)
         .putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
-      result mustBe userEnrolmentDetails
+      result shouldBe userEnrolmentDetails
     }
 
     "update" in {
@@ -88,7 +88,7 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
       verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
       verify(updateFunc).apply(userEnrolmentDetails)
       verify(mockUserDataRepository).putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
-      result mustBe userEnrolmentDetails
+      result shouldBe userEnrolmentDetails
     }
 
     "delete" in {

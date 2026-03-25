@@ -19,7 +19,7 @@ package models.genericregistration
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
 import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum.given_Format_PartnerTypeEnum
 
 import java.util.UUID
 

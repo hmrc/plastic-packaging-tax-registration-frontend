@@ -18,6 +18,7 @@
 @import views.html.main_template
 @import views.viewmodels.{BackButtonJs, Title}
 @import forms.organisation.PartnerType
+@import forms.organisation.PartnerTypeEnum
 @import forms.organisation.PartnerTypeEnum._
 @import models.request.JourneyRequest
 
@@ -63,7 +64,7 @@
 
         @pageHeading(messages(titleMessage))
 
-        @formHelper(action = submit, 'autoComplete -> "off") {
+        @formHelper(action = submit, Symbol("autoComplete") -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

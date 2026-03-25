@@ -23,8 +23,8 @@ import models.registration.NewLiability
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.{reset, verify}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify}
+
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -65,8 +65,10 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
         r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability)))
       )
     spyJourneyAction.setReg(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
-    given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
+    `given`(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(
+      TaxStartDate.liableFromBackwardsTest(aDate)
+    )
     mockRegistrationUpdate()
   }
 
@@ -97,7 +99,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
       "check the backward look feature flags" in {
 
-        given(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
+        `given`(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
 
         await(controller.displayPage()(FakeRequest()))
 
@@ -112,11 +114,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
             r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability)))
           )
         spyJourneyAction.setReg(registration)
-        given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+        `given`(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
         verify(page).apply(any())(any(), any())
       }
     }
@@ -129,11 +131,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         val result = controller.submit()(postRequest(Json.toJson(registration)))
 
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) shouldBe Some(pptRoutes.TaskListController.displayPage().url)
 
         verify(mockTaxStartDateService).calculateTaxStartDate(ArgumentMatchers.eq(registration.liabilityDetails))
 
-        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe aDate
+        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate shouldBe aDate
       }
     }
   }

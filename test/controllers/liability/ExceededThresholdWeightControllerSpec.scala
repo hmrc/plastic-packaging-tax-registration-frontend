@@ -23,9 +23,9 @@ import models.registration.Registration
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
@@ -72,7 +72,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
         val result: Future[Result] = controller.displayPage()(FakeRequest())
         status(result) shouldEqual Status.OK
-        contentAsString(result) mustBe "test view"
+        contentAsString(result) shouldBe "test view"
       }
     }
 
@@ -84,7 +84,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         spyJourneyAction.setReg(existingRegistration)
 
         val result = controller.displayPage()(FakeRequest())
-        status(result) mustBe Status.OK
+        status(result) shouldBe Status.OK
 
         verify(existingRegistration.liabilityDetails).exceededThresholdWeight
 
@@ -106,9 +106,9 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(false)
-        redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.exceededThresholdWeight shouldBe Some(false)
+        redirectLocation(result) shouldBe Some(routes.TaxStartDateController.displayPage().url)
       }
 
       "user answers yes" in {
@@ -117,16 +117,16 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         val correctForm = Seq("value" -> "yes")
 
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
-        redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightDateController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.exceededThresholdWeight shouldBe Some(true)
+        redirectLocation(result) shouldBe Some(routes.ExceededThresholdWeightDateController.displayPage().url)
       }
     }
 
     "return an error" when {
       "the form fails to bind" in {
         val result = controller.submit()(postRequestEncoded(JsObject.empty))
-        status(result) mustBe Status.BAD_REQUEST
+        status(result) shouldBe Status.BAD_REQUEST
       }
 
       "user submits form and the registration update fails" in {

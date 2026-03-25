@@ -22,8 +22,8 @@ import forms.YesNoValues
 import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.LiabilityDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.mvc.MessagesControllerComponents
@@ -59,7 +59,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -70,7 +70,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method without the expectToExceedThresholdWeight not set" in {
@@ -81,7 +81,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
   }
@@ -95,11 +95,11 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight shouldBe Some(true)
         redirectLocation(
           result
-        ).get mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage.url
+        ).get shouldBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage.url
       }
 
       "user submits 'No' answer" in {
@@ -110,12 +110,12 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
-        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight shouldBe Some(false)
+        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight shouldBe None
         redirectLocation(
           result
-        ).get mustBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
+        ).get shouldBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
       }
 
       "return 400 (BAD_REQUEST)" when {
@@ -125,7 +125,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty))
 
-          status(result) mustBe BAD_REQUEST
+          status(result) shouldBe BAD_REQUEST
         }
       }
 

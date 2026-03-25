@@ -43,7 +43,7 @@
     @errorSummary(form.errors)
     @sectionHeader(messages("liability.sectionHeader"))
 
-    @formHelper(action = pptRoutes.RegistrationTypeController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.RegistrationTypeController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

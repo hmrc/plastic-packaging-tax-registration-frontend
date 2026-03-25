@@ -19,8 +19,8 @@ package controllers.amendment.partner
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -50,16 +50,16 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
       spyJourneyAction.setReg(partnershipRegistration)
 
       val resp = listPartnersController.displayPage()(FakeRequest())
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "List Partners Page"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "List Partners Page"
     }
 
     "reject unselected submission and redisplay page" in {
       spyJourneyAction.setReg(partnershipRegistration)
 
       val resp = listPartnersController.submit()(FakeRequest().withFormUrlEncodedBody("addOrganisation" -> ""))
-      status(resp) mustBe BAD_REQUEST
-      contentAsString(resp) mustBe "List Partners Page"
+      status(resp) shouldBe BAD_REQUEST
+      contentAsString(resp) shouldBe "List Partners Page"
     }
 
     "redirect to the add new partner flow" when {
@@ -67,8 +67,8 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
         spyJourneyAction.setReg(partnershipRegistration)
 
         val resp = listPartnersController.submit()(postRequest.withFormUrlEncodedBody("addOrganisation" -> "yes"))
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.AddPartnerOrganisationDetailsTypeController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.AddPartnerOrganisationDetailsTypeController.displayPage().url)
       }
     }
 
@@ -77,8 +77,8 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
         spyJourneyAction.setReg(partnershipRegistration)
 
         val resp = listPartnersController.submit()(postRequest.withFormUrlEncodedBody("addOrganisation" -> "no"))
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.ManagePartnersController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.ManagePartnersController.displayPage().url)
       }
     }
   }

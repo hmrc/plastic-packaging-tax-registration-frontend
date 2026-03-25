@@ -17,7 +17,7 @@
 package controllers.deregistration
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, status}
@@ -25,8 +25,8 @@ import play.twirl.api.HtmlFormat
 import connectors.{DeregistrationConnector, DownstreamServiceError, FailedToDeregister}
 import models.deregistration.{DeregistrationDetails, DeregistrationReason}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import repositories.{DeregistrationDetailRepositoryImpl, UserDataRepository}
 import views.html.deregistration.deregister_check_your_answers_page
@@ -74,7 +74,7 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "submit the answers" in {
@@ -89,8 +89,8 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
 
         val result: Future[Result] = controller.continue()(request)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DeregistrationSubmittedController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.DeregistrationSubmittedController.displayPage().url)
 
         verify(mockCache).deleteData[DeregistrationDetails](any)(any, any)
 

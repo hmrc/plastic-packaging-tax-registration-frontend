@@ -39,7 +39,7 @@ object PartnershipName {
         .verifying("partnership.name.empty.error", isNonEmpty)
         .verifying("partnership.name.too-long", isShortEnough).verifying()
         .verifying("partnership.name.format.error", matchesRegex)
-  )(PartnershipName.apply)(PartnershipName.unapply)
+  )(PartnershipName.apply)(pn => Some(pn.value))
 
   private def isShortEnough: String => Boolean = { name =>
     name.length <= maxLength

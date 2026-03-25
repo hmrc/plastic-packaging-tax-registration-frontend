@@ -81,7 +81,7 @@ class AmendPartnerContactDetailsController @Inject() (
             ),
           partnerName =>
             updateRegistration(
-              { registration: Registration =>
+              { (registration: Registration) =>
                 registration.withUpdatedPartner(
                   partnerId,
                   partner =>
@@ -136,7 +136,7 @@ class AmendPartnerContactDetailsController @Inject() (
             doesPartnerEmailRequireVerification(partner, emailAddress).flatMap { isEmailVerificationRequired =>
               if (!isEmailVerificationRequired)
                 updateRegistration(
-                  { registration: Registration =>
+                  { (registration: Registration) =>
                     registration.withUpdatedPartner(
                       partnerId,
                       partner => applyEmailAddressTo(partner, emailAddress.value)
@@ -201,9 +201,8 @@ class AmendPartnerContactDetailsController @Inject() (
       isEmailVerified(prospectiveEmail).flatMap { isVerified =>
         if (isVerified)
           updateRegistration(
-            { registration: Registration =>
-              registration.withUpdatedPartner(partnerId, partner => applyEmailAddressTo(partner, prospectiveEmail))
-            },
+            (registration: Registration) =>
+              registration.withUpdatedPartner(partnerId, partner => applyEmailAddressTo(partner, prospectiveEmail)),
             successfulRedirect(partnerId)
           )
         else
@@ -245,7 +244,7 @@ class AmendPartnerContactDetailsController @Inject() (
             ),
           phoneNumber =>
             updateRegistration(
-              { registration: Registration =>
+              { (registration: Registration) =>
                 registration.withUpdatedPartner(
                   partnerId,
                   partner =>
@@ -323,7 +322,7 @@ class AmendPartnerContactDetailsController @Inject() (
             ),
           jobTitle =>
             updateRegistration(
-              { registration: Registration =>
+              { (registration: Registration) =>
                 registration.withUpdatedPartner(
                   partnerId,
                   partner =>

@@ -49,7 +49,7 @@
             messages("liability.taxStartDate.realisedThresholdWouldBeExceeded.hint")
     )
 
-    @formHelper(action = pptRoutes.TaxStartDateController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.TaxStartDateController.submit(), Symbol("autoComplete") -> "off") {
         @continueButton()
     }
 }

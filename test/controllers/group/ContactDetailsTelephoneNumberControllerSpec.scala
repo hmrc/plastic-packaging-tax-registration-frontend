@@ -23,8 +23,8 @@ import forms.contact.PhoneNumber
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -70,7 +70,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -78,7 +78,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -91,9 +91,11 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         val result =
           controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some("077123")
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber shouldBe Some(
+          "077123"
+        )
+        redirectLocation(result) shouldBe Some(
           groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url
         )
         reset(mockRegistrationConnector)
@@ -114,7 +116,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
         await(controller.displayPage(groupMember.id)(FakeRequest()))
 
-        pageForm.get.value mustBe "077123"
+        pageForm.get.value shouldBe "077123"
       }
     }
 
@@ -124,7 +126,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
         val result = controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("$%^"))))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 

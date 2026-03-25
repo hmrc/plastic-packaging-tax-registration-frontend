@@ -19,8 +19,8 @@ package controllers.contact
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -41,7 +41,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
     super.beforeEach()
     val registration = aRegistration()
     spyJourneyAction.setReg(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -56,7 +56,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -65,7 +65,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
       "when form is submitted" in {
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
       }
     }
 
@@ -77,8 +77,8 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
         val result =
           controller.submit()(FakeRequest("POST", ""))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(pptRoutes.TaskListController.displayPage().url)
       }
     }
   }

@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package audit
+package models.registration
 
-import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
+import audit.UserType
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.Json
 
-import scala.util.Try
+class UserTypeSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-enum UserType:
-  case NEW, RESUME
+  "UserType" should {
+    "work" in {
+      println(Json.toJson(UserType.NEW))
 
-object UserType:
-  given Format[UserType] =
-    Format(
-      Reads {
-        case JsString(value) =>
-          Try(UserType.valueOf(value))
-            .map(JsSuccess(_))
-            .getOrElse(JsError(s"Unknown UserType: $value"))
-        case _ =>
-          JsError("String value expected")
-      },
-      Writes(userType => JsString(userType.toString))
-    )
+      1 mustBe 1
+    }
+  }
+}

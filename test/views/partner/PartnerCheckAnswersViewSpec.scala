@@ -23,6 +23,7 @@ import play.api.mvc.Call
 import forms.contact.Address
 import forms.organisation.PartnerTypeEnum
 import models.genericregistration.Partner
+import org.scalatest.matchers.should.Matchers.shouldBe
 import services.CountryService
 import views.html.partner.partner_check_answers_page
 
@@ -43,7 +44,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
     val view = createView(limitedCompanyPartner)
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -196,7 +197,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Confirm and continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Confirm and continue"
+      view.getElementById("submit").text() shouldBe "Confirm and continue"
     }
 
   }

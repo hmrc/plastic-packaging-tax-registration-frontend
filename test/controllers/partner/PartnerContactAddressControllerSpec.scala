@@ -17,7 +17,7 @@
 package controllers.partner
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.redirectLocation
 import spec.PptTestData
@@ -77,7 +77,7 @@ class PartnerContactAddressControllerSpec
 
         val resp = controller.captureNewPartner()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
       "capturing address for existing partner" in {
         spyJourneyAction.setReg(partnershipRegistrationWithExistingPartner)
@@ -86,7 +86,7 @@ class PartnerContactAddressControllerSpec
           partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
         )(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -96,9 +96,9 @@ class PartnerContactAddressControllerSpec
 
         val resp = controller.addressCaptureCallbackNewPartner()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(routes.PartnerCheckAnswersController.displayNewPartner().url)
+        redirectLocation(resp) shouldBe Some(routes.PartnerCheckAnswersController.displayNewPartner().url)
 
-        modifiedRegistration.newPartner.get.contactDetails.get.address mustBe Some(validCapturedAddress)
+        modifiedRegistration.newPartner.get.contactDetails.get.address shouldBe Some(validCapturedAddress)
       }
       "receive address capture callback for existing partner" in {
         val nominatedPartnerId = partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
@@ -107,11 +107,11 @@ class PartnerContactAddressControllerSpec
         val resp =
           controller.addressCaptureCallbackExistingPartner(nominatedPartnerId)(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(
+        redirectLocation(resp) shouldBe Some(
           routes.PartnerCheckAnswersController.displayExistingPartner(nominatedPartnerId).url
         )
 
-        modifiedRegistration.nominatedPartner.get.contactDetails.get.address mustBe Some(validCapturedAddress)
+        modifiedRegistration.nominatedPartner.get.contactDetails.get.address shouldBe Some(validCapturedAddress)
       }
     }
   }

@@ -38,7 +38,7 @@
 
     @pageHeading(messages("enrolment.checkAnswers.title"))
 
-    @formHelper(action = pptRoutes.CheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.CheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
         @govukSummaryList(
             SummaryList(
                 rows = Seq(

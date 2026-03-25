@@ -17,9 +17,10 @@
 package base.unit
 
 import org.jsoup.nodes.Element
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.include
 import spec.ViewMatchers
 import controllers.routes
+import org.scalatest.matchers.should.Matchers.should
 import views.viewmodels.SignOutReason
 
 trait ViewAssertions extends ViewMatchers {
@@ -28,8 +29,8 @@ trait ViewAssertions extends ViewMatchers {
     view.select("meta[name='hmrc-timeout-dialog']").size() == 1
 
   def displaySignOutLink(view: Element) = {
-    view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
-    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref(
+    view.getElementsByClass("hmrc-sign-out-nav__link").first().text() should include("Sign out")
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() should haveHref(
       routes.SignOutController.signOut(SignOutReason.UserAction)
     )
   }

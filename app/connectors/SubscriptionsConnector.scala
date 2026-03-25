@@ -19,11 +19,12 @@ package connectors
 import config.AppConfig
 import models.registration.Registration
 import models.subscriptions.{SubscriptionCreateOrUpdateResponse, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatusResponse}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
@@ -35,9 +36,7 @@ import scala.util.{Failure, Success, Try}
 @Singleton
 class SubscriptionsConnector @Inject() (httpClient: HttpClientV2, config: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
-) {
-
-  private val logger = Logger(this.getClass)
+) extends Logging {
 
   def getSubscriptionStatus(safeId: String)(implicit hc: HeaderCarrier): Future[SubscriptionStatusResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.status.timer").time()

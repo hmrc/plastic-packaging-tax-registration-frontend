@@ -17,9 +17,10 @@
 package audit
 
 import play.api.libs.json.{Json, OFormat}
-import forms.organisation.OrgType.OrgType
+import forms.organisation.OrgType
+import forms.organisation.OrgType.given_Format_OrgType
 
-case class OrgTypeRegistrationEvent(internalId: String, orgType: Option[OrgType]) {}
+case class OrgTypeRegistrationEvent(internalId: String, orgType: Option[OrgType])
 
 object OrgTypeRegistrationEvent {
   implicit val format: OFormat[OrgTypeRegistrationEvent] = Json.format[OrgTypeRegistrationEvent]

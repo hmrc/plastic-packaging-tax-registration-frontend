@@ -19,7 +19,7 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.Call
@@ -27,7 +27,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.Html
 import forms.liability.RegType.GROUP
 import forms.liability.RegistrationType
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.test.FakeRequest
 import views.html.liability.registration_type_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -59,12 +59,12 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
         val result = registrationTypeController.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
 
         val captor: ArgumentCaptor[Form[RegistrationType]] =
           ArgumentCaptor.forClass(classOf[Form[RegistrationType]])
         verify(mockPage).apply(captor.capture(), any())(any(), any())
-        captor.getValue.value mustBe None
+        captor.getValue.value shouldBe None
       }
 
       "registration type previously supplied" in {
@@ -72,12 +72,12 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
         val result = registrationTypeController.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
 
         val captor: ArgumentCaptor[Form[RegistrationType]] =
           ArgumentCaptor.forClass(classOf[Form[RegistrationType]])
         verify(mockPage).apply(captor.capture(), any())(any(), any())
-        captor.getValue.value mustBe Some(RegistrationType(Some(GROUP)))
+        captor.getValue.value shouldBe Some(RegistrationType(Some(GROUP)))
       }
 
     }
@@ -97,7 +97,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         val groupSelection = Seq("value" -> GROUP.toString)
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(groupSelection: _*))
 
-        redirectLocation(result) mustBe Some(routes.MembersUnderGroupControlController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.MembersUnderGroupControlController.displayPage().url)
 
         val expectedRegistration = initialRegistration.copy(registrationType = Some(GROUP))
         verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
@@ -113,7 +113,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         val emptySelection = Seq()
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(emptySelection: _*))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
   }
@@ -123,11 +123,11 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
     val result = registrationTypeController.displayPage()(FakeRequest())
 
-    status(result) mustBe OK
+    status(result) shouldBe OK
 
     val captor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
     verify(mockPage).apply(any(), captor.capture())(any(), any())
-    captor.getValue.url mustBe backLink
+    captor.getValue.url shouldBe backLink
   }
 
 }

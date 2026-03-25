@@ -18,8 +18,7 @@ package controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, session, status}
@@ -64,7 +63,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        redirectLocation(result) mustBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
+        redirectLocation(result) shouldBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
 
       }
 
@@ -72,7 +71,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        redirectLocation(result) mustBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
+        redirectLocation(result) shouldBe Some(s"${config.signOutUrl}?continue=$feedbackSurveyUrlEncoded")
 
       }
     }
@@ -83,7 +82,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
       }
 
@@ -91,7 +90,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.UserAction)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
       }
     }
@@ -125,9 +124,9 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result).get must include(sessionTimeoutUrlEncoded)
+        redirectLocation(result).get should include(sessionTimeoutUrlEncoded)
 
       }
 
@@ -135,9 +134,9 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.signOut(SignOutReason.SessionTimeout)(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result).get must include(sessionTimeoutUrlEncoded)
+        redirectLocation(result).get should include(sessionTimeoutUrlEncoded)
 
       }
     }
@@ -159,7 +158,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
         val result = controller.sessionTimeoutSignedOut()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 

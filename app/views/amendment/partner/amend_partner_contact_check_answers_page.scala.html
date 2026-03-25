@@ -38,7 +38,7 @@
 
     @pageHeading(messages("partner.check.title"))
 
-    @formHelper(action = routes.PartnerContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.PartnerContactDetailsCheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
 
            @govukSummaryList(
             SummaryList(

@@ -21,18 +21,18 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.dsl.MatcherWords
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import connectors.DownstreamServiceError
 import forms.organisation.OrgType
-import forms.organisation.OrgType.{OrgType, PARTNERSHIP}
+import forms.organisation.OrgType.PARTNERSHIP
 import models.genericregistration.{CompanyProfile, IncorporationDetails}
 import models.registration.group.{GroupMember, OrganisationDetails => GroupOrgDetails}
 import models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import models.subscriptions.SubscriptionStatusResponse
-import org.mockito.MockitoSugar.{reset, verify}
+import org.mockito.Mockito.{reset, verify}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -93,7 +93,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
             case _ =>
               simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType))
           }
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
           redirectLocation(result).get should include("confirm-address")
         }
 
@@ -110,7 +110,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
                 Some(groupMember.id)
               )
           }
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
           redirectLocation(result).get should include("confirm-address")
         }
       }
@@ -120,26 +120,26 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           orgType match {
             case PARTNERSHIP =>
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
-              groupMemberSize(getLastSavedRegistration) mustBe 1
+              groupMemberSize(getLastSavedRegistration) shouldBe 1
 
               val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
               val partnershipDetailsWithCompanyProfile =
                 partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
-              memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
-              memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
-              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
+              memberDetails.organisationDetails.get.organisationType shouldBe orgType.toString
+              memberDetails.organisationDetails.get.organisationName shouldBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
+              memberDetails.addressDetails shouldBe addressConversionUtils.toPptAddress(
                 partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress
               )
             case _ =>
               await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
-              groupMemberSize(getLastSavedRegistration) mustBe 1
+              groupMemberSize(getLastSavedRegistration) shouldBe 1
 
               val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
 
-              memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
-              memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
+              memberDetails.organisationDetails.get.organisationType shouldBe orgType.toString
+              memberDetails.organisationDetails.get.organisationName shouldBe incorporationDetails.companyName
+              memberDetails.addressDetails shouldBe addressConversionUtils.toPptAddress(
                 incorporationDetails.companyAddress
               )
           }
@@ -183,23 +183,23 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
-          groupMemberSize(registration) mustBe 1
+          groupMemberSize(registration) shouldBe 1
 
           val result = controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
 
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
 
           if (orgType.equals(OrgType.PARTNERSHIP))
             redirectLocation(result).get should include("/register-for-plastic-packaging-tax/confirm-address")
           else
-            redirectLocation(result) mustBe Some(
+            redirectLocation(result) shouldBe Some(
               routes.ConfirmBusinessAddressController.displayPage(
                 "123456ABC",
                 "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC"
               ).url
             )
 
-          groupMemberSize(getLastSavedRegistration) mustBe 1
+          groupMemberSize(getLastSavedRegistration) shouldBe 1
 
         }
       }
@@ -260,8 +260,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           val result =
             controller.grsCallbackNewMember(registration.incorpJourneyId.get)(FakeRequest())
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
 
         }
       }
