@@ -126,9 +126,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      radioInputmustBe(1, UK_COMPANY)
-      radioInputmustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
-      radioInputmustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(1, UK_COMPANY)
+      radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
+      radioInputMustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display hint link" in {
@@ -153,10 +153,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
       val form = OrganisationType
         .form(ActionEnum.Group)
-        .fill(OrganisationType(UK_COMPANY.toString))
+        .fill(OrganisationType(UK_COMPANY.value))
       val view = createView(form)
 
-      view.getElementById("answer").attr("value") mustBe UK_COMPANY.toString
+      view.getElementById("answer").attr("value") mustBe UK_COMPANY.value
     }
 
     "display error" when {
@@ -191,10 +191,12 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     )
   }
 
-  def radioInputmustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
-    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
+  private def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit
+    view: Document
+  ) = {
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.value
     view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
-      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+      labelKey.getOrElse(s"organisationDetails.type.${orgType.value}")
     )
   }
 

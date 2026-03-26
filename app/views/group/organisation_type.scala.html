@@ -42,13 +42,13 @@
     messages(
         orgType match {
             case PARTNERSHIP => "organisationDetails.type.GroupPartnership"
-            case _ => s"organisationDetails.type.$orgType"
+            case _ => s"organisationDetails.type.${orgType.value}"
         }
     )
 }
 
 @radioItem(orgType: OrgType) = @{
-    RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
+    RadioItem(content = Text(displayName(orgType)), value = Some(orgType.value), checked = form("answer").value.contains(orgType.value))
 }
 
 @organisationRadios = @{

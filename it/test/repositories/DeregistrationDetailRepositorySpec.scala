@@ -67,12 +67,12 @@ class DeregistrationDetailRepositorySpec
   "Deregistration Detail Repository" should {
 
     "return empty DeregistrationDetails when no previously stored deregistration detail" in {
-      deregistrationDetailRepository.get().map(_ shouldBe DeregistrationDetails(None, None))
+      deregistrationDetailRepository.get().map(_ mustBe DeregistrationDetails(None, None))
     }
 
     "persist deregistration detail" in {
       deregistrationDetailRepository.put(deregistrationDetail).map { _ =>
-        deregistrationDetailRepository.get().map(_ shouldBe deregistrationDetail)
+        deregistrationDetailRepository.get().map(_ mustBe deregistrationDetail)
       }
     }
 
@@ -82,7 +82,7 @@ class DeregistrationDetailRepositorySpec
           storedDeregistrationDetail.copy(reason = Some(DeregistrationReason.CeasedTrading))
         }.map { _ =>
           deregistrationDetailRepository.get().map { storedRegistrationDetail =>
-            storedRegistrationDetail.reason shouldBe Some(DeregistrationReason.CeasedTrading)
+            storedRegistrationDetail.reason mustBe Some(DeregistrationReason.CeasedTrading)
           }
         }
       }
@@ -91,7 +91,7 @@ class DeregistrationDetailRepositorySpec
     "delete deregistration detail" in {
       deregistrationDetailRepository.put(deregistrationDetail).map { _ =>
         deregistrationDetailRepository.delete().map { _ =>
-          deregistrationDetailRepository.get() shouldBe None
+          deregistrationDetailRepository.get() mustBe DeregistrationDetails(None, None)
         }
       }
     }

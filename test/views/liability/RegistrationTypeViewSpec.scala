@@ -82,10 +82,10 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
       val form = RegistrationType
         .form()
-        .fill(RegistrationType(SINGLE_ENTITY.toString))
+        .fill(RegistrationType(SINGLE_ENTITY))
       val view = createView(form)
 
-      view.getElementById("value").attr("value") mustBe SINGLE_ENTITY.toString
+      view.getElementById("value").attr("value") mustBe SINGLE_ENTITY.value
     }
 
     "display error" when {

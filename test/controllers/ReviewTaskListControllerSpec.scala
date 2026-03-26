@@ -34,6 +34,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -76,10 +77,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     `given`(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     `given`(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any[Registration]))
-      .thenReturn { (invocationOnMock: InvocationOnMock) =>
-        val reg = invocationOnMock.getArgument(0)
-        reg
-      }
+      .thenAnswer(new Answer[Registration] {
+        override def answer(invocation: InvocationOnMock): Registration =
+          invocation.getArgument(0)
+      })
   }
 
   override protected def afterEach(): Unit = {

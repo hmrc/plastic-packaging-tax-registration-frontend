@@ -43,7 +43,9 @@
 
 @fieldSetBody = {
 
-    @optionalHint
+    @if(hintKey.isDefined) {
+        <p class="govuk-body">@messages(hintKey.get)</p>
+    }
 
     @inputText(
         field = form("addressLine1"),

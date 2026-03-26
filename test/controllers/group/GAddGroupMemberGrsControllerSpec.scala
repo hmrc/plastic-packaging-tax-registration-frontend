@@ -55,8 +55,11 @@ class GAddGroupMemberGrsControllerSpec extends ControllerSpec {
 
   type RequestAsyncFunction = JourneyRequest[AnyContent] => Future[Result]
 
+  val fakeJourneyAction = FakeJourneyAction
+  fakeJourneyAction.setReg(reg)
+
   private lazy val sut = new AddGroupMemberGrsController(
-    FakeJourneyAction,
+    fakeJourneyAction,
     mockUkCompanyGrsConnector,
     mockSubscriptionsConnector,
     mockPartnershipGrsConnector,

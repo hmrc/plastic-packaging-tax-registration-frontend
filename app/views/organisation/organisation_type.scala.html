@@ -33,6 +33,7 @@
     paragraph: paragraph
 )
 
+
 @(form: Form[OrganisationType], isGroup: Boolean)(implicit request: Request[_], messages: Messages)
 
     @title = @{ if(isGroup) "organisationDetails.type.group.title" else "organisationDetails.type.title" }
@@ -41,13 +42,13 @@
     @displayName(orgType: OrgType) = @{ messages(
       orgType match {
           case PARTNERSHIP if isGroup => "organisationDetails.type.GroupNominatedPartnership"
-          case _ => s"organisationDetails.type.$orgType"
+          case _ => s"organisationDetails.type.${orgType.value}"
       }
     )
     }
 
     @radioItem(orgType: OrgType) = @{
-        RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
+        RadioItem(content = Text(displayName(orgType)), value = Some(orgType.value), checked = form("answer").value.contains(orgType.value))
     }
 
     @organisationRadios = @{
@@ -70,7 +71,6 @@
           )
     }
 
-    @linkHint = {<a href=@messages("gform.link") class="govuk-link" id="organisationDetails-type-link">@messages("organisationDetails.type.hint")</a>}
 
     @govukLayout(
         title = Title(form, title),
@@ -98,7 +98,11 @@
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 ))
 
-        @{ if(isGroup) paragraph(linkHint) }
+        @if(isGroup) {
+            <p class="govuk-body">
+                <a href=@messages("gform.link") class="govuk-link" id="organisationDetails-type-link">@messages("organisationDetails.type.hint")</a>
+            </p>
+        }
 
         @saveButtons()
     }

@@ -38,30 +38,32 @@ enum PartnerTypeEnum(val value: String):
   case OVERSEAS_COMPANY_UK_BRANCH           extends PartnerTypeEnum("OverseasCompanyUkBranch")
   case OVERSEAS_COMPANY_NO_UK_BRANCH        extends PartnerTypeEnum("OverseasCompanyNoUKBranch")
 
+  override def toString: String = value // for backwards compatibility only
+
 object PartnerTypeEnum {
-  def withNameOpt(name: String): Option[PartnerTypeEnum] = PartnerTypeEnum.values.find(_.toString == name)
+  def withNameOpt(name: String): Option[PartnerTypeEnum] = PartnerTypeEnum.values.find(_.value == name)
 
   def withName(name: String): PartnerTypeEnum =
-    PartnerTypeEnum.values.find(_.toString == name)
+    PartnerTypeEnum.values.find(_.value == name)
       .getOrElse(throw new NoSuchElementException(s"unable to find partner type: $name"))
 
   def displayName(partnerTypeEnum: PartnerTypeEnum)(implicit messages: Messages): String =
-    messages(s"partner.type.$partnerTypeEnum")
+    messages(s"partner.type.${partnerTypeEnum.value}")
 
   implicit def value(partnerTypeEnum: PartnerTypeEnum): String =
-    partnerTypeEnum.toString
+    partnerTypeEnum.value
 
   given Format[PartnerTypeEnum] =
     Format(
       Reads {
         case JsString(value) =>
-          Try(PartnerTypeEnum.valueOf(value))
+          PartnerTypeEnum.values.find(_.value == value)
             .map(JsSuccess(_))
             .getOrElse(JsError(s"Unknown PartnerTypeEnum: $value"))
         case _ =>
           JsError("String value expected")
       },
-      Writes(partnerTypeEnum => JsString(partnerTypeEnum.toString))
+      Writes(partnerTypeEnum => JsString(partnerTypeEnum.value))
     )
 }
 
@@ -88,8 +90,8 @@ object PartnerType extends CommonFormValidators {
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError(mode))
-          .verifying(emptyError(mode), contains(PartnerTypeEnum.values.toSeq.map(_.toString)))
-          .transform[PartnerTypeEnum](str => PartnerTypeEnum.withName(str), _.toString)
+          .verifying(emptyError(mode), contains(PartnerTypeEnum.values.toSeq.map(_.value)))
+          .transform[PartnerTypeEnum](str => PartnerTypeEnum.withName(str), _.value)
       )(PartnerType.apply)(pt => Some(pt.answer))
     )
 

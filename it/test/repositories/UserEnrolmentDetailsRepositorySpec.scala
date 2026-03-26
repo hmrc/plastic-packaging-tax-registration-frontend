@@ -58,14 +58,14 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
         val result = await(sut.get()(authenticatedRequest))
 
         verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
-        result shouldBe userEnrolmentDetails
+        result mustBe userEnrolmentDetails
       }
       "there is NOT one" in {
         when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = await(sut.get()(authenticatedRequest))
 
         verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
-        result shouldBe UserEnrolmentDetails()
+        result mustBe UserEnrolmentDetails()
       }
     }
     "put" in {
@@ -74,7 +74,7 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
 
       verify(mockUserDataRepository)
         .putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
-      result shouldBe userEnrolmentDetails
+      result mustBe userEnrolmentDetails
     }
 
     "update" in {
@@ -88,7 +88,7 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
       verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
       verify(updateFunc).apply(userEnrolmentDetails)
       verify(mockUserDataRepository).putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
-      result shouldBe userEnrolmentDetails
+      result mustBe userEnrolmentDetails
     }
 
     "delete" in {

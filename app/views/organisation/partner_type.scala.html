@@ -51,7 +51,7 @@
     }
 
     @radioItem(ppType: PartnerTypeEnum) = @{
-        RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
+        RadioItem(content = Text(displayName(ppType)), value = Some(ppType.value), checked = form("answer").value.contains(ppType.value))
     }
 
     @govukLayout(

@@ -18,9 +18,10 @@ package controllers.amendment.partner
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import models.genericregistration.Partner
+import models.registration.Registration
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-
+import org.mockito.Mockito.{verify, when}
 import play.api.Play.materializer
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest

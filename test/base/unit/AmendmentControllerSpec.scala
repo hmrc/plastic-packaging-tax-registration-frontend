@@ -64,11 +64,13 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
       )
     )
 
-  protected def getUpdatedRegistrationMethod(reg: Registration): Registration = {
+  protected def getUpdatedRegistrationMethod(registration: Registration): Registration = {
     val registrationCaptor: ArgumentCaptor[Registration => Registration] =
       ArgumentCaptor.forClass(classOf[Registration => Registration])
     verify(mockAmendRegService).updateSubscriptionWithRegistration(registrationCaptor.capture())(any(), any())
-    reg
+
+    val capturedFunc = registrationCaptor.getValue
+    capturedFunc.apply(registration)
   }
 
 }

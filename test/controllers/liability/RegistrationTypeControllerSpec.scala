@@ -77,7 +77,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         val captor: ArgumentCaptor[Form[RegistrationType]] =
           ArgumentCaptor.forClass(classOf[Form[RegistrationType]])
         verify(mockPage).apply(captor.capture(), any())(any(), any())
-        captor.getValue.value shouldBe Some(RegistrationType(Some(GROUP)))
+        captor.getValue.value shouldBe Some(RegistrationType(GROUP))
       }
 
     }

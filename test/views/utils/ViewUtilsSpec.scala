@@ -35,7 +35,7 @@ class ViewUtilsSpec extends PlaySpec {
   "displayLocalDate" should {
     "return a date as a string" in {
 
-      when(messages.apply(any[String])).thenReturn("May")
+      when(messages.apply(any[String], any[Seq[Any]])).thenReturn("May")
 
       val date = LocalDate.parse("2023-05-15")
 

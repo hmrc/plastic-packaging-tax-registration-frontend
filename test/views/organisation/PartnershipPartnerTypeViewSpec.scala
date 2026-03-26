@@ -133,9 +133,9 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
   ) = {
     view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
       "value"
-    ).text() shouldBe partnershipPartnerType.toString
+    ).text() shouldBe partnershipPartnerType.value
     view.getElementsByClass("govuk-label").get(number - 1).text() shouldBe messages(
-      labelKey.getOrElse(s"partner.type.$partnershipPartnerType")
+      labelKey.getOrElse(s"partner.type.${partnershipPartnerType.value}")
     )
   }
 

@@ -55,10 +55,10 @@
                 hint = None,
                 name = "value",
                 items = Seq(
-                    RadioItem(content = HtmlContent(messages("registrationType.singleEntity")), value = Some(RegType.SINGLE_ENTITY.toString), checked = registrationType.value.contains(RegType.SINGLE_ENTITY.toString)),
+                    RadioItem(content = HtmlContent(messages("registrationType.singleEntity")), value = Some(RegType.SINGLE_ENTITY.value), checked = registrationType.value.contains(RegType.SINGLE_ENTITY.value)),
                     RadioItem(content = HtmlContent(messages("registrationType.group")),
-                        value = Some(RegType.GROUP.toString),
-                        checked = registrationType.value.contains(RegType.GROUP.toString),
+                        value = Some(RegType.GROUP.value),
+                        checked = registrationType.value.contains(RegType.GROUP.value),
                         hint = Some(Hint(content = HtmlContent(messages("registrationType.group.hint")))))
                 ),
                 classes = "govuk-radios",

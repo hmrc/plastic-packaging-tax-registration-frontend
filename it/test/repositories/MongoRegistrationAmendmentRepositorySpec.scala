@@ -64,8 +64,8 @@ class MongoRegistrationAmendmentRepositorySpec
       }
 
       "getting registration" in {
-        await(mongoRegistrationAmendmentRepository.get()) shouldBe Some(registration)
-        await(mongoRegistrationAmendmentRepository.get(sessionId)) shouldBe Some(registration)
+        await(mongoRegistrationAmendmentRepository.get()) mustBe Some(registration)
+        await(mongoRegistrationAmendmentRepository.get(sessionId)) mustBe Some(registration)
       }
 
       "updating a registration" in {

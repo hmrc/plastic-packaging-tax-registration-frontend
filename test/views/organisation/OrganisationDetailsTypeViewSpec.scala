@@ -142,10 +142,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
       val form = OrganisationType
         .form(ActionEnum.Org)
-        .fill(OrganisationType(UK_COMPANY.toString))
+        .fill(OrganisationType(UK_COMPANY.value))
       val view = createView(form)
 
-      view.getElementById("answer").attr("value") shouldBe UK_COMPANY.toString
+      view.getElementById("answer").attr("value") shouldBe UK_COMPANY.value
     }
 
     "display error" when {
@@ -180,9 +180,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   def radioInputshouldBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
-    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() shouldBe orgType.toString
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() shouldBe orgType.value
     view.getElementsByClass("govuk-label").get(number - 1).text() shouldBe messages(
-      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+      labelKey.getOrElse(s"organisationDetails.type.${orgType.value}")
     )
   }
 

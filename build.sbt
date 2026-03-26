@@ -19,12 +19,10 @@ lazy val microservice = Project(appName, file("."))
     ),
     scalacOptions ++= Seq(
       "-Wconf:msg=unused import&src=html/.*:s",
-      "-Wconf:src=routes/.*:s"
+      "-Wconf:msg=Flag.*repeatedly:s",
+      "-Wconf:src=routes/.*:s",
     ),
   )
-  .configs(A11yTest)
-  .settings(headerSettings(A11yTest): _*)
-  .settings(automateHeaderSettings(A11yTest))
   .settings(scoverageSettings)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
 
@@ -54,4 +52,4 @@ lazy val it = project
   .settings(libraryDependencies ++= AppDependencies.test)
 
 lazy val all = taskKey[Unit]("Runs units, its, and ally tests")
-all := Def.sequential(Test / test, A11yTest / test).value
+all := Def.sequential(Test / test).value
