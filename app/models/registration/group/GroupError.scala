@@ -27,7 +27,6 @@ enum GroupErrorType(val value: String):
   case MEMBER_IS_ALREADY_REGISTERED extends GroupErrorType("MEMBER_IS_ALREADY_REGISTERED")
 
 object GroupErrorType {
-//  implicit def value(errorType: GroupErrorType): String = errorType.toString
 
   given Format[GroupErrorType] =
     Format(

@@ -37,10 +37,6 @@
 
 @(form: Form[Address], countryMap: Map[String, String], updateCall: Call, headingKey: String, entityName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
 
-@optionalHint = @{
-    if(hintKey.isDefined) paragraphBody(messages(hintKey.get))
-}
-
 @fieldSetBody = {
 
     @if(hintKey.isDefined) {
