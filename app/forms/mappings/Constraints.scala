@@ -72,10 +72,8 @@ trait Constraints {
     }
 
   protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
-    Constraint { input: (String, String, String) =>
-      val date = Try {
-        tupleToDate(input)
-      }.toOption
+    Constraint { case (day: String, month: String, year: String) =>
+      val date = Try(tupleToDate((day, month, year))).toOption
       date match {
         case Some(_) => Valid
         case None    => Invalid(errKey, args: _*)

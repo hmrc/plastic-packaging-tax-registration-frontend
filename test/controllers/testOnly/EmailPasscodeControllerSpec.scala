@@ -18,8 +18,8 @@ package controllers.testOnly
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.OK
 import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -52,7 +52,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
           Future.successful(Right("passcodes"))
         )
         val result = controller.testOnlyGetPasscodes()(FakeRequest())
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 

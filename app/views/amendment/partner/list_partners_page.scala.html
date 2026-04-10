@@ -66,7 +66,7 @@
 
     @listMembers(partners)
 
-    @formHelper(action = routes.PartnersListController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.PartnersListController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

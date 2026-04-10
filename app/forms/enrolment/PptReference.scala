@@ -37,7 +37,7 @@ object PptReference extends CommonFormValidators {
         "enrolment.pptReference.value.error.regex",
         pptReference => !isNonEmpty(pptReference) || isMatchingPattern(pptReference, PPT_REGEX)
       )
-  )(PptReference.apply)(PptReference.unapply)
+  )(PptReference.apply)(pptRef => Some(pptRef.value))
 
   def form(): Form[PptReference] = Form(mapping)
 }

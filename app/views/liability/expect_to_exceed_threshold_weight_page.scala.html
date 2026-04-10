@@ -64,7 +64,7 @@
         link(messages("liability.expectToExceedThresholdWeight.p3.link"), Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
     ))
 
-    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukRadios(
             RadiosViewModel.yesNo(

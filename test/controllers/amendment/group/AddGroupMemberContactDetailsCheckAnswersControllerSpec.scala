@@ -20,8 +20,7 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import controllers.amendment.{routes => amendRoutes}
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -62,8 +61,8 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
           val resp = controller.displayPage(mostRecentGroupMember.id)(FakeRequest())
 
-          status(resp) mustBe OK
-          contentAsString(resp) mustBe "Amend Reg - New Group Member CYA"
+          status(resp) shouldBe OK
+          contentAsString(resp) shouldBe "Amend Reg - New Group Member CYA"
           verify(spyJourneyAction).amend
         }
       }
@@ -93,8 +92,8 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
         val resp = controller.submit()(FakeRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.ManageGroupMembersController.displayPage().toString)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.ManageGroupMembersController.displayPage().toString)
         verify(spyJourneyAction).amend
       }
       "redirect to the post reg amend error page" when {
@@ -104,8 +103,8 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
           val resp = controller.submit()(FakeRequest())
 
-          status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
+          status(resp) shouldBe SEE_OTHER
+          redirectLocation(resp) shouldBe Some(
             amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
           )
           verify(spyJourneyAction).amend
@@ -116,8 +115,8 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
           val resp = controller.submit()(FakeRequest())
 
-          status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
+          status(resp) shouldBe SEE_OTHER
+          redirectLocation(resp) shouldBe Some(
             amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
           )
           verify(spyJourneyAction).amend

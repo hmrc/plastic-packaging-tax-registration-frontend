@@ -19,7 +19,7 @@ package forms.liability
 import config.AppConfig
 import forms.liability.ExceededThresholdWeightDate._
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError

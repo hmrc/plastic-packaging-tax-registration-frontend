@@ -19,14 +19,15 @@ package spec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.scalatest.matchers._
+import org.scalatest.matchers.*
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.i18n.Messages
 import play.api.mvc.{Call, Result}
-import play.api.test.Helpers.{contentAsString, _}
+import play.api.test.Helpers.{contentAsString, *}
 import play.twirl.api.Html
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.concurrent.Future
 import scala.language.implicitConversions
 import scala.util.Try
@@ -47,7 +48,7 @@ trait ViewMatchers {
   implicit class PageComplexChecks(document: Document) extends Matchers {
 
     def checkErrorsSummary(): Unit = {
-      document.getElementById("error-summary-heading").text() mustBe "error.summary.title"
+      document.getElementById("error-summary-heading").text() shouldBe "error.summary.title"
       document.select("div.error-summary.error-summary--show>p").text() must be("error.summary.text")
     }
 

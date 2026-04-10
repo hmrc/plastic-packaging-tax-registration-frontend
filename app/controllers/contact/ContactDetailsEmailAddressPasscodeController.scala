@@ -119,7 +119,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
 
   private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit
     hc: HeaderCarrier
-  ): Future[EmailVerificationJourneyStatus.Value] =
+  ): Future[EmailVerificationJourneyStatus] =
     emailVerificationService.checkVerificationCode(passcode, email, journeyId)
 
   private def sectionName(implicit request: JourneyRequest[AnyContent], messages: Messages): String =

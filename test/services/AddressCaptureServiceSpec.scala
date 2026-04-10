@@ -18,7 +18,7 @@ package services
 
 import base.unit.MockAddressCaptureDetailRepository
 import controllers.address.routes
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import org.scalatest.wordspec.AnyWordSpecLike
 import spec.PptTestData
 
@@ -48,7 +48,7 @@ class AddressCaptureServiceSpec extends AnyWordSpecLike with MockAddressCaptureD
             addressCaptureDetail.get.config mustBe addressCaptureConfig
             addressCaptureDetail.get.capturedAddress mustBe None
 
-            redirectUrl mustBe routes.AddressCaptureController.initialiseAddressCapture().url
+            redirectUrl.url mustBe routes.AddressCaptureController.initialiseAddressCapture().url
           }
         }
       }

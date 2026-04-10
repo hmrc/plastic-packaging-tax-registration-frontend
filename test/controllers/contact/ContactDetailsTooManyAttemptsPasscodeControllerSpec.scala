@@ -19,8 +19,8 @@ package controllers.contact
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
@@ -39,7 +39,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
     super.beforeEach()
     val registration = aRegistration()
     spyJourneyAction.setReg(registration)
-    given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -55,7 +55,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 

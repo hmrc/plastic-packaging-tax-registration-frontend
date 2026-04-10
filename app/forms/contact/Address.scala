@@ -70,7 +70,7 @@ object Address extends CommonFormValidators {
       (__ \ "townOrCity").read[String] and
       (__ \ "postCode").readNullable[String].map(pc => pc.getOrElse("")) and
       (__ \ "countryCode").read[String]
-  )(UKAddress)
+  )(UKAddress.apply)
 
   val ukWrites: OWrites[UKAddress] = Json.writes[UKAddress]
 

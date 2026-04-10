@@ -52,7 +52,7 @@ class AmendContactDetailsController @Inject() (
 
   def updateContactName(): Action[AnyContent] = {
 
-    def updateContactName(updatedName: String): Registration => Registration = { registration: Registration =>
+    def updateContactName(updatedName: String): Registration => Registration = { (registration: Registration) =>
       registration.copy(primaryContactDetails = registration.primaryContactDetails.copy(name = Some(updatedName)))
     }
 
@@ -81,7 +81,7 @@ class AmendContactDetailsController @Inject() (
 
   def updateJobTitle(): Action[AnyContent] = {
 
-    def updateJobTitle(updatedJobTitle: String): Registration => Registration = { registration: Registration =>
+    def updateJobTitle(updatedJobTitle: String): Registration => Registration = { (registration: Registration) =>
       registration.copy(primaryContactDetails =
         registration.primaryContactDetails.copy(jobTitle = Some(updatedJobTitle))
       )
@@ -112,7 +112,7 @@ class AmendContactDetailsController @Inject() (
 
   def updatePhoneNumber(): Action[AnyContent] = {
 
-    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = { registration: Registration =>
+    def updatePhoneNumber(updatedPhoneNumber: String): Registration => Registration = { (registration: Registration) =>
       registration.copy(primaryContactDetails =
         registration.primaryContactDetails.copy(phoneNumber = Some(updatedPhoneNumber))
       )

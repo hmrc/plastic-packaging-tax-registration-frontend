@@ -17,7 +17,7 @@
 package controllers
 
 import base.unit.ControllerSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
@@ -35,7 +35,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
   "Keepalive controller" should {
     "keepalive" in {
       spyJourneyAction.setReg(aRegistration())
-      status(controller.keepAlive()(FakeRequest())) mustBe OK
+      status(controller.keepAlive()(FakeRequest())) shouldBe OK
     }
   }
 

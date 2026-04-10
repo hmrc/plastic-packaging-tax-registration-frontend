@@ -16,16 +16,27 @@
 
 package models.emailverification
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
-object EmailVerificationJourneyStatus extends Enumeration {
-  type JourneyStatus = Value
-  val COMPLETE: Value           = Value("complete")
-  val INCORRECT_PASSCODE: Value = Value("incorrectPasscode")
-  val TOO_MANY_ATTEMPTS: Value  = Value("tooManyAttempts")
-  val JOURNEY_NOT_FOUND: Value  = Value("journeyNotFound")
+import scala.util.Try
 
-  implicit val format: Format[JourneyStatus] =
-    Format(Reads.enumNameReads(EmailVerificationJourneyStatus), Writes.enumNameWrites)
+enum EmailVerificationJourneyStatus(val value: String):
+  case COMPLETE           extends EmailVerificationJourneyStatus("complete")
+  case INCORRECT_PASSCODE extends EmailVerificationJourneyStatus("incorrectPasscode")
+  case TOO_MANY_ATTEMPTS  extends EmailVerificationJourneyStatus("tooManyAttempts")
+  case JOURNEY_NOT_FOUND  extends EmailVerificationJourneyStatus("journeyNotFound")
 
+object EmailVerificationJourneyStatus {
+  given Format[EmailVerificationJourneyStatus] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(EmailVerificationJourneyStatus.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown EmailVerificationJourneyStatus: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(emailVerificationJourneyStatus => JsString(emailVerificationJourneyStatus.toString))
+    )
 }

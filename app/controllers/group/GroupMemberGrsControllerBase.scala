@@ -17,13 +17,14 @@
 package controllers.group
 
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.SubscriptionsConnector
 import connectors.grs.{PartnershipGrsConnector, UkCompanyGrsConnector}
-import controllers.organisation.RegistrationStatus.{DUPLICATE_SUBSCRIPTION, RegistrationStatus, STATUS_OK}
+import controllers.organisation.RegistrationStatus
+import controllers.organisation.RegistrationStatus.{DUPLICATE_SUBSCRIPTION, STATUS_OK}
 import forms.organisation.OrgType
-import forms.organisation.OrgType.OrgType
+import forms.organisation.OrgType.given_Format_OrgType
 import models.genericregistration.{CompanyProfile, IncorporationDetails, PartnershipBusinessDetails}
 import models.registration.group.{GroupError, GroupErrorType, GroupMember, OrganisationDetails}
 import models.registration.{GroupDetail, Registration, RegistrationUpdater}
@@ -32,9 +33,10 @@ import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import utils.AddressConversionUtils
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.amendment.group.{routes => amendRoutes}
+import controllers.amendment.group.routes as amendRoutes
+import controllers.organisation.RegistrationStatus
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -127,7 +129,7 @@ abstract class GroupMemberGrsControllerBase(
         _.organisationDetails
       )
 
-    val status: Future[SubscriptionStatus.Status] =
+    val status: Future[SubscriptionStatus] =
       organisationDetails.flatMap(_.businessPartnerId) match {
         case Some(businessPartnerId) => checkSubscriptionStatus(businessPartnerId)
         case _                       => Future.successful(SubscriptionStatus.NOT_SUBSCRIBED)
@@ -140,7 +142,7 @@ abstract class GroupMemberGrsControllerBase(
 
   private def checkSubscriptionStatus(businessPartnerId: String)(implicit
     hc: HeaderCarrier
-  ): Future[SubscriptionStatus.Status] =
+  ): Future[SubscriptionStatus] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
   private def updateRegistrationDetails(journeyId: String, memberId: Option[String])(implicit

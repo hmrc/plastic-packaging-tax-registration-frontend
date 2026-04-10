@@ -20,9 +20,11 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import forms.organisation.{ActionEnum, OrganisationType}
 import views.html.organisation.organisation_type
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
@@ -40,7 +42,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -60,27 +62,27 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      radioInputMustBe(1, UK_COMPANY)
-      radioInputMustBe(2, OVERSEAS_COMPANY_UK_BRANCH)
-      radioInputMustBe(3, OVERSEAS_COMPANY_NO_UK_BRANCH)
-      radioInputMustBe(4, PARTNERSHIP)
-      radioInputMustBe(5, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(6, REGISTERED_SOCIETY)
-      radioInputMustBe(7, SOLE_TRADER)
-      radioInputMustBe(8, TRUST)
+      radioInputshouldBe(1, UK_COMPANY)
+      radioInputshouldBe(2, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputshouldBe(3, OVERSEAS_COMPANY_NO_UK_BRANCH)
+      radioInputshouldBe(4, PARTNERSHIP)
+      radioInputshouldBe(5, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputshouldBe(6, REGISTERED_SOCIETY)
+      radioInputshouldBe(7, SOLE_TRADER)
+      radioInputshouldBe(8, TRUST)
     }
 
     "display no hint link" in {
 
       val link = view.getElementById("organisationDetails-other-type-link")
 
-      link mustBe null
+      link shouldBe null
     }
 
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }
@@ -91,7 +93,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -113,9 +115,9 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      radioInputMustBe(1, UK_COMPANY)
-      radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupNominatedPartnership"))
-      radioInputMustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputshouldBe(1, UK_COMPANY)
+      radioInputshouldBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupNominatedPartnership"))
+      radioInputshouldBe(3, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display hint link" in {
@@ -129,7 +131,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }
@@ -140,10 +142,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
       val form = OrganisationType
         .form(ActionEnum.Org)
-        .fill(OrganisationType(UK_COMPANY.toString))
+        .fill(OrganisationType(UK_COMPANY.value))
       val view = createView(form)
 
-      view.getElementById("answer").attr("value") mustBe UK_COMPANY.toString
+      view.getElementById("answer").attr("value") shouldBe UK_COMPANY.value
     }
 
     "display error" when {
@@ -177,10 +179,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     page.render(OrganisationType.form(ActionEnum.Org), false, request, messages)
   }
 
-  def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
-    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
-    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
-      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+  def radioInputshouldBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() shouldBe orgType.value
+    view.getElementsByClass("govuk-label").get(number - 1).text() shouldBe messages(
+      labelKey.getOrElse(s"organisationDetails.type.${orgType.value}")
     )
   }
 

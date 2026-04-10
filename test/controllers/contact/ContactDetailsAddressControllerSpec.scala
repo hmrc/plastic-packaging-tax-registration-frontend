@@ -17,7 +17,7 @@
 package controllers.contact
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.test.FakeRequest
 import play.api.test.Helpers.redirectLocation
 import services.AddressCaptureConfig
@@ -57,7 +57,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
 
         val result = controller.displayPage()(FakeRequest())
 
-        redirectLocation(result) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(result) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -69,9 +69,9 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
 
         val result = controller.update()(FakeRequest())
 
-        redirectLocation(result) mustBe Some(routes.ContactDetailsCheckAnswersController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.ContactDetailsCheckAnswersController.displayPage().url)
 
-        modifiedRegistration.primaryContactDetails.address mustBe Some(validCapturedAddress)
+        modifiedRegistration.primaryContactDetails.address shouldBe Some(validCapturedAddress)
       }
     }
 

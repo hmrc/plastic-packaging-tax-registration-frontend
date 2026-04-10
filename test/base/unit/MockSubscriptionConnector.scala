@@ -22,8 +22,8 @@ import models.registration.Registration
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponse, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
-import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.Mockito.{verify, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 
 import java.time.ZonedDateTime
@@ -50,21 +50,21 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
 
   protected def simulateUpdateSubscriptionFailure(
     ex: RuntimeException
-  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(Future.failed(ex))
 
   protected def simulateUpdateSubscriptionFailureReturnedError()
-    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures = Seq(EisError("E1", "Big Error Number 1")))
       )
     )
 
-  protected def simulateGetSubscriptionSuccess(registration: Registration): ScalaOngoingStubbing[Future[Registration]] =
+  protected def simulateGetSubscriptionSuccess(registration: Registration): OngoingStubbing[Future[Registration]] =
     when(mockSubscriptionConnector.getSubscription(any())(any())).thenReturn(Future.successful(registration))
 
-  protected def simulateGetSubscriptionFailure(): ScalaOngoingStubbing[Future[Registration]] =
+  protected def simulateGetSubscriptionFailure(): OngoingStubbing[Future[Registration]] =
     when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(new IllegalStateException("BANG!"))
 
   protected def getUpdatedRegistration(): Registration = {

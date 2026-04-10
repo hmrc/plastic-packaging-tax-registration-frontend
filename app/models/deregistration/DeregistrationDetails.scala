@@ -17,7 +17,7 @@
 package models.deregistration
 
 import play.api.libs.json._
-import models.deregistration.DeregistrationReason.DeregistrationReason
+import models.deregistration.DeregistrationReason.given_Format_DeregistrationReason
 
 case class DeregistrationDetails(deregister: Option[Boolean], reason: Option[DeregistrationReason])
 

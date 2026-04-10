@@ -18,8 +18,7 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.OK
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -63,16 +62,16 @@ class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwait
       spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))))
       val resp = controller.displayNewPartner()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Partner check answers"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Partner check answers"
     }
 
     "show nominated partner detail" in {
       val resp =
         controller.displayExistingPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Partner check answers"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Partner check answers"
     }
     "show other partner detail" in {
       val firstPartnerId =
@@ -81,14 +80,14 @@ class PartnerCheckAnswersControllerSpec extends ControllerSpec with DefaultAwait
         )
       val resp = controller.displayExistingPartner(firstPartnerId)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Partner check answers"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Partner check answers"
     }
     "redirect to partner list" when {
       "confirmed" in {
         val resp = controller.continue()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(routes.PartnerListController.displayPage().url)
+        redirectLocation(resp) shouldBe Some(routes.PartnerListController.displayPage().url)
       }
     }
     "throw IllegalStateException" when {

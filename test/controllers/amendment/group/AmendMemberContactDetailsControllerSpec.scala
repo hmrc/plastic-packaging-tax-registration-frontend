@@ -17,15 +17,14 @@
 package controllers.amendment.group
 
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
-import controllers.amendment.{routes => amendRoutes}
-import forms.contact._
+import controllers.amendment.routes as amendRoutes
+import forms.contact.*
 import forms.group.MemberName
 import models.registration.Registration
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}
@@ -109,8 +108,8 @@ class AmendMemberContactDetailsControllerSpec
 
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
             verify(spyJourneyAction).amend
           }
 
@@ -119,8 +118,8 @@ class AmendMemberContactDetailsControllerSpec
 
             val resp = call(FakeRequest())
 
-            status(resp) mustBe OK
-            contentAsString(resp) mustBe expectedContent
+            status(resp) shouldBe OK
+            contentAsString(resp) shouldBe expectedContent
             verify(spyJourneyAction).amend
           }
       }
@@ -134,7 +133,7 @@ class AmendMemberContactDetailsControllerSpec
           () => MemberName("", ""),
           () => MemberName("John", "Johnson"),
           (req: Request[AnyContent]) => controller.updateContactName(memberId)(req),
-          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.firstName mustBe "John",
+          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.firstName shouldBe "John",
           "name amendment"
         ),
         (
@@ -143,7 +142,7 @@ class AmendMemberContactDetailsControllerSpec
           () => PhoneNumber("07123 123456"),
           (req: Request[AnyContent]) => controller.updatePhoneNumber(memberId)(req),
           (reg: Registration) =>
-            reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some("07123 123456"),
+            reg.groupDetail.get.members.head.contactDetails.get.phoneNumber shouldBe Some("07123 123456"),
           "phone number amendment"
         ),
         (
@@ -151,7 +150,8 @@ class AmendMemberContactDetailsControllerSpec
           () => EmailAddress(""),
           () => EmailAddress("test@test.com"),
           (req: Request[AnyContent]) => controller.updateEmail(memberId)(req),
-          (reg: Registration) => reg.groupDetail.get.members.head.contactDetails.get.email mustBe Some("test@test.com"),
+          (reg: Registration) =>
+            reg.groupDetail.get.members.head.contactDetails.get.email shouldBe Some("test@test.com"),
           "email address amendment"
         )
       )
@@ -173,8 +173,8 @@ class AmendMemberContactDetailsControllerSpec
 
             val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()): _*))
 
-            status(resp) mustBe BAD_REQUEST
-            contentAsString(resp) mustBe expectedPageContent
+            status(resp) shouldBe BAD_REQUEST
+            contentAsString(resp) shouldBe expectedPageContent
           }
       }
     }
@@ -223,7 +223,7 @@ class AmendMemberContactDetailsControllerSpec
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
       val resp = controller.address(memberId)(FakeRequest())
-      redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+      redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
     }
 
     "update address on address capture callback" in {
@@ -231,15 +231,15 @@ class AmendMemberContactDetailsControllerSpec
       simulateValidAddressCapture()
       simulateUpdateWithRegSubscriptionSuccess()
 
-      populatedRegistration.findMember(memberId).flatMap(_.contactDetails.flatMap(_.address)) mustNot equal(
+      populatedRegistration.findMember(memberId).flatMap(_.contactDetails.flatMap(_.address)) shouldNot equal(
         validCapturedAddress
       )
 
       await(controller.updateAddress(memberId)(FakeRequest()))
 
-      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(
+      getUpdatedRegistrationMethod(populatedRegistration).findMember(memberId).flatMap(
         _.contactDetails
-      ).flatMap(_.address) mustBe Some(validCapturedAddress)
+      ).flatMap(_.address) shouldBe Some(validCapturedAddress)
     }
 
   }

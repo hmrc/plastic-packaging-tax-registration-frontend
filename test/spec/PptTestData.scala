@@ -22,7 +22,7 @@ import forms.contact.Address
 import forms.contact.Address.UKAddress
 import forms.enrolment._
 import forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
-import forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
+import forms.organisation.PartnerTypeEnum._
 import forms.organisation.{OrgType, PartnerTypeEnum}
 import models.SignedInUser
 import models.addresslookup.CountryCode.GB

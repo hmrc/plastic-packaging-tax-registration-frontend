@@ -20,8 +20,8 @@ import base.unit.ControllerSpec
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.request.{AuthenticatedRequest, JourneyRequest}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.FakeRequest
@@ -88,46 +88,46 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       val resp = controller.subscriptionFailure()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error page content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error page content"
     }
 
     "present the generic error no save page on enrolment failure" in {
 
       val resp = controller.enrolmentFailure()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error no save page content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error no save page content"
     }
 
     "present the business verification failed page" in {
 
       val resp = controller.businessVerificationFailure()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error business verification failed content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error business verification failed content"
     }
 
     "present the sole trader verification failed page" in {
 
       val resp = controller.soleTraderVerificationFailure()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error sole trader verification failed content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error sole trader verification failed content"
     }
 
     "present the grs failure page" in {
       val resp = controller.grsFailure()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "grs failure content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "grs failure content"
     }
 
     "present the duplicate subscription page" in {
       val resp = controller.duplicateRegistration()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "duplicate subscription content"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "duplicate subscription content"
     }
   }
 }

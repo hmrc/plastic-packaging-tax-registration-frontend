@@ -37,7 +37,7 @@ object EmailAddress {
       text()
         .verifying(emailAddressEmptyError, isNonEmpty)
         .verifying(emailAddressFormatError, email => isNotExceedingMaxLength(email, maxLength) && isValidEmail(email))
-  )(EmailAddress.apply)(EmailAddress.unapply)
+  )(EmailAddress.apply)(ea => Some(ea.value))
 
   def form(): Form[EmailAddress] = Form(mapping)
 }

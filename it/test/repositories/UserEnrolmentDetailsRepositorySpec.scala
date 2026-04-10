@@ -19,7 +19,7 @@ package test.repositories
 import forms.enrolment._
 import models.registration.UserEnrolmentDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, when, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec

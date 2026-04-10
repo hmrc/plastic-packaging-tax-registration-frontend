@@ -63,7 +63,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
       val expectedContent = Seq(
         (
           messages("partner.check.orgType"),
-          messages(s"organisationDetails.type.${partner.partnerType.toString}"),
+          messages(s"organisationDetails.type.${partner.partnerType.value}"),
           None
         ),
         (messages("partner.check.orgName"), partner.name, None),

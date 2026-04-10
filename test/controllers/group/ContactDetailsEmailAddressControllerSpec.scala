@@ -23,8 +23,8 @@ import forms.contact.EmailAddress
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -68,7 +68,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -76,7 +76,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -89,11 +89,11 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         val result =
           controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email shouldBe Some(
           "test@test.com"
         )
-        redirectLocation(result) mustBe Some(
+        redirectLocation(result) shouldBe Some(
           groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
         )
         reset(mockRegistrationConnector)
@@ -115,7 +115,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       await(controller.displayPage(groupMember.id)(FakeRequest()))
 
-      pageForm.get.value mustBe "test@test.com"
+      pageForm.get.value shouldBe "test@test.com"
     }
   }
 
@@ -126,7 +126,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       val result =
         controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("$%^"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 

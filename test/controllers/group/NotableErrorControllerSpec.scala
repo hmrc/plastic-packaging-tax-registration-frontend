@@ -19,8 +19,8 @@ package controllers.group
 import base.unit.ControllerSpec
 import controllers.actions.getRegistration.GetRegistrationAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -85,8 +85,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       val resp = controller.nominatedOrganisationAlreadyRegistered()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error nominated organisation already been registered"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error nominated organisation already been registered"
     }
   }
 
@@ -102,8 +102,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
         val resp = controller.organisationAlreadyInGroup()(FakeRequest())
 
-        status(resp) mustBe OK
-        contentAsString(resp) mustBe "error organisation already in group"
+        status(resp) shouldBe OK
+        contentAsString(resp) shouldBe "error organisation already in group"
       }
     }
 
@@ -113,8 +113,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
         val resp = controller.organisationAlreadyInGroup()(FakeRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(groupRoutes.OrganisationListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(groupRoutes.OrganisationListController.displayPage().url)
       }
     }
   }
@@ -130,8 +130,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       val resp = controller.groupMemberAlreadyRegistered()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "error group member already registered"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "error group member already registered"
     }
   }
 }

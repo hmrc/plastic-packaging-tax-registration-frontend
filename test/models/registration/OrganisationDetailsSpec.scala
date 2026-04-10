@@ -17,9 +17,11 @@
 package models.registration
 
 import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, UK_COMPANY}
-import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
-import models.genericregistration._
-import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED, Status, UNKNOWN}
+import forms.organisation.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import models.genericregistration.*
+import models.subscriptions.SubscriptionStatus
+import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED, UNKNOWN}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
@@ -165,7 +167,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
   }
 
   private def createdRegisteredSoleTradeOrg(
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
   ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(SOLE_TRADER),
@@ -191,7 +193,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     )
 
   private def createdFailedSoleTradeOrg(
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
   ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(SOLE_TRADER),
@@ -209,7 +211,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
     )
 
   private def createRegisteredUkCompanyOrg(
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
   ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(UK_COMPANY),
@@ -225,7 +227,9 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
       subscriptionStatus = subscriptionStatus
     )
 
-  private def createFailedUkCompanyOrg(subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)): OrganisationDetails =
+  private def createFailedUkCompanyOrg(
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(UK_COMPANY),
       incorporationDetails = Some(
@@ -242,7 +246,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
 
   private def createRegisteredPartnership(
     partnershipType: PartnerTypeEnum,
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
   ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),
@@ -265,7 +269,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
 
   private def createFailedPartnership(
     partnershipType: PartnerTypeEnum,
-    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+    subscriptionStatus: Option[SubscriptionStatus] = Some(NOT_SUBSCRIBED)
   ): OrganisationDetails =
     OrganisationDetails(
       organisationType = Some(PARTNERSHIP),

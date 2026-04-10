@@ -27,6 +27,7 @@ import views.components.Styles._
 import views.html.confirmation_page
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
 
@@ -43,7 +44,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
     val view: Html = createView()
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {

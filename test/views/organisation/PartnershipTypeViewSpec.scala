@@ -25,6 +25,7 @@ import forms.organisation.PartnerType.{FormMode, form}
 import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import forms.organisation.{PartnerType, PartnerTypeEnum}
 import views.html.organisation.partnership_type
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
@@ -39,7 +40,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -64,18 +65,18 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      view.getElementById("answer").attr("value").text() mustBe GENERAL_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe PartnerTypeEnum.displayName(GENERAL_PARTNERSHIP)
-      view.getElementById("answer-2").attr("value").text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnerTypeEnum.displayName(
+      view.getElementById("answer").attr("value").text() shouldBe GENERAL_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").first().text() shouldBe PartnerTypeEnum.displayName(GENERAL_PARTNERSHIP)
+      view.getElementById("answer-2").attr("value").text() shouldBe LIMITED_LIABILITY_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(1).text() shouldBe PartnerTypeEnum.displayName(
         LIMITED_LIABILITY_PARTNERSHIP
       )
-      view.getElementById("answer-3").attr("value").text() mustBe LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnerTypeEnum.displayName(LIMITED_PARTNERSHIP)
-      view.getElementById("answer-4").attr("value").text() mustBe SCOTTISH_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnerTypeEnum.displayName(SCOTTISH_PARTNERSHIP)
-      view.getElementById("answer-5").attr("value").text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnerTypeEnum.displayName(
+      view.getElementById("answer-3").attr("value").text() shouldBe LIMITED_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(2).text() shouldBe PartnerTypeEnum.displayName(LIMITED_PARTNERSHIP)
+      view.getElementById("answer-4").attr("value").text() shouldBe SCOTTISH_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(3).text() shouldBe PartnerTypeEnum.displayName(SCOTTISH_PARTNERSHIP)
+      view.getElementById("answer-5").attr("value").text() shouldBe SCOTTISH_LIMITED_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(4).text() shouldBe PartnerTypeEnum.displayName(
         SCOTTISH_LIMITED_PARTNERSHIP
       )
     }
@@ -83,7 +84,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }
@@ -97,7 +98,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
         .fill(PartnerType(LIMITED_LIABILITY_PARTNERSHIP))
       val view = createView(form)
 
-      view.getElementById("answer-2").attr("value") mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
+      view.getElementById("answer-2").attr("value") shouldBe LIMITED_LIABILITY_PARTNERSHIP.toString
     }
 
     "display error" when {

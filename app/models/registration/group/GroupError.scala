@@ -16,20 +16,30 @@
 
 package models.registration.group
 
-import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
-import models.registration.group.GroupErrorType.GroupErrorType
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Json, OFormat, Reads, Writes}
+import models.registration.group.GroupErrorType.given_Format_GroupErrorType
 
-object GroupErrorType extends Enumeration {
-  type GroupErrorType = Value
-  val MEMBER_IN_GROUP: Value              = Value("MEMBER_IN_GROUP")
-  val MEMBER_IS_NOMINATED: Value          = Value("MEMBER_IS_NOMINATED")
-  val MEMBER_IS_ALREADY_REGISTERED: Value = Value("MEMBER_IS_ALREADY_REGISTERED")
+import scala.util.Try
 
-  implicit def value(errorType: GroupErrorType): String = errorType.toString
+enum GroupErrorType(val value: String):
+  case MEMBER_IN_GROUP              extends GroupErrorType("MEMBER_IN_GROUP")
+  case MEMBER_IS_NOMINATED          extends GroupErrorType("MEMBER_IS_NOMINATED")
+  case MEMBER_IS_ALREADY_REGISTERED extends GroupErrorType("MEMBER_IS_ALREADY_REGISTERED")
 
-  implicit val format: Format[GroupErrorType] =
-    Format(Reads.enumNameReads(GroupErrorType), Writes.enumNameWrites)
+object GroupErrorType {
 
+  given Format[GroupErrorType] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(GroupErrorType.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown GroupErrorType: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(groupErrorType => JsString(groupErrorType.toString))
+    )
 }
 
 case class GroupError(errorType: GroupErrorType, memberName: String)

@@ -24,7 +24,8 @@ import controllers.organisation.{routes => orgRoutes}
 import controllers.{routes => commonRoutes}
 import forms.organisation.OrgType
 import forms.organisation.OrgType.SOLE_TRADER
-import forms.organisation.PartnerTypeEnum.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum.given_Format_PartnerTypeEnum
 import models.genericregistration._
 import models.registration.{Cacheable, OrganisationDetails, Registration}
 import models.request.JourneyRequest
@@ -42,16 +43,9 @@ import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object RegistrationStatus extends Enumeration {
-  type RegistrationStatus = Value
-
-  val STATUS_OK: Value                       = Value
-  val GRS_FAILED: Value                      = Value
-  val BUSINESS_VERIFICATION_FAILED: Value    = Value
-  val SOLE_TRADER_VERIFICATION_FAILED: Value = Value
-  val DUPLICATE_SUBSCRIPTION: Value          = Value
-  val UNSUPPORTED_ORGANISATION: Value        = Value
-}
+enum RegistrationStatus:
+  case STATUS_OK, GRS_FAILED, BUSINESS_VERIFICATION_FAILED, SOLE_TRADER_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION,
+    UNSUPPORTED_ORGANISATION
 
 @Singleton
 class GrsController @Inject() (
@@ -132,7 +126,7 @@ class GrsController @Inject() (
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[SubscriptionStatus.Status] =
+  ): Future[SubscriptionStatus] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).flatMap { response =>
       update(model =>
         model.copy(

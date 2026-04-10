@@ -18,8 +18,7 @@ package controllers.group
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -62,8 +61,8 @@ class ContactDetailsCheckAnswersControllerSpec extends ControllerSpec with Defau
     "display captured group member details" in {
       val resp = controller.displayPage(groupMember.id)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Group member contact details check answers"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Group member contact details check answers"
     }
 
     "throw exception" when {
@@ -80,8 +79,8 @@ class ContactDetailsCheckAnswersControllerSpec extends ControllerSpec with Defau
       "submitted" in {
         val resp = controller.submit()(FakeRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.OrganisationListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.OrganisationListController.displayPage().url)
       }
     }
   }

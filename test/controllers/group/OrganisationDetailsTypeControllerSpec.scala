@@ -21,13 +21,13 @@ import connectors.DownstreamServiceError
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.partner.{routes => partnerRoutes}
 import forms.liability.RegType
-import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, UK_COMPANY}
 import forms.organisation.OrganisationType
 import models.registration.group.{GroupMember, OrganisationDetails}
 import models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -77,7 +77,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
           val result = controller.displayPageNewMember()(FakeRequest())
 
-          status(result) mustBe OK
+          status(result) shouldBe OK
         }
         "amending existing group member" in {
 
@@ -85,7 +85,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
           val result = controller.displayPageAmendMember("123456ABC")(FakeRequest())
 
-          status(result) mustBe OK
+          status(result) shouldBe OK
         }
       }
 
@@ -107,7 +107,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         val result = controller.displayPageNewMember()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
     }
@@ -128,7 +128,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         val result = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
-        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
       }
 
       "user submits organisation type: " + PARTNERSHIP in {
@@ -140,7 +140,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         val correctForm = Seq("answer" -> PARTNERSHIP.toString)
         val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
-        redirectLocation(result) mustBe Some(partnerRoutes.PartnershipTypeController.displayPage().url)
+        redirectLocation(result) shouldBe Some(partnerRoutes.PartnershipTypeController.displayPage().url)
       }
 
       "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
@@ -180,10 +180,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       val correctForm = Seq("answer" -> orgType.toString)
       val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
-      status(result) mustBe SEE_OTHER
-      modifiedRegistration.groupDetail.get.members.head.organisationDetails.get.organisationType mustBe orgType.toString
+      status(result) shouldBe SEE_OTHER
+      modifiedRegistration.groupDetail.get.members.head.organisationDetails.get.organisationType shouldBe orgType.toString
 
-      redirectLocation(result) mustBe Some(redirectUrl)
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
     "return 400 (BAD_REQUEST) " when {
@@ -193,7 +193,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submitNewMember()(postRequestEncoded(JsObject.empty))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters invalid data" in {
@@ -202,7 +202,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val incorrectForm = Seq("answer" -> "maybe")
         val result        = controller.submitNewMember()(postJsonRequestEncoded(incorrectForm: _*))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 

@@ -16,15 +16,24 @@
 
 package models.subscriptions
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.*
 
-object SubscriptionStatus extends Enumeration {
-  type Status = Value
-  val SUBSCRIBED: Value     = Value
-  val NOT_SUBSCRIBED: Value = Value
-  val UNKNOWN: Value        = Value
+import scala.util.Try
 
-  implicit val format: Format[Status] =
-    Format(Reads.enumNameReads(SubscriptionStatus), Writes.enumNameWrites)
+enum SubscriptionStatus:
+  case SUBSCRIBED, NOT_SUBSCRIBED, UNKNOWN
 
+object SubscriptionStatus {
+  given Format[SubscriptionStatus] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(SubscriptionStatus.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown SubscriptionStatus: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(subscriptionStatus => JsString(subscriptionStatus.toString))
+    )
 }

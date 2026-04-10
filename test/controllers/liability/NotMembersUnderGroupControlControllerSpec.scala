@@ -19,8 +19,8 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
@@ -39,7 +39,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
     super.beforeEach()
     val registration = aRegistration()
     spyJourneyAction.setReg(registration)
-    given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -55,7 +55,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -69,8 +69,8 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(FakeRequest("POST", ""))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.RegistrationTypeController.displayPage().url)
       }
     }
 

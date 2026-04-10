@@ -16,14 +16,23 @@
 
 package audit
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
 
-object UserType extends Enumeration {
-  type UserType = Value
-  val NEW    = Value
-  val RESUME = Value
+import scala.util.Try
 
-  implicit val format: Format[UserType] =
-    Format(Reads.enumNameReads(UserType), Writes.enumNameWrites)
+enum UserType:
+  case NEW, RESUME
 
-}
+object UserType:
+  given Format[UserType] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(UserType.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown UserType: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(userType => JsString(userType.toString))
+    )

@@ -19,7 +19,7 @@ package controllers.organisation
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
@@ -57,8 +57,8 @@ class CheckAnswersControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "CYA Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "CYA Page"
       }
 
     }

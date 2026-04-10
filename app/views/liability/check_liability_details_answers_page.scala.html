@@ -42,7 +42,7 @@
         @sectionHeader(messages("liability.sectionHeader"))
         @pageHeading(messages("liability.checkAnswers.title"))
 
-        @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), Symbol("autoComplete") -> "off") {
             @liabilityCheckAnswers(registration)
             @continue()
         }

@@ -18,9 +18,10 @@ package controllers.amendment.partner
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import models.genericregistration.Partner
+import models.registration.Registration
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{verify, when}
 import play.api.Play.materializer
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -57,7 +58,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
     "display the confirm remove partner page with the correct partner details" in {
       val resp =
         confirmRemovePartnerController.displayPage(partnershipRegistration.otherPartners.head.id)(FakeRequest())
-      status(resp) mustBe OK
+      status(resp) shouldBe OK
       contentAsString(resp) contains partnershipRegistration.otherPartners.head.name
     }
 
@@ -71,7 +72,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
       val resp = confirmRemovePartnerController.submit(partnershipRegistration.otherPartners.head.id)(
         FakeRequest().withFormUrlEncodedBody("value" -> "")
       )
-      status(resp) mustBe BAD_REQUEST
+      status(resp) shouldBe BAD_REQUEST
       contentAsString(resp) contains "Are you sure you want to remove"
     }
 
@@ -80,8 +81,8 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
         val resp = confirmRemovePartnerController.submit(partnershipRegistration.otherPartners.head.id)(
           FakeRequest(POST, "").withFormUrlEncodedBody("value" -> "no")
         )
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.PartnersListController.displayPage().url)
       }
     }
 
@@ -92,11 +93,11 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
         val resp = confirmRemovePartnerController.submit(partnershipRegistration.otherPartners.head.id)(
           FakeRequest(POST, "").withFormUrlEncodedBody("value" -> "yes")
         )
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.PartnersListController.displayPage().url)
 
-        val updatedReg = getUpdatedRegistrationMethod().apply(partnershipRegistration)
-        updatedReg.otherPartners.map(_.id).contains(partnershipRegistration.otherPartners.head.id) mustBe false
+        val updatedReg = getUpdatedRegistrationMethod(partnershipRegistration)
+        updatedReg.otherPartners.map(_.id).contains(partnershipRegistration.otherPartners.head.id) shouldBe false
       }
     }
   }

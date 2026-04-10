@@ -67,7 +67,7 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
       val expectedContent = Seq(
         (
           messages("contactDetails.member.check.orgType"),
-          messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"),
+          messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get.value}"),
           Some(routes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.companyNumber"), groupMember.customerIdentification1, None),

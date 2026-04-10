@@ -22,9 +22,9 @@ import forms.organisation.PartnerType
 import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import models.genericregistration.PartnershipDetails
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.FakeRequest
@@ -65,7 +65,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "previous partnership type in registration" in {
@@ -75,7 +75,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -98,7 +98,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
             Seq("answer" -> partnershipDetails._1.toString)
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+          redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
         }
       }
     }
@@ -117,7 +117,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
             Seq("answer" -> partnershipDetails._1.toString)
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          redirectLocation(result) mustBe Some(routes.PartnershipNameController.displayPage().url)
+          redirectLocation(result) shouldBe Some(routes.PartnershipNameController.displayPage().url)
         }
       }
     }
@@ -168,7 +168,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
       val result = controller.submit()(postJsonRequestEncoded())
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 }

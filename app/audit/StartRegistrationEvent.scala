@@ -17,9 +17,9 @@
 package audit
 
 import play.api.libs.json.{Json, OFormat}
-import audit.UserType.UserType
+import audit.UserType.given_Format_UserType
 
-case class StartRegistrationEvent(userType: UserType, internalId: String) {}
+case class StartRegistrationEvent(userType: UserType, internalId: String)
 
 object StartRegistrationEvent {
   implicit val format: OFormat[StartRegistrationEvent] = Json.format[StartRegistrationEvent]

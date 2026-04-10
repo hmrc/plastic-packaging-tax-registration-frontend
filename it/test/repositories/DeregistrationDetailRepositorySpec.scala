@@ -91,7 +91,7 @@ class DeregistrationDetailRepositorySpec
     "delete deregistration detail" in {
       deregistrationDetailRepository.put(deregistrationDetail).map { _ =>
         deregistrationDetailRepository.delete().map { _ =>
-          deregistrationDetailRepository.get() mustBe None
+          deregistrationDetailRepository.get() mustBe DeregistrationDetails(None, None)
         }
       }
     }

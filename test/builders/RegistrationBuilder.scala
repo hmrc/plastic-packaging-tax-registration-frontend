@@ -17,7 +17,8 @@
 package builders
 
 import forms.contact.Address
-import forms.liability.RegType.{GROUP, RegType}
+import forms.liability.RegType
+import forms.liability.RegType.GROUP
 import forms.liability.{LiabilityWeight, RegType}
 import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import forms.{Date, OldDate}

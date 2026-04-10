@@ -16,24 +16,35 @@
 
 package forms.liability
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
-import play.api.libs.json.{Format, Reads, Writes}
 import forms.CommonFormValidators
-import forms.liability.RegType.RegType
+import forms.liability.RegType.given_Format_RegType
+import play.api.data.Form
+import play.api.data.Forms.{mapping, nonEmptyText, optional, text}
+import play.api.libs.json.*
 
-object RegType extends Enumeration {
-  type RegType = Value
+import scala.util.Try
 
-  val GROUP: Value         = Value("Group")
-  val SINGLE_ENTITY: Value = Value("SingleEntity")
+enum RegType(val value: String):
+  case GROUP         extends RegType("Group")
+  case SINGLE_ENTITY extends RegType("SingleEntity")
+  override def toString: String = value // for backwards compatibility only
 
-  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
-
-  implicit val format: Format[RegType] = Format(Reads.enumNameReads(RegType), Writes.enumNameWrites)
+object RegType {
+  given Format[RegType] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          RegType.values.find(_.value == value)
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown RegType: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(regType => JsString(regType.value))
+    )
 }
 
-case class RegistrationType(value: Option[RegType])
+case class RegistrationType(value: RegType)
 
 object RegistrationType extends CommonFormValidators {
   val emptyError = "registrationType.type.empty.error"
@@ -41,16 +52,10 @@ object RegistrationType extends CommonFormValidators {
   def form(): Form[RegistrationType] =
     Form(
       mapping(
-        "value" -> optional(text())
-          .verifying(emptyError, _.isDefined)
-          .transform[String](_.get, Some.apply)
-          .verifying(emptyError, contains(RegType.values.toSeq.map(_.toString)))
-      )(RegistrationType.apply)(RegistrationType.unapply)
+        "value" -> nonEmptyString(emptyError)
+          .verifying(emptyError, contains(RegType.values.toSeq.map(_.value)))
+          .transform[RegType](str => RegType.values.find(_.value == str).get, _.value)
+      )(RegistrationType.apply)(regType => Some(regType.value))
     )
-
-  def apply(value: String): RegistrationType = RegistrationType(RegType.withNameOpt(value))
-
-  def unapply(registrationType: RegistrationType): Option[String] =
-    registrationType.value.map(_.toString)
 
 }

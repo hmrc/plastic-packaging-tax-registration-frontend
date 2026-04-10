@@ -19,7 +19,7 @@ package controllers.amendment.group
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
@@ -58,8 +58,8 @@ class ContactDetailsCheckAnswersControllerSpec
     "display group member details" in {
       val resp = controller.displayPage(groupMember.id)(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Group member contact details check answers"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Group member contact details check answers"
     }
 
     "throw exception" when {
@@ -74,8 +74,8 @@ class ContactDetailsCheckAnswersControllerSpec
       "submitted" in {
         val resp = controller.submit()(FakeRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.GroupMembersListController.displayPage().url)
       }
     }
   }

@@ -23,6 +23,7 @@ import forms.partner.AddPartner
 import models.genericregistration.Partner
 import models.registration.Registration
 import views.html.partner.partner_list_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnerListViewSpec extends UnitViewSpec with Matchers {
 
@@ -43,7 +44,7 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -85,25 +86,25 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
       "there are two partner only" in {
         val newView = createView(Seq(aPartnershipPartner))
 
-        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() shouldBe 0
       }
 
       "there is one partner only" in {
         val newView = createView(Seq.empty)
 
-        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() shouldBe 0
       }
     }
 
     "display the remove partner button" when {
       "there are more than 2 partner" in {
 
-        view.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 3
+        view.getElementsByClass("hmrc-add-to-a-list__remove").size() shouldBe 3
       }
     }
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
   }
 

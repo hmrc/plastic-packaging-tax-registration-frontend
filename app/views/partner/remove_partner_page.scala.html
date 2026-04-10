@@ -46,7 +46,7 @@
 
    @sectionHeader(messages("partnership.partners.in.the.partnership"))
 
-    @formHelper(action = routes.RemovePartnerController.submit(partnerId), 'autoComplete -> "off") {
+    @formHelper(action = routes.RemovePartnerController.submit(partnerId), Symbol("autoComplete") -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

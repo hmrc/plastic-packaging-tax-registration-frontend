@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import views.html.error_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class ErrorPageSpec extends UnitViewSpec with Matchers {
 
@@ -37,7 +38,7 @@ class ErrorPageSpec extends UnitViewSpec with Matchers {
     }
 
     "contain heading" in {
-      view.select("h1").text() mustBe messages("error.title")
+      view.select("h1").text() shouldBe messages("error.title")
     }
 
     "contain detail" in {

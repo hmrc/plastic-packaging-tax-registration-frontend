@@ -21,6 +21,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
 import forms.contact.Address.{NonUKAddress, UKAddress}
 import models.genericregistration.IncorporationAddressDetails
+import org.scalatest.matchers.should.Matchers.shouldBe
 import services.CountryService
 
 class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
@@ -45,7 +46,7 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubRegisteredOfficeAddressNoPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe UKAddress("1", Some("testLine1"), Some("test town"), "test city", "")
+        acu.toPptAddress(incAddress) shouldBe UKAddress("1", Some("testLine1"), Some("test town"), "test city", "")
 
       }
     }
@@ -67,7 +68,13 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubRegisteredOfficeAddressWithPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe UKAddress("1", Some("testLine1"), Some("test town"), "test city", "AA11AA")
+        acu.toPptAddress(incAddress) shouldBe UKAddress(
+          "1",
+          Some("testLine1"),
+          Some("test town"),
+          "test city",
+          "AA11AA"
+        )
 
       }
     }
@@ -88,7 +95,7 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubOverseasAddress.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe NonUKAddress(
+        acu.toPptAddress(incAddress) shouldBe NonUKAddress(
           "1",
           Some("testLine1"),
           Some("test town"),

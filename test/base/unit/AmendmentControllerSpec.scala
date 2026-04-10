@@ -20,8 +20,8 @@ import models.registration.{AmendRegistrationUpdateService, Registration, Regist
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponse, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
-import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.Mockito.{verify, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import services.AmendRegistrationService
 
@@ -36,7 +36,7 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
   val mockRegistrationUpdater: RegistrationUpdater  = mock[RegistrationUpdater]
 
   protected def simulateUpdateWithRegSubscriptionSuccess()
-    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseSuccess(
@@ -53,23 +53,24 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
 
   protected def simulateUpdateWithRegSubscriptionFailure(
     ex: RuntimeException
-  ): ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(Future.failed(ex))
 
   protected def simulateUpdateSubscriptionWithRegFailureReturnedError()
-    : ScalaOngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
+    : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures = Seq(EisError("E1", "Big Error Number 1")))
       )
     )
 
-  protected def getUpdatedRegistrationMethod(): Registration => Registration = {
+  protected def getUpdatedRegistrationMethod(registration: Registration): Registration = {
     val registrationCaptor: ArgumentCaptor[Registration => Registration] =
       ArgumentCaptor.forClass(classOf[Registration => Registration])
     verify(mockAmendRegService).updateSubscriptionWithRegistration(registrationCaptor.capture())(any(), any())
 
-    registrationCaptor.getValue
+    val capturedFunc = registrationCaptor.getValue
+    capturedFunc.apply(registration)
   }
 
 }

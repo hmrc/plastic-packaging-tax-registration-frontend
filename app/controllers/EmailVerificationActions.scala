@@ -121,7 +121,7 @@ trait EmailVerificationActions {
 
   private def checkVerificationCode(
     verificationCode: String
-  )(implicit req: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[EmailVerificationJourneyStatus.Value] =
+  )(implicit req: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[EmailVerificationJourneyStatus] =
     emailVerificationService.checkVerificationCode(
       verificationCode,
       getProspectiveEmail(),
@@ -144,14 +144,16 @@ trait EmailVerificationActions {
   ): Future[Registration] =
     registrationUpdater.updateRegistration(setProspectiveEmailOnRegistration(email.value, emailVerificationJourneyId))
 
-  private def setProspectiveEmailOnRegistration(prospectiveEmail: String, emailVerificationJourneyId: String) = {
-    registration: Registration =>
-      registration.copy(primaryContactDetails =
-        registration.primaryContactDetails.copy(
-          journeyId = Some(emailVerificationJourneyId),
-          prospectiveEmail = Some(prospectiveEmail)
-        )
+  private def setProspectiveEmailOnRegistration(
+    prospectiveEmail: String,
+    emailVerificationJourneyId: String
+  ): Registration => Registration = { (registration: Registration) =>
+    registration.copy(primaryContactDetails =
+      registration.primaryContactDetails.copy(
+        journeyId = Some(emailVerificationJourneyId),
+        prospectiveEmail = Some(prospectiveEmail)
       )
+    )
   }
 
   private def getEmailVerificationJourneyId()(implicit req: JourneyRequest[AnyContent]) =

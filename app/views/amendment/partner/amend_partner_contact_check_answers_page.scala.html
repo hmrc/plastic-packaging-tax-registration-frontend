@@ -38,12 +38,12 @@
 
     @pageHeading(messages("partner.check.title"))
 
-    @formHelper(action = routes.PartnerContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.PartnerContactDetailsCheckAnswersController.submit(), Symbol("autoComplete") -> "off") {
 
            @govukSummaryList(
             SummaryList(
                 rows = Seq(
-                    viewUtils.summaryListRow("partner.check.orgType", Some(messages(s"partner.type.${partner.partnerType.toString}")), None),
+                    viewUtils.summaryListRow("partner.check.orgType", Some(messages(s"partner.type.${partner.partnerType.value}")), None),
                     viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), None),
                     viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(routes.AmendPartnerContactDetailsController.contactName(partner.id))),
                     viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id))),

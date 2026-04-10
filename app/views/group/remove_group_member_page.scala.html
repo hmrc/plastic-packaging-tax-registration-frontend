@@ -42,7 +42,7 @@
 
     @errorSummary(form.errors)
 
-    @formHelper(action = routes.RemoveMemberController.submit(memberId), 'autoComplete -> "off") {
+    @formHelper(action = routes.RemoveMemberController.submit(memberId), Symbol("autoComplete") -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

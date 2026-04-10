@@ -112,7 +112,7 @@ abstract class PartnerGrsControllerBase(
 
   private def checkSubscriptionStatus(businessPartnerId: String)(implicit
     hc: HeaderCarrier
-  ): Future[SubscriptionStatus.Status] =
+  ): Future[SubscriptionStatus] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
   private def saveRegistrationDetails(journeyId: String, partnerId: Option[String])(implicit

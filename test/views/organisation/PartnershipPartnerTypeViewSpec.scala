@@ -18,14 +18,16 @@ package views.organisation
 
 import base.unit.UnitViewSpec
 import forms.organisation.PartnerType
+import forms.organisation.PartnerTypeEnum
 import forms.organisation.PartnerType.FormMode
-import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
 import spec.PptTestData
 import views.html.organisation.partner_type
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with PptTestData {
 
@@ -51,7 +53,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
     }
 
     "display sign out link" in {
@@ -66,19 +68,19 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
 
     "display radio inputs" in {
 
-      radioInputMustBe(1, SOLE_TRADER)
-      radioInputMustBe(2, UK_COMPANY)
-      radioInputMustBe(3, REGISTERED_SOCIETY)
-      radioInputMustBe(4, LIMITED_LIABILITY_PARTNERSHIP)
-      radioInputMustBe(5, SCOTTISH_PARTNERSHIP)
-      radioInputMustBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
-      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputshouldBe(1, SOLE_TRADER)
+      radioInputshouldBe(2, UK_COMPANY)
+      radioInputshouldBe(3, REGISTERED_SOCIETY)
+      radioInputshouldBe(4, LIMITED_LIABILITY_PARTNERSHIP)
+      radioInputshouldBe(5, SCOTTISH_PARTNERSHIP)
+      radioInputshouldBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
+      radioInputshouldBe(7, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }
@@ -89,7 +91,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view1) mustBe true
+      containTimeoutDialogFunction(view1) shouldBe true
     }
 
     "display sign out link" in {
@@ -104,19 +106,19 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
 
     "display radio inputs" in {
 
-      radioInputMustBe(1, SOLE_TRADER)
-      radioInputMustBe(2, UK_COMPANY)
-      radioInputMustBe(3, REGISTERED_SOCIETY)
-      radioInputMustBe(4, LIMITED_LIABILITY_PARTNERSHIP)
-      radioInputMustBe(5, SCOTTISH_PARTNERSHIP)
-      radioInputMustBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
-      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputshouldBe(1, SOLE_TRADER)
+      radioInputshouldBe(2, UK_COMPANY)
+      radioInputshouldBe(3, REGISTERED_SOCIETY)
+      radioInputshouldBe(4, LIMITED_LIABILITY_PARTNERSHIP)
+      radioInputshouldBe(5, SCOTTISH_PARTNERSHIP)
+      radioInputshouldBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
+      radioInputshouldBe(7, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {
 
       view1 must containElementWithID("submit")
-      view1.getElementById("submit").text() mustBe "Save and continue"
+      view1.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }
@@ -126,14 +128,14 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
     page.render(PartnerType.form(FormMode.NominatedPartnerType), None, submitLink, registrationJourneyRequest, messages)
   }
 
-  def radioInputMustBe(number: Int, partnershipPartnerType: PartnerTypeEnum, labelKey: Option[String] = None)(implicit
+  def radioInputshouldBe(number: Int, partnershipPartnerType: PartnerTypeEnum, labelKey: Option[String] = None)(implicit
     view: Document
   ) = {
     view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
       "value"
-    ).text() mustBe partnershipPartnerType.toString
-    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
-      labelKey.getOrElse(s"partner.type.$partnershipPartnerType")
+    ).text() shouldBe partnershipPartnerType.value
+    view.getElementsByClass("govuk-label").get(number - 1).text() shouldBe messages(
+      labelKey.getOrElse(s"partner.type.${partnershipPartnerType.value}")
     )
   }
 

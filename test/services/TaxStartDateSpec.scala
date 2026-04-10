@@ -17,7 +17,7 @@
 package services
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{never, reset, times, verify}
+import org.mockito.Mockito.{never, reset, times, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec

@@ -17,7 +17,7 @@
 package models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import forms.organisation.OrgType.OrgType
+import forms.organisation.OrgType
 import models.registration.group.{GroupError, GroupMember}
 import views.viewmodels.TaskStatus
 

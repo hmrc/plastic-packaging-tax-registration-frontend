@@ -20,7 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -75,7 +75,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, details already exist and display page method is invoked" in {
@@ -85,7 +85,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
         )
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "redirect to next page and persist reason" when {
@@ -99,8 +99,8 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
           val result =
             controller.submit()(postRequestEncoded(DeregisterReasonForm(Some(CeasedTrading))))
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.DeregisterCheckYourAnswersController.displayPage().url)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.DeregisterCheckYourAnswersController.displayPage().url)
 
           verify(mockCache).putData(
             ArgumentMatchers.eq(DeregistrationDetailsRepository.repositoryKey),
@@ -114,7 +114,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
 
           val result = controller.submit()(postRequestEncoded(JsObject.empty))
 
-          status(result) mustBe BAD_REQUEST
+          status(result) shouldBe BAD_REQUEST
         }
       }
 

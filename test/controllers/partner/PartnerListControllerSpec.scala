@@ -18,8 +18,7 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -64,8 +63,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     "show list of partners" in {
       val resp = controller.displayPage()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Partner list"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Partner list"
     }
 
     "redisplay list of partners page with bad request status" when {
@@ -73,8 +72,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val resp =
           controller.submit()(postRequestEncoded(AddPartner(None)))
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "Partner list"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "Partner list"
       }
     }
     "redirect to other partner type selection page" when {
@@ -82,8 +81,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val form = Seq("addPartner" -> "yes")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(routes.PartnerTypeController.displayNewPartner().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(routes.PartnerTypeController.displayNewPartner().url)
       }
     }
     "redirect to task list page" when {
@@ -91,8 +90,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val form = Seq("addPartner" -> "no")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
+        status(resp) shouldBe SEE_OTHER
+        redirectLocation(resp) shouldBe Some(commonRoutes.TaskListController.displayPage().url)
       }
     }
 

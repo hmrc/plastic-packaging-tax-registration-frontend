@@ -16,8 +16,10 @@
 
 package views.utils
 
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.matchers.should.Matchers.shouldBe
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import services.CountryService
@@ -33,11 +35,11 @@ class ViewUtilsSpec extends PlaySpec {
   "displayLocalDate" should {
     "return a date as a string" in {
 
-      when(messages.apply(any[String])).thenReturn("May")
+      when(messages.apply(any[String], any[Seq[Any]])).thenReturn("May")
 
       val date = LocalDate.parse("2023-05-15")
 
-      sut.displayLocalDate(date)(messages) mustBe "15 May 2023"
+      sut.displayLocalDate(date)(messages) shouldBe "15 May 2023"
     }
   }
 

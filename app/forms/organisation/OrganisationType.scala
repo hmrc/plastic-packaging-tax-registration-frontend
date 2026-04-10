@@ -19,30 +19,47 @@ package forms.organisation
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
 import forms.CommonFormValidators
-import forms.organisation.OrgType.OrgType
+import forms.organisation.OrgType.given_Format_OrgType
 
-object OrgType extends Enumeration {
-  type OrgType = Value
-  val UK_COMPANY: Value                           = Value("UkCompany")
-  val SOLE_TRADER: Value                          = Value("SoleTrader")
-  val PARTNERSHIP: Value                          = Value("Partnership")
-  val REGISTERED_SOCIETY: Value                   = Value("RegisteredSociety")
-  val TRUST: Value                                = Value("Trust")
-  val CHARITABLE_INCORPORATED_ORGANISATION: Value = Value("CIO")
-  val OVERSEAS_COMPANY_UK_BRANCH: Value           = Value("OverseasCompanyUkBranch")
-  val OVERSEAS_COMPANY_NO_UK_BRANCH: Value        = Value("OverseasCompanyNoUKBranch")
+import scala.util.Try
 
-  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+enum OrgType(val value: String):
+  case UK_COMPANY                           extends OrgType("UkCompany")
+  case SOLE_TRADER                          extends OrgType("SoleTrader")
+  case PARTNERSHIP                          extends OrgType("Partnership")
+  case REGISTERED_SOCIETY                   extends OrgType("RegisteredSociety")
+  case TRUST                                extends OrgType("Trust")
+  case CHARITABLE_INCORPORATED_ORGANISATION extends OrgType("CIO")
+  case OVERSEAS_COMPANY_UK_BRANCH           extends OrgType("OverseasCompanyUkBranch")
+  case OVERSEAS_COMPANY_NO_UK_BRANCH        extends OrgType("OverseasCompanyNoUKBranch")
+
+  override def toString: String = value // for backwards compatibility only
+
+object OrgType {
+  def withNameOpt(name: String): Option[OrgType] = OrgType.values.find(_.value == name)
+
+  def withName(name: String): OrgType =
+    withNameOpt(name).getOrElse(throw new NoSuchElementException(s"org type found: $name"))
 
   def displayName(orgType: OrgType)(implicit messages: Messages): String =
-    messages(s"organisationDetails.type.$orgType")
+    messages(s"organisationDetails.type.${orgType.value}")
 
-  implicit def value(orgType: OrgType): String = orgType.toString
+  implicit def value(orgType: OrgType): String = orgType.value
 
-  implicit val format: Format[OrgType] =
-    Format(Reads.enumNameReads(OrgType), Writes.enumNameWrites)
+  given Format[OrgType] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          OrgType.values.find(_.value == value)
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown OrgType: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(orgType => JsString(orgType.value))
+    )
 
 }
 
@@ -67,7 +84,7 @@ object OrganisationType extends CommonFormValidators {
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(OrgType.values.toSeq.map(_.toString)))
+          .verifying(emptyError, contains(OrgType.values.toSeq.map(_.value)))
       )(OrganisationType.apply)(OrganisationType.unapply)
     )
   }
@@ -75,6 +92,6 @@ object OrganisationType extends CommonFormValidators {
   def apply(value: String): OrganisationType = OrganisationType(OrgType.withNameOpt(value))
 
   def unapply(organisationType: OrganisationType): Option[String] =
-    organisationType.answer.map(_.toString)
+    organisationType.answer.map(_.value)
 
 }

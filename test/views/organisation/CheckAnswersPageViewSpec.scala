@@ -23,10 +23,11 @@ import forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import models.addresslookup.CountryCode.GB
-import models.registration.group.{GroupMember, OrganisationDetails => GroupMemberOrganisationDetails}
+import models.registration.group.{GroupMember, OrganisationDetails as GroupMemberOrganisationDetails}
 import models.registration.{GroupDetail, OrganisationDetails}
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.prop.TableDrivenPropertyChecks
 import views.html.organisation.check_answers_page
 
@@ -114,17 +115,17 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             "reviewRegistration.organisationDetails.registeredBusinessAddress"
           )
 
-          getValueFor(0, ukCompanyView) mustBe OrgType.displayName(UK_COMPANY)
-          getValueFor(1, ukCompanyView) mustBe ukCompanyRegistration.organisationDetails.businessName.get
+          getValueFor(0, ukCompanyView) shouldBe OrgType.displayName(UK_COMPANY)
+          getValueFor(1, ukCompanyView) shouldBe ukCompanyRegistration.organisationDetails.businessName.get
           getValueFor(
             2,
             ukCompanyView
-          ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
+          ) shouldBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
           getValueFor(
             3,
             ukCompanyView
-          ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
-          getValueFor(4, ukCompanyView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+          ) shouldBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
+          getValueFor(4, ukCompanyView) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, ukCompanyView) must haveHref(routes.OrganisationDetailsTypeController.displayPage())
         }
@@ -153,24 +154,24 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             "reviewRegistration.organisationDetails.registeredBusinessAddress"
           )
 
-          getValueFor(0, soleTraderView) mustBe OrgType.displayName(OrgType.SOLE_TRADER)
+          getValueFor(0, soleTraderView) shouldBe OrgType.displayName(OrgType.SOLE_TRADER)
           getValueFor(
             1,
             soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
+          ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
           getValueFor(
             2,
             soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
+          ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
           getValueFor(
             3,
             soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
+          ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
           getValueFor(
             4,
             soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
-          getValueFor(5, soleTraderView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+          ) shouldBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
+          getValueFor(5, soleTraderView) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, soleTraderView) must haveHref(routes.OrganisationDetailsTypeController.displayPage())
         }
@@ -193,9 +194,9 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             "reviewRegistration.organisationDetails.registeredBusinessAddress"
           )
 
-          getValueFor(0, partnershipView) mustBe PARTNERSHIP.toString
-          getValueFor(1, partnershipView) mustBe generalPartnershipDetails.partnershipName.get
-          getValueFor(2, partnershipView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+          getValueFor(0, partnershipView) shouldBe PARTNERSHIP.toString
+          getValueFor(1, partnershipView) shouldBe generalPartnershipDetails.partnershipName.get
+          getValueFor(2, partnershipView) shouldBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, partnershipView) must haveHref(routes.OrganisationDetailsTypeController.displayPage())
         }

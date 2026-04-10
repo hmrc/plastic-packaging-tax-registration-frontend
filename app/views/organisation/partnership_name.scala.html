@@ -42,7 +42,7 @@
 
     @sectionHeader(messages("partnership.name.section-header"))
 
-    @formHelper(action = partnerRoutes.PartnershipNameController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = partnerRoutes.PartnershipNameController.submit(), Symbol("autoComplete") -> "off") {
 
         @govukInput(
             Input(

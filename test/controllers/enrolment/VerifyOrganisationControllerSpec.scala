@@ -19,8 +19,8 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.reset
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.reset
+
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
@@ -37,7 +37,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -53,7 +53,7 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
     }
@@ -63,8 +63,8 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
       "user is authorised and submit " in {
         val result = controller.submit()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.IsUkAddressController.displayPage().url)
       }
 
     }

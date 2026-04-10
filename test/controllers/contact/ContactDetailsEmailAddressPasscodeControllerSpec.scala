@@ -20,13 +20,14 @@ import base.unit.ControllerSpec
 import connectors.{DownstreamServiceError, ServiceError}
 import controllers.contact.{routes => contactRoutes}
 import forms.contact.{Address, EmailAddressPasscode}
-import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
+import models.emailverification.EmailVerificationJourneyStatus
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
 import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.stubbing.ScalaOngoingStubbing
+import org.mockito.stubbing.OngoingStubbing
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -66,14 +67,16 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
     super.afterEach()
   }
 
-  def mockEmailVerificationVerifyPasscode(dataToReturn: JourneyStatus): ScalaOngoingStubbing[Future[JourneyStatus]] =
+  def mockEmailVerificationVerifyPasscode(
+    dataToReturn: EmailVerificationJourneyStatus
+  ): OngoingStubbing[Future[EmailVerificationJourneyStatus]] =
     when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(
       Future.successful(dataToReturn)
     )
 
   def mockEmailVerificationVerifyPasscodeWithException(
     error: ServiceError
-  ): ScalaOngoingStubbing[Future[JourneyStatus]] =
+  ): OngoingStubbing[Future[EmailVerificationJourneyStatus]] =
     when(mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(any())).thenReturn(
       Future.failed(error)
     )
@@ -87,7 +90,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -95,7 +98,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -106,7 +109,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
       verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
-      captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
+      captor.getValue shouldBe Some("primaryContactDetails.group.sectionHeader")
     }
 
     "display page for single member" in {
@@ -116,7 +119,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
       verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
-      captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
+      captor.getValue shouldBe Some("primaryContactDetails.sectionHeader")
     }
 
     "return 200 (OK)" when {
@@ -124,18 +127,18 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         val email = "test2352356523332453@test.com"
         val reg =
           aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some(email))))
-        reg.metaData.emailVerified(email) mustBe false
+        reg.metaData.emailVerified(email) shouldBe false
 
         spyJourneyAction.setReg(reg)
         mockRegistrationUpdate()
         mockEmailVerificationVerifyPasscode(COMPLETE)
         val result =
           controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(
           contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
         )
-        modifiedRegistration.metaData.emailVerified(email) mustBe true
+        modifiedRegistration.metaData.emailVerified(email) shouldBe true
 
         reset(mockRegistrationConnector)
       }
@@ -150,7 +153,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         mockEmailVerificationVerifyPasscode(INCORRECT_PASSCODE)
         val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
 
         reset(mockRegistrationConnector)
       }
@@ -164,7 +167,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
         val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
         reset(mockRegistrationConnector)
       }
@@ -178,7 +181,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
         val result =
           controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
 
         reset(mockRegistrationConnector)
       }
@@ -243,7 +246,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
       val result =
         controller.submit()(postRequest(Json.toJson(EmailAddressPasscode(""))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 
@@ -268,7 +271,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec extends ControllerSpec wi
 
       await(controller.displayPage()(FakeRequest()))
 
-      pageForm.get.value mustBe "DNCLRK"
+      pageForm.get.value shouldBe "DNCLRK"
     }
 
   }

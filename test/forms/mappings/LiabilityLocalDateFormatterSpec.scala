@@ -19,7 +19,7 @@ package forms.mappings
 import config.AppConfig
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.reset
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec

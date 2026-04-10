@@ -20,7 +20,8 @@ import config.AppConfig
 import models.deregistration.DeregistrationDetails
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
@@ -45,8 +46,7 @@ class DeregistrationConnector @Inject() (httpClient: HttpClientV2, appConfig: Ap
         timer.stop()
       }
       .map {
-        case response @ HttpResponse(OK, _, _) =>
-          Right(())
+        case HttpResponse(OK, _, _) => Right(())
         case response =>
           Left(
             DownstreamServiceError(

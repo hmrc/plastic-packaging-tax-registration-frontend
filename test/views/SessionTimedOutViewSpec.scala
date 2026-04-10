@@ -22,6 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import controllers.routes
 import views.components.Styles
 import views.html.session_timed_out
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
@@ -34,7 +35,7 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
     "not contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe false
+      containTimeoutDialogFunction(view) shouldBe false
     }
 
     "display title" in {

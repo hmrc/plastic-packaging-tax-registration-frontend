@@ -17,19 +17,28 @@
 package models.emailverification
 
 import play.api.libs.json
-import play.api.libs.json.{Format, Reads, Writes}
-import models.emailverification.EmailVerificationStatus.EmailVerificationStatus
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
+import models.emailverification.EmailVerificationStatus.given_Format_EmailVerificationStatus
 import models.registration.Registration
 
-object EmailVerificationStatus extends Enumeration {
-  type EmailVerificationStatus = Value
-  val VERIFIED: Value     = Value
-  val LOCKED_OUT: Value   = Value
-  val NOT_VERIFIED: Value = Value
+import scala.util.Try
 
-  implicit val format: Format[EmailVerificationStatus] =
-    json.Format(Reads.enumNameReads(EmailVerificationStatus), Writes.enumNameWrites)
+enum EmailVerificationStatus:
+  case VERIFIED, LOCKED_OUT, NOT_VERIFIED
 
+object EmailVerificationStatus {
+  given Format[EmailVerificationStatus] =
+    Format(
+      Reads {
+        case JsString(value) =>
+          Try(EmailVerificationStatus.valueOf(value))
+            .map(JsSuccess(_))
+            .getOrElse(JsError(s"Unknown EmailVerificationStatus: $value"))
+        case _ =>
+          JsError("String value expected")
+      },
+      Writes(emailVerificationStatus => JsString(emailVerificationStatus.toString))
+    )
 }
 
 object EmailVerificationStatusMapper {
@@ -38,20 +47,16 @@ object EmailVerificationStatusMapper {
     emailStatuses.map(email => email.emailAddress -> toStatus(email)).toMap
 
   private def toStatus(emailStatus: EmailStatus): EmailVerificationStatus =
-    if (emailStatus.verified)
-      EmailVerificationStatus.VERIFIED
-    else if (emailStatus.locked)
-      EmailVerificationStatus.LOCKED_OUT
-    else
-      EmailVerificationStatus.NOT_VERIFIED
+    (emailStatus.verified, emailStatus.locked) match
+      case (true, _)     => EmailVerificationStatus.VERIFIED
+      case (false, true) => EmailVerificationStatus.LOCKED_OUT
+      case _             => EmailVerificationStatus.NOT_VERIFIED
 
 }
 
 object LocalEmailVerification {
-
   def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus =
-    registration.primaryContactDetails.email.map(email => registration.metaData.getEmailStatus(email)).getOrElse(
-      EmailVerificationStatus.NOT_VERIFIED
-    )
-
+    registration.primaryContactDetails.email
+      .map(email => registration.metaData.getEmailStatus(email))
+      .getOrElse(EmailVerificationStatus.NOT_VERIFIED)
 }

@@ -19,6 +19,7 @@ package views.viewmodels
 import org.scalatest.EitherValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
 
@@ -31,7 +32,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
         val result =
           SignOutReason.binder.bind("signOutReason", Map("signOutReason" -> Seq(SignOutReason.UserAction.toString)))
 
-        result.get mustBe Right(SignOutReason.UserAction)
+        result.get shouldBe Right(SignOutReason.UserAction)
       }
     }
 
@@ -42,7 +43,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
         val result =
           SignOutReason.binder.bind("signOutReason", Map("someRubbishKey" -> Seq(SignOutReason.UserAction.toString)))
 
-        result.get mustBe Right(SignOutReason.SessionTimeout)
+        result.get shouldBe Right(SignOutReason.SessionTimeout)
       }
     }
   }
@@ -52,7 +53,7 @@ class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
     val result =
       SignOutReason.binder.unbind("signOutReason", SignOutReason.UserAction)
 
-    result mustBe s"signOutReason=${SignOutReason.UserAction}"
+    result shouldBe s"signOutReason=${SignOutReason.UserAction}"
 
   }
 }

@@ -18,7 +18,8 @@ package views.group
 
 import base.unit.UnitViewSpec
 import controllers.group.routes
-import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, UK_COMPANY}
 import forms.organisation.{ActionEnum, OrganisationType}
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
@@ -152,10 +153,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
       val form = OrganisationType
         .form(ActionEnum.Group)
-        .fill(OrganisationType(UK_COMPANY.toString))
+        .fill(OrganisationType(UK_COMPANY.value))
       val view = createView(form)
 
-      view.getElementById("answer").attr("value") mustBe UK_COMPANY.toString
+      view.getElementById("answer").attr("value") mustBe UK_COMPANY.value
     }
 
     "display error" when {
@@ -190,10 +191,12 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     )
   }
 
-  def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit view: Document) = {
-    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.toString
+  private def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit
+    view: Document
+  ) = {
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr("value").text() mustBe orgType.value
     view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
-      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+      labelKey.getOrElse(s"organisationDetails.type.${orgType.value}")
     )
   }
 

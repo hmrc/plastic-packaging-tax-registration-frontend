@@ -65,7 +65,7 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
       val expectedContent = Seq(
         (
           messages("contactDetails.member.check.orgType"),
-          messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"),
+          messages(s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get.value}"),
           None
         ),
         (messages("contactDetails.member.check.companyNumber"), groupMember.customerIdentification1, None),

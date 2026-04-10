@@ -18,8 +18,8 @@ package controllers.amendment
 
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.verify
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.verify
+
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.redirectLocation
@@ -65,7 +65,7 @@ class AmendOrganisationDetailsControllerSpec
 
         val resp: Future[Result] = controller.changeBusinessAddress()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -77,11 +77,11 @@ class AmendOrganisationDetailsControllerSpec
 
         val resp = controller.addressCaptureCallback()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+        redirectLocation(resp) shouldBe Some(routes.AmendRegistrationController.displayPage().url)
 
         verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-        val updatedRegistration = getUpdatedRegistrationMethod().apply(registration)
-        updatedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(validCapturedAddress)
+        val updatedRegistration = getUpdatedRegistrationMethod(registration)
+        updatedRegistration.organisationDetails.businessRegisteredAddress shouldBe Some(validCapturedAddress)
       }
     }
 

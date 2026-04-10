@@ -36,8 +36,8 @@
 
 @organisationTypeName = @{
     groupMember.businessType match {
-        case Some(orgType) => OrgType.withNameOpt(orgType).getOrElse(OrgType.UK_COMPANY)
-        case _ => OrgType.UK_COMPANY
+        case Some(orgType) => OrgType.withNameOpt(orgType).map(_.value).getOrElse(OrgType.UK_COMPANY.value)
+        case _ => OrgType.UK_COMPANY.value
     }
 }
 
@@ -47,7 +47,7 @@
 
     @pageHeading(messages("contactDetails.member.check.title"))
 
-    @formHelper(action = submitCall, 'autoComplete -> "off") {
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
 
         @govukSummaryList(
             SummaryList(

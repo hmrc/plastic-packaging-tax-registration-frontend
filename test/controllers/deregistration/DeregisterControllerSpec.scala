@@ -20,7 +20,7 @@ import base.unit.{ControllerSpec, MockDeregistrationDetailRepository}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
@@ -59,14 +59,14 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
       "no previous detail held in repository" in {
         deregisterPageDisplayedAsExpected()
 
-        formCaptor.getValue.value mustBe None
+        formCaptor.getValue.value shouldBe None
       }
       "previous detail held in repository" in {
         inMemoryDeregistrationDetailRepository.put(DeregistrationDetails(Some(true), None))
 
         deregisterPageDisplayedAsExpected()
 
-        formCaptor.getValue.value mustBe Some(true)
+        formCaptor.getValue.value shouldBe Some(true)
       }
     }
 
@@ -76,10 +76,10 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
         val correctForm = Seq("deregister" -> "yes")
         val resp        = await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
 
-        redirectLocation(Future.successful(resp)) mustBe Some(routes.DeregisterReasonController.displayPage().url)
+        redirectLocation(Future.successful(resp)) shouldBe Some(routes.DeregisterReasonController.displayPage().url)
 
         inMemoryDeregistrationDetailRepository.get().map { deregistrationDetail =>
-          deregistrationDetail.deregister mustBe Some(true)
+          deregistrationDetail.deregister shouldBe Some(true)
         }
       }
     }
@@ -90,7 +90,7 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
         val correctForm = Seq("deregister" -> "no")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        redirectLocation(resp) mustBe Some("/account")
+        redirectLocation(resp) shouldBe Some("/account")
       }
     }
 
@@ -100,8 +100,8 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
         val correctForm = Seq("deregister" -> "")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(resp) mustBe BAD_REQUEST
-        contentAsString(resp) mustBe "Deregister?"
+        status(resp) shouldBe BAD_REQUEST
+        contentAsString(resp) shouldBe "Deregister?"
       }
     }
   }
@@ -110,8 +110,8 @@ class DeregisterControllerSpec extends ControllerSpec with MockDeregistrationDet
 
     val resp = deregisterController.displayPage()(FakeRequest())
 
-    status(resp) mustBe OK
-    contentAsString(resp) mustBe "Deregister?"
+    status(resp) shouldBe OK
+    contentAsString(resp) shouldBe "Deregister?"
   }
 
 }

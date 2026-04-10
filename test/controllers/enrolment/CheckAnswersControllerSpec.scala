@@ -18,8 +18,7 @@ package controllers.enrolment
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -68,8 +67,8 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "CYA Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "CYA Page"
       }
 
     }
@@ -83,9 +82,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
+        redirectLocation(result) shouldBe Some(routes.PptReferenceController.displayPage().url)
       }
 
       "page is submitted" when {
@@ -98,9 +97,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
 
-          redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentVerificationFailurePage().url)
+          redirectLocation(result) shouldBe Some(routes.NotableErrorController.enrolmentVerificationFailurePage().url)
         }
 
         "successful enrolment verification " in {
@@ -111,9 +110,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
 
-          redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+          redirectLocation(result) shouldBe Some(routes.ConfirmationController.displayPage().url)
         }
 
         "ppt reference number is already enroled " in {
@@ -124,9 +123,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           val result =
             controller.submit()(FakeRequest("POST", ""))
 
-          status(result) mustBe SEE_OTHER
+          status(result) shouldBe SEE_OTHER
 
-          redirectLocation(result) mustBe Some(
+          redirectLocation(result) shouldBe Some(
             routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage().url
           )
         }

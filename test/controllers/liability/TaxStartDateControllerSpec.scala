@@ -19,8 +19,8 @@ package controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.{reset, verify}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify}
+
 import play.api.libs.json.JsObject
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.FakeRequest
@@ -54,23 +54,25 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   "display page" should {
 
     "pass the liability answers to the tax start date service" in {
-      given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
+      `given`(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
       await(sut.displayPage()(FakeRequest()))
       verify(mockTaxStartDateService).calculateTaxStartDate(eqq(aRegistration.liabilityDetails))
     }
 
     "bounce to the not liable page" in {
-      given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
+      `given`(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
       val result = await(sut.displayPage()(FakeRequest()))
-      result mustBe Redirect(routes.NotLiableController.displayPage())
+      result shouldBe Redirect(routes.NotLiableController.displayPage())
     }
 
     "display tax start date page" in {
-      given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromForwardsTest(aDate))
-      given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.raw("tax start date blah"))
+      `given`(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(
+        TaxStartDate.liableFromForwardsTest(aDate)
+      )
+      `given`(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.raw("tax start date blah"))
       val result = await(sut.displayPage()(FakeRequest()))
       verify(page).apply(eqq(aDate), eqq(false))(any(), any())
-      result mustBe Ok(HtmlFormat.raw("tax start date blah"))
+      result shouldBe Ok(HtmlFormat.raw("tax start date blah"))
     }
 
   }
@@ -78,7 +80,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   "submit" should {
     "redirect to the next page" in {
       val result = await(sut.submit()(postRequest(JsObject.empty)))
-      result mustBe Redirect(routes.LiabilityWeightController.displayPage())
+      result shouldBe Redirect(routes.LiabilityWeightController.displayPage())
     }
   }
 

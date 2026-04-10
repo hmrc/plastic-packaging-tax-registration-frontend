@@ -39,7 +39,7 @@
     title = Title("company.confirmAddress.title", companyName),
     backButton = Some(BackButtonJs)) {
 
-    @formHelper(action = Call("GET", nextPage), 'autoComplete -> "off") {
+    @formHelper(action = Call("GET", nextPage), Symbol("autoComplete") -> "off") {
 
         @pageHeading(messages("company.confirmAddress.title", companyName), classes=gdsPageHeading)
         @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))

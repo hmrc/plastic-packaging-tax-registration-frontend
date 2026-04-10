@@ -111,8 +111,9 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
-  private def updatePartnersEmail(updatedEmail: String): Registration => Registration = { registration: Registration =>
-    updateRegistrationWithPartnerEmail(registration, None, updatedEmail)
+  private def updatePartnersEmail(updatedEmail: String): Registration => Registration = {
+    (registration: Registration) =>
+      updateRegistrationWithPartnerEmail(registration, None, updatedEmail)
   }
 
 }

@@ -19,8 +19,8 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -68,16 +68,16 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Is UK Address Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Is UK Address Page"
       }
       "user is authorised and cache is empty" in {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Is UK Address Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Is UK Address Page"
       }
     }
 
@@ -86,8 +86,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(IsUkAddress(None)))
 
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe "Is UK Address Page"
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) shouldBe "Is UK Address Page"
       }
     }
 
@@ -101,8 +101,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postJsonRequestEncoded(("value", "yes")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PostcodeController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.PostcodeController.displayPage().url)
 
         verify(mockCache).putData(
           ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
@@ -121,8 +121,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postJsonRequestEncoded(("value", "no")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.RegistrationDateController.displayPage().url)
 
         verify(mockCache).putData(
           ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),

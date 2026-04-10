@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import forms.contact.JobTitle
 import views.html.partner.partner_job_title_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
@@ -40,7 +41,7 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(view) shouldBe true
 
     }
 
@@ -63,7 +64,7 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      view.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }

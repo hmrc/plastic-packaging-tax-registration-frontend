@@ -21,7 +21,8 @@ import play.api.data.Forms.mapping
 import play.api.libs.json.{Json, OFormat}
 import forms.{CommonFormValidators, CommonFormValues}
 import models.deregistration.DeregistrationReason
-import models.deregistration.DeregistrationReason.DeregistrationReason
+import models.deregistration.DeregistrationReason.given_Format_DeregistrationReason
+import models.deregistration.DeregistrationReason
 
 case class DeregisterReasonForm(answer: Option[DeregistrationReason])
 

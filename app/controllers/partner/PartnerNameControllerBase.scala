@@ -128,7 +128,7 @@ abstract class PartnerNameControllerBase(
     formData: PartnerName
   )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
-      registration.inflightPartner.map { partner: Partner =>
+      registration.inflightPartner.map { (partner: Partner) =>
         registration.withInflightPartner(Some(setPartnershipNameFor(partner, formData)))
       }.getOrElse {
         registration

@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.mvc.Call
 import forms.contact.EmailAddress
 import views.html.partner.partner_email_address_page
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
@@ -48,7 +49,7 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(viewNom) mustBe true
+      containTimeoutDialogFunction(viewNom) shouldBe true
 
     }
 
@@ -107,7 +108,7 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
 
       viewNom must containElementWithID("submit")
-      viewNom.getElementById("submit").text() mustBe "Save and continue"
+      viewNom.getElementById("submit").text() shouldBe "Save and continue"
     }
 
   }

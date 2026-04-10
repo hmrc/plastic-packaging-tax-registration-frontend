@@ -18,11 +18,14 @@ package models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
-import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import forms.organisation.PartnerTypeEnum
-import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, given_Format_PartnerTypeEnum}
 import models.genericregistration._
-import models.subscriptions.SubscriptionStatus.{SUBSCRIBED, Status}
+import models.subscriptions.SubscriptionStatus
+import models.subscriptions.SubscriptionStatus.given_Format_SubscriptionStatus
+import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import utils.AddressConversionUtils
 import views.viewmodels.TaskStatus
 
@@ -32,7 +35,7 @@ case class OrganisationDetails(
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
-  subscriptionStatus: Option[Status] = None,
+  subscriptionStatus: Option[SubscriptionStatus] = None,
   regWithoutIDFlag: Option[Boolean] = None,
   isBusinessAddressFromGrs: Option[Boolean] = None
 ) {

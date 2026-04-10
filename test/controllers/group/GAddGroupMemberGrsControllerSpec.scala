@@ -17,30 +17,30 @@
 package controllers.group
 
 import base.PptTestData.nrsCredentials
-import base.unit.MockConnectors
+import base.unit.{ControllerSpec, MockConnectors}
 import controllers.actions.JourneyAction
-import controllers.amendment.group.{AddGroupMemberGrsController, routes => amendRoutes}
+import controllers.amendment.group.{AddGroupMemberGrsController, routes as amendRoutes}
 import forms.organisation.OrgType
 import models.registration.{AmendRegistrationUpdateService, Registration}
 import models.request.AuthenticatedRequest.RegistrationRequest
-import models.request.{IdentityData, JourneyRequest}
+import models.request.{AuthenticatedRequest, IdentityData, JourneyRequest}
 import models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import models.subscriptions.SubscriptionStatusResponse
-import org.mockito.ArgumentMatchersSugar.any
-import org.mockito.MockitoSugar.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.{Action, ActionBuilder, AnyContent, Result}
+import play.api.mvc.{Action, ActionBuilder, AnyContent, BodyParser, BodyParsers, PlayBodyParsers, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import spec.PptTestData
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with PptTestData with BeforeAndAfterEach {
+class GAddGroupMemberGrsControllerSpec extends ControllerSpec {
 
   private val reg =
     aRegistration(
@@ -55,8 +55,11 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
 
   type RequestAsyncFunction = JourneyRequest[AnyContent] => Future[Result]
 
+  val fakeJourneyAction = FakeJourneyAction
+  fakeJourneyAction.setReg(reg)
+
   private lazy val sut = new AddGroupMemberGrsController(
-    journeyAction,
+    fakeJourneyAction,
     mockUkCompanyGrsConnector,
     mockSubscriptionsConnector,
     mockPartnershipGrsConnector,
@@ -69,13 +72,11 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
     super.beforeEach()
 
     when(journeyAction.amend).thenReturn(actionBuilder)
-    when(actionBuilder.async(any[RequestAsyncFunction])) thenAnswer byConvertingFunctionArgumentsToFutureAction
 
     val detailsFromGrs =
       incorporationDetails.copy(companyNumber = "22222", companyName = "Existing Company")
     mockGetUkCompanyDetails(detailsFromGrs)
-    when(registrationUpdater.updateRegistration(any)(any, any)).thenReturn(Future.successful(reg))
-
+    when(registrationUpdater.updateRegistration(any())(any(), any())).thenReturn(Future.successful(reg))
   }
 
   "grsCallbackAmendAddGroupMember" should {
@@ -85,10 +86,10 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
 
       val result: Future[Result] = sut.grsCallbackNewMember("123")(createRequest(reg))
 
-      status(result) mustBe SEE_OTHER
+      status(result) shouldBe SEE_OTHER
       assertResult(
         amendRoutes.AddGroupMemberConfirmBusinessAddressController.displayPage("uuid").url,
-        redirectLocation(result).value
+        redirectLocation(result).head
       )
     }
 
@@ -97,8 +98,8 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
 
       val result: Future[Result] = sut.grsCallbackNewMember("123")(createRequest(reg))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
     }
   }
 
@@ -111,14 +112,8 @@ class GAddGroupMemberGrsControllerSpec extends PlaySpec with MockConnectors with
     assert(s"^$regexp.*".r.matches(actualLocation))
   }
 
-  private def authRequest[A](fakeRequest: FakeRequest[A]) =
+  override def authRequest[A](fakeRequest: FakeRequest[A]) =
     RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
-
-  private def byConvertingFunctionArgumentsToFutureAction: (RequestAsyncFunction) => Action[AnyContent] =
-    (function: RequestAsyncFunction) =>
-      when(mock[Action[AnyContent]].apply(any))
-        .thenAnswer((request: JourneyRequest[AnyContent]) => function(request))
-        .getMock[Action[AnyContent]]
 
   private def createRequest(reg: Registration): JourneyRequest[AnyContent] =
     JourneyRequest(authRequest(FakeRequest()), reg)

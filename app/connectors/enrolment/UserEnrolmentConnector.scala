@@ -18,12 +18,13 @@ package connectors.enrolment
 
 import config.AppConfig
 import connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
-import models.enrolment._
+import models.enrolment.*
 import models.registration.UserEnrolmentDetails
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
@@ -35,9 +36,7 @@ import scala.util.{Failure, Success, Try}
 @Singleton
 class UserEnrolmentConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
-) {
-
-  private val logger = Logger(this.getClass)
+) extends Logging {
 
   def enrol(payload: UserEnrolmentDetails)(implicit hc: HeaderCarrier): Future[UserEnrolmentResponse] = {
     val timer = metrics.defaultRegistry.timer(UserEnrolmentTimer).time()

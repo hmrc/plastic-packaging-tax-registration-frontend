@@ -19,7 +19,8 @@ package models.registration
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
 import forms.liability.RegType
-import forms.liability.RegType.{GROUP, RegType}
+import forms.liability.RegType
+import forms.liability.RegType.GROUP
 import forms.organisation.{OrgType, PartnerTypeEnum}
 import models.genericregistration.Partner
 import models.registration.group.GroupMember
@@ -41,7 +42,7 @@ case class Registration(
   userHeaders: Option[Map[String, String]] = None
 ) {
 
-  def clearAddressFromGrs =
+  def clearAddressFromGrs: Registration =
     copy(organisationDetails = organisationDetails.clearGrsStuff)
 
   def toRegistration: Registration =

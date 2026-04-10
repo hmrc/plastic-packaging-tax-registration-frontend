@@ -21,13 +21,13 @@ import base.unit.ControllerSpec
 import connectors.DownstreamServiceError
 import controllers.partner.{routes => partnerRoutes}
 import forms.liability.RegType
-import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import forms.organisation.{OrgType, OrganisationType, PartnerTypeEnum}
 import models.registration.{NewRegistrationUpdateService, OrganisationDetails}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.atLeastOnce
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -79,7 +79,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -90,7 +90,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised and display page method is invoked for representative member" in {
@@ -99,7 +99,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         val result = controller.displayPageRepresentativeMember()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked for representative member" in {
@@ -110,7 +110,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPageRepresentativeMember()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -138,11 +138,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val correctForm = Seq("answer" -> PARTNERSHIP.toString)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 
-        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
       }
 
       "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
@@ -163,11 +163,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val correctForm = Seq("answer" -> PARTNERSHIP.toString)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 
-        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
       }
 
       "user submits organisation type: " + REGISTERED_SOCIETY in {
@@ -200,11 +200,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submitRepresentativeMember()(postJsonRequestEncoded(correctForm: _*))
 
-        status(result) mustBe SEE_OTHER
-        modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
-        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 
-        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
       }
     }
 
@@ -216,12 +216,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       val correctForm = Seq("answer" -> orgType.toString)
       val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-      status(result) mustBe SEE_OTHER
-      modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
+      status(result) shouldBe SEE_OTHER
+      modifiedRegistration.organisationDetails.organisationType shouldBe Some(orgType)
 
       verify(mockAuditor, atLeastOnce()).orgTypeSelected(any(), refEq(Some(orgType)))(any(), any())
 
-      redirectLocation(result) mustBe Some(redirectUrl)
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
     "return 400 (BAD_REQUEST)" when {
@@ -231,7 +231,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submit()(postRequestEncoded(JsObject.empty))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters invalid data" in {
@@ -240,7 +240,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val incorrectForm = Seq("answer" -> "maybe")
         val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 
@@ -280,7 +280,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       intercept[RuntimeException](
         status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-      ).getMessage mustBe "sole trader create journey error"
+      ).getMessage shouldBe "sole trader create journey error"
     }
 
     "user submits form for uk company" in {
@@ -293,7 +293,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       intercept[RuntimeException](
         status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-      ).getMessage mustBe "uk company create journey error"
+      ).getMessage shouldBe "uk company create journey error"
     }
 
     "user submits form for registered society" in {
@@ -306,7 +306,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       intercept[RuntimeException](
         status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-      ).getMessage mustBe "registered society create journey error"
+      ).getMessage shouldBe "registered society create journey error"
     }
   }
 

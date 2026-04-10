@@ -40,7 +40,7 @@ object PhoneNumber extends CommonFormValidators {
           .verifying(phoneNumberEmptyError, isNonEmpty)
           .verifying(phoneNumberTooLongError, isNotExceedingMaxLengthExcludingWhitespaces(_, maxLength))
           .verifying(phoneNumberInvalidFormat, isValidTelephoneNumber)
-      )(PhoneNumber.apply)(PhoneNumber.unapply)
+      )(PhoneNumber.apply)(pn => Some(pn.value))
     )
 
 }

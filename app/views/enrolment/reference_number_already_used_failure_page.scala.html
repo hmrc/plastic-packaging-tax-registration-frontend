@@ -32,7 +32,7 @@
 
 @govukLayout(title = Title("enrolment.referenceNumber.already.used.title")) {
 
-    @formHelper(action =Call("GET", appConfig.businessAccountUrl), 'autoComplete -> "off") {
+    @formHelper(action =Call("GET", appConfig.businessAccountUrl), Symbol("autoComplete") -> "off") {
 
         @pageHeading(messages("enrolment.referenceNumber.already.used.title"))
 

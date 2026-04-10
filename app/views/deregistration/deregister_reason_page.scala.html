@@ -50,7 +50,7 @@
 
     @errorSummary(form.errors)
     
-    @formHelper(action = routes.DeregisterReasonController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = routes.DeregisterReasonController.submit(), Symbol("autoComplete") -> "off") {
 
     @govukRadios(Radios(
         fieldset = Some(Fieldset(

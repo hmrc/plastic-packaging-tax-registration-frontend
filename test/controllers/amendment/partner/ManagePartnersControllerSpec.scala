@@ -19,8 +19,8 @@ package controllers.amendment.partner
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.when
+
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
@@ -51,8 +51,8 @@ class ManagePartnersControllerSpec extends ControllerSpec with AmendmentControll
       spyJourneyAction.setReg(partnershipRegistration)
 
       val resp = managePartnersController.displayPage()(FakeRequest())
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "Manage Partners Page"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "Manage Partners Page"
     }
   }
 

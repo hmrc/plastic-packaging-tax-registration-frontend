@@ -23,8 +23,8 @@ import forms.group.MemberName
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -69,7 +69,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -77,7 +77,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember))))))
         val result = controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -92,12 +92,12 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
             postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'."))
           )
 
-        status(result) mustBe SEE_OTHER
+        status(result) shouldBe SEE_OTHER
         val contactDetails =
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get
-        contactDetails.firstName mustBe "Test -'."
-        contactDetails.lastName mustBe "User -'."
-        redirectLocation(result) mustBe Some(
+        contactDetails.firstName shouldBe "Test -'."
+        contactDetails.lastName shouldBe "User -'."
+        redirectLocation(result) shouldBe Some(
           groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url
         )
         reset(mockRegistrationConnector)
@@ -119,8 +119,8 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       await(controller.displayPage(groupMember.id)(FakeRequest()))
 
-      pageForm.get.firstName mustBe "Test"
-      pageForm.get.lastName mustBe "User"
+      pageForm.get.firstName shouldBe "Test"
+      pageForm.get.lastName shouldBe "User"
     }
   }
 
@@ -131,14 +131,14 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       val result =
         controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("123", "andy"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
     "user submits numbers in lastname" in {
 
       val result =
         controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("andy", "123"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
 
     "user submits accented member name" in {
@@ -146,7 +146,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       val result =
         controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("Chlöe", "Bòb"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
 
     "user submits invalid member name" in {
@@ -154,7 +154,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       val result =
         controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("$%^", "£$£¬"))))
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
   }
 

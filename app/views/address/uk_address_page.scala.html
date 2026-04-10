@@ -42,7 +42,7 @@
 
     @errorSummary(form.errors)
 
-    @formHelper(action = routes.AddressCaptureController.submitAddressInUk(), 'autoComplete -> "off") {
+    @formHelper(action = routes.AddressCaptureController.submitAddressInUk(), Symbol("autoComplete") -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
                 content = Text(messages(title, entityName.getOrElse(messages("missing.organisationName")))),

@@ -41,7 +41,9 @@ case class GroupMember(
   lazy val businessTypeDisplayName: String =
     businessType match {
       case Some(organisationType) =>
-        OrgType.withNameOpt(organisationType).getOrElse(throw new IllegalStateException("Organisation type is absent"))
+        OrgType.withNameOpt(organisationType).map(_.value).getOrElse(
+          throw new IllegalStateException("Organisation type is absent")
+        )
       case None => throw new IllegalStateException("Organisation type is absent")
     }
 

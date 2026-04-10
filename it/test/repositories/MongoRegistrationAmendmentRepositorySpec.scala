@@ -20,7 +20,7 @@ import builders.RegistrationBuilder
 import models.registration.Registration
 import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, when, verify}
 import org.mockito.invocation.InvocationOnMock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers

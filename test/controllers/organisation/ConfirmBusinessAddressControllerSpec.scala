@@ -18,8 +18,7 @@ package controllers.organisation
 
 import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -65,8 +64,8 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
       val resp = controller.displayPage()(FakeRequest())
 
-      status(resp) mustBe OK
-      contentAsString(resp) mustBe "business registered address"
+      status(resp) shouldBe OK
+      contentAsString(resp) shouldBe "business registered address"
     }
 
     "redirect to address capture" when {
@@ -80,7 +79,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
         val resp = controller.displayPage()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
       "registered business address is invalid" in {
         val registration   = aRegistration()
@@ -98,7 +97,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
         val resp = controller.displayPage()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 
@@ -106,9 +105,9 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
       "control is returned from address lookup frontend" in {
         val resp = controller.addressCaptureCallback()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
+        redirectLocation(resp) shouldBe Some(commonRoutes.TaskListController.displayPage().url)
 
-        modifiedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(validCapturedAddress)
+        modifiedRegistration.organisationDetails.businessRegisteredAddress shouldBe Some(validCapturedAddress)
       }
     }
 
@@ -118,7 +117,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
         val resp = controller.changeBusinessAddress()(FakeRequest())
 
-        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        redirectLocation(resp) shouldBe Some(addressCaptureRedirect.url)
       }
     }
 

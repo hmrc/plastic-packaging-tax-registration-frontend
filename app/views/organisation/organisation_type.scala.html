@@ -19,6 +19,7 @@
 @import views.html.main_template
 @import controllers.{routes => pptRoutes}
 @import controllers.organisation.{routes => organisationRoutes}
+@import forms.organisation.OrgType
 @import forms.organisation.OrgType._
 @import forms.organisation.OrganisationType
 
@@ -29,8 +30,8 @@
     sectionHeader: sectionHeader,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
-    paragraph: paragraph
 )
+
 
 @(form: Form[OrganisationType], isGroup: Boolean)(implicit request: Request[_], messages: Messages)
 
@@ -40,13 +41,13 @@
     @displayName(orgType: OrgType) = @{ messages(
       orgType match {
           case PARTNERSHIP if isGroup => "organisationDetails.type.GroupNominatedPartnership"
-          case _ => s"organisationDetails.type.$orgType"
+          case _ => s"organisationDetails.type.${orgType.value}"
       }
     )
     }
 
     @radioItem(orgType: OrgType) = @{
-        RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
+        RadioItem(content = Text(displayName(orgType)), value = Some(orgType.value), checked = form("answer").value.contains(orgType.value))
     }
 
     @organisationRadios = @{
@@ -69,7 +70,6 @@
           )
     }
 
-    @linkHint = {<a href=@messages("gform.link") class="govuk-link" id="organisationDetails-type-link">@messages("organisationDetails.type.hint")</a>}
 
     @govukLayout(
         title = Title(form, title),
@@ -79,7 +79,7 @@
 
         @sectionHeader(messages(section))
 
-        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), Symbol("autoComplete") -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
@@ -97,7 +97,11 @@
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 ))
 
-        @{ if(isGroup) paragraph(linkHint) }
+        @if(isGroup) {
+            <p class="govuk-body">
+                <a href=@messages("gform.link") class="govuk-link" id="organisationDetails-type-link">@messages("organisationDetails.type.hint")</a>
+            </p>
+        }
 
         @saveButtons()
     }

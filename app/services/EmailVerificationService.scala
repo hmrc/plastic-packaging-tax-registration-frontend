@@ -65,7 +65,7 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
 
   def checkVerificationCode(code: String, email: String, journeyId: String)(implicit
     hc: HeaderCarrier
-  ): Future[EmailVerificationJourneyStatus.Value] =
+  ): Future[EmailVerificationJourneyStatus] =
     emailVerificationConnector.verifyPasscode(journeyId, VerifyPasscodeRequest(code, email)).map {
       case Right(verificationStatus) => verificationStatus
       case Left(ex)                  => throw ex

@@ -19,10 +19,11 @@ package connectors
 import config.AppConfig
 import connectors.PPTReference.pptReferenceTimer
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +37,7 @@ object ClientRegistration {
 class PptReferenceConnector @Inject() (httpClient: HttpClientV2, appConfig: AppConfig, metrics: Metrics)(implicit
   ec: ExecutionContext
 ) {
-  import ClientRegistration._
+  import ClientRegistration.*
   def get(implicit hc: HeaderCarrier): Future[String] = {
     val timer = metrics.defaultRegistry.timer(pptReferenceTimer).time()
 

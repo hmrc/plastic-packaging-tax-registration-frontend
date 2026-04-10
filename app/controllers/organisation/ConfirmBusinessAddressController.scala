@@ -20,7 +20,9 @@ import connectors.RegistrationConnector
 import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
 import forms.contact.Address
-import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
+import forms.organisation.OrgType
+import forms.organisation.OrgType.given_Format_OrgType
+import forms.organisation.OrgType.OVERSEAS_COMPANY_UK_BRANCH
 import models.addresslookup.CountryCode.GB
 import models.registration.Cacheable
 import models.registration.OrganisationName.getMissingOrgMessage

@@ -53,7 +53,7 @@
         @hmrcTimeoutDialog(TimeoutDialog(
           timeout = Some(timeoutDialogConfig.timeoutSecs),
           countdown = Some(timeoutDialogConfig.countdownSecs),
-          keepAliveUrl = Some(pptRoutes.KeepAliveController.keepAlive.url),
+          keepAliveUrl = Some(pptRoutes.KeepAliveController.keepAlive().url),
           signOutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction).url),
           timeoutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.SessionTimeout).url),
           title = Some(messages("timeoutDialog.title")),
@@ -98,7 +98,7 @@
 @hmrcStandardPage(
     HmrcStandardPageParams(
         serviceURLs = ServiceURLs(
-            serviceUrl = Some(pptRoutes.StartRegistrationController.startRegistration.url),
+            serviceUrl = Some(pptRoutes.StartRegistrationController.startRegistration().url),
             signOutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction).url)
         ),
         banners = Banners(phaseBanner = None),

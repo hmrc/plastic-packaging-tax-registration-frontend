@@ -72,7 +72,7 @@
                                                     ))
                         ))
 
-        @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), Symbol("autoComplete") -> "off") {
             @radioButtons
             @saveButtons()
     }

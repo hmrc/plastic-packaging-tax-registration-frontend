@@ -18,6 +18,7 @@ package controllers.liability
 
 import connectors.RegistrationConnector
 import controllers.actions.JourneyAction
+import forms.liability.RegType.*
 import forms.liability.{RegType, RegistrationType}
 import models.registration.{Cacheable, Registration}
 import play.api.data.Form
@@ -43,7 +44,7 @@ class RegistrationTypeController @Inject() (
     journeyAction.register { implicit request =>
       request.registration.registrationType match {
         case Some(regType) =>
-          Ok(page(RegistrationType.form().fill(RegistrationType(Some(regType))), backLink))
+          Ok(page(RegistrationType.form().fill(RegistrationType(regType)), backLink))
         case _ => Ok(page(RegistrationType.form(), backLink))
       }
     }
@@ -58,7 +59,7 @@ class RegistrationTypeController @Inject() (
             update(updateRegistration(registrationType)).map {
               case Right(registration) =>
                 registration.registrationType match {
-                  case Some(regType) if regType == RegType.GROUP =>
+                  case Some(regType) if regType == GROUP =>
                     Redirect(routes.MembersUnderGroupControlController.displayPage().url)
                   case _ =>
                     Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
@@ -73,15 +74,14 @@ class RegistrationTypeController @Inject() (
 
   private def updateRegistration(registrationType: RegistrationType): Registration => Registration =
     registrationType.value match {
-      case Some(RegType.GROUP) =>
-        registration => registration.copy(registrationType = registrationType.value)
-      case Some(RegType.SINGLE_ENTITY) =>
+      case GROUP =>
+        registration => registration.copy(registrationType = Some(registrationType.value))
+      case SINGLE_ENTITY =>
         registration =>
           registration.copy(
-            registrationType = registrationType.value,
+            registrationType = Some(registrationType.value),
             groupDetail = registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
           )
-      case other => throw new IllegalStateException(s"Invalid registration type: $other")
     }
 
 }

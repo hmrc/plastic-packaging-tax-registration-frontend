@@ -21,8 +21,7 @@ import connectors.DownstreamServiceError
 import forms.partner.PartnerName
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.{redirectLocation, status}
@@ -85,7 +84,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "displaying an existing partner to edit their name" in {
@@ -94,7 +93,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         val result = controller.displayExistingPartner(existingPartner.id)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -107,11 +106,11 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         val result = controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("https://test/redirect/grs/identify-partnership")
         modifiedRegistration.inflightPartner.flatMap(
           _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("Test Partner")
+        ) shouldBe Some("Test Partner")
       }
 
       "user submits an amendment to an existing partners name" in {
@@ -123,11 +122,11 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val result =
           controller.submitExistingPartner(existingPartner.id)(postRequestEncoded(PartnerName("Test Partner")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("https://test/redirect/grs/identify-partnership")
         modifiedRegistration.findPartner(existingPartner.id).flatMap(
           _.partnerPartnershipDetails.flatMap(_.partnershipName)
-        ) mustBe Some("Test Partner")
+        ) shouldBe Some("Test Partner")
       }
     }
 
@@ -139,7 +138,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val result =
           controller.submitNewPartner()(postRequestEncoded(PartnerName("")))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
 
       "user enters a long name" in {
@@ -148,7 +147,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         val result = controller.submitNewPartner()(postRequestEncoded(PartnerName("abced" * 40)))
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
       }
     }
 

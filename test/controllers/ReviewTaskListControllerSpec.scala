@@ -26,15 +26,16 @@ import forms.{Date, OldDate}
 import models.addresslookup.CountryCode.GB
 import models.genericregistration.IncorporationDetails
 import models.nrs.NrsDetails
-import models.registration._
+import models.registration.*
 import models.registration.group.GroupMember
 import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import org.mockito.{ArgumentMatchers, Mockito}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -73,10 +74,13 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
-    given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
+    `given`(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any[Registration]))
-      .thenAnswer((reg: Registration) => reg)
+      .thenAnswer(new Answer[Registration] {
+        override def answer(invocation: InvocationOnMock): Registration =
+          invocation.getArgument(0)
+      })
   }
 
   override protected def afterEach(): Unit = {
@@ -123,7 +127,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
         verify(mockReviewRegistrationPage).apply(ArgumentMatchers.eq(registration))(any(), any())
       }
 
@@ -142,7 +146,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       ".displayPage is invoked with a partnership" in {
@@ -163,7 +167,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -184,8 +188,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.TaskListController.displayPage().url)
       }
 
       "all group members have been removed" in {
@@ -202,8 +206,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.TaskListController.displayPage().url)
       }
 
       "the registration is not in ready state" in {
@@ -217,8 +221,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.TaskListController.displayPage().url)
       }
 
       "the user has not answered the new liability questions" in {
@@ -227,7 +231,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
-        await(result) mustBe Redirect(routes.TaskListController.displayPage())
+        await(result) shouldBe Redirect(routes.TaskListController.displayPage())
       }
 
     }
@@ -255,8 +259,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           val result = controller.submit()(postRequest(JsObject.empty))
           submissionCount += 1
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.ConfirmationController.displayPage().url)
           verify(mockSubscriptionsConnector).submitSubscription(
             ArgumentMatchers.eq(safeNumber),
             ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
@@ -264,7 +268,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
           metricsMock.defaultRegistry.counter(
             "ppt.registration.success.submission.counter"
-          ).getCount mustBe submissionCount
+          ).getCount shouldBe submissionCount
         }
       }
 
@@ -274,7 +278,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         mockRegistrationUpdate()
 
         val result = controller.submit()(postRequest(JsObject.empty))
-        await(result) mustBe Redirect(routes.TaskListController.displayPage())
+        await(result) shouldBe Redirect(routes.TaskListController.displayPage())
       }
 
     }
@@ -336,10 +340,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result =
           controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.NotableErrorController.subscriptionFailure().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.NotableErrorController.subscriptionFailure().url)
 
-        metricsMock.defaultRegistry.counter("ppt.registration.failed.submission.counter").getCount mustBe 1
+        metricsMock.defaultRegistry.counter("ppt.registration.failed.submission.counter").getCount shouldBe 1
       }
 
       "user submits form and the submission fails with an error response" in {
@@ -353,8 +357,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.NotableErrorController.subscriptionFailure().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.NotableErrorController.subscriptionFailure().url)
       }
 
       "user submits form and the enrolment initiation fails" in {
@@ -364,8 +368,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentFailure().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.NotableErrorController.enrolmentFailure().url)
       }
 
       "duplicate subscription detected at the back end" in {
@@ -384,8 +388,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.NotableErrorController.duplicateRegistration().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.NotableErrorController.duplicateRegistration().url)
       }
     }
   }

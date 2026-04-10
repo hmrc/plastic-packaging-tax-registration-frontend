@@ -45,7 +45,7 @@ object PartnerName {
           partnerNameFormatError,
           partnerName => !isNonEmpty(partnerName) || isMatchingPattern(partnerName, PARTNER_NAME_REGEX)
         )
-  )(PartnerName.apply)(PartnerName.unapply)
+  )(PartnerName.apply)(pn => Some(pn.value))
 
   def form(): Form[PartnerName] = Form(mapping)
 }

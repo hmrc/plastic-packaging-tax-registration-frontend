@@ -18,7 +18,8 @@ package models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 import forms.contact.Address
-import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP}
+import forms.organisation.PartnerTypeEnum
+import forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, given_Format_PartnerTypeEnum}
 import utils.AddressConversionUtils
 
 case class PartnershipDetails(

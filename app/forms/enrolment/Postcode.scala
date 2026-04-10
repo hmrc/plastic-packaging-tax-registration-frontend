@@ -31,7 +31,7 @@ object Postcode extends CommonFormValidators {
       .transform[String](postcode => postcode.toUpperCase, postcode => postcode)
       .verifying("enrolment.postcode.value.error.empty", isNonEmpty)
       .verifying("enrolment.postcode.value.error.regex", validatePostcode(10))
-  )(Postcode.apply)(Postcode.unapply)
+  )(Postcode.apply)(postcode => Some(postcode.value))
 
   def form(): Form[Postcode] = Form(mapping)
 }

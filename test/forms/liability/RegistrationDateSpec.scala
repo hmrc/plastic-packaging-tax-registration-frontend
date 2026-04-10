@@ -21,12 +21,13 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.FormError
 import play.api.test.FakeRequest
 import forms.enrolment.RegistrationDate
+import play.api.mvc.AnyContentAsEmpty
 
 import java.time.LocalDate
 
 class RegistrationDateSpec extends MessagesSpec with Matchers {
 
-  implicit val request = FakeRequest()
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   private val year  = "date.year"
   private val month = "date.month"

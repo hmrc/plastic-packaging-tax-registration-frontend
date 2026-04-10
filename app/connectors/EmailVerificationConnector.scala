@@ -17,11 +17,12 @@
 package connectors
 
 import config.AppConfig
-import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
-import models.emailverification.{CreateEmailVerificationRequest, VerificationStatus, VerifyPasscodeRequest}
-import play.api.http.Status._
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
+import models.emailverification.{CreateEmailVerificationRequest, EmailVerificationJourneyStatus, VerificationStatus, VerifyPasscodeRequest}
+import play.api.http.Status.*
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.metrics.Metrics
@@ -72,7 +73,7 @@ class EmailVerificationConnector @Inject() (httpClient: HttpClientV2, appConfig:
 
   def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit
     hc: HeaderCarrier
-  ): Future[Either[ServiceError, JourneyStatus]] = {
+  ): Future[Either[ServiceError, EmailVerificationJourneyStatus]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
     httpClient
       .post(url"${appConfig.getSubmitPassscodeUrl(journeyId = journeyId)}")

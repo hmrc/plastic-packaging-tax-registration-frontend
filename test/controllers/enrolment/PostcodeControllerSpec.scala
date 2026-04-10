@@ -19,8 +19,8 @@ package controllers.enrolment
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -71,8 +71,8 @@ class PostcodeControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Postcode Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Postcode Page"
       }
 
       "user is authorised and cache is empty" in {
@@ -80,8 +80,8 @@ class PostcodeControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
         val result = controller.displayPage()(FakeRequest())
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Postcode Page"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Postcode Page"
       }
     }
 
@@ -90,8 +90,8 @@ class PostcodeControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(Postcode("XXX")))
 
-        status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe "Postcode Page"
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) shouldBe "Postcode Page"
       }
     }
 
@@ -105,8 +105,8 @@ class PostcodeControllerSpec extends ControllerSpec {
 
         val result = controller.submit()(postRequestEncoded(Postcode("LS1 1AA")))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.RegistrationDateController.displayPage().url)
 
         verify(mockCache).putData(
           ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),

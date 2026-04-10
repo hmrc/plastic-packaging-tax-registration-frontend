@@ -25,9 +25,9 @@ import models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipGrsC
 import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{verify, when}
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.Inspectors.forAll
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -82,7 +82,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayNewPartner()(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
 
       "previous partnership partner type in registration" in {
@@ -94,7 +94,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
         val result = controller.displayExistingPartner("123")(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) shouldBe OK
       }
     }
 
@@ -147,7 +147,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
             partnershipDetails._1 match {
               case SOLE_TRADER =>
-                redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+                redirectLocation(result) shouldBe Some("http://test/redirect/soletrader")
                 val soleTraderGrsCreateRequest: ArgumentCaptor[SoleTraderGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[SoleTraderGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -155,9 +155,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                   soleTraderGrsCreateRequest.capture(),
                   grsUrlCaptor.capture()
                 )(any(), any())
-                soleTraderGrsCreateRequest.getValue.businessVerificationCheck mustBe false
+                soleTraderGrsCreateRequest.getValue.businessVerificationCheck shouldBe false
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
-                redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
+                redirectLocation(result) shouldBe Some("http://test/redirect/ukCompany")
                 val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -165,9 +165,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                   incorpEntityGrsCreateRequest.capture(),
                   grsUrlCaptor.capture()
                 )(any(), any())
-                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
+                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck shouldBe false
               case REGISTERED_SOCIETY =>
-                redirectLocation(result) mustBe Some("http://test/redirect/registeredSociety")
+                redirectLocation(result) shouldBe Some("http://test/redirect/registeredSociety")
                 val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -175,9 +175,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                   incorpEntityGrsCreateRequest.capture(),
                   grsUrlCaptor.capture()
                 )(any(), any())
-                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
+                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck shouldBe false
               case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
-                redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+                redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
                 val partnerGrsCreateRequest: ArgumentCaptor[PartnershipGrsCreateRequest] =
                   ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])
                 val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
@@ -185,9 +185,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                   partnerGrsCreateRequest.capture(),
                   grsUrlCaptor.capture()
                 )(any(), any())
-                partnerGrsCreateRequest.getValue.businessVerificationCheck mustBe false
+                partnerGrsCreateRequest.getValue.businessVerificationCheck shouldBe false
               case _ =>
-                redirectLocation(result) mustBe Some(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url)
+                redirectLocation(result) shouldBe Some(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url)
             }
           }
         }
@@ -214,7 +214,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
             val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
 
-            redirectLocation(result) mustBe Some(partnerRoutes.PartnerNameController.displayNewPartner().url)
+            redirectLocation(result) shouldBe Some(partnerRoutes.PartnerNameController.displayNewPartner().url)
           }
         }
       }
@@ -235,7 +235,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
 
-        redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+        redirectLocation(result) shouldBe Some("http://test/redirect/soletrader")
       }
     }
 
@@ -253,7 +253,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
 
-        redirectLocation(result) mustBe Some(partnerRoutes.PartnerNameController.displayExistingPartner("123").url)
+        redirectLocation(result) shouldBe Some(partnerRoutes.PartnerNameController.displayExistingPartner("123").url)
       }
     }
 
@@ -267,7 +267,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
       val result = controller.submitNewPartner()(postJsonRequestEncoded())
 
-      status(result) mustBe BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
 
     "display nominated partner type capture page" when {
@@ -275,7 +275,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         "registration does not contain partnership partner" in {
           val resp = controller.displayNewPartner()(FakeRequest())
 
-          contentAsString(resp) mustBe "Nominated partner type capture"
+          contentAsString(resp) shouldBe "Nominated partner type capture"
         }
         "registration does contain nominated partnership type" in {
           spyJourneyAction.setReg(
@@ -290,7 +290,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
           val resp = controller.displayNewPartner()(FakeRequest())
 
-          contentAsString(resp) mustBe "Nominated partner type capture"
+          contentAsString(resp) shouldBe "Nominated partner type capture"
         }
       }
     }

@@ -24,9 +24,9 @@ import models.registration.{LiabilityDetails, NewLiability, Registration}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.verifyNoInteractions
-import org.mockito.MockitoSugar.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.Messages
@@ -72,7 +72,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
       val result = sut.displayPage()()(FakeRequest())
 
-      status(result) mustBe OK
+      status(result) shouldBe OK
     }
 
     "display a view with empty date" in {
@@ -109,8 +109,8 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
       val result = sut.submit()(FakeRequest())
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightController.displayPage.url)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.ExceededThresholdWeightController.displayPage.url)
     }
 
     "save the date to cache" in {
@@ -130,7 +130,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
         val result = sut.submit()(FakeRequest())
 
-        status(result) mustBe BAD_REQUEST
+        status(result) shouldBe BAD_REQUEST
         verify(page).apply(ArgumentMatchers.eq(bindForm))(any(), any())
       }
 

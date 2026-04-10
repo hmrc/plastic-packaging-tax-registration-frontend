@@ -20,8 +20,7 @@ import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import models.registration.GroupDetail
 import models.registration.group.GroupMember
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{reset, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -68,7 +67,7 @@ class ConfirmRemoveMemberControllerSpec
         val resp =
           controller.displayPage(groupMember.id)(FakeRequest())
 
-        status(resp) mustBe OK
+        status(resp) shouldBe OK
         verify(spyJourneyAction).amend
       }
 
@@ -81,9 +80,9 @@ class ConfirmRemoveMemberControllerSpec
           val correctlyEncodedForm = Seq("value" -> "yes")
           val resp = controller.submit(groupMember.id)(postRequestTuplesEncoded(correctlyEncodedForm, sessionId))
 
-          status(resp) mustBe SEE_OTHER
+          status(resp) shouldBe SEE_OTHER
           verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-          redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage().url)
+          redirectLocation(resp) shouldBe Some(routes.GroupMembersListController.displayPage().url)
           verify(spyJourneyAction).amend
         }
       }

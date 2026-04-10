@@ -17,7 +17,7 @@
 package controllers
 
 import base.unit.ControllerSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
 import controllers.liability.{routes => liabilityRoutes}
@@ -60,8 +60,8 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
         val result = controller.startRegistration()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pageUrl)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(pageUrl)
       }
     }
     "redirect to task list page" when {
@@ -71,8 +71,8 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
         val result = controller.startRegistration()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.TaskListController.displayPage().url)
       }
 
       "partial registration exists with new liability" in {
@@ -85,8 +85,8 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
         val result = controller.startRegistration()(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.TaskListController.displayPage().url)
       }
     }
   }
