@@ -25,22 +25,23 @@ enum DeregistrationReason(val value: String):
   case CeasedTrading              extends DeregistrationReason("Ceased Trading")
   case BelowDeminimis             extends DeregistrationReason("Below De-minimus")
   case TakenIntoGroupRegistration extends DeregistrationReason("Taken into Group Registration")
+  override def toString: String = value // for backwards compatibility only
 
 object DeregistrationReason {
-  def withNameOpt(name: String): Option[DeregistrationReason] = DeregistrationReason.values.find(_.toString == name)
+  def withNameOpt(name: String): Option[DeregistrationReason] = DeregistrationReason.values.find(_.value == name)
 
-  implicit def value(reason: DeregistrationReason): String = reason.toString
+  implicit def value(reason: DeregistrationReason): String = reason.value
 
   given Format[DeregistrationReason] =
     Format(
       Reads {
         case JsString(value) =>
-          Try(DeregistrationReason.valueOf(value))
+          DeregistrationReason.values.find(_.value == value)
             .map(JsSuccess(_))
             .getOrElse(JsError(s"Unknown DeregistrationReason: $value"))
         case _ =>
           JsError("String value expected")
       },
-      Writes(deRegistrationReason => JsString(deRegistrationReason.toString))
+      Writes(deRegistrationReason => JsString(deRegistrationReason.value))
     )
 }
