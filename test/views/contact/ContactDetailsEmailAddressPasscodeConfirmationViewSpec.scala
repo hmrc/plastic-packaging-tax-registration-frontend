@@ -53,7 +53,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
     }
 
     "display 'Update and continue' button" in {
-      view.getElementById("update").text() mustBe "Update and continue"
+      view.getElementById("submit").text() mustBe "Update and continue"
     }
 
   }
