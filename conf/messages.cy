@@ -16,6 +16,7 @@ site.back  = Yn ôl
 site.back.hiddenText  = i’r dudalen flaenorol
 site.backToGovUk  = Yn ôl i GOV.UK
 site.button.saveAndContinue  = Cadw ac yn eich blaen
+site.button.updateAndContinue = Update and continue
 site.button.acceptAndSend  = Derbyn ac anfon
 site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
 site.error.summary.title  = Mae problem wedi codi
