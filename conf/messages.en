@@ -192,7 +192,7 @@ primaryContactDetails.emailAddress.passcode.summary.detail.link.text =  provide 
 
 
 primaryContactDetails.emailAddress.passcode.confirmation.title = You have confirmed this email address
-primaryContactDetails.emailAddress.passcode.confirmation.detail = Select `Update and continue` to add it to your account.
+primaryContactDetails.emailAddress.passcode.confirmation.detail = Select ‘Update and continue’ to add it to your account.
 
 primaryContactDetails.tooManyAttempts.passcode.title = You’ve been locked out of your PPT registration
 primaryContactDetails.tooManyAttempts.passcode.1 = This is because you entered the wrong email passcode too many times.
