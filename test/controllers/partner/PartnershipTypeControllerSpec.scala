@@ -53,8 +53,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     super.beforeEach()
     when(page.apply(any[Form[PartnerType]])(any(), any())).thenReturn(HtmlFormat.empty)
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
-    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(
-      invocation => s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
+    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(invocation =>
+      s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
     )
   }
 
@@ -115,12 +115,18 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
       spyJourneyAction.setReg(registration)
       mockRegistrationUpdate()
-      mockCreatePartnershipGrsJourneyCreation("http://test/identify-your-partnership/new-journey/company-registration-number")
+      mockCreatePartnershipGrsJourneyCreation(
+        "http://test/identify-your-partnership/new-journey/company-registration-number"
+      )
 
       val result = controller.submit()(postJsonRequestEncoded("answer" -> LIMITED_PARTNERSHIP.toString))
 
-      redirectLocation(result) shouldBe Some("http://test/identify-your-partnership/new-journey/company-registration-number")
-      modifiedRegistration.organisationDetails.partnershipDetails.map(_.partnershipType) shouldBe Some(LIMITED_PARTNERSHIP)
+      redirectLocation(result) shouldBe Some(
+        "http://test/identify-your-partnership/new-journey/company-registration-number"
+      )
+      modifiedRegistration.organisationDetails.partnershipDetails.map(_.partnershipType) shouldBe Some(
+        LIMITED_PARTNERSHIP
+      )
       modifiedRegistration.incorpJourneyId shouldBe Some("new-journey")
     }
 

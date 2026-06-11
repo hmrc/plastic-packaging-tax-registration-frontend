@@ -102,7 +102,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val soleTraderJourneyInitUrl =
     s"$soleTraderHost/sole-trader-identification/api/sole-trader-journey"
 
-  lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
+  lazy val soleTraderJourneyUrl      = s"$soleTraderHost/sole-trader-identification/api/journey"
   lazy val soleTraderFrontendBaseUrl = s"$soleTraderHost/identify-your-sole-trader-business"
 
   def soleTraderFullNameUrl(journeyId: String): String =
@@ -111,7 +111,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   private lazy val partnershipHost: String =
     servicesConfig.baseUrl("partnership-identification-frontend")
 
-  lazy val partnershipFrontendBaseUrl = s"$partnershipHost/identify-your-partnership"
+  lazy val partnershipFrontendBaseUrl    = s"$partnershipHost/identify-your-partnership"
   lazy val partnershipBaseUrl            = s"$partnershipHost/partnership-identification/api"
   lazy val partnershipJourneyUrl         = s"$partnershipBaseUrl/journey"
   lazy val generalPartnershipJourneyUrl  = s"$partnershipBaseUrl/general-partnership-journey"

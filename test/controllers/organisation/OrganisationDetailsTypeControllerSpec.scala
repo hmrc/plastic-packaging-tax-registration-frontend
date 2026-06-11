@@ -62,10 +62,14 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[OrganisationType]], any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(config.incorpCompanyNumberUrl(any())).thenAnswer(invocation => s"http://test/incorp/${invocation.getArgument[String](0)}/company-number")
-    when(config.soleTraderFullNameUrl(any())).thenAnswer(invocation => s"http://test/sole-trader/${invocation.getArgument[String](0)}/full-name")
-    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(
-      invocation => s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
+    when(config.incorpCompanyNumberUrl(any())).thenAnswer(invocation =>
+      s"http://test/incorp/${invocation.getArgument[String](0)}/company-number"
+    )
+    when(config.soleTraderFullNameUrl(any())).thenAnswer(invocation =>
+      s"http://test/sole-trader/${invocation.getArgument[String](0)}/full-name"
+    )
+    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(invocation =>
+      s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
     )
   }
 
@@ -134,7 +138,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(
           aRegistration(
             withIncorpJourneyId(Some("journey-123")),
-            withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY), incorporationDetails = Some(incorporationDetails)))
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.UK_COMPANY),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
           )
         )
         mockRegistrationUpdate()
@@ -210,7 +219,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(
           aRegistration(
             withIncorpJourneyId(Some("journey-321")),
-            withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.SOLE_TRADER), soleTraderDetails = Some(soleTraderDetails)))
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.SOLE_TRADER),
+                soleTraderDetails = Some(soleTraderDetails)
+              )
+            )
           )
         )
         mockRegistrationUpdate()
@@ -251,7 +265,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
         modifiedRegistration.incorpJourneyId shouldBe Some("group-llp")
 
-        redirectLocation(result) shouldBe Some("http://test/identify-your-partnership/group-llp/company-registration-number")
+        redirectLocation(result) shouldBe Some(
+          "http://test/identify-your-partnership/group-llp/company-registration-number"
+        )
       }
 
       "group user reselects organisation type Limited Liability Partnership with an existing partnership journey" in {
@@ -307,7 +323,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits organisation type: " + REGISTERED_SOCIETY in {
-        mockRegisteredSocietyCreateIncorpJourneyId("http://test/identify-your-incorporated-business/reg-soc/company-number")
+        mockRegisteredSocietyCreateIncorpJourneyId(
+          "http://test/identify-your-incorporated-business/reg-soc/company-number"
+        )
         assertRedirectForOrgType(
           REGISTERED_SOCIETY,
           "http://test/identify-your-incorporated-business/reg-soc/company-number",
@@ -354,7 +372,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String, expectedJourneyId: Option[String] = None): Unit = {
+    def assertRedirectForOrgType(
+      orgType: OrgType,
+      redirectUrl: String,
+      expectedJourneyId: Option[String] = None
+    ): Unit = {
 
       spyJourneyAction.setReg(
         aRegistration(

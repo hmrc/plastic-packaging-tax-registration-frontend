@@ -86,21 +86,19 @@ class PartnershipTypeController @Inject() (
                   case SCOTTISH_LIMITED_PARTNERSHIP =>
                     getPartnershipRedirectResultOrResume(
                       selectedPartnershipType = SCOTTISH_LIMITED_PARTNERSHIP,
-                      createJourney =
-                        getPartnershipRedirectUrl(
-                          appConfig.scottishLimitedPartnershipJourneyUrl,
-                          appConfig.grsCallbackUrl
-                        ),
+                      createJourney = getPartnershipRedirectUrl(
+                        appConfig.scottishLimitedPartnershipJourneyUrl,
+                        appConfig.grsCallbackUrl
+                      ),
                       resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl
                     )
                   case LIMITED_LIABILITY_PARTNERSHIP =>
                     getPartnershipRedirectResultOrResume(
                       selectedPartnershipType = LIMITED_LIABILITY_PARTNERSHIP,
-                      createJourney =
-                        getPartnershipRedirectUrl(
-                          appConfig.limitedLiabilityPartnershipJourneyUrl,
-                          appConfig.grsCallbackUrl
-                        ),
+                      createJourney = getPartnershipRedirectUrl(
+                        appConfig.limitedLiabilityPartnershipJourneyUrl,
+                        appConfig.grsCallbackUrl
+                      ),
                       resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl
                     )
                   case _ =>

@@ -56,8 +56,8 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     when(config.generalPartnershipJourneyUrl).thenReturn("/general-partnership-grs-journey-creation")
     when(config.scottishPartnershipJourneyUrl).thenReturn("/scottish-partnership-grs-journey-creation")
-    when(config.partnershipSautrUrl(any())).thenAnswer(
-      invocation => s"http://test/partnership/${invocation.getArgument[String](0)}/sa-utr"
+    when(config.partnershipSautrUrl(any())).thenAnswer(invocation =>
+      s"http://test/partnership/${invocation.getArgument[String](0)}/sa-utr"
     )
   }
 
@@ -118,7 +118,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     "resume an existing general or scottish partnership journey" when {
       Seq(
-        GENERAL_PARTNERSHIP -> generalPartnershipDetails,
+        GENERAL_PARTNERSHIP  -> generalPartnershipDetails,
         SCOTTISH_PARTNERSHIP -> scottishPartnershipDetails
       ).foreach { case (partnershipType, partnershipDetails) =>
         s"the same $partnershipType was reselected" in {

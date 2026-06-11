@@ -166,8 +166,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
           persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractJourneyId) { journeyId =>
             _.copy(
               incorpJourneyId = Some(journeyId),
-              organisationDetails =
-                request.registration.organisationDetails.copy(organisationType = Some(orgType))
+              organisationDetails = request.registration.organisationDetails.copy(organisationType = Some(orgType))
             )
           }
         }
@@ -192,8 +191,8 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         Future.successful(SeeOther(resumeUrl(journeyId)))
       case _ =>
         createJourney.flatMap { journeyStartUrl =>
-          persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractPartnershipJourneyId) { journeyId =>
-            registration =>
+          persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractPartnershipJourneyId) {
+            journeyId => registration =>
               registration.copy(
                 incorpJourneyId = Some(journeyId),
                 organisationDetails = registration.organisationDetails.copy(
@@ -227,7 +226,9 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     else
       Future.successful(SeeOther(journeyStartUrl))
 
-  private def isMainOrganisationJourney(memberId: Option[String])(implicit request: JourneyRequest[AnyContent]): Boolean =
+  private def isMainOrganisationJourney(memberId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Boolean =
     memberId.isEmpty && request.registration.groupDetail.forall(_.currentMemberOrganisationType.isEmpty)
 
   private def extractJourneyId(journeyStartUrl: String): Option[String] =
