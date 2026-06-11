@@ -69,11 +69,16 @@ class PartnershipNameController @Inject() (
           (formWithErrors: Form[PartnershipName]) => Future(BadRequest(page(formWithErrors))),
           partnershipName =>
             updatePartnershipName(partnershipName.value).flatMap { registration =>
-              getGrsRedirectUrl(getPartnershipType(registration) match {
-                case GENERAL_PARTNERSHIP  => appConfig.generalPartnershipJourneyUrl
-                case SCOTTISH_PARTNERSHIP => appConfig.scottishPartnershipJourneyUrl
-                case _                    => throw new IllegalStateException("Unexpected partnership type")
-              }).map(grsRedirectUrl => Redirect(grsRedirectUrl))
+              val partnershipType = getPartnershipType(registration)
+              getPartnershipRedirectResultOrResume(
+                registration = registration,
+                selectedPartnershipType = partnershipType,
+                createJourney = getGrsRedirectUrl(partnershipType match {
+                  case GENERAL_PARTNERSHIP  => appConfig.generalPartnershipJourneyUrl
+                  case SCOTTISH_PARTNERSHIP => appConfig.scottishPartnershipJourneyUrl
+                  case _                    => throw new IllegalStateException("Unexpected partnership type")
+                })
+              )
             }
         )
     }
@@ -110,5 +115,35 @@ class PartnershipNameController @Inject() (
       ),
       url
     )
+
+  private def getPartnershipRedirectResultOrResume(
+    registration: Registration,
+    selectedPartnershipType: forms.organisation.PartnerTypeEnum,
+    createJourney: => Future[String]
+  )(implicit request: JourneyRequest[AnyContent]): Future[play.api.mvc.Result] =
+    registration.incorpJourneyId match {
+      case Some(journeyId)
+          if registration.organisationDetails.partnershipDetails.exists(_.partnershipType == selectedPartnershipType) =>
+        Future.successful(Redirect(appConfig.partnershipSautrUrl(journeyId)))
+      case _ =>
+        createJourney.flatMap { journeyStartUrl =>
+          extractPartnershipJourneyId(journeyStartUrl).fold(Future.successful(Redirect(journeyStartUrl))) { journeyId =>
+            update(_.copy(incorpJourneyId = Some(journeyId))).map {
+              case Right(_)    => Redirect(journeyStartUrl)
+              case Left(error) => throw error
+            }
+          }
+        }
+    }
+
+  private def extractPartnershipJourneyId(journeyStartUrl: String): Option[String] =
+    """.*/identify-your-partnership/([^/]+)/sa-utr$""".r
+      .findFirstMatchIn(journeyStartUrl)
+      .map(_.group(1))
+      .orElse(
+        """/identify-your-partnership/([^/]+)/sa-utr$""".r
+          .findFirstMatchIn(journeyStartUrl)
+          .map(_.group(1))
+      )
 
 }

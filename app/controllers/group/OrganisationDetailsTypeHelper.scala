@@ -25,7 +25,8 @@ import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, S
 import controllers.organisation.{routes => organisationRoutes}
 import controllers.partner.{routes => partnerRoutes}
 import forms.organisation.{OrgType, OrganisationType}
-import models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipGrsCreateRequest, SoleTraderGrsCreateRequest}
+import forms.organisation.PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+import models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipDetails, PartnershipGrsCreateRequest, SoleTraderGrsCreateRequest}
 import models.registration.RegistrationUpdater
 import models.request.JourneyRequest
 
@@ -51,17 +52,25 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
   ): Future[Result] =
     organisationType.answer match {
       case Some(OrgType.UK_COMPANY) =>
-        getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+        getIncorpRedirectResultOrResume(
+          orgType = OrgType.UK_COMPANY,
+          createJourney = getUkCompanyRedirectUrl(businessVerificationCheck, memberId),
+          memberId = memberId
+        )
       case Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
-        getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+        getIncorpRedirectResultOrResume(
+          orgType = OrgType.OVERSEAS_COMPANY_UK_BRANCH,
+          createJourney = getUkCompanyRedirectUrl(businessVerificationCheck, memberId),
+          memberId = memberId
+        )
       case Some(OrgType.SOLE_TRADER) =>
-        getSoleTraderRedirectUrl(memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+        getSoleTraderRedirectResultOrResume(memberId)
       case Some(OrgType.REGISTERED_SOCIETY) =>
-        getRegisteredSocietyRedirectUrl(memberId)
-          .map(journeyStartUrl => SeeOther(journeyStartUrl))
+        getIncorpRedirectResultOrResume(
+          orgType = OrgType.REGISTERED_SOCIETY,
+          createJourney = getRegisteredSocietyRedirectUrl(memberId),
+          memberId = memberId
+        )
       case Some(OrgType.PARTNERSHIP) =>
         getPartnershipRedirectUrl(memberId, businessVerificationCheck)
       case _ =>
@@ -76,8 +85,11 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     executionContext: ExecutionContext
   ): Future[Result] =
     if (request.registration.isGroup)
-      getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, businessVerificationCheck, memberId).map(
-        journeyStartUrl => SeeOther(journeyStartUrl)
+      getPartnershipRedirectResultOrResume(
+        createJourney =
+          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, businessVerificationCheck, memberId),
+        resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl,
+        memberId = memberId
       )
     else
       Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
@@ -94,6 +106,28 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         appConfig.grsAccessibilityStatementPath
       )
     )
+
+  private def getSoleTraderRedirectResultOrResume(memberId: Option[String])(implicit
+    request: JourneyRequest[AnyContent],
+    executionContext: ExecutionContext,
+    headerCarrier: HeaderCarrier
+  ): Future[Result] =
+    request.registration.incorpJourneyId match {
+      case Some(journeyId)
+          if isMainOrganisationJourney(memberId) &&
+            request.registration.organisationDetails.organisationType.contains(OrgType.SOLE_TRADER) =>
+        Future.successful(SeeOther(appConfig.soleTraderFullNameUrl(journeyId)))
+      case _ =>
+        getSoleTraderRedirectUrl(memberId).flatMap { journeyStartUrl =>
+          persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractSoleTraderJourneyId) { journeyId =>
+            _.copy(
+              incorpJourneyId = Some(journeyId),
+              organisationDetails =
+                request.registration.organisationDetails.copy(organisationType = Some(OrgType.SOLE_TRADER))
+            )
+          }
+        }
+    }
 
   private def incorpEntityGrsCreateRequest(businessVerificationCheck: Boolean, memberId: Option[String])(implicit
     request: Request[_]
@@ -112,6 +146,119 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     headerCarrier: HeaderCarrier
   ): Future[String] =
     ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(businessVerificationCheck, memberId))
+
+  private def getIncorpRedirectResultOrResume(
+    orgType: OrgType,
+    createJourney: => Future[String],
+    memberId: Option[String]
+  )(implicit
+    request: JourneyRequest[AnyContent],
+    executionContext: ExecutionContext,
+    headerCarrier: HeaderCarrier
+  ): Future[Result] =
+    request.registration.incorpJourneyId match {
+      case Some(journeyId)
+          if isMainOrganisationJourney(memberId) &&
+            request.registration.organisationDetails.organisationType.contains(orgType) =>
+        Future.successful(SeeOther(appConfig.incorpCompanyNumberUrl(journeyId)))
+      case _ =>
+        createJourney.flatMap { journeyStartUrl =>
+          persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractJourneyId) { journeyId =>
+            _.copy(
+              incorpJourneyId = Some(journeyId),
+              organisationDetails =
+                request.registration.organisationDetails.copy(organisationType = Some(orgType))
+            )
+          }
+        }
+    }
+
+  private def getPartnershipRedirectResultOrResume(
+    createJourney: => Future[String],
+    resumeUrl: String => String,
+    memberId: Option[String]
+  )(implicit
+    request: JourneyRequest[AnyContent],
+    executionContext: ExecutionContext,
+    headerCarrier: HeaderCarrier
+  ): Future[Result] =
+    request.registration.incorpJourneyId match {
+      case Some(journeyId)
+          if isMainOrganisationJourney(memberId) &&
+            request.registration.organisationDetails.organisationType.contains(OrgType.PARTNERSHIP) &&
+            request.registration.organisationDetails.partnershipDetails.exists(
+              _.partnershipType == LIMITED_LIABILITY_PARTNERSHIP
+            ) =>
+        Future.successful(SeeOther(resumeUrl(journeyId)))
+      case _ =>
+        createJourney.flatMap { journeyStartUrl =>
+          persistOrganisationJourneyOrRedirect(journeyStartUrl, memberId, extractPartnershipJourneyId) { journeyId =>
+            registration =>
+              registration.copy(
+                incorpJourneyId = Some(journeyId),
+                organisationDetails = registration.organisationDetails.copy(
+                  organisationType = Some(OrgType.PARTNERSHIP),
+                  partnershipDetails = Some(
+                    registration.organisationDetails.partnershipDetails
+                      .getOrElse(PartnershipDetails(LIMITED_LIABILITY_PARTNERSHIP))
+                      .copy(partnershipType = LIMITED_LIABILITY_PARTNERSHIP)
+                  )
+                )
+              )
+          }
+        }
+    }
+
+  private def persistOrganisationJourneyOrRedirect(
+    journeyStartUrl: String,
+    memberId: Option[String],
+    extractJourneyId: String => Option[String]
+  )(updateRegistrationModel: String => models.registration.Registration => models.registration.Registration)(implicit
+    request: JourneyRequest[AnyContent],
+    executionContext: ExecutionContext,
+    headerCarrier: HeaderCarrier
+  ): Future[Result] =
+    if (isMainOrganisationJourney(memberId))
+      extractJourneyId(journeyStartUrl).fold(Future.successful(SeeOther(journeyStartUrl))) { journeyId =>
+        registrationUpdater
+          .updateRegistration(updateRegistrationModel(journeyId))
+          .map(_ => SeeOther(journeyStartUrl))
+      }
+    else
+      Future.successful(SeeOther(journeyStartUrl))
+
+  private def isMainOrganisationJourney(memberId: Option[String])(implicit request: JourneyRequest[AnyContent]): Boolean =
+    memberId.isEmpty && request.registration.groupDetail.forall(_.currentMemberOrganisationType.isEmpty)
+
+  private def extractJourneyId(journeyStartUrl: String): Option[String] =
+    """.*/identify-your-incorporated-business/([^/]+)/company-number$""".r
+      .findFirstMatchIn(journeyStartUrl)
+      .map(_.group(1))
+      .orElse(
+        """/identify-your-incorporated-business/([^/]+)/company-number$""".r
+          .findFirstMatchIn(journeyStartUrl)
+          .map(_.group(1))
+      )
+
+  private def extractSoleTraderJourneyId(journeyStartUrl: String): Option[String] =
+    """.*/identify-your-sole-trader-business/([^/]+)/full-name$""".r
+      .findFirstMatchIn(journeyStartUrl)
+      .map(_.group(1))
+      .orElse(
+        """/identify-your-sole-trader-business/([^/]+)/full-name$""".r
+          .findFirstMatchIn(journeyStartUrl)
+          .map(_.group(1))
+      )
+
+  private def extractPartnershipJourneyId(journeyStartUrl: String): Option[String] =
+    """.*/identify-your-partnership/([^/]+)/(?:company-registration-number|sa-utr)$""".r
+      .findFirstMatchIn(journeyStartUrl)
+      .map(_.group(1))
+      .orElse(
+        """/identify-your-partnership/([^/]+)/(?:company-registration-number|sa-utr)$""".r
+          .findFirstMatchIn(journeyStartUrl)
+          .map(_.group(1))
+      )
 
   private def getRegisteredSocietyRedirectUrl(
     memberId: Option[String]

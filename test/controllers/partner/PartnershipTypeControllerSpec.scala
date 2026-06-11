@@ -22,7 +22,7 @@ import forms.organisation.PartnerType
 import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import models.genericregistration.PartnershipDetails
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatest.Inspectors.forAll
 
 import play.api.data.Form
@@ -53,6 +53,9 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     super.beforeEach()
     when(page.apply(any[Form[PartnerType]])(any(), any())).thenReturn(HtmlFormat.empty)
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
+    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(
+      invocation => s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
+    )
   }
 
   "Partnership Type Controller" should {
@@ -88,7 +91,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         )
       ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
-          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
+          val registration =
+            aRegistration(withIncorpJourneyId(None), withPartnershipDetails(Some(partnershipDetails._2)))
 
           spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
@@ -99,6 +103,49 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
+        }
+      }
+    }
+
+    "persist the newly selected partnership type when starting a fresh partnership GRS journey" in {
+      val registration = aRegistration(
+        withIncorpJourneyId(None),
+        withPartnershipDetails(Some(PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP)))
+      )
+
+      spyJourneyAction.setReg(registration)
+      mockRegistrationUpdate()
+      mockCreatePartnershipGrsJourneyCreation("http://test/identify-your-partnership/new-journey/company-registration-number")
+
+      val result = controller.submit()(postJsonRequestEncoded("answer" -> LIMITED_PARTNERSHIP.toString))
+
+      redirectLocation(result) shouldBe Some("http://test/identify-your-partnership/new-journey/company-registration-number")
+      modifiedRegistration.organisationDetails.partnershipDetails.map(_.partnershipType) shouldBe Some(LIMITED_PARTNERSHIP)
+      modifiedRegistration.incorpJourneyId shouldBe Some("new-journey")
+    }
+
+    "resume an existing partnership GRS journey" when {
+      forAll(
+        Seq(
+          SCOTTISH_LIMITED_PARTNERSHIP,
+          LIMITED_PARTNERSHIP,
+          LIMITED_LIABILITY_PARTNERSHIP
+        )
+      ) { partnershipType =>
+        s"the same $partnershipType was reselected" in {
+          val registration = aRegistration(
+            withIncorpJourneyId(Some("journey-123")),
+            withPartnershipDetails(Some(PartnershipDetails(partnershipType = partnershipType)))
+          )
+
+          spyJourneyAction.setReg(registration)
+          mockRegistrationUpdate()
+
+          val result = controller.submit()(postJsonRequestEncoded("answer" -> partnershipType.toString))
+
+          redirectLocation(result) shouldBe Some("http://test/partnership/journey-123/company-registration-number")
+
+          verify(mockPartnershipGrsConnector, never()).createJourney(any(), any())(any(), any())
         }
       }
     }

@@ -60,9 +60,21 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       validAppConfig.incorpDetailsUrl must be("http://localhost:9718/incorporated-entity-identification/api/journey")
     }
 
+    "have 'incorpCompanyNumberUrl(...)' defined" in {
+      validAppConfig.incorpCompanyNumberUrl("journey-123") must be(
+        "http://localhost:9718/identify-your-incorporated-business/journey-123/company-number"
+      )
+    }
+
     "have 'soleTraderJourneyUrl' defined" in {
       validAppConfig.soleTraderJourneyInitUrl must be(
         "http://localhost:9717/sole-trader-identification/api/sole-trader-journey"
+      )
+    }
+
+    "have 'soleTraderFullNameUrl(...)' defined" in {
+      validAppConfig.soleTraderFullNameUrl("journey-123") must be(
+        "http://localhost:9717/identify-your-sole-trader-business/journey-123/full-name"
       )
     }
 

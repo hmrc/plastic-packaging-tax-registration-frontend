@@ -20,7 +20,7 @@ import builders.RegistrationBuilder
 import connectors.{DownstreamServiceError, RegistrationConnector, ServiceError}
 import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.{ArgumentCaptor, Mockito}
@@ -48,8 +48,8 @@ trait MockRegistrationConnector extends MockitoSugar with RegistrationBuilder wi
 
   def modifiedRegistration: Registration = {
     val captor = ArgumentCaptor.forClass(classOf[Registration])
-    verify(mockRegistrationConnector).update(captor.capture())(any())
-    captor.getValue
+    verify(mockRegistrationConnector, atLeastOnce()).update(captor.capture())(any())
+    captor.getAllValues.get(captor.getAllValues.size() - 1)
   }
 
   override protected def afterEach(): Unit = {

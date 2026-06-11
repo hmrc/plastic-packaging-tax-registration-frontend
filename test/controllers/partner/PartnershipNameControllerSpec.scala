@@ -18,12 +18,13 @@ package controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{never, verify, when}
 
 import play.api.http.Status.BAD_REQUEST
-import play.api.test.Helpers.{await, contentAsString, status}
+import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.organisation.PartnershipName
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import play.api.test.FakeRequest
 import views.html.organisation.partnership_name
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -42,7 +43,8 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     page = page
   )
 
-  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
+  private val partnershipRegistration =
+    aRegistration(withIncorpJourneyId(None), withPartnershipDetails(Some(generalPartnershipDetails)))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,6 +56,9 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     when(config.generalPartnershipJourneyUrl).thenReturn("/general-partnership-grs-journey-creation")
     when(config.scottishPartnershipJourneyUrl).thenReturn("/scottish-partnership-grs-journey-creation")
+    when(config.partnershipSautrUrl(any())).thenAnswer(
+      invocation => s"http://test/partnership/${invocation.getArgument[String](0)}/sa-utr"
+    )
   }
 
   "Partnership Name Controller" should {
@@ -100,13 +105,37 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     "redirect to scottish partnership grs journey" in {
 
-      spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))))
+      spyJourneyAction.setReg(
+        aRegistration(withIncorpJourneyId(None), withPartnershipDetails(Some(scottishPartnershipDetails)))
+      )
 
       await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
       grsJourneyCreationUrl shouldBe config.scottishPartnershipJourneyUrl
+    }
+
+    "resume an existing general or scottish partnership journey" when {
+      Seq(
+        GENERAL_PARTNERSHIP -> generalPartnershipDetails,
+        SCOTTISH_PARTNERSHIP -> scottishPartnershipDetails
+      ).foreach { case (partnershipType, partnershipDetails) =>
+        s"the same $partnershipType was reselected" in {
+          spyJourneyAction.setReg(
+            aRegistration(
+              withIncorpJourneyId(Some("journey-321")),
+              withPartnershipDetails(Some(partnershipDetails))
+            )
+          )
+
+          val result = controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic")))
+
+          redirectLocation(result) shouldBe Some("http://test/partnership/journey-321/sa-utr")
+
+          verify(mockPartnershipGrsConnector, never()).createJourney(any(), any())(any(), any())
+        }
+      }
     }
 
     "reject invalid partnership names" in {
@@ -132,7 +161,9 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       "submitting partnership name" when {
         "registration is of unexpected partnership type" in {
-          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
+          spyJourneyAction.setReg(
+            aRegistration(withIncorpJourneyId(None), withPartnershipDetails(Some(llpPartnershipDetails)))
+          )
 
           intercept[IllegalStateException] {
             await(controller.submit()(postRequestEncoded(PartnershipName("Partners in Plastic"))))
