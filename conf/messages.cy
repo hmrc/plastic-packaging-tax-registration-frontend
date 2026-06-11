@@ -16,7 +16,7 @@ site.back  = Yn ôl
 site.back.hiddenText  = i’r dudalen flaenorol
 site.backToGovUk  = Yn ôl i GOV.UK
 site.button.saveAndContinue  = Cadw ac yn eich blaen
-site.button.updateAndContinue = Update and continue
+site.button.updateAndContinue = Diweddaru a pharhau
 site.button.acceptAndSend  = Derbyn ac anfon
 site.button.saveAndComeBackLater  = Cadw a dod yn ôl yn nes ymlaen
 site.error.summary.title  = Mae problem wedi codi
@@ -210,8 +210,8 @@ primaryContactDetails.emailAddress.passcode.summary.detail  = Gall yr e-bost gym
 primaryContactDetails.emailAddress.passcode.summary.detail.2  = Gwiriwch eich ffolder sbam neu sothach. Os nad yw wedi cyrraedd o hyd, gallwch
 primaryContactDetails.emailAddress.passcode.summary.detail.link.text  = ddarparu cyfeiriad e-bost gwahanol
 
-primaryContactDetails.emailAddress.passcode.confirmation.title  = Cyfeiriad e-bost wedi’i gadarnhau
-primaryContactDetails.emailAddress.passcode.confirmation.detail  = Mae’r cyfeiriad e-bost hwn wedi’i gadarnhau erbyn hyn.
+primaryContactDetails.emailAddress.passcode.confirmation.title  = Rydych wedi cadarnhau’r cyfeiriad e-bost hwn
+primaryContactDetails.emailAddress.passcode.confirmation.detail  = Dewiswch ‘Diweddaru a pharhau’ i’w ychwanegu at eich cyfrif.
 
 primaryContactDetails.tooManyAttempts.passcode.title  = Rydych wedi cael eich cloi allan o’ch cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig
 primaryContactDetails.tooManyAttempts.passcode.1  = Y rheswm dros hyn yw eich bod wedi nodi’r cod mynediad e-bost anghywir gormod o weithiau.
