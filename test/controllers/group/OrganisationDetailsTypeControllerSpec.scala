@@ -25,7 +25,7 @@ import forms.organisation.OrgType
 import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP, UK_COMPANY}
 import forms.organisation.OrganisationType
 import models.registration.group.{GroupMember, OrganisationDetails}
-import models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
+import models.registration.{GroupDetail, NewRegistrationUpdateService, OrganisationDetails as MainOrganisationDetails, Registration}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.data.Form
@@ -174,7 +174,13 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         )
       )
 
-      spyJourneyAction.setReg(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
+      spyJourneyAction.setReg(
+        aRegistration(
+          withIncorpJourneyId(None),
+          withOrganisationDetails(MainOrganisationDetails()),
+          withGroupDetail(groupDetail = Some(groupDetails))
+        )
+      )
       mockRegistrationUpdate()
 
       val correctForm = Seq("answer" -> orgType.toString)

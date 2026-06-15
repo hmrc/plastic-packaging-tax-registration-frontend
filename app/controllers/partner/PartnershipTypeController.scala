@@ -77,14 +77,30 @@ class PartnershipTypeController @Inject() (
                   case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
                     Future(Redirect(routes.PartnershipNameController.displayPage().url))
                   case LIMITED_PARTNERSHIP =>
-                    getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl, appConfig.grsCallbackUrl)
-                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                    getPartnershipRedirectResultOrResume(
+                      selectedPartnershipType = LIMITED_PARTNERSHIP,
+                      createJourney =
+                        getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl, appConfig.grsCallbackUrl),
+                      resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl
+                    )
                   case SCOTTISH_LIMITED_PARTNERSHIP =>
-                    getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl, appConfig.grsCallbackUrl)
-                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                    getPartnershipRedirectResultOrResume(
+                      selectedPartnershipType = SCOTTISH_LIMITED_PARTNERSHIP,
+                      createJourney = getPartnershipRedirectUrl(
+                        appConfig.scottishLimitedPartnershipJourneyUrl,
+                        appConfig.grsCallbackUrl
+                      ),
+                      resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl
+                    )
                   case LIMITED_LIABILITY_PARTNERSHIP =>
-                    getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl, appConfig.grsCallbackUrl)
-                      .map(journeyStartUrl => SeeOther(journeyStartUrl))
+                    getPartnershipRedirectResultOrResume(
+                      selectedPartnershipType = LIMITED_LIABILITY_PARTNERSHIP,
+                      createJourney = getPartnershipRedirectUrl(
+                        appConfig.limitedLiabilityPartnershipJourneyUrl,
+                        appConfig.grsCallbackUrl
+                      ),
+                      resumeUrl = appConfig.partnershipCompanyRegistrationNumberUrl
+                    )
                   case _ =>
                     Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
                 }
@@ -92,6 +108,49 @@ class PartnershipTypeController @Inject() (
             }
         )
     }
+
+  private def getPartnershipRedirectResultOrResume(
+    selectedPartnershipType: forms.organisation.PartnerTypeEnum,
+    createJourney: => Future[String],
+    resumeUrl: String => String
+  )(implicit request: JourneyRequest[AnyContent]): Future[play.api.mvc.Result] =
+    request.registration.incorpJourneyId match {
+      case Some(journeyId)
+          if request.registration.organisationDetails.partnershipDetails.exists(
+            _.partnershipType == selectedPartnershipType
+          ) =>
+        Future.successful(SeeOther(resumeUrl(journeyId)))
+      case _ =>
+        createJourney.flatMap { journeyStartUrl =>
+          extractPartnershipJourneyId(journeyStartUrl).fold(Future.successful(SeeOther(journeyStartUrl))) { journeyId =>
+            update { registration =>
+              registration.copy(
+                incorpJourneyId = Some(journeyId),
+                organisationDetails = registration.organisationDetails.copy(
+                  partnershipDetails = Some(
+                    registration.organisationDetails.partnershipDetails
+                      .getOrElse(PartnershipDetails(partnershipType = selectedPartnershipType))
+                      .copy(partnershipType = selectedPartnershipType)
+                  )
+                )
+              )
+            }.map {
+              case Right(_)    => SeeOther(journeyStartUrl)
+              case Left(error) => throw error
+            }
+          }
+        }
+    }
+
+  private def extractPartnershipJourneyId(journeyStartUrl: String): Option[String] =
+    """.*/identify-your-partnership/([^/]+)/company-registration-number$""".r
+      .findFirstMatchIn(journeyStartUrl)
+      .map(_.group(1))
+      .orElse(
+        """/identify-your-partnership/([^/]+)/company-registration-number$""".r
+          .findFirstMatchIn(journeyStartUrl)
+          .map(_.group(1))
+      )
 
   private def updateRegistration(
     formData: PartnerType

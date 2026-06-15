@@ -91,6 +91,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpLimitedCompanyJourneyUrl  = s"$incorpBaseUrl/limited-company-journey"
   lazy val incorpRegistedSocietyJourneyUrl = s"$incorpBaseUrl/registered-society-journey"
   lazy val incorpDetailsUrl                = s"$incorpBaseUrl/journey"
+  lazy val incorpFrontendBaseUrl           = s"$incorpIdHost/identify-your-incorporated-business"
+
+  def incorpCompanyNumberUrl(journeyId: String): String =
+    s"$incorpFrontendBaseUrl/$journeyId/company-number"
 
   private lazy val soleTraderHost: String =
     servicesConfig.baseUrl("sole-trader-identification-frontend")
@@ -98,11 +102,16 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val soleTraderJourneyInitUrl =
     s"$soleTraderHost/sole-trader-identification/api/sole-trader-journey"
 
-  lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
+  lazy val soleTraderJourneyUrl      = s"$soleTraderHost/sole-trader-identification/api/journey"
+  lazy val soleTraderFrontendBaseUrl = s"$soleTraderHost/identify-your-sole-trader-business"
+
+  def soleTraderFullNameUrl(journeyId: String): String =
+    s"$soleTraderFrontendBaseUrl/$journeyId/full-name"
 
   private lazy val partnershipHost: String =
     servicesConfig.baseUrl("partnership-identification-frontend")
 
+  lazy val partnershipFrontendBaseUrl    = s"$partnershipHost/identify-your-partnership"
   lazy val partnershipBaseUrl            = s"$partnershipHost/partnership-identification/api"
   lazy val partnershipJourneyUrl         = s"$partnershipBaseUrl/journey"
   lazy val generalPartnershipJourneyUrl  = s"$partnershipBaseUrl/general-partnership-journey"
@@ -114,6 +123,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val limitedLiabilityPartnershipJourneyUrl =
     s"$partnershipBaseUrl/limited-liability-partnership-journey"
+
+  def partnershipSautrUrl(journeyId: String): String =
+    s"$partnershipFrontendBaseUrl/$journeyId/sa-utr"
+
+  def partnershipCompanyRegistrationNumberUrl(journeyId: String): String =
+    s"$partnershipFrontendBaseUrl/$journeyId/company-registration-number"
 
   // Define other partnership URLs here?
 

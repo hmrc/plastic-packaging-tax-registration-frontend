@@ -25,7 +25,7 @@ import forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEA
 import forms.organisation.{OrgType, OrganisationType, PartnerTypeEnum}
 import models.registration.{NewRegistrationUpdateService, OrganisationDetails}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.atLeastOnce
+import org.mockito.Mockito.{atLeastOnce, never}
 import org.mockito.Mockito.{reset, verify, when}
 
 import play.api.data.Form
@@ -62,6 +62,15 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[OrganisationType]], any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(config.incorpCompanyNumberUrl(any())).thenAnswer(invocation =>
+      s"http://test/incorp/${invocation.getArgument[String](0)}/company-number"
+    )
+    when(config.soleTraderFullNameUrl(any())).thenAnswer(invocation =>
+      s"http://test/sole-trader/${invocation.getArgument[String](0)}/full-name"
+    )
+    when(config.partnershipCompanyRegistrationNumberUrl(any())).thenAnswer(invocation =>
+      s"http://test/partnership/${invocation.getArgument[String](0)}/company-registration-number"
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -117,12 +126,117 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
     "return 303 (OK)" when {
 
       "user submits organisation type: " + UK_COMPANY in {
-        mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
-        assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
+        mockUkCompanyCreateIncorpJourneyId("http://test/identify-your-incorporated-business/uk-company/company-number")
+        assertRedirectForOrgType(
+          UK_COMPANY,
+          "http://test/identify-your-incorporated-business/uk-company/company-number",
+          expectedJourneyId = Some("uk-company")
+        )
       }
+
+      "user reselects organisation type: " + UK_COMPANY + " with an existing incorporated journey" in {
+        spyJourneyAction.setReg(
+          aRegistration(
+            withIncorpJourneyId(Some("journey-123")),
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.UK_COMPANY),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> UK_COMPANY.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(UK_COMPANY)
+        redirectLocation(result) shouldBe Some("http://test/incorp/journey-123/company-number")
+
+        verify(mockUkCompanyGrsConnector, never()).createJourney(any())(any(), any())
+      }
+
+      "user reselects organisation type: " + OVERSEAS_COMPANY_UK_BRANCH + " with an existing incorporated journey" in {
+        spyJourneyAction.setReg(
+          aRegistration(
+            withIncorpJourneyId(Some("journey-456")),
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> OVERSEAS_COMPANY_UK_BRANCH.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(OVERSEAS_COMPANY_UK_BRANCH)
+        redirectLocation(result) shouldBe Some("http://test/incorp/journey-456/company-number")
+
+        verify(mockUkCompanyGrsConnector, never()).createJourney(any())(any(), any())
+      }
+
+      "user reselects organisation type: " + REGISTERED_SOCIETY + " with an existing incorporated journey" in {
+        spyJourneyAction.setReg(
+          aRegistration(
+            withIncorpJourneyId(Some("journey-789")),
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.REGISTERED_SOCIETY),
+                incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> REGISTERED_SOCIETY.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(REGISTERED_SOCIETY)
+        redirectLocation(result) shouldBe Some("http://test/incorp/journey-789/company-number")
+
+        verify(mockRegisteredSocietyGrsConnector, never()).createJourney(any())(any(), any())
+      }
+
       "user submits organisation type: " + SOLE_TRADER in {
-        mockSoleTraderCreateIncorpJourneyId("http://test/redirect/sole-trader")
-        assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
+        mockSoleTraderCreateIncorpJourneyId("http://test/identify-your-sole-trader-business/sole-trader/full-name")
+        assertRedirectForOrgType(
+          SOLE_TRADER,
+          "http://test/identify-your-sole-trader-business/sole-trader/full-name",
+          expectedJourneyId = Some("sole-trader")
+        )
+      }
+
+      "user reselects organisation type: " + SOLE_TRADER + " with an existing sole trader journey" in {
+        spyJourneyAction.setReg(
+          aRegistration(
+            withIncorpJourneyId(Some("journey-321")),
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(OrgType.SOLE_TRADER),
+                soleTraderDetails = Some(soleTraderDetails)
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> SOLE_TRADER.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) shouldBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(SOLE_TRADER)
+        redirectLocation(result) shouldBe Some("http://test/sole-trader/journey-321/full-name")
+
+        verify(mockSoleTraderGrsConnector, never()).createJourney(any())(any(), any())
       }
       "user submits organisation type: " + PARTNERSHIP in {
         mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
@@ -130,9 +244,17 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
-        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreatePartnershipGrsJourneyCreation(
+          "http://test/identify-your-partnership/group-llp/company-registration-number"
+        )
 
-        spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+        spyJourneyAction.setReg(
+          aRegistration(
+            withRegistrationType(Some(RegType.GROUP)),
+            withIncorpJourneyId(None),
+            withOrganisationDetails(OrganisationDetails())
+          )
+        )
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> PARTNERSHIP.toString)
@@ -141,8 +263,37 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         status(result) shouldBe SEE_OTHER
         modifiedRegistration.organisationDetails.organisationType shouldBe Some(PARTNERSHIP)
         modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+        modifiedRegistration.incorpJourneyId shouldBe Some("group-llp")
 
-        redirectLocation(result) shouldBe Some("http://test/redirect/partnership")
+        redirectLocation(result) shouldBe Some(
+          "http://test/identify-your-partnership/group-llp/company-registration-number"
+        )
+      }
+
+      "group user reselects organisation type Limited Liability Partnership with an existing partnership journey" in {
+        spyJourneyAction.setReg(
+          aRegistration(
+            withRegistrationType(Some(RegType.GROUP)),
+            withIncorpJourneyId(Some("journey-654")),
+            withOrganisationDetails(
+              OrganisationDetails(
+                organisationType = Some(PARTNERSHIP),
+                partnershipDetails = Some(llpPartnershipDetails)
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> PARTNERSHIP.toString)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("http://test/partnership/journey-654/company-registration-number")
+        modifiedRegistration.organisationDetails.organisationType shouldBe Some(PARTNERSHIP)
+        modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType shouldBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+
+        verify(mockPartnershipGrsConnector, never()).createJourney(any(), any())(any(), any())
       }
 
       "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
@@ -151,6 +302,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(
           aRegistration(
             withRegistrationType(Some(RegType.GROUP)),
+            withIncorpJourneyId(None),
             withPartnershipDetails(
               Some(
                 partnershipDetailsWithBusinessAddress(partnerTypeEnum = PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
@@ -171,8 +323,14 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits organisation type: " + REGISTERED_SOCIETY in {
-        mockRegisteredSocietyCreateIncorpJourneyId("http://test/redirect/reg-soc")
-        assertRedirectForOrgType(REGISTERED_SOCIETY, "http://test/redirect/reg-soc")
+        mockRegisteredSocietyCreateIncorpJourneyId(
+          "http://test/identify-your-incorporated-business/reg-soc/company-number"
+        )
+        assertRedirectForOrgType(
+          REGISTERED_SOCIETY,
+          "http://test/identify-your-incorporated-business/reg-soc/company-number",
+          expectedJourneyId = Some("reg-soc")
+        )
       }
 
       "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
@@ -182,8 +340,14 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         )
       }
       "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
-        mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
-        assertRedirectForOrgType(OVERSEAS_COMPANY_UK_BRANCH, "http://test/redirect/overseas-uk-company")
+        mockUkCompanyCreateIncorpJourneyId(
+          "http://test/identify-your-incorporated-business/overseas-uk-company/company-number"
+        )
+        assertRedirectForOrgType(
+          OVERSEAS_COMPANY_UK_BRANCH,
+          "http://test/identify-your-incorporated-business/overseas-uk-company/company-number",
+          expectedJourneyId = Some("overseas-uk-company")
+        )
       }
 
       "user submits organisation type: " + TRUST in {
@@ -208,9 +372,18 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
+    def assertRedirectForOrgType(
+      orgType: OrgType,
+      redirectUrl: String,
+      expectedJourneyId: Option[String] = None
+    ): Unit = {
 
-      spyJourneyAction.setReg(aRegistration())
+      spyJourneyAction.setReg(
+        aRegistration(
+          withIncorpJourneyId(None),
+          withOrganisationDetails(OrganisationDetails())
+        )
+      )
       mockRegistrationUpdate()
 
       val correctForm = Seq("answer" -> orgType.toString)
@@ -218,6 +391,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       status(result) shouldBe SEE_OTHER
       modifiedRegistration.organisationDetails.organisationType shouldBe Some(orgType)
+      modifiedRegistration.incorpJourneyId shouldBe expectedJourneyId
 
       verify(mockAuditor, atLeastOnce()).orgTypeSelected(any(), refEq(Some(orgType)))(any(), any())
 
@@ -285,7 +459,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
     "user submits form for uk company" in {
 
-      spyJourneyAction.setReg(aRegistration())
+      spyJourneyAction.setReg(
+        aRegistration(
+          withIncorpJourneyId(None),
+          withOrganisationDetails(OrganisationDetails())
+        )
+      )
       mockRegistrationUpdate()
       mockUkCompanyCreateIncorpJourneyIdException()
 
