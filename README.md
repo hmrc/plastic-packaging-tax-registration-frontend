@@ -24,6 +24,9 @@ sm2 --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMA
 # For the above organisation types along with partnerships and sole traders use these profiles -
 sm2 --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
 
+# If testing the email verification pages (runs EMAIL_VERIFICATION)
+sm2 --start PLASTIC_PACKAGING_TAX_AT_REGISTRATION 
+
 # confirm all services are running
 sm2 -s 
 ```

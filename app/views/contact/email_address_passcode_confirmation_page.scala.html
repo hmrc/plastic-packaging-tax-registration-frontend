@@ -29,7 +29,7 @@
   paragraphBody: paragraphBody,
   appConfig: AppConfig,
   formHelper: FormWithCSRF,
-  continueButton: continue
+  updateAndContinueButton: updateAndContinue
 )
 @(updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
 
@@ -49,6 +49,6 @@
 
         @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.detail"), id = Some("email-address-passcode-confirmation-id"))
 
-        @continueButton()
+        @updateAndContinueButton()
     }
 }

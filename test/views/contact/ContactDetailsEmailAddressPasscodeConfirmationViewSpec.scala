@@ -52,8 +52,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
       view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
     }
 
-    "display 'Continue' button" in {
-      view.getElementById("submit").text() mustBe "Continue"
+    "display 'Update and continue' button" in {
+      view.getElementById("submit").text() mustBe "Update and continue"
     }
 
   }
