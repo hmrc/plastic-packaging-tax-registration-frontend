@@ -35,7 +35,7 @@ class SignOutController @Inject() (
     Action {
       signOutReason match {
         case SignOutReason.SessionTimeout =>
-          Redirect(appConfig.signOutUrl, Map("continue" -> Seq(routes.SignOutController.sessionTimeoutSignedOut().url)))
+          Redirect(appConfig.signOutUrl, Map("continue" -> Seq(appConfig.timedOutUrl)))
         case SignOutReason.UserAction =>
           Redirect(appConfig.signOutUrl, Map("continue" -> Seq(appConfig.exitSurveyUrl)))
       }

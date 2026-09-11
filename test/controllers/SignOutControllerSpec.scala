@@ -38,7 +38,7 @@ class SignOutControllerSpec extends ControllerSpec {
     new SignOutController(config, sessionTimeoutPage, mcc)
 
   private val sessionTimeoutUrlEncoded: String =
-    URLEncoder.encode(routes.SignOutController.sessionTimeoutSignedOut().url, "UTF-8")
+    URLEncoder.encode(givenTimeoutUrl, "UTF-8")
 
   private val feedbackSurveyUrlEncoded: String =
     URLEncoder.encode(givenExistSurveyUrl, "UTF-8")
@@ -168,6 +168,12 @@ class SignOutControllerSpec extends ControllerSpec {
     val exitSurveyUrl = "http://localhost:9514/feedback/plastic-packaging-tax-registration"
     when(config.exitSurveyUrl).thenReturn(exitSurveyUrl)
     exitSurveyUrl
+  }
+
+  private def givenTimeoutUrl = {
+    val timedOutUrl = "http://localhost:8503/register-for-plastic-packaging-tax/security-signed-out"
+    when(config.timedOutUrl).thenReturn(timedOutUrl)
+    timedOutUrl
   }
 
 }
