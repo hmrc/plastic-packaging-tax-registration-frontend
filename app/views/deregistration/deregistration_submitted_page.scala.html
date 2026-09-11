@@ -34,7 +34,7 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("deregistration.confirmation.title")) {
+    title = Title("deregistration.confirmation.title"), displayUserResearchBanner = true) {
 
     @govukPanel(Panel(
         title = HtmlContent(messages("deregistration.confirmation.title"))

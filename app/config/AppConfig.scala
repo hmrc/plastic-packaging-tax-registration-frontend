@@ -35,6 +35,7 @@ package config
 import play.api.Configuration
 import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.i18n.Messages
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -156,10 +157,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   private lazy val feedbackUnauthenticatedLink: String =
     config.get[String]("urls.feedback.unauthenticatedLink")
 
-  lazy val exitSurveyUrl: String   = config.get[String]("urls.exitSurvey")
-  lazy val hmrcPrivacyUrl: String  = config.get[String]("urls.hmrcPrivacy")
-  lazy val govUkUrl: String        = config.get[String]("urls.govUk")
-  lazy val userResearchUrl: String = config.get[String]("urls.userResearchUrl")
+  lazy val exitSurveyUrl: String  = config.get[String]("urls.exitSurvey")
+  lazy val hmrcPrivacyUrl: String = config.get[String]("urls.hmrcPrivacy")
+  lazy val govUkUrl: String       = config.get[String]("urls.govUk")
 
   private lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
   lazy val pptRegistrationUrl: String          = s"$pptServiceHost/registrations"
@@ -206,6 +206,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=$serviceIdentifier"
+
+  lazy val userResearchBannerEnabled: Boolean =
+    config.getOptional[Boolean]("features.user-research-banner").getOrElse(false)
+
+  def userResearchBannerUrl()(implicit messages: Messages): String =
+    config.get[String](s"urls.user-research-banner-${messages.lang.code}")
 
   lazy val pptAccountUrl     = s"$pptAccountHost/plastic-packaging-tax/account"
   lazy val pptNotEnrolledUrl = s"$pptAccountHost/plastic-packaging-tax/account/not-enrolled"

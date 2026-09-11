@@ -22,6 +22,8 @@
 @import models.request.{AuthenticatedRequest, JourneyRequest}
 @import views.viewmodels.{Title, BackButton, BackButtonJs, BackButtonLink}
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.Banners
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 
 @this(
     hmrcStandardPage: HmrcStandardPage,
@@ -36,7 +38,8 @@
 @(
     title: Title,
     backButton: Option[BackButtonLink] = None,
-    useCustomContentWidth: Boolean = false
+    useCustomContentWidth: Boolean = false,
+    displayUserResearchBanner: Boolean = false,
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
@@ -101,7 +104,10 @@
             serviceUrl = Some(pptRoutes.StartRegistrationController.startRegistration().url),
             signOutUrl = Some(pptRoutes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction).url)
         ),
-        banners = Banners(phaseBanner = None),
+        banners = Banners(phaseBanner = None, userResearchBanner = Option.when(displayUserResearchBanner && appConfig.userResearchBannerEnabled)(UserResearchBanner(
+            url = appConfig.userResearchBannerUrl(),
+            hideCloseButton = true
+        ))),
         pageTitle = Some(title.toString(messages)),
         templateOverrides = TemplateOverrides(
             additionalHeadBlock = Some(head),
