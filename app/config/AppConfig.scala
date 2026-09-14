@@ -71,6 +71,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val loginUrl: String         = config.get[String]("urls.login")
   lazy val loginContinueUrl: String = config.get[String]("urls.loginContinue")
   lazy val signOutUrl: String       = config.get[String]("urls.logOut")
+  lazy val timedOutUrl: String      = config.get[String]("urls.timedOut")
 
   lazy val signOutLink: String = {
     val signOutMethod = controllers.routes.SignOutController.signOut(views.viewmodels.SignOutReason.UserAction)
