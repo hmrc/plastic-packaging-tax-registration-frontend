@@ -47,10 +47,9 @@ trait ViewAssertions extends ViewMatchers {
 
     val link = view.select(".hmrc-user-research-banner__link")
     link.attr("href") should include("https://banner-cy")
-    link.text mustBe "Ymunwch â'n panel ymchwil (yn agor tab newydd)"
+    link.text mustBe "Ymunwch â’n panel ymchwil (yn agor tab newydd)"
   }
 
   def containNoUserResearchBanner(view: Element): Unit =
     view.select(".hmrc-user-research-banner").size() mustBe 0
 }
-
