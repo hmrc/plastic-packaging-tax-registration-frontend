@@ -31,7 +31,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("enrolment.confirmation.title")) {
+@govukLayout(title = Title("enrolment.confirmation.title"), displayUserResearchBanner = true) {
 
   @govukPanel(Panel(
     title = Text(messages("enrolment.confirmation.title"))
