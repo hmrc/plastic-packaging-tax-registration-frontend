@@ -20,6 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import config.AppConfig
 import play.api.i18n.{Lang, Messages, MessagesImpl}
 import play.api.i18n.MessagesApi
@@ -31,35 +33,66 @@ import views.html.enrolment.{confirmation_page => enrolmentConfirmationPage}
 
 class UserResearchBannerSpec extends UnitViewSpec with Matchers {
 
+  private def appWith(bannerEnabled: Boolean): Application =
+    new GuiceApplicationBuilder()
+      .configure(
+        "features.user-research-banner" -> bannerEnabled,
+        "metrics.jvm"                   -> false,
+        "metrics.enabled"               -> false
+      )
+      .build()
+
   val appConfig: AppConfig     = inject[AppConfig]
   val messagesApi: MessagesApi = inject[MessagesApi]
 
-  private val confirmationPage   = inject[confirmation_page]
-  private val deregistrationPage = inject[deregistration_submitted_page]
-  private val accountCreatedPage = inject[enrolmentConfirmationPage]
+  private val confirmationPage = inject[confirmation_page]
+
+  private lazy val bannerOn  = appWith(bannerEnabled = true)
+  private lazy val bannerOff = appWith(bannerEnabled = false)
 
   private def welshMessages: Messages =
     MessagesImpl(Lang("cy"), messagesApi)
 
-  private def optedInPages(msgs: Messages): Seq[(String, Html)] = Seq(
-    "confirmation_page"             -> confirmationPage()(registrationRequest, msgs, new Flash(Map.empty)),
-    "deregistration_submitted_page" -> deregistrationPage()(registrationRequest, msgs),
-    "account_created_page"          -> accountCreatedPage()(registrationRequest, msgs)
-  )
+  private def optedInPages(app: Application, msgs: Messages): Seq[(String, Html)] = {
+    val injector = app.injector
+    Seq(
+      "confirmation_page" -> injector.instanceOf[confirmation_page].apply()(
+        registrationRequest,
+        msgs,
+        new Flash(Map.empty)
+      ),
+      "deregistration_submitted_page" -> injector.instanceOf[deregistration_submitted_page].apply()(
+        registrationRequest,
+        msgs
+      ),
+      "account_created_page" -> injector.instanceOf[enrolmentConfirmationPage].apply()(registrationRequest, msgs)
+    )
+  }
 
   private def asElement(html: Html): Element = Jsoup.parse(html.toString()).body()
 
   "The user research banner" should {
 
     "be displayed on every opted-in page in English" in {
-      optedInPages(messages).foreach { case (name, html) =>
+
+      implicit val msgs: Messages = MessagesImpl(Lang("en"), messagesApi)
+
+      optedInPages(bannerOn, msgs).foreach { case (name, html) =>
         withClue(s"$name: ")(containUserResearchBannerEnglish(asElement(html)))
       }
     }
 
     "be displayed on every opted-in page in Welsh" in {
-      optedInPages(welshMessages).foreach { case (name, html) =>
+      implicit val msgs: Messages = welshMessages
+      optedInPages(bannerOn, msgs).foreach { case (name, html) =>
         withClue(s"$name: ")(containUserResearchBannerWelsh(asElement(html)))
+      }
+    }
+
+    "not be displayed when the feature switch is disabled" in {
+      val disabledMessages = MessagesImpl(Lang("en"), messagesApi)
+      optedInPages(bannerOff, disabledMessages).foreach { case (name, html) =>
+        withClue(s"$name: ")(asElement(html).select(".hmrc-user-research-banner").size() mustBe 0)
       }
     }
 
