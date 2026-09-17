@@ -17,7 +17,7 @@
 package base.unit
 
 import org.jsoup.nodes.Element
-import org.scalatest.matchers.must.Matchers.include
+import org.scalatest.matchers.must.Matchers.{include, mustBe}
 import spec.ViewMatchers
 import controllers.routes
 import org.scalatest.matchers.should.Matchers.should
@@ -35,4 +35,21 @@ trait ViewAssertions extends ViewMatchers {
     )
   }
 
+  def containUserResearchBannerEnglish(view: Element): Unit = {
+    view.select(".hmrc-user-research-banner").size() mustBe 1
+
+    val link = view.select(".hmrc-user-research-banner__link")
+    link.attr("href") should include("https://banner-en")
+  }
+
+  def containUserResearchBannerWelsh(view: Element): Unit = {
+    view.select(".hmrc-user-research-banner").size() mustBe 1
+
+    val link = view.select(".hmrc-user-research-banner__link")
+    link.attr("href") should include("https://banner-cy")
+    link.text mustBe "Ymunwch â’n panel ymchwil (yn agor tab newydd)"
+  }
+
+  def containNoUserResearchBanner(view: Element): Unit =
+    view.select(".hmrc-user-research-banner").size() mustBe 0
 }
