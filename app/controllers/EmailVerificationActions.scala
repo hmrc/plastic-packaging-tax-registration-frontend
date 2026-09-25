@@ -89,7 +89,7 @@ trait EmailVerificationActions {
       case INCORRECT_PASSCODE =>
         BadRequest(
           renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
+            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect confirmation code"),
             getProspectiveEmail(),
             backCall,
             submitCall
