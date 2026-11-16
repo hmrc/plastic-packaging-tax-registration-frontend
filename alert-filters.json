@@ -1,0 +1,13 @@
+{
+  "add": [
+    {
+      "reason": "Only used for internal testing and we don't own the service",
+      "url": "http:\/\/localhost:9722\/identify-your-partnership\/test-only\/feature-switches\/.*",
+      "contextId": 1,
+      "ruleId": 10038,
+      "urlIsRegex": "true",
+      "newLevel": -1
+    }
+  ],
+  "remove": []
+}
