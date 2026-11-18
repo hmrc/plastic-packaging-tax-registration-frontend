@@ -89,7 +89,7 @@ trait EmailVerificationActions {
       case INCORRECT_PASSCODE =>
         BadRequest(
           renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect confirmation code"),
+            EmailAddressPasscode.form().withError("value", "Incorrect confirmation code"),
             getProspectiveEmail(),
             backCall,
             submitCall
@@ -100,7 +100,7 @@ trait EmailVerificationActions {
       case _ =>
         BadRequest(
           renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("journeyNotFound", "Passcode for email address is not found"),
+            EmailAddressPasscode.form().withError("value", "Passcode for email address is not found"),
             getProspectiveEmail(),
             backCall,
             submitCall
