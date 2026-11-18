@@ -84,7 +84,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
           BadRequest(
             buildEmailPasscodePage(
               EmailAddressPasscode.form().withError(
-                "incorrectPasscode",
+                "value",
                 "primaryContactDetails.emailAddress.passcode.incorrect"
               ),
               None
@@ -97,7 +97,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         Future.successful(
           BadRequest(
             buildEmailPasscodePage(
-              EmailAddressPasscode.form().withError("journeyNotFound", "Passcode for email address is not found"),
+              EmailAddressPasscode.form().withError("value", "Passcode for email address is not found"),
               None
             )
           )
