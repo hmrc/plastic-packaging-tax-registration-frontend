@@ -16,6 +16,7 @@
 
 package controllers.deregistration
 
+import config.AppConfig
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,7 +34,8 @@ class DeregisterReasonController @Inject() (
   authenticate: AmendAuthAction,
   mcc: MessagesControllerComponents,
   deregistrationDetailRepository: DeregistrationDetailRepository,
-  page: deregister_reason_page
+  page: deregister_reason_page,
+  appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
@@ -41,10 +43,14 @@ class DeregisterReasonController @Inject() (
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
       deregistrationDetailRepository.get().map { data =>
-        data.reason match {
-          case Some(reason) =>
-            Ok(page(DeregisterReasonForm.form().fill(DeregisterReasonForm(Some(reason)))))
-          case _ => Ok(page(DeregisterReasonForm.form()))
+        data.deregister match {
+          case Some(true) =>
+            data.reason match {
+              case Some(reason) =>
+                Ok(page(DeregisterReasonForm.form().fill(DeregisterReasonForm(Some(reason)))))
+              case _ => Ok(page(DeregisterReasonForm.form()))
+            }
+          case _ => Redirect(appConfig.pptAccountUrl)
         }
       }
     }

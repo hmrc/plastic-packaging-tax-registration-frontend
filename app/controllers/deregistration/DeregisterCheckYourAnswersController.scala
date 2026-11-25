@@ -16,6 +16,7 @@
 
 package controllers.deregistration
 
+import config.AppConfig
 import connectors.DeregistrationConnector
 import controllers.actions.auth.AmendAuthAction
 import play.api.i18n.I18nSupport
@@ -33,14 +34,20 @@ class DeregisterCheckYourAnswersController @Inject() (
   mcc: MessagesControllerComponents,
   deregistrationDetailRepository: DeregistrationDetailRepository,
   deregistrationConnector: DeregistrationConnector,
-  page: deregister_check_your_answers_page
+  page: deregister_check_your_answers_page,
+  appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.get().map(deregistrationDetails => Ok(page(deregistrationDetails)))
+      deregistrationDetailRepository.get().map { deregistrationDetails =>
+        deregistrationDetails.deregister match {
+          case Some(true) => Ok(page(deregistrationDetails))
+          case _          => Redirect(appConfig.pptAccountUrl)
+        }
+      }
     }
 
   def continue(): Action[AnyContent] =

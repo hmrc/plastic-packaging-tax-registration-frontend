@@ -50,12 +50,14 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
       authenticate = FakeAmendAuthAction,
       mcc = mcc,
       deregistrationDetailRepository = repository,
-      page = page
+      page = page,
+      appConfig = config
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[DeregisterReasonForm]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(config.pptAccountUrl).thenReturn("/account")
   }
 
   override protected def afterEach(): Unit = {
@@ -88,10 +90,37 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
         status(result) shouldBe OK
       }
 
+      "redirect to the PPT account page" when {
+        "deregistration has not been confirmed" in {
+          when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+            Future.successful(Some(initialDeregistrationDetails.copy(deregister = Some(false))))
+          )
+
+          val result = controller.displayPage()(FakeRequest())
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/account")
+        }
+
+        "deregistration details have not been set" in {
+          when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+            Future.successful(Some(DeregistrationDetails(deregister = None, reason = None)))
+          )
+
+          val result = controller.displayPage()(FakeRequest())
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/account")
+        }
+      }
+
       "redirect to next page and persist reason" when {
         "a reason is submitted" in {
           val expectedDeregistrationDetails =
             initialDeregistrationDetails.copy(reason = Some(CeasedTrading))
+          when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+            Future.successful(Some(initialDeregistrationDetails))
+          )
           when(mockCache.putData[DeregistrationDetails](any(), any())(any(), any())).thenReturn(
             Future.successful(expectedDeregistrationDetails)
           )
