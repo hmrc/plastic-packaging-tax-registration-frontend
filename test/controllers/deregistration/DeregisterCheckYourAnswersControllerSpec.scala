@@ -50,7 +50,8 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
       mcc = mcc,
       deregistrationDetailRepository = repository,
       deregistrationConnector = mockDegistrationConnector,
-      page = page
+      page = page,
+      appConfig = config
     )
 
   override protected def beforeEach(): Unit = {
@@ -59,6 +60,7 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
     when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
       Future.successful(Some(initialDeregistrationDetails))
     )
+    when(config.pptAccountUrl).thenReturn("/account")
   }
 
   override protected def afterEach(): Unit = {
@@ -75,6 +77,30 @@ class DeregisterCheckYourAnswersControllerSpec extends ControllerSpec with Amend
         val result = controller.displayPage()(FakeRequest())
 
         status(result) shouldBe OK
+      }
+
+      "redirect to the PPT account page" when {
+        "deregistration has not been confirmed" in {
+          when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
+            Future.successful(Some(initialDeregistrationDetails.copy(deregister = Some(false))))
+          )
+
+          val result = controller.displayPage()(FakeRequest())
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/account")
+        }
+
+        "deregistration details have not been set" in {
+          when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
+            Future.successful(Some(DeregistrationDetails(deregister = None, reason = None)))
+          )
+
+          val result = controller.displayPage()(FakeRequest())
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some("/account")
+        }
       }
 
       "submit the answers" in {
